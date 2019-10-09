@@ -102,7 +102,7 @@ import { AdminComponent } from './admin/admin.component';
     TemplateSelectionDialogComponent,
     DelimitorDialogComponent,
     UserComponent,
-    AdminComponent,
+    AdminComponent
     
 
     

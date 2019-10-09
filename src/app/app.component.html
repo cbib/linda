@@ -53,7 +53,7 @@
                 <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i> Logout</a>
             </li>
             
-             <li $ngIf="currentUser['admin']==='root'" class="nav-item">
+             <li *ngIf="currentUser['admin']==='root'" class="nav-item">
                 <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-sign-out-alt"></i> Admin</a>
             </li>
             
