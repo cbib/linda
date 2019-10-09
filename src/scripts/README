@@ -1,0 +1,1 @@
+./obo_parser.py -v -i obo_ontologies/PO_Structure.obo -o PO_Structure

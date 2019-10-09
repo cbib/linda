@@ -1,0 +1,1314 @@
+format-version: 1.2
+date: 02:04:2012 12:19
+saved-by: Raynooo
+auto-generated-by: The OWL API (version 3.2.3.1824)
+id_space: rdfs http://www.w3.org/2000/01/rdf-schema#
+id_space: owl http://www.w3.org/2002/07/owl#
+id_space: xeo http://xeo.codeplex.com/xeo.owl#
+id_space: xsd http://www.w3.org/2001/XMLSchema#
+id_space: rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#
+
+
+! ----------------------  CLASSES  -------------------------
+
+[Term]
+id: XEO:00001
+name: EnvironmentVariable
+relationship: has_context XEO:00015
+relationship: has_context XEO:00014
+
+
+[Term]
+id: XEO:00002
+name: Context
+
+[Term]
+id: XEO:00003
+name: Aerial
+is_a: XEO:00001
+
+[Term]
+id: XEO:00004
+name: Substrate
+is_a: XEO:00001
+
+[Term]
+id: XEO:00005
+name: QuantityContext
+is_a: XEO:00002
+
+[Term]
+id: XEO:00006
+name: Temperature
+is_a: XEO:00004
+relationship: has_context XEO:00008
+
+
+[Term]
+id: XEO:00007
+name: Temperature
+is_a: XEO:00003
+relationship: has_context XEO:00008
+def: Defines the air temperature
+
+[Term]
+id: XEO:00008
+name: Quantity
+comment: TemperatureContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00014
+name: FreeText
+is_a: XEO:00002
+relationship: has_datatype XEO:00238
+
+
+[Term]
+id: XEO:00015
+name: ResponseRange
+is_a: XEO:00002
+relationship: has_datatype XEO:00237
+relationship: has_enum XEO:00171
+
+
+[Term]
+id: XEO:00016
+name: AirMoisture
+is_a: XEO:00003
+
+[Term]
+id: XEO:00017
+name: AirMovements
+is_a: XEO:00003
+
+[Term]
+id: XEO:00018
+name: Gases
+is_a: XEO:00003
+
+[Term]
+id: XEO:00019
+name: Radiation
+is_a: XEO:00003
+
+[Term]
+id: XEO:00020
+name: RelativeHumidity
+is_a: XEO:00016
+relationship: has_context XEO:00139
+def: Describes the amount of water vapor in the air, generally expressed as the percentage of the maximum water vapor
+
+[Term]
+id: XEO:00021
+name: VapourPressureDeficit
+is_a: XEO:00016
+relationship: has_context XEO:00141
+def: Defines the difference between the maximal amount of water in the air minus the actual amount
+
+[Term]
+id: XEO:00022
+name: AirVelocity
+is_a: XEO:00017
+relationship: has_context XEO:00149
+def: Defines the velocity of the wind
+
+[Term]
+id: XEO:00023
+name: CarbonDioxide
+is_a: XEO:00018
+relationship: has_context XEO:00127
+def: Defines the concentration of CO2 in the air
+
+[Term]
+id: XEO:00024
+name: Nitrogen
+def: Defines the concentration of N2 in the air
+is_a: XEO:00018
+relationship: has_context XEO:00127
+
+
+[Term]
+id: XEO:00025
+name: Oxygen
+is_a: XEO:00018
+relationship: has_context XEO:00127
+def: Defines the concentration of O2 in the air
+
+[Term]
+id: XEO:00026
+name: Pollutants
+is_a: XEO:00018
+
+[Term]
+id: XEO:00027
+name: NOX
+is_a: XEO:00026
+relationship: has_context XEO:00127
+def: Defines the concentration of NOX in the air
+
+[Term]
+id: XEO:00028
+name: Ozone
+is_a: XEO:00026
+relationship: has_context XEO:00127
+def: Defines the concentration of O3 in the air
+
+[Term]
+id: XEO:00029
+name: SO2
+is_a: XEO:00026
+relationship: has_context XEO:00127
+def: Defines the concentration of SO2 in the air
+
+[Term]
+id: XEO:00030
+name: LightIntensity
+is_a: XEO:00019
+
+[Term]
+id: XEO:00031
+name: LightQuality
+is_a: XEO:00019
+
+[Term]
+id: XEO:00032
+name: UV
+is_a: XEO:00019
+
+[Term]
+id: XEO:00033
+name: PAR Light
+is_a: XEO:00030
+relationship: has_context XEO:00135
+def: Defines the intensity of photosynthetically active light
+
+[Term]
+id: XEO:00034
+name: Total Light
+is_a: XEO:00030
+relationship: has_context XEO:00135
+def: Defines the intensity of total light
+
+[Term]
+id: XEO:00035
+name: BlueToTotal
+is_a: XEO:00031
+relationship: has_context XEO:00152
+def: Defines the blue light to total light ratio
+
+[Term]
+id: XEO:00036
+name: RedToFarRed
+is_a: XEO:00031
+relationship: has_context XEO:00152
+def: Defines the red light to far red light ratio
+
+[Term]
+id: XEO:00037
+name: UVA
+is_a: XEO:00032
+relationship: has_context XEO:00135
+def: Defines the intensity of UVA radiation (320-400 nm)
+
+[Term]
+id: XEO:00038
+name: UVB
+is_a: XEO:00032
+relationship: has_context XEO:00135
+def: Defines the intensity of UVB radiation (290-320 nm)
+
+[Term]
+id: XEO:00039
+name: UVC
+is_a: XEO:00032
+relationship: has_context XEO:00135
+def: Defines the intensity of UVB radiation (less tha 280 nm)
+
+[Term]
+id: XEO:00040
+name: Container
+is_a: XEO:00004
+relationship: has_enum XEO:00212
+def: Defines the type of container used to grow/treat the plants (e.g. pot, Petri dish, well, tray, etc.)
+
+[Term]
+id: XEO:00041
+name: Sterility
+is_a: XEO:00004
+relationship: has_enum XEO:00232
+def: Indicates whether the substrate has been sterilised
+
+[Term]
+id: XEO:00042
+name: Nutrients
+is_a: XEO:00004
+
+[Term]
+id: XEO:00043
+name: Oxygen
+is_a: XEO:00004
+
+[Term]
+id: XEO:00044
+name: pH
+is_a: XEO:00004
+
+[Term]
+id: XEO:00045
+name: Planting
+is_a: XEO:00004
+
+[Term]
+id: XEO:00046
+name: Properties
+is_a: XEO:00004
+
+[Term]
+id: XEO:00047
+name: Salt
+is_a: XEO:00004
+
+[Term]
+id: XEO:00048
+name: Water
+is_a: XEO:00004
+
+[Term]
+id: XEO:00049
+name: Macronutrients
+is_a: XEO:00042
+
+[Term]
+id: XEO:00050
+name: Micronutrients
+is_a: XEO:00042
+
+[Term]
+id: XEO:00051
+name: Calcium
+is_a: XEO:00049
+
+[Term]
+id: XEO:00052
+name: Carbon
+is_a: XEO:00049
+
+[Term]
+id: XEO:00053
+name: Magnesium
+is_a: XEO:00049
+
+[Term]
+id: XEO:00054
+name: Nitrogen
+is_a: XEO:00049
+
+[Term]
+id: XEO:00055
+name: Phosphor
+is_a: XEO:00049
+
+[Term]
+id: XEO:00056
+name: Potassium
+is_a: XEO:00049
+
+[Term]
+id: XEO:00057
+name: Sulfur
+is_a: XEO:00049
+
+[Term]
+id: XEO:00058
+name: Ca
+is_a: XEO:00051
+relationship: has_context XEO:00127
+def: Defines the concentration of total calcium
+
+[Term]
+id: XEO:00059
+name: Ca2+
+is_a: XEO:00051
+relationship: has_context XEO:00127
+def: Defines the concentration of free calcium
+
+[Term]
+id: XEO:00060
+name: C
+is_a: XEO:00052
+relationship: has_context XEO:00127
+def: Defines the concentration of total carbon within the substrate
+
+[Term]
+id: XEO:00061
+name: Fructose
+is_a: XEO:00052
+relationship: has_context XEO:00127
+def: Defines the concentration of fructose within the substrate
+
+[Term]
+id: XEO:00062
+name: Glucose
+is_a: XEO:00052
+relationship: has_context XEO:00127
+def: Defines the concentration of glucose within the substrate
+
+[Term]
+id: XEO:00063
+name: Sucrose
+is_a: XEO:00052
+relationship: has_context XEO:00127
+def: Defines the concentration of sucrose within the substrate
+
+[Term]
+id: XEO:00064
+name: Mg
+is_a: XEO:00053
+relationship: has_context XEO:00127
+def: Defines the concentration of total magnesium
+
+[Term]
+id: XEO:00065
+name: Mg2+
+is_a: XEO:00053
+relationship: has_context XEO:00127
+def: Defines the concentration of free magnesium
+
+[Term]
+id: XEO:00066
+name: Glutamine
+is_a: XEO:00054
+relationship: has_context XEO:00127
+def: Defines the concentration of glutamine
+
+[Term]
+id: XEO:00067
+name: N
+is_a: XEO:00054
+relationship: has_context XEO:00127
+def: Defines the concentration of total nitrogen
+
+[Term]
+id: XEO:00068
+name: NH4+
+is_a: XEO:00054
+relationship: has_context XEO:00127
+def: Defines the concentration of ammonium
+
+[Term]
+id: XEO:00069
+name: NO3-
+is_a: XEO:00054
+relationship: has_context XEO:00127
+def: Defines the concentration of nitrate
+
+[Term]
+id: XEO:00070
+name: Urea
+is_a: XEO:00054
+relationship: has_context XEO:00127
+def: Defines the concentration of urea
+
+[Term]
+id: XEO:00071
+name: (PO4)2-
+is_a: XEO:00055
+relationship: has_context XEO:00127
+def: Defines the concentration of inorganic free phosphate
+
+[Term]
+id: XEO:00072
+name: P
+is_a: XEO:00055
+relationship: has_context XEO:00127
+def: Defines the concentration of total phosphor
+
+[Term]
+id: XEO:00073
+name: K
+is_a: XEO:00056
+relationship: has_context XEO:00127
+def: Defines the concentration of total potassium
+
+[Term]
+id: XEO:00074
+name: K+
+is_a: XEO:00056
+relationship: has_context XEO:00127
+def: Defines the concentration of free potassium
+
+[Term]
+id: XEO:00075
+name: (SO4)2-
+is_a: XEO:00057
+relationship: has_context XEO:00127
+def: Defines the concentration of free sulfate
+
+[Term]
+id: XEO:00076
+name: S
+is_a: XEO:00057
+relationship: has_context XEO:00127
+def: Defines the concentration of total sulfur
+
+[Term]
+id: XEO:00077
+name: Boron
+is_a: XEO:00050
+
+[Term]
+id: XEO:00078
+name: Chlorine
+is_a: XEO:00050
+
+[Term]
+id: XEO:00079
+name: Cobalt
+is_a: XEO:00050
+
+[Term]
+id: XEO:00080
+name: Copper
+is_a: XEO:00050
+
+[Term]
+id: XEO:00081
+name: Iron
+is_a: XEO:00050
+
+[Term]
+id: XEO:00082
+name: Manganese
+is_a: XEO:00050
+
+[Term]
+id: XEO:00083
+name: Molybdenum
+is_a: XEO:00050
+
+[Term]
+id: XEO:00084
+name: Nickel
+is_a: XEO:00050
+
+[Term]
+id: XEO:00085
+name: Silicon
+is_a: XEO:00050
+
+[Term]
+id: XEO:00086
+name: Sodium
+is_a: XEO:00050
+
+[Term]
+id: XEO:00087
+name: Zinc
+is_a: XEO:00050
+
+[Term]
+id: XEO:00088
+name: (BO3)3-
+is_a: XEO:00077
+relationship: has_context XEO:00127
+def: Defines the concentration of borate
+
+[Term]
+id: XEO:00089
+name: B
+is_a: XEO:00077
+relationship: has_context XEO:00127
+def: Defines the concentration of total boron
+
+[Term]
+id: XEO:00090
+name: Cl
+is_a: XEO:00078
+relationship: has_context XEO:00127
+def: Defines the concentration of total chlorine
+
+[Term]
+id: XEO:00091
+name: Cl-
+is_a: XEO:00078
+relationship: has_context XEO:00127
+def: Defines the concentration of chloride
+
+[Term]
+id: XEO:00092
+name: Co
+is_a: XEO:00079
+relationship: has_context XEO:00127
+def: Defines the concentration of total cobalt
+
+[Term]
+id: XEO:00093
+name: Co2+
+is_a: XEO:00079
+relationship: has_context XEO:00127
+def: Defines the concentration of free cobalt
+
+[Term]
+id: XEO:00094
+name: Cu
+is_a: XEO:00080
+relationship: has_context XEO:00127
+def: Defines the concentration of total copper
+
+[Term]
+id: XEO:00095
+name: Cu2+
+is_a: XEO:00080
+relationship: has_context XEO:00127
+def: Defines the concentration of free copper
+
+[Term]
+id: XEO:00096
+name: Fe
+is_a: XEO:00081
+relationship: has_context XEO:00127
+def: Defines the concentration of of total iron
+
+[Term]
+id: XEO:00097
+name: Fe2+
+is_a: XEO:00081
+relationship: has_context XEO:00127
+def: Defines the concentration of of ferride
+
+[Term]
+id: XEO:00098
+name: Fe3+
+is_a: XEO:00081
+relationship: has_context XEO:00127
+def: Defines the concentration of of ferride
+
+[Term]
+id: XEO:00099
+name: Mn
+is_a: XEO:00082
+relationship: has_context XEO:00127
+def: Defines the concentration of total manganese
+
+[Term]
+id: XEO:00100
+name: Mn2+
+is_a: XEO:00082
+relationship: has_context XEO:00127
+def: Defines the concentration of free manganese
+
+[Term]
+id: XEO:00101
+name: (MoO4)2-
+is_a: XEO:00083
+relationship: has_context XEO:00127
+def: Defines the concentration of molybdate
+
+[Term]
+id: XEO:00102
+name: Mo
+is_a: XEO:00083
+relationship: has_context XEO:00127
+def: Defines the concentration of total molybdenum
+
+[Term]
+id: XEO:00103
+name: Ni
+is_a: XEO:00084
+relationship: has_context XEO:00127
+def: Defines the concentration of total nickel
+
+[Term]
+id: XEO:00104
+name: Ni2+
+is_a: XEO:00084
+relationship: has_context XEO:00127
+def: Defines the concentration of nickel
+
+[Term]
+id: XEO:00105
+name: Si
+is_a: XEO:00085
+relationship: has_context XEO:00127
+def: Defines the concentration of total silicon
+
+[Term]
+id: XEO:00106
+name: Na
+is_a: XEO:00086
+relationship: has_context XEO:00127
+def: Defines the concentration of total sodium
+
+[Term]
+id: XEO:00107
+name: Na+
+is_a: XEO:00086
+relationship: has_context XEO:00127
+def: Defines the concentration of free sodium
+
+[Term]
+id: XEO:00108
+name: Zn
+is_a: XEO:00087
+relationship: has_context XEO:00127
+def: Defines the concentration of total zinc
+
+[Term]
+id: XEO:00109
+name: Zn2+
+is_a: XEO:00087
+relationship: has_context XEO:00127
+def: Defines the concentration of free zinc
+
+[Term]
+id: XEO:00110
+name: Oxygen
+is_a: XEO:00043
+relationship: has_context XEO:00127
+def: Defines the concentration of O2 in the substrate
+
+[Term]
+id: XEO:00111
+name: pH
+is_a: XEO:00044
+relationship: has_context XEO:00133
+def: Defines the chemical activity of the protons in the substrate, i.e. the acidity or the alkalinity of the substrate; pH = -Log10a[H+] with a, the activity of water
+
+[Term]
+id: XEO:00112
+name: Plants/Container
+is_a: XEO:00045
+relationship: has_context XEO:00152
+def: Defines the number of plants per container (e.g. pot, Petri dish, well, tray, etc.)
+
+[Term]
+id: XEO:00113
+name: RootingVolume
+is_a: XEO:00045
+relationship: has_context XEO:00153
+def: Defines the volume that is available to the roots
+
+[Term]
+id: XEO:00114
+name: ECa
+is_a: XEO:00046
+relationship: has_context XEO:00156
+def: Defines the apparent soil electrical conductivity
+
+[Term]
+id: XEO:00115
+name: ECw
+is_a: XEO:00046
+relationship: has_context XEO:00156
+def: Defines the electrical conductivity of the soil water
+
+[Term]
+id: XEO:00116
+name: Granulometry
+is_a: XEO:00046
+relationship: has_context XEO:00152
+def: Describes the soil texture according to the size of soil particles
+
+[Term]
+id: XEO:00117
+name: OrganicMatter
+is_a: XEO:00046
+def: Defines the proportion of organic matter in the soil
+
+[Term]
+id: XEO:00118
+name: SubstrateDryWeight
+is_a: XEO:00046
+relationship: has_context XEO:00159
+def: Defines the amount of dry matter within the substrate
+
+[Term]
+id: XEO:00119
+name: SubstrateMaxWeight
+is_a: XEO:00046
+relationship: has_context XEO:00159
+def: Defines the weight of the substrate at field capacity
+
+[Term]
+id: XEO:00120
+name: Salt
+is_a: XEO:00047
+relationship: has_context XEO:00127
+def: Defines the concentration of NaCl
+
+[Term]
+id: XEO:00121
+name: TotalSalt
+is_a: XEO:00047
+relationship: has_context XEO:00127
+def: Defines the concentration of total salt
+
+[Term]
+id: XEO:00122
+name: Flooding
+is_a: XEO:00048
+relationship: has_context XEO:00168
+def: Defines the level of submerging water
+
+[Term]
+id: XEO:00123
+name: RelativeWaterContent
+is_a: XEO:00048
+relationship: has_context XEO:00139
+def: Defines the amount of soil water, expressed as a proportion of the water holding capacity of the soil
+
+[Term]
+id: XEO:00124
+name: Watering
+is_a: XEO:00048
+relationship: has_context XEO:00153
+def: Indicates the volume of supplied water
+
+[Term]
+id: XEO:00125
+name: Waterlogging
+is_a: XEO:00048
+relationship: has_context XEO:00168
+def: Defines the position of the water table
+
+[Term]
+id: XEO:00126
+name: WaterPotential
+is_a: XEO:00048
+relationship: has_context XEO:00141
+def: Defines the potential energy of water per unit mass of water in the soil
+
+[Term]
+id: XEO:00127
+name: Quantity
+comment: ConcentrationContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00133
+name: Quantity
+comment: pHContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00135
+name: Quantity
+comment: LightIntensityContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00137
+name: Source
+is_a: XEO:00019
+relationship: has_enum XEO:00189
+def: Defines the nature of the light source
+
+[Term]
+id: XEO:00139
+name: Quantity
+comment: PercentageContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00141
+name: Quantity
+comment: PressureContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00149
+name: Quantity
+comment: VelocityContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00151
+name: Type
+is_a: XEO:00004
+relationship: has_enum XEO:00197
+def: Defines the nature of the substrate
+
+[Term]
+id: XEO:00152
+name: Quantity
+comment: RatioContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00153
+name: Quantity
+comment: VolumeContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00156
+name: Quantity
+comment: ElectricalConductivity
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00159
+name: Quantity
+comment: DensityContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00168
+name: Quantity
+comment: DistanceContext
+is_a: XEO:00005
+relationship: has_datatype XEO:00237
+
+
+[Term]
+id: XEO:00171
+name: ResponseRangeEnum
+is_a: XEO:00237
+
+[Term]
+id: XEO:00189
+name: LightSourceEnum
+is_a: XEO:00238
+
+[Term]
+id: XEO:00197
+name: SubstrateTypeEnum
+is_a: XEO:00238
+
+[Term]
+id: XEO:00212
+name: ContainerEnum
+is_a: XEO:00238
+
+[Term]
+id: XEO:00232
+name: BoolEnum
+is_a: XEO:00240
+
+[Term]
+id: XEO:00236
+name: DataTypes
+
+[Term]
+id: XEO:00237
+name: Number
+is_a: XEO:00236
+
+[Term]
+id: XEO:00238
+name: Text
+is_a: XEO:00236
+
+[Term]
+id: XEO:00239
+name: Date
+is_a: XEO:00236
+
+[Term]
+id: XEO:00240
+name: Bool
+is_a: XEO:00236
+
+[Typedef]
+id: has_context
+domain: XEO:00001
+range: XEO:00002
+is_metadata_tag: false
+
+[Typedef]
+id: has_datatype
+domain: XEO:00002
+range: XEO:00236
+is_metadata_tag: false
+
+[Typedef]
+id: has_enum
+is_metadata_tag: false
+
+[Typedef]
+id: has_symbol
+domain: XEO:00005
+range: http://www.w3.org/2001/XMLSchema#string
+is_metadata_tag: false
+
+[Instance]
+id: XEO:00011
+name: Celsius
+instance_of: XEO:00008
+property_value: has_symbol "°C" 
+
+[Instance]
+id: XEO:00012
+name: Fahrenheit
+instance_of: XEO:00008
+property_value: has_symbol "°F" 
+
+[Instance]
+id: XEO:00013
+name: Kelvin
+instance_of: XEO:00008
+property_value: has_symbol "K" 
+
+[Instance]
+id: XEO:00128
+name: moles per liter
+instance_of: XEO:00127
+property_value: has_symbol "mol/l" 
+
+[Instance]
+id: XEO:00129
+name: millimol per liter
+instance_of: XEO:00127
+property_value: has_symbol "mM" 
+
+[Instance]
+id: XEO:00130
+name: micromole per liter
+instance_of: XEO:00127
+property_value: has_symbol "µM" 
+
+[Instance]
+id: XEO:00131
+name: moles per gram dry weight
+instance_of: XEO:00127
+property_value: has_symbol "mol/gDW" 
+
+[Instance]
+id: XEO:00132
+name: g per gram dry weight
+instance_of: XEO:00127
+property_value: has_symbol "g/gDW" 
+
+[Instance]
+id: XEO:00134
+name: pH
+instance_of: XEO:00133
+
+[Instance]
+id: XEO:00136
+name: microeinstein/m^2/s
+instance_of: XEO:00135
+property_value: has_symbol "µE/m^2/s" 
+
+[Instance]
+id: XEO:00138
+name: Watts/m^2
+instance_of: XEO:00135
+property_value: has_symbol "Watts/m^2" 
+
+[Instance]
+id: XEO:00140
+name: percentage
+instance_of: XEO:00139
+instance_of: XEO:00127
+property_value: has_symbol "%" 
+
+[Instance]
+id: XEO:00142
+name: kilopascal
+instance_of: XEO:00141
+property_value: has_symbol "kPa" 
+
+[Instance]
+id: XEO:00150
+name: meters per second
+instance_of: XEO:00149
+property_value: has_symbol "m/s" 
+
+[Instance]
+id: XEO:00154
+name: liters
+instance_of: XEO:00153
+property_value: has_symbol "l" 
+
+[Instance]
+id: XEO:00155
+name: cubic meters
+instance_of: XEO:00153
+property_value: has_symbol "m^3" 
+
+[Instance]
+id: XEO:00157
+name: Siemens/m^2
+instance_of: XEO:00156
+property_value: has_symbol "S/m^2" 
+
+[Instance]
+id: XEO:00158
+name: Siemens/cm^2
+instance_of: XEO:00156
+property_value: has_symbol "S/cm^2" 
+
+[Instance]
+id: XEO:00160
+name: gram per liter
+instance_of: XEO:00159
+property_value: has_symbol "g/l" 
+
+[Instance]
+id: XEO:00166
+name: liters per plant
+instance_of: XEO:00153
+property_value: has_symbol "l/plant" 
+
+[Instance]
+id: XEO:00167
+name: megapascal
+instance_of: XEO:00141
+property_value: has_symbol "MPa" 
+
+[Instance]
+id: XEO:00169
+name: meters
+instance_of: XEO:00168
+property_value: has_symbol "m" 
+
+[Instance]
+id: XEO:00172
+name: 0
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00173
+name: 1
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00174
+name: 2
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00175
+name: 3
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00176
+name: 4
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00177
+name: 5
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00178
+name: 6
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00179
+name: 7
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00180
+name: 8
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00181
+name: 9
+instance_of: XEO:00171
+
+[Instance]
+id: XEO:00190
+name: Sun
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00191
+name: Fluorescent Tube
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00192
+name: LED
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00193
+name: High Pressure Sodium
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00194
+name: Incandescent Lamp
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00195
+name: None
+instance_of: XEO:00189
+
+[Instance]
+id: XEO:00198
+name: Undefined soil
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00199
+name: Sandy soil
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00200
+name: Clay soil
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00201
+name: Peat soil
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00202
+name: Potting soil
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00203
+name: Hydroponics
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00204
+name: Vermiculite
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00205
+name: Perlite
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00206
+name: Rockwool
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00207
+name: Gravel
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00208
+name: Coir
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00209
+name: Sand
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00210
+name: Aeroponics
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00211
+name: Agar
+instance_of: XEO:00197
+
+[Instance]
+id: XEO:00213
+name: Pot
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00214
+name: Petri dish
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00215
+name: Microplate 4-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00216
+name: Microplate 6-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00217
+name: Microplate 8-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00218
+name: Microplate 12-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00219
+name: Microplate 24-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00220
+name: Microplate 48-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00221
+name: Microplate 96-wells
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00222
+name: Hydroponics tray
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00223
+name: Film
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00224
+name: Open
+instance_of: XEO:00212
+
+[Instance]
+id: XEO:00228
+name: Ratio
+instance_of: XEO:00152
+
+[Instance]
+id: XEO:00241
+name: micromole per mole
+instance_of: XEO:00127
+property_value: has_symbol "µmol/mol" 
+
+[Instance]
+id: XEO:00242
+name: part per million
+instance_of: XEO:00127
+property_value: has_symbol "ppm" 

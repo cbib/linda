@@ -1,0 +1,64 @@
+﻿<?xml version="1.0"?>
+<Repository NameSpace="http://www.mpimp-golm.mpg.de/2007/XEML/Positioning" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.mpimp-golm.mpg.de/2007/XEML/Environment" xsi:schemaLocation="http://www.mpimp-golm.mpg.de/2007/XEML/Environment XeOSchema_V1.xsd">
+  <Resources>
+    <UnitSets />
+    <TypeSets>
+      <TypeDefine Name="QualityTypeDef" BaseType="Text">
+        <Enum>bad</Enum>
+        <Enum>good</Enum>
+        <Enum>very good</Enum>
+      </TypeDefine>
+    </TypeSets>
+    <ContextCollection>
+      <Context Name="Quality">
+        <Description>Defines qualitative values of variables.</Description>
+      </Context>
+      <Context Name="Quantity">
+        <Description>Defines quantitative values of variables.</Description>
+      </Context>
+      <Context Name="ResponseRange">
+        <Description>Defines the reponse of a given process (by default biomass production) to the actual variable. Values 0-4 correspond to "too little", values >4-5 to "enough", values >5-6 to "luxurious" and values >6-9 to "too much"</Description>
+      </Context>
+      <Context Name="FreeText">
+        <Description>For comments or text-based Definitions</Description>
+      </Context>
+    </ContextCollection>
+  </Resources>
+  <Variable TermId="POS00001"  Name="HeightFromGround" Group="Absolut" RecommendationLevel="3">
+    <Definition>Defines the the height from the ground.</Definition>
+    <Context Name="Quantity">
+      <TypeDefine BaseType="Number">
+        <Min>0</Min>
+      </TypeDefine>
+      <Units>
+        <Default Name="centi meter" Symbol="cm" />
+        <Unit Name="meter" Symbol="m" Conversion="x\100" />
+        <Unit Name="deci meter" Symbol="dm²" Conversion="x\10" />
+      </Units>
+      <DefaultValue>10</DefaultValue>
+    </Context>
+    <Context Name="Quality">
+      <TypeSource typeRef="QualityTypeDef" />
+      <DefaultValue>good</DefaultValue>
+    </Context>
+  </Variable>
+  <Variable TermId="POS00002"  Name="DistanceFromClade" Group="Absolut" RecommendationLevel="3">
+    <Definition>Defines the the distance from the center of the plant.</Definition>
+    <Context Name="Quantity">
+      <TypeDefine BaseType="Number">
+        <Min>0</Min>
+      </TypeDefine>
+      <Units>
+        <Default Name="centi meter" Symbol="cm" />
+        <Unit Name="meter" Symbol="m" Conversion="x\100" />
+        <Unit Name="deci meter" Symbol="dm" Conversion="x\10" />
+      </Units>
+      <DefaultValue>10</DefaultValue>
+    </Context>
+    <Context Name="Quality">
+      <TypeSource typeRef="QualityTypeDef" />
+      <DefaultValue>good</DefaultValue>
+    </Context>
+  </Variable>
+ 
+</Repository>

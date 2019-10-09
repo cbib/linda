@@ -1,0 +1,77 @@
+
+
+<h1 mat-dialog-title>Please select a datet format</h1>
+<div mat-dialog-content >
+<input type="text" name="dataformat" (change)="onChange($event)" /> 
+<br>
+<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">
+    <p>Below is the descriptive of all time formats available. Build your own dateformat accordingly to it and press save.
+        
+<table class="table table-hover table-bordered table-responsive-md table-striped text-center">
+ <thead>
+    <tr>
+        <td>Field type</td><td>Format</td><td>Description</td><td>Example Value</td>
+    </tr>
+ </thead>
+ <tbody>
+<tr><td>Era</td><td>G, GG & GGG</td><td>Abbreviated</td><td>AD</td></tr>
+<tr><td></td><td>GGGG</td><td>Wide</td><td>Anno Domini</td></tr>
+<tr><td></td><td>GGGGG</td><td>Narrow</td><td>A</td></tr>
+<tr><td>Year</td><td>y</td><td>Numeric: minimum digits</td><td>2, 20, 201, 2017, 20173</td></tr>
+<tr><td></td><td>yy</td><td>Numeric: 2 digits + zero padded</td><td>02, 20, 01, 17, 73</td></tr>
+<tr><td></td><td>yyy</td><td>Numeric: 3 digits + zero padded</td><td>002, 020, 201, 2017, 20173</td></tr>
+<tr><td></td><td>yyyy</td><td>Numeric: 4 digits or more + zero padded</td><td>0002, 0020, 0201, 2017, 20173</td></tr>
+<tr><td>Month</td><td>M</td><td>Numeric: 1 digit</td><td>9, 12</td></tr>
+<tr><td></td><td>MM</td><td>Numeric: 2 digits + zero padded</td><td>09, 12</td></tr>
+<tr><td></td><td>MMM</td><td>Abbreviated</td><td>Sep</td></tr>
+<tr><td></td><td>MMMM</td><td>Wide</td><td>September</td></tr>
+<tr><td></td><td>MMMMM</td><td>Narrow</td><td>S</td></tr>
+<tr><td>Month standalone</td><td>L</td><td>Numeric: 1 digit</td><td>9, 12</td></tr>
+<tr><td></td><td>LL</td><td>Numeric: 2 digits + zero padded</td><td>09, 12</td></tr>
+<tr><td></td><td>LLL</td><td>Abbreviated</td><td>Sep</td></tr>
+<tr><td></td><td>LLLL</td><td>Wide</td><td>September</td></tr>
+<tr><td></td><td>LLLLL</td><td>Narrow</td><td>S</td></tr>
+<tr><td>Week of year</td><td>w</td><td>Numeric: minimum digits</td><td>1... 53</td></tr>
+<tr><td></td><td>ww</td><td>Numeric: 2 digits + zero padded</td><td>01... 53</td></tr>
+<tr><td>Week of month</td><td>W</td><td>Numeric: 1 digit</td><td>1... 5</td></tr>
+<tr><td>Day of month</td><td>d</td><td>Numeric: minimum digits</td><td>1</td></tr>
+<tr><td></td><td>dd</td><td>Numeric: 2 digits + zero padded</td><td>1</td></tr>
+<tr><td>Week day</td><td>E, EE & EEE</td><td>Abbreviated</td><td>Tue</td></tr>
+<tr><td></td><td>EEEE</td><td>Wide</td><td>Tuesday</td></tr>
+<tr><td></td><td>EEEEE</td><td>Narrow</td><td>T</td></tr>
+<tr><td></td><td>EEEEEE</td><td>Short</td><td>Tu</td></tr>
+<tr><td>Period</td><td>a, aa & aaa</td><td>Abbreviated</td><td>am/pm or AM/PM</td></tr>
+<tr><td></td><td>aaaa</td><td>Wide (fallback to a when missing)</td><td>ante meridiem/post meridiem</td></tr>
+<tr><td></td><td>aaaaa</td><td>Narrow</td><td>a/p</td></tr>
+<tr><td>Period*</td><td>B, BB & BBB</td><td>Abbreviated</td><td>mid.</td></tr>
+<tr><td></td><td>BBBB</td><td>Wide</td><td>am, pm, midnight, noon, morning, afternoon, evening, night</td></tr>
+<tr><td></td><td>BBBBB</td><td>Narrow</td><td>md</td></tr>
+<tr><td>Period standalone*</td><td>b, bb & bbb</td><td>Abbreviated</td><td>mid.</td></tr>
+<tr><td></td><td>bbbb</td><td>Wide</td><td>am, pm, midnight, noon, morning, afternoon, evening, night</td></tr>
+<tr><td></td><td>bbbbb</td><td>Narrow</td><td>md</td></tr>
+<tr><td>Hour 1-12</td><td>h</td><td>Numeric: minimum digits</td><td>1, 12</td></tr>
+<tr><td></td><td>hh</td><td>Numeric: 2 digits + zero padded</td><td>01, 12</td></tr>
+<tr><td>Hour 0-23</td><td>H</td><td>Numeric: minimum digits</td><td>0, 23</td></tr>
+<tr><td></td><td>HH</td><td>Numeric: 2 digits + zero padded</td><td>00, 23</td></tr>
+<tr><td>Minute</td><td>m</td><td>Numeric: minimum digits</td><td>8, 59</td></tr>
+<tr><td></td><td>mm</td><td>Numeric: 2 digits + zero padded</td><td>08, 59</td></tr>
+<tr><td>Second</td><td>s</td><td>Numeric: minimum digits</td><td>0... 59</td></tr>
+<tr><td></td><td>ss</td><td>Numeric: 2 digits + zero padded</td><td>00... 59</td></tr>
+<tr><td>Fractional seconds</td><td>S</td><td>Numeric: 1 digit</td><td>0... 9</td></tr>
+<tr><td></td><td>SS</td><td>Numeric: 2 digits + zero padded</td><td>00... 99</td></tr>
+<tr><td></td><td>SSS</td><td>Numeric: 3 digits + zero padded (= milliseconds)</td><td>000... 999</td></tr>
+<tr><td>Zone</td><td>z, zz & zzz</td><td>Short specific non location format (fallback to O)</td><td>GMT-8</td></tr>
+<tr><td></td><td>zzzz</td><td>Long specific non location format (fallback to OOOO)</td><td>GMT-08:00</td></tr>
+<tr><td></td><td>Z, ZZ & ZZZ</td><td>ISO8601 basic format</td><td>-800</td></tr>
+<tr><td></td><td>ZZZZ</td><td>Long localized GMT format</td><td>GMT-8:00</td></tr>
+<tr><td></td><td>ZZZZZ</td><td>ISO8601 extended format + Z indicator for offset 0 (= XXXXX)</td><td>-08:00</td></tr>
+<tr><td></td><td>O, OO & OOO</td><td>Short localized GMT format</td><td>GMT-8</td></tr>
+<tr><td></td><td>OOOO</td><td>Long localized GMT format</td><td>GMT-08:00</td></tr>
+ </tbody>
+</table>
+</cdk-virtual-scroll-viewport>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</div>

@@ -1,0 +1,28 @@
+.example-container {
+  height: 800px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  
+}
+
+.example-sidenav-content {
+  display: flex;
+  width: 600px;
+  
+  /*height: 100%;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+}
+
+.example-sidenav {
+  padding: 20px;
+   width: 700px;
+   height: 800px;
+  
+}
+mat-sidenav {
+  width: 500px;
+  height: 800px;
+}
+.mat-tree{
+        height: 100%; 
+    }

@@ -1,0 +1,790 @@
+format-version: 1.2
+date: 15:12:2015 09:57
+saved-by: lvalette
+auto-generated-by: OBO-Edit 2.3.1
+default-namespace: multicrop passport ontology
+
+[Term]
+id: CO_020:0000000
+name: multicrop passport ontology
+comment: release date: June 30, 2015\nversion: 2.1. Adapted from FAO/Bioversity Multi-Crop Passport Descriptors, December 2015\ncoverage: Multi-Crop Passport Descriptors\ncreator: Jeffrey Detras, Tom Hazekamp and Richard Bruskiewich, updated by Leo Valette\npublisher: Bioversity International and IRRI under the Generation Challenge Program
+xref: GCPDomainModel:CO_000\:0000165
+
+[Term]
+id: CO_020:0000003
+name: collecting number
+comment: Original identifier assigned by the collector(s) of the sample, normally composed of the name or \ninitials of the collector(s) followed by a number (e.g. "FM9909"). This identifier is essential for \nidentifying duplicates held in different collections.
+synonym: "(COLLNUMB)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000014
+is_a: CO_020:0000079 ! germplasm identifier descriptor
+
+[Term]
+id: CO_020:0000004
+name: collecting institute code
+comment: FAO WIEWS code of the institute collecting the sample. If the holding institute has collected the material, the collecting institute code (COLLCODE) should be the same as the holding institute code (INSTCODE). Follows INSTCODE standard. Multiple values are separated by a semicolon without space.
+synonym: "(COLLCODE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000024
+is_a: CO_020:0000088 ! institute code
+
+[Term]
+id: CO_020:0000005
+name: genus
+comment: Genus name for taxon. Initial Uppercase letter required.
+synonym: "(GENUS)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000042
+xref: GCPDomainModel:CO_000\:0000154
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000006
+name: species
+comment: Specific epithet portion of the scientific name in lowercase letters plus authority1. Following abbreviation is allowed: sp.
+synonym: "(SPECIES)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000039
+xref: GCPDomainModel:CO_000\:0000205
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000007
+name: species authority
+comment: Provide the authority for the species name.
+synonym: "(SPAUTHOR)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000157
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000008
+name: subtaxa
+comment: Subtaxa can be used to store any additional taxonomic identifier plus authority1. Following abbreviations are allowed: ssp. (for subspecies); var. (for variety); convar. (for convariety); f. (for form).
+synonym: "(SUBTAXA)" EXACT []
+synonym: "Subspecies" RELATED []
+xref: GCP germplasm ontology:CO_010\:0000040
+xref: GCPDomainModel:CO_000\:0000151
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000009
+name: subtaxa authority
+comment: Provide the subtaxa authority at the most detailed taxonomic level.
+synonym: "(SUBTAUTHOR)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000158
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000010
+name: common crop name
+comment: Name of the crop in colloquial language, preferably English (i.e. 'malting barley, 'cauliflower', or 'white cabbage')
+synonym: "(CROPNAME)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000153
+is_a: CO_020:0000081 ! taxonomy descriptor
+
+[Term]
+id: CO_020:0000011
+name: accession name
+comment: Either a registered or other designation given to the material received, other than the donor s accession number (23) or collecting number (3). First letter uppercase. Multiple names are separated by a semicolon without space. Example: Accession name: Bogatyr;Symphony;Emma.
+synonym: "(ACCENAME)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000045
+is_a: CO_020:0000079 ! germplasm identifier descriptor
+
+[Term]
+id: CO_020:0000012
+name: acquisition date
+comment: Date on which the accession entered the collection where YYYY is the year, MM is the month and DD is the day. Missing data (MM or DD) should be indicated with hyphens. Leading zeros are required. [DDMMYYYY].
+synonym: "(ACQDATE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000057
+is_a: CO_020:0000086 ! date descriptor
+
+[Term]
+id: CO_020:0000013
+name: country of origin
+comment: 3-letter ISO 3166-1 code of the country in which the sample was originally collected (e.g. landrace, crop wild relative,farmers variety), bred or selected (breeding lines, GMOs, segregating populations, hybrids, modern cultivars, etc.).
+synonym: "(ORIGCTY)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000010
+xref: GCPDomainModel:CO_000\:0000173
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000014
+name: location of collecting site
+comment: Location information below the country level that describes where the accession was collected starting with the most detailed information. Might include the distance in kilometers and direction from the nearest town, village or map grid reference point, (e.g. CURITIBA 7S, PARANA means 7 km south of Curitiba in the state of Parana).
+synonym: "(COLLSITE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000028
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000015
+name: latitude of collecting site (degree, min, sec)
+comment: Degrees (2 digits) minutes (2 digits), and seconds (2 digits) followed by N (North) or S (South) (e.g. 103020S). Every missing digit (minutes or seconds) should be indicated with a hyphen. Leading zeros are required (e.g. 10----S; 011530N; 4531--S).
+synonym: "(LATITUDE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000008
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000016
+name: longitude of collecting site (degree, min, sec)
+comment: Degrees (3 digits), minutes (2 digits), and seconds (2 digits) followed by E (East) or W (West) (e.g. 0762510W). Every missing digit (minutes or seconds) should be indicated with a hyphen. Leading zeros are required (e.g. 076----W).
+synonym: "(LONGITUDE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000026
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000017
+name: elevation of collecting site
+comment: Elevation of collecting site expressed in meters above sea level. Negative values allowed. Format: [m asl].
+synonym: "(ELEVATION)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000004
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000018
+name: collecting date of sample
+comment: Collecting date of the sample, where YYYY is the year, MM is the month and DD is the day. Missing data (MM or DD) should be indicated with hyphens or "00" [double zero].
+synonym: "(COLLDATE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000030
+is_a: CO_020:0000086 ! date descriptor
+
+[Term]
+id: CO_020:0000019
+name: breeding institute code
+comment: FAO WIEWS code of the institute that has bred the material. If the holding institute has bred the material, the breeding institute code (BREDCODE) should be the same as the holding institute code (INSTCODE). Follows INSTCODE standard. Multiple values are separated by a semicolon without space.
+synonym: "(BREDCODE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000155
+is_a: CO_020:0000088 ! institute code
+
+[Term]
+id: CO_020:0000020
+name: biological status of accession
+comment: The coding scheme proposed can be used at 3 different levels of detail: either by using the general codes (in boldface) such as 100, 200, 300, 400 or by using the more specific codes such as 110, 120 etc.
+synonym: "(SAMPSTAT)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000022
+xref: GCPDomainModel:CO_000\:0000138
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000021
+name: ancestral data
+comment: Information about either pedigree or other description of ancestral information (e.g. parent variety in case of mutant or selection). For example a pedigree "Hanna/7*Atlas//Turk/8*Atlas" or a description "mutation found in Hanna", "selection from Irene" or "cross involving amongst others Hanna and Irene".
+synonym: "(ANCEST)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000152
+is_a: CO_020:0000082 ! origin descriptor
+
+[Term]
+id: CO_020:0000022
+name: collecting or acquisition source
+comment: The coding scheme proposed can be used at 2 different levels of detail: either by using the general codes (in boldface) such as 10, 20, 30, 40, etc., or by using the more specific codes, such as 11, 12, etc.
+synonym: "(COLLSRC)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000005
+is_a: CO_020:0000087 ! location descriptor
+
+[Term]
+id: CO_020:0000023
+name: donor institute code
+comment: Code for the donor institute. Follows INSTCODE standard.
+synonym: "(DONORCODE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000156
+is_a: CO_020:0000088 ! institute code
+
+[Term]
+id: CO_020:0000024
+name: donor accession number
+comment: Number assigned to an accession by the donor. Follows ACCENUMB standard.
+synonym: "(DONORNUMB)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000059
+is_a: CO_020:0000089 ! accession number
+
+[Term]
+id: CO_020:0000025
+name: other identification numbers associated with the accession
+comment: Any other identifiers known to exist in other collections for this accession. Use the following format: INSTCODE:ACCENUMB;INSTCODE:identifier; INSTCODE and identifier are separated by a colon without space. Pairs of INSTCODE and identifier are separated by a semicolon without space. When the institute is not known, the identifier should be preceded by a colon.
+synonym: "(OTHERNUMB)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000061
+is_a: CO_020:0000079 ! germplasm identifier descriptor
+
+[Term]
+id: CO_020:0000026
+name: location of safety duplicates
+comment: FAO WIEWS code of the institute(s) where a safety duplicate of the accession is maintained. Multiple values are separated by a semicolon without space. Follows INSTCODE standard.
+synonym: "(DUPLSITE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000126
+is_a: CO_020:0000088 ! institute code
+
+[Term]
+id: CO_020:0000027
+name: type of germplasm storage
+comment: If germplasm is maintained under different types of storage, multiple choices are allowed, separated by a semicolon (e.g. 20;30). (Refer to FAO/IPGRI Genebank Standards 1994 for details on storage type.).
+synonym: "(STORAGE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000137
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000028
+name: remarks
+comment: The remarks field is used to add notes or to elaborate on descriptors with value 99 or 999 (= Other). Prefix remarks with the field name they refer to and a colon (:) without space (e.g. COLLSRC:riverside). Distinct remarks referring to different fields are separated by semicolons without space.
+synonym: "(REMARKS)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000051
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000029
+name: 100 wild
+xref: GCP germplasm ontology:CO_010\:0000090
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000030
+name: 110 natural
+xref: GCP germplasm ontology:CO_010\:0000195
+is_a: CO_020:0000029 ! 100 wild
+
+[Term]
+id: CO_020:0000031
+name: 120 semi-natural or wild
+xref: GCP germplasm ontology:CO_010\:0000196
+is_a: CO_020:0000029 ! 100 wild
+
+[Term]
+id: CO_020:0000032
+name: 200 weedy
+xref: GCP germplasm ontology:CO_010\:0000091
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000033
+name: 300 traditional cultivar or landrace
+synonym: "primitive cultivar" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000092
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000034
+name: 400 breeding or research material
+xref: GCP germplasm ontology:CO_010\:0000159
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000035
+name: 410 breeder's line
+xref: GCP germplasm ontology:CO_010\:0000093
+is_a: CO_020:0000034 ! 400 breeding or research material
+
+[Term]
+id: CO_020:0000036
+name: 411 synthetic population
+xref: GCP germplasm ontology:CO_010\:0000164
+is_a: CO_020:0000035 ! 410 breeder's line
+
+[Term]
+id: CO_020:0000037
+name: 412 hybrid
+xref: GCP germplasm ontology:CO_010\:0000161
+is_a: CO_020:0000035 ! 410 breeder's line
+
+[Term]
+id: CO_020:0000038
+name: 413 founder stock or base population
+xref: GCP germplasm ontology:CO_010\:0000160
+is_a: CO_020:0000035 ! 410 breeder's line
+
+[Term]
+id: CO_020:0000039
+name: 414 inbred line (parent of hybrid cultivar)
+xref: GCP germplasm ontology:CO_010\:0000162
+is_a: CO_020:0000035 ! 410 breeder's line
+
+[Term]
+id: CO_020:0000040
+name: 415 segregating population
+xref: GCP germplasm ontology:CO_010\:0000163
+is_a: CO_020:0000035 ! 410 breeder's line
+
+[Term]
+id: CO_020:0000041
+name: 420 genetic stock
+xref: GCP germplasm ontology:CO_010\:0000194
+is_a: CO_020:0000034 ! 400 breeding or research material
+
+[Term]
+id: CO_020:0000042
+name: 500 advanced or improved cultivar
+xref: GCP germplasm ontology:CO_010\:0000094
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000043
+name: 999 other biological status of accession
+comment: Elaborate in REMARKS field.
+xref: GCP germplasm ontology:CO_010\:0000101
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+
+[Term]
+id: CO_020:0000044
+name: 10 wild habitat
+xref: GCP germplasm ontology:CO_010\:0000066
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000045
+name: 11 forest or woodland
+xref: GCP germplasm ontology:CO_010\:0000211
+is_a: CO_020:0000044 ! 10 wild habitat
+
+[Term]
+id: CO_020:0000046
+name: 12 shrubland
+xref: GCP germplasm ontology:CO_010\:0000213
+is_a: CO_020:0000044 ! 10 wild habitat
+
+[Term]
+id: CO_020:0000047
+name: 13 grassland
+xref: GCP germplasm ontology:CO_010\:0000212
+is_a: CO_020:0000044 ! 10 wild habitat
+
+[Term]
+id: CO_020:0000048
+name: 14 desert or tundra
+xref: GCP germplasm ontology:CO_010\:0000210
+is_a: CO_020:0000044 ! 10 wild habitat
+
+[Term]
+id: CO_020:0000049
+name: 15 aquatic habitat
+xref: GCP germplasm ontology:CO_010\:0000209
+is_a: CO_020:0000044 ! 10 wild habitat
+
+[Term]
+id: CO_020:0000050
+name: 20 farm or cultivated habitat
+xref: GCP germplasm ontology:CO_010\:0000067
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000051
+name: 21 field
+xref: GCP germplasm ontology:CO_010\:0000202
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000052
+name: 22 orchard
+xref: GCP germplasm ontology:CO_010\:0000203
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000053
+name: 23 backyard, kitchen, or home garden (urban, peri-urban or rural)
+xref: GCP germplasm ontology:CO_010\:0000199
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000054
+name: 24 fallow land
+xref: GCP germplasm ontology:CO_010\:0000200
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000055
+name: 25 pasture
+xref: GCP germplasm ontology:CO_010\:0000205
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000056
+name: 26 farm store
+xref: GCP germplasm ontology:CO_010\:0000201
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000057
+name: 27 threshing floor
+xref: GCP germplasm ontology:CO_010\:0000206
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000058
+name: 28 park
+xref: GCP germplasm ontology:CO_010\:0000204
+is_a: CO_020:0000050 ! 20 farm or cultivated habitat
+
+[Term]
+id: CO_020:0000059
+name: 30 market or shop
+xref: GCP germplasm ontology:CO_010\:0000068
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000060
+name: 40 institute, experimental station, research organization, genebank
+xref: GCP germplasm ontology:CO_010\:0000069
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000061
+name: 50 seed company
+xref: GCP germplasm ontology:CO_010\:0000197
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000062
+name: 60 weedy, disturbed or ruderal habitat
+xref: GCP germplasm ontology:CO_010\:0000198
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000063
+name: 61 roadside
+xref: GCP germplasm ontology:CO_010\:0000208
+is_a: CO_020:0000062 ! 60 weedy, disturbed or ruderal habitat
+
+[Term]
+id: CO_020:0000064
+name: 62 field margin
+xref: GCP germplasm ontology:CO_010\:0000207
+is_a: CO_020:0000062 ! 60 weedy, disturbed or ruderal habitat
+
+[Term]
+id: CO_020:0000065
+name: MultiCropPassportDescriptorCode
+comment: The coded values for some descriptors.
+is_a: CO_020:0000000 ! multicrop passport ontology
+
+[Term]
+id: CO_020:0000066
+name: 10 seed collection
+xref: GCP germplasm ontology:CO_010\:0000146
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+
+[Term]
+id: CO_020:0000067
+name: 11short term
+xref: GCP germplasm ontology:CO_010\:0000219
+is_a: CO_020:0000066 ! 10 seed collection
+
+[Term]
+id: CO_020:0000068
+name: 12 medium term
+xref: GCP germplasm ontology:CO_010\:0000218
+is_a: CO_020:0000066 ! 10 seed collection
+
+[Term]
+id: CO_020:0000069
+name: 13 long term
+xref: GCP germplasm ontology:CO_010\:0000217
+is_a: CO_020:0000066 ! 10 seed collection
+
+[Term]
+id: CO_020:0000070
+name: 20 field collection
+xref: GCP germplasm ontology:CO_010\:0000144
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+
+[Term]
+id: CO_020:0000071
+name: 30 in vitro collection
+comment: Has slow growth.
+xref: GCP germplasm ontology:CO_010\:0000145
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+
+[Term]
+id: CO_020:0000072
+name: 40 cryopreserved collection
+xref: GCP germplasm ontology:CO_010\:0000216
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+
+[Term]
+id: CO_020:0000073
+name: 99 other type of germplasm storage
+comment: Elaborate in REMARKS field.
+xref: GCP germplasm ontology:CO_010\:0000147
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+
+[Term]
+id: CO_020:0000074
+name: multicrop passport descriptor
+comment: The list of multi-crop passport descriptors is developed jointly by Bioversity (formerly IPGRI) and FAO to provide international standards to facilitate germplasm passport information exchange. These descriptors aim to be compatible with Bioversity crop descriptor lists and with the descriptors used for the FAO World Information and Early Warning System (WIEWS) on plant genetic resources (PGR). For each multi-crop passport descriptor, a brief explanation of content, coding scheme and suggested fieldname (in parentheses) is provided to assist in the computerized exchange of this type of data. It is recognized that networks or groups of users may want to further expand this GCP.mcpd List to meet their specific needs. As long as these additions allow for an easy conversion to the format proposed in the multi-crop passport descriptors, basic passport data can be exchanged worldwide in a consistent manner. AUTHORS: Adriana Alercia, Stefano Diulgheroff, Thomas Metz YEAR:2001
+is_a: CO_020:0000000 ! multicrop passport ontology
+
+[Term]
+id: CO_020:0000075
+name: BiologicalStatusOfAccessionCode
+xref: GCP germplasm ontology:CO_010\:0000089
+xref: GCPDomainModel:CO_000\:0000071
+is_a: CO_020:0000065 ! MultiCropPassportDescriptorCode
+relationship: CO_020:0000001 CO_020:0000020 ! biological status of accession
+
+[Term]
+id: CO_020:0000076
+name: CollectingOrAcquisitionSourceCode
+xref: GCP germplasm ontology:CO_010\:0000065
+xref: GCPDomainModel:CO_000\:0000136
+is_a: CO_020:0000065 ! MultiCropPassportDescriptorCode
+relationship: CO_020:0000001 CO_020:0000022 ! collecting or acquisition source
+
+[Term]
+id: CO_020:0000077
+name: 99 other collecting or acquisition source
+comment: Elaborate in REMARKS field.
+xref: GCP germplasm ontology:CO_010\:0000102
+is_a: CO_020:0000076 ! CollectingOrAcquisitionSourceCode
+
+[Term]
+id: CO_020:0000078
+name: TypeOfGermplasmStorageCode
+xref: GCP germplasm ontology:CO_010\:0000143
+is_a: CO_020:0000065 ! MultiCropPassportDescriptorCode
+relationship: CO_020:0000001 CO_020:0000027 ! type of germplasm storage
+
+[Term]
+id: CO_020:0000079
+name: germplasm identifier descriptor
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000080
+name: institute descriptor
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000081
+name: taxonomy descriptor
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000082
+name: origin descriptor
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000084
+name: InstituteCode
+xref: GCP germplasm ontology:CO_010\:0000215
+is_a: CO_020:0000065 ! MultiCropPassportDescriptorCode
+relationship: CO_020:0000001 CO_020:0000088 ! institute code
+
+[Term]
+id: CO_020:0000085
+name: CountryOfOriginCode
+xref: GCP germplasm ontology:CO_010\:0000214
+is_a: CO_020:0000065 ! MultiCropPassportDescriptorCode
+relationship: CO_020:0000001 CO_020:0000013 ! country of origin
+
+[Term]
+id: CO_020:0000086
+name: date descriptor
+is_a: CO_020:0000074 ! multicrop passport descriptor
+
+[Term]
+id: CO_020:0000087
+name: location descriptor
+is_a: CO_020:0000082 ! origin descriptor
+
+[Term]
+id: CO_020:0000088
+name: institute code
+comment: FAO WIEWS code of the institute where the accession is maintained. The codes consist of the 3-letter ISO 3166 country code of the country where the institute is located plus a number (e.g. COL001). The current set of institute codes is available from http://apps3.fao.org/wiews/wiews.jsp. For those institutes not yet having an FAO Code, or for those with "obsolete" codes, see "Common formatting rules (v)".
+synonym: "(INSTCODE)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000154
+xref: GCPDomainModel:CO_000\:0000224
+is_a: CO_020:0000080 ! institute descriptor
+
+[Term]
+id: CO_020:0000089
+name: accession number
+comment: This is the unique identifier for accessions within a genebank, and is assigned when a sample is entered into the genebank collection (e.g. "PI 113869").\nOnce assigned this number should never be reassigned to another accession in the collection. Even if an accession is lost, its assigned number should never be reused. Letters should be used before the number to identify the genebank or national system (e.g. IDG indicates an accession that comes from the genebank at Bari, Italy; CGN indicates an accession from the genebank at Wageningen, The Netherlands; PI indicates an accession within the USA system).
+synonym: "(ACCENUMB)" EXACT []
+xref: GCP germplasm ontology:CO_010\:0000058
+is_a: CO_020:0000079 ! germplasm identifier descriptor
+
+[Term]
+id: CO_020:0000090
+name: collecting institute address
+comment: Address of the institute collecting the sample. This descriptor should be used only if COLLCODE cannot be filled since the FAO WIEWS code for this institute is not available. Multiple values are separated by a semicolon without space.
+synonym: "COLLINSTADDRESS" RELATED []
+is_a: CO_020:0000088 ! institute code
+created_by: lvalette
+creation_date: 2015-07-01T11:38:55Z
+
+[Term]
+id: CO_020:0000091
+name: collecting mission identifier
+comment: Identifier of the collecting mission used by the Collecting Institute (4 or 4.1) (e.g. "CIATFOR-052", "CN426").
+synonym: "COLLMISSID" RELATED []
+is_a: CO_020:0000088 ! institute code
+created_by: lvalette
+creation_date: 2015-07-01T12:20:33Z
+
+[Term]
+id: CO_020:0000092
+name: latitude of collecting site (decimal degree)
+comment: Latitude expressed in decimal degrees. Positive values are North of the Equator; negative values are South of the Equator (e.g. -44.6975).
+synonym: "DECLATITUDE" RELATED []
+is_a: CO_020:0000087 ! location descriptor
+created_by: lvalette
+creation_date: 2015-07-01T14:49:13Z
+
+[Term]
+id: CO_020:0000093
+name: longitude of collecting site (decimal degree)
+comment: Longitude expressed in decimal degrees. Positive values are East of the Greenwich Meridian; negative values are West of the Greenwich Meridian (e.g. +120.9123).
+synonym: "DECLONGITUDE" RELATED []
+is_a: CO_020:0000087 ! location descriptor
+created_by: lvalette
+creation_date: 2015-07-01T14:51:54Z
+
+[Term]
+id: CO_020:0000094
+name: coordinate uncertainty
+comment: Uncertainty associated with the coordinates in metres. Leave the value empty if the uncertainty is unknown
+synonym: "COORDUNCERT" RELATED []
+is_a: CO_020:0000087 ! location descriptor
+created_by: lvalette
+creation_date: 2015-07-01T14:54:02Z
+
+[Term]
+id: CO_020:0000095
+name: coordinate datum
+comment: The geodetic datum or spatial reference system upon which the coordinates given in decimal latitude and decimal longitude are based (e.g. WGS84, ETRS89, NAD83). The GPS uses the WGS84 datum.
+synonym: "COORDDATUM" RELATED []
+is_a: CO_020:0000087 ! location descriptor
+created_by: lvalette
+creation_date: 2015-07-01T14:54:53Z
+
+[Term]
+id: CO_020:0000096
+name: georeferencing method
+comment: The georeferencing method used (GPS, determined from map, gazetteer, or estimated using software). Leave the value empty if georeferencing method is not known.
+synonym: "GEOREFMETH" RELATED []
+is_a: CO_020:0000087 ! location descriptor
+created_by: lvalette
+creation_date: 2015-07-01T14:55:45Z
+
+[Term]
+id: CO_020:0000097
+name: Breeding institute name
+comment: Name of the institute (or person) that bred the material. This descriptor should be used only if BREDCODE cannot be filled because the FAO WIEWS code for this institute is not available. Multiple names are separated by a semicolon without space
+synonym: "BREDNAME" RELATED []
+is_a: CO_020:0000019 ! breeding institute code
+created_by: lvalette
+creation_date: 2015-07-01T14:58:34Z
+
+[Term]
+id: CO_020:0000098
+name: 130 semi-natural or sown
+is_a: CO_020:0000029 ! 100 wild
+created_by: lvalette
+creation_date: 2015-07-01T15:01:03Z
+
+[Term]
+id: CO_020:0000099
+name: 416 clonal selection
+is_a: CO_020:0000035 ! 410 breeder's line
+created_by: lvalette
+creation_date: 2015-07-01T15:02:31Z
+
+[Term]
+id: CO_020:0000100
+name: 421 mutant
+comment: (e.g. induced/insertion mutants, tilling populations)
+is_a: CO_020:0000041 ! 420 genetic stock
+created_by: lvalette
+creation_date: 2015-07-01T15:04:01Z
+
+[Term]
+id: CO_020:0000101
+name: 422 cytogenic stocks
+comment: e.g. chromosome addition/substitution, aneuploids, \namphiploids
+is_a: CO_020:0000041 ! 420 genetic stock
+created_by: lvalette
+creation_date: 2015-07-01T15:04:30Z
+
+[Term]
+id: CO_020:0000102
+name: 423 Other genetic stocks
+comment: e.g. mapping populations
+is_a: CO_020:0000041 ! 420 genetic stock
+created_by: lvalette
+creation_date: 2015-07-01T15:05:10Z
+
+[Term]
+id: CO_020:0000103
+name: 600 GMO
+comment: (by genetic engineering)
+is_a: CO_020:0000075 ! BiologicalStatusOfAccessionCode
+created_by: lvalette
+creation_date: 2015-07-01T15:05:53Z
+
+[Term]
+id: CO_020:0000104
+name: donor institute name
+comment: Name of the donor institute (or person). This descriptor should be used only if DONORCODE cannot be filled because the FAO WIEWS code for this institute is not available.
+synonym: "DONORNAME" RELATED []
+is_a: CO_020:0000023 ! donor institute code
+created_by: lvalette
+creation_date: 2015-07-01T16:40:07Z
+
+[Term]
+id: CO_020:0000105
+name: Institute maintaining safety duplicates
+comment: Name of the institute where a safety duplicate of the accession is maintained. Multiple values are separated by a semicolon without space.
+synonym: "DUPLINSTNAME" RELATED []
+is_a: CO_020:0000026 ! location of safety duplicates
+created_by: lvalette
+creation_date: 2015-07-01T16:43:42Z
+
+[Term]
+id: CO_020:0000106
+name: 50 DNA collection
+is_a: CO_020:0000078 ! TypeOfGermplasmStorageCode
+created_by: lvalette
+creation_date: 2015-07-01T16:47:27Z
+
+[Term]
+id: CO_020:0000107
+name: MLS status of the accession
+comment: The status of an accession with regards to the Multilateral System (MLS) of the International Treaty on Plant Genetic Resources for Food and Agriculture. Leave the value empty if the status is not known
+synonym: "MLSSTAT" RELATED []
+is_a: CO_020:0000074 ! multicrop passport descriptor
+created_by: lvalette
+creation_date: 2015-07-01T16:53:51Z
+
+[Term]
+id: CO_020:0000108
+name: 0 No
+comment: Not included
+is_a: CO_020:0000107 ! MLS status of the accession
+created_by: lvalette
+creation_date: 2015-07-01T16:54:35Z
+
+[Term]
+id: CO_020:0000109
+name: 1 Yes
+comment: Included
+is_a: CO_020:0000107 ! MLS status of the accession
+created_by: lvalette
+creation_date: 2015-07-01T16:55:53Z
+
+[Term]
+id: CO_020:0000110
+name: 99 Other
+comment: Elaborate in REMARKS field e.g., "under development"
+is_a: CO_020:0000107 ! MLS status of the accession
+created_by: lvalette
+creation_date: 2015-07-01T16:56:21Z
+
+[Term]
+id: ID:0000000
+name: persistent unique identifier
+comment: Any persistent, unique identifier assigned to the accession so it can be unambiguously referenced at the global level and the information associated with it harvested through automated means. Report one PUID for each accession. \n\nThe Secretariat of the International Treaty on Plant Genetic Resources for Food and Agriculture (PGRFA) is facilitating the assignment of a persistent unique identifier (PUID), in the form of  a DOI, to PGRFA at the accession level (http://www.planttreaty.org/doi). \nGenebanks not applying a true PUID to their accessions should use, and request recipients to use, the concatenation of INSTCODE, ACCENUMB, and GENUS as a globally unique identifier \nsimilar in most respects to the PUID whenever they exchange information on accessions with third parties (e.g. NOR017:NGB17773:ALLIUM).
+synonym: "PUID" RELATED []
+is_a: CO_020:0000074 ! multicrop passport descriptor
+created_by: lvalette
+creation_date: 2015-12-15T09:38:00Z
+
+[Typedef]
+id: CO_020:0000001
+name: range_of
+
+[Typedef]
+id: CO_020:0000002
+name: descriptor_of
+
