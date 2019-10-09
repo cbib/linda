@@ -270,7 +270,7 @@ export class UserTreeComponent implements OnInit{
                 
             dialogRef.afterClosed().subscribe(result => {
                     
-                if (result.values){
+                if (result){
                     console.log(result.values)
                     console.log(model_type)
                     console.log(this.active_node.id)
