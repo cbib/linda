@@ -33,7 +33,7 @@ const routes: Routes = [
   {path: 'home',component: HomeComponent},
   {path: 'navbars',component: NavbarComponent},
   {path: 'generic',component: FormComponent},
-  {path: 'ontologies',component: DialogComponent}
+  {path: 'ontologies',component: DialogComponent},
   {path: 'admin',component: AdminComponent}
   ];
 
