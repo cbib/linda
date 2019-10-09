@@ -337,7 +337,7 @@ export class UserTreeComponent implements OnInit{
                 }
 
             }); 
-            this.router.routeReuseStrategy.shouldReuseRoute = ( ) => true;                              
+            this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
             this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
 
            
