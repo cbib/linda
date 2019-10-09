@@ -27,6 +27,7 @@
     "datatables.net": "^1.10.19",
     "datatables.net-dt": "^1.10.19",
     "jquery": "^3.4.1",
+    "moment": "^2.19.3",
     "ng-bootstrap": "^1.6.3",
     "ngx-json-viewer": "^2.4.0",
     "rxjs": "~6.4.0",
