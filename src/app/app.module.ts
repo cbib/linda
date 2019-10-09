@@ -76,6 +76,7 @@ import { EmailvalidatorComponent } from './validators/emailvalidator.component';
 import { TemplateSelectionDialogComponent } from './dialog/template-selection-dialog.component';
 import { DelimitorDialogComponent } from './dialog/delimitor-dialog.component';
 import { UserComponent } from './users/user.component';
+import { AdminComponent } from './admin/admin.component';
 
 
 
@@ -101,6 +102,7 @@ import { UserComponent } from './users/user.component';
     TemplateSelectionDialogComponent,
     DelimitorDialogComponent,
     UserComponent,
+    AdminComponent,
     
 
     

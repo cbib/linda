@@ -52,6 +52,11 @@
              <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i> Logout</a>
             </li>
+            
+             <li $ngIf="currentUser['admin']==='root'" class="nav-item">
+                <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-sign-out-alt"></i> Admin</a>
+            </li>
+            
     </ul>
       <form id='search' class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">

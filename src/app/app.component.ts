@@ -9,5 +9,6 @@ import { Component,ViewEncapsulation } from '@angular/core';
 export class AppComponent {
   title = 'LINDA';
   selected="Home";
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
   
 }

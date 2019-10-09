@@ -10,6 +10,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { OntologyTreeComponent } from './ontology-tree/ontology-tree.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { UserTreeComponent } from './user-tree/user-tree.component';
+import { AdminComponent } from './admin/admin.component';
 
 
 
@@ -33,6 +34,7 @@ const routes: Routes = [
   {path: 'navbars',component: NavbarComponent},
   {path: 'generic',component: FormComponent},
   {path: 'ontologies',component: DialogComponent}
+  {path: 'admin',component: AdminComponent}
   ];
 
 @NgModule({
