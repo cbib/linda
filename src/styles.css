@@ -37,9 +37,9 @@ body {
 }
 
 
-*{
+/**{
     outline:none; 
-}
+}*/
 
 .container{
     width: 100%; 
