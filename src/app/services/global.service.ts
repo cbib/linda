@@ -13,7 +13,8 @@ export class GlobalService {
     //private auth = ('guest:guest');
     //private data  = {};
     //private datas:any  = [];
-    private APIUrl:string;
+    private APIUrl:string;// = 'http://127.0.0.1:8529/_db/MIAPPE_GRAPH/xeml/';
+    //private FAIRDOM='https://fairdomhub.org/investigations/56';
     //private httpOptions = {
     //    headers: new HttpHeaders({'Content-Type':  'application/json','Access-Control-Allow-Origin': '*','Authorization': 'Bearer ' + btoa(this.auth),'Accept': '*/*'})    
     //};
@@ -24,7 +25,7 @@ export class GlobalService {
     
     private extractData(res: Response) {
         let body = res;
-        console.log(body);
+        //console.log(body);
         return body || { };
     }
     
@@ -153,7 +154,7 @@ export class GlobalService {
             'password': user.password,
             'id':id
         };
-        console.log(obj2send)
+        console.log(obj2send);
 
         return this.http.post(`${this.APIUrl+"remove"}`, obj2send);
         
@@ -187,6 +188,7 @@ export class GlobalService {
         
         return this.http.post(`${this.APIUrl+"saveTemplate"}`, obj2send);
     }
+    
     get_templates(user_key:string,model_coll:string): Observable<any>{
         return this.http.get(this.APIUrl+"get_templates/"+user_key+"/"+model_coll).pipe(map(this.extractData));
         
@@ -201,14 +203,14 @@ export class GlobalService {
     //get investigation by key
     get_by_key(key:string, model_type:string ){
         //return this.http.get(this.investigationGetUrl+'/'+ key).pipe(map(this.extractData));
-        return this.http.get(this.APIUrl+'get_by_key/'+ model_type+'/'+key).pipe(map(this.extractData));
+        return this.http.get(this.APIUrl+'/get_by_key/'+ model_type+'/'+key).pipe(map(this.extractData));
 
     }
     
     
     get_elem(collection:string ,key:string){
         //return this.http.get(this.investigationGetUrl+'/'+ key).pipe(map(this.extractData));
-        return this.http.get(this.APIUrl+'get_elem/'+ collection+'/'+key).pipe(map(this.extractData));
+        return this.http.get(this.APIUrl+'/get_elem/'+ collection+'/'+key).pipe(map(this.extractData));
 
     }
     
@@ -218,7 +220,7 @@ export class GlobalService {
         //let user=JSON.parse(localStorage.getItem('currentUser'));
         //console.log(user_key)
         //return this.http.get(this.investigationsUrl+'/'+user_key).pipe(map(this.extractData));
-        return this.http.get(this.APIUrl+'get_by_parent_key/'+ model_type+'/'+ parent_key).pipe(map(this.extractData));
+        return this.http.get(this.APIUrl+'/get_by_parent_key/'+ model_type+'/'+ parent_key).pipe(map(this.extractData));
 
     }
     

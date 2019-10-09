@@ -26,10 +26,11 @@
     display: inline-block;
     vertical-align: bottom;
 }
+
 .relative {
   position: relative;
-  top: -60px;
-  left: 900px;
+  top: -35px;
+  left: 300px;
   background-color: white;
   width: 300px;
 }

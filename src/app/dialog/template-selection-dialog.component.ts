@@ -19,7 +19,7 @@ interface DialogData {
 export class TemplateSelectionDialogComponent implements OnInit {
     private template_id: string;
     private user_key: string;
-    private result:[]
+    private result:{}[]
     private model_type: string;
 
     constructor(private globalService : GlobalService,public dialogRef: MatDialogRef<TemplateSelectionDialogComponent>,
@@ -39,6 +39,14 @@ export class TemplateSelectionDialogComponent implements OnInit {
                 data => {
                     
 //                    this.result=res
+                    
+                    if (data instanceof Array){
+                        console.log("data is array")
+                    }
+                    if (this.result instanceof Array){
+                        console.log("result is array")
+                    }
+                    
                     this.result=data;
                     console.log(this.result);
                 }
@@ -65,8 +73,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
         this.dialogRef.close(this.data);
     }
     get_result(){
-	return this.result;
+        return this.result;
     }
 
 }
-

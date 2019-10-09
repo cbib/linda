@@ -10,6 +10,8 @@ import {Constants} from "../constants";
 })
 export class UploadService {
   private APIUrl:string;
+  //SERVER_URL: string = "http://localhost:4200";
+  //private APIUrl = 'http://localhost:8529/_db/MIAPPE_GRAPH/xeml/';
 
   constructor(private httpClient: HttpClient) {
   this.APIUrl = Constants.APIConfig.APIUrl;

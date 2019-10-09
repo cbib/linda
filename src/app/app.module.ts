@@ -69,12 +69,13 @@ import { UserTreeComponent } from './user-tree/user-tree.component';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { DateformatComponent } from './dateformat/dateformat.component';
 import { ConfirmationDialogComponent } from './dialog/confirmation-dialog.component';
-import { TemplateSelectionDialogComponent } from './dialog/template-selection-dialog.component';
 //import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-//import { ModaltreeComponent } from './modal/modaltree.component';
-//
+
 import { EmailvalidatorComponent } from './validators/emailvalidator.component';
+import { TemplateSelectionDialogComponent } from './dialog/template-selection-dialog.component';
+import { DelimitorDialogComponent } from './dialog/delimitor-dialog.component';
+import { UserComponent } from './users/user.component';
 
 
 
@@ -88,6 +89,7 @@ import { EmailvalidatorComponent } from './validators/emailvalidator.component';
     DownloadComponent,
     RegisterComponent,
     DateValidatorComponent,
+    EmailvalidatorComponent,
     NavbarComponent,
     OntologyTreeComponent,
     UniqueIDValidatorComponent,
@@ -97,12 +99,15 @@ import { EmailvalidatorComponent } from './validators/emailvalidator.component';
     DateformatComponent,
     ConfirmationDialogComponent,
     TemplateSelectionDialogComponent,
+    DelimitorDialogComponent,
+    UserComponent,
+    
 
     
 //    DialogOverviewExampleDialog,
     //ModaltreeComponent,
     
-    EmailvalidatorComponent
+//    EmailvalidatorComponent
     
     
   ],
@@ -151,8 +156,9 @@ import { EmailvalidatorComponent } from './validators/emailvalidator.component';
     NgxJsonViewerModule,
     ScrollingModule,
     DataTablesModule,
+    DragDropModule
   ],
-  entryComponents:[DialogComponent,OntologyTreeComponent,DateformatComponent,ConfirmationDialogComponent,TemplateSelectionDialogComponent],
+  entryComponents:[DialogComponent,OntologyTreeComponent,DateformatComponent,ConfirmationDialogComponent,TemplateSelectionDialogComponent,DelimitorDialogComponent],
   providers: [AuthGuard,
               AlertService,
               AuthenticationService,

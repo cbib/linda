@@ -2,41 +2,123 @@
 <!--navigation-->
 
 
-<div class="navbar navbar-inverse navbar-expand-lg navbar-light" style="background-color: #006666" >
-    <!--navbar-fixed-left">-->
+<!--<div class="navbar navbar-inverse " style="background-color: #006666" >
+    navbar-fixed-left">
     <a class="navbar-brand"  style="font-size: 20pt; background-color: white;color: #006666" href="#">{{ title }} <i style="font-size: 10pt"> pLant experImeNtal metaDatA </i></a>
-  <ul class="nav navbar-nav">  
-    <!--<li [ngClass]="([routerLink]==['/login'])?'active':'selected'"><a href="./investigations"><i class="fa fa-investigations"></i><span> Investigations </span></a></li>-->
-    <li><a style="font-size: 14pt;" href="/linda/home"><i class="fas fa-home"></i><span style="color: #99ffcc"> Home </span></a></li> 
-    <!--<li><a style="font-size: 14pt;" href="/homespace"><i class="fas fa-home"></i><span style="color: #99ffcc"> Your Space </span></a></li>-->
-    <!--<li><a style="font-size: 14pt;" href="/download"><i class="fas fa-download"></i><span style="color: #99ffcc"> Data </span></a></li>-->
-    <!--<li><a style="font-size: 14pt;" href="/trees"><i class="fas fa-download"></i><span style="color: #99ffcc"> tree </span></a></li>-->
-    <li><a style="font-size: 14pt;" href="/linda/tree"><i class="fas fa-download"></i><span style="color: #99ffcc"> Your Space  </span></a></li>
-    <!--<li><a style="font-size: 14pt;" href="/steppers"><i class="fas fa-download"></i><span> steppers </span></a></li>-->
-    <!--<li><a style="font-size: 14pt;" href="/ontologies"><i class="fas fa-download"></i><span style="color: #99ffcc"> ontologies </span></a></li>-->
-
-   <!-- <li><a href="/navbars"><i class="fas fa-download"></i><span> navbars </span></a></li>-->
-    <!--<li><a href="/project?step=1&level=1"><i class="fas fa-download"></i><span> Add Project </span></a></li>-->
-    <li><a style="font-size: 14pt;" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i><span style="color: #99ffcc"> Logout</span></a></li>
-    <!--<li><a [routerLink]="['/generic']" [queryParams]="{parent_id:'123344', model_type:'investigation',level:'1'}"><i class="fas fa-sign-out-alt"></i><span> generic</span></a></li>-->
-  </ul>
-</div>
-
-
-
-
-<div class="container">
-    <!--<alert></alert>-->
-<!--    <aside class="left-side" style="min-height: 889px;position: fixed;">
+    <ul id="navBar" class="nav navbar-nav ">  
         
-    </aside>
-    <aside class="right-side">-->
-        <router-outlet></router-outlet>
-    <!--</aside>-->
-    <!--<alert></alert>-->
+        <li><a style="font-size: 14pt;" href="/project?step=1&level=1"><i class="fas fa-download"></i><span> Add Project </span></a></li>
+        <li id="logout">
+            <a  [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i><span style="color: #99ffcc"> Logout</span></a>
+        </li>
+    </ul>
+</div>-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand"  style="font-size: 20pt; background-color: white;color: #006666" href="#">{{ title }} <i style="font-size: 10pt"> pLant experImeNtal metaDatA </i></a>
+
+  <!--<a class="navbar-brand" href="#">Navbar</a>-->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <!--<ul class="navbar-nav mr-auto">-->
+    
+<!--    <div class="navbar-nav">
+      <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link" href="#">Features</a>
+      <a class="nav-item nav-link" href="#">Pricing</a>
+      <a class="nav-item nav-link disabled" href="#">Disabled</a>
+      <form id='search' class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+    </form>
+    </div>-->
+    
+    
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+<!--      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>-->
+            <li ng-class="{'nav-item active' : selected == 'Home'}" ng-click="selected = 'Home'">
+              <!--<span style="color: #99ffcc"> Home </span>-->
+              <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+            </li> 
+            
+            <li class="nav-item">
+                <a class="nav-link"  href="/tree"><i class="fas fa-download"></i>Projects</a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+    </ul>
+      <form id='search' class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+    </form>
+    
+<!--     <li id="logout">
+            <a  [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i><span style="color: #99ffcc"> Logout</span></a>
+        </li>-->
+  </div>
+</nav>
+<div class="wrapper">
+    
+    <!-- Sidebar -->
+<!--    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Bootstrap Sidebar</h3>
+        </div>
+
+        <ul class="list-unstyled components">
+            
+            <li>
+                <a  href="/home"><i class="fas fa-home"></i><span style="color: #99ffcc"> Home </span></a>
+            </li> 
+            <li>
+                <a  href="/tree"><i class="fas fa-download"></i><span style="color: #99ffcc"> Projects  </span></a>
+            </li>
+            <li><a style="font-size: 14pt;" href="/project?step=1&level=1"><i class="fas fa-download"></i><span> Add Project </span></a></li>
+            
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="#">Page 1</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 2</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 3</a>
+                    </li>
+                </ul>
+            </li>
+            
+        </ul>
+    </nav>-->
+<!--<nav id="sidebar"></nav>-->
+    <!-- Page Content -->
+    <div id="content" class="container">
+        <!--<nav class="navbar">-->
+<!--        <div class="container-fluid">
+
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+                <i class="fas fa-align-left"></i>
+                <span>Toggle Sidebar</span>
+            </button>
+
+        </div>-->
+        <div fxFlex fxLayout="column">
+            <router-outlet></router-outlet>
+            </div>
+        <!--</nav>-->
+        
+    </div>
+
 </div>
-
-
 <!--end navigation-->
 <!-- 1st section-->
 

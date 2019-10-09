@@ -7,6 +7,7 @@ import {Constants} from "../constants";
 @Injectable()
 export class UserService {
     private APIUrl:string;
+    //private apiUrl='http://127.0.0.1:8529/_db/MIAPPE_GRAPH/xeml'
     constructor(private http: HttpClient) { 
     this.APIUrl = Constants.APIConfig.APIUrl;}
 
@@ -15,7 +16,7 @@ export class UserService {
 //        return this.http.get<User[]>(this.apiUrl);
 //    }
     getAll() {
-        return this.http.get<User[]>(this.APIUrl+"users");
+        return this.http.get<User[]>(`${this.APIUrl}/users`);
     }
 
 //    getByUsername_password(_id: string) {
@@ -23,8 +24,8 @@ export class UserService {
 //    }
 
     register(user: User) {
-        //alert(this.http.post(`${this.apiUrl}/register`, user))
-        return this.http.post(this.APIUrl+"register", user);
+        console.log(user)
+        return this.http.post(`${this.APIUrl}/register`, user);
     }
 
 //    update(user: User) {

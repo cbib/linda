@@ -35,8 +35,9 @@
      <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
     <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
-
+    
   </form>
+     <br>
 </div>     
  
 <!-- <pre>
@@ -46,24 +47,23 @@
  -->
  
  
- 
+
 <!--<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">-->
-<table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" >
+<table cdkDropList cdkDropListOrientation="horizontal" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
     <thead>
 <!--    <tr>-->
         <!--<th scope="col"  style="font-size:10px;text-align: center; "><i class="fas fa-cogs"></i></th>-->
     <!--</tr>-->   
         
     <tr>
-        <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; ">{{key}}</th>
+        <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">{{key}}</th>
     </tr>
     <tr>
-        <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center;">
-            <span *ngIf="i>0" style="display:inline-block; margin-left: 10px;"> 
-                <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,key)">
+        <th scope="col" *ngFor="let key of get_headers_select() ; index as i; "  style="font-size:10px;text-align: center;" cdkDrag>
+            <span *ngIf="key==='others'" style="display:inline-block; margin-left: 10px;"> 
+                <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,get_headers()[i])" >
                     <!--<option value="" disabled>Assign Ontology term</option>-->
                     <option [value]="undefined" selected>Assign Ontology term</option>
-                    
                     <option value='XEO' (change)="onSelect($event.target.value,key)">XEO</option>
                     <option value='EO'>EO</option>
                     <option value='EnvO'>EnvO</option>
@@ -75,8 +75,8 @@
                 </select> 
             </span>
             
-            <span *ngIf="i==0" style="display:inline-block; margin-left: 10px;"> 
-                <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,key)">
+            <span *ngIf="key==='time'" style="display:inline-block; margin-left: 10px;"> 
+                <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
                     <option value="" disabled>Select time format</option>
                     <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
                     <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
@@ -124,4 +124,3 @@
    <p>The time is {{today | date:'h:mm a z'}}</p>
  </div>-->
 <!--</cdk-virtual-scroll-viewport>-->
-

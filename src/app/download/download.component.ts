@@ -10,9 +10,11 @@ import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component'
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { DateformatComponent } from '../dateformat/dateformat.component';
 import { DataTablesModule } from 'angular-datatables';
-
+import { DelimitorDialogComponent } from '../dialog/delimitor-dialog.component';
 import * as XLSX from 'xlsx';
-    
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+
+
         
             
 @Component({
@@ -21,26 +23,31 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./download.component.css']
 })
 export class DownloadComponent implements OnInit {
-    @Input() parent_id; 
+    @Input() parent_id:string; 
     @Input() model_key:string;
     @Input() model_type:string;
     @Input() mode:string;
     form: FormGroup;
     private data={}
-    private selectedOntology:string;
-    today: number = Date.now();
-    fileData: File = null;
+    //private selectedOntology:string;
+    //fileData: File = null;
     fileUploaded: File;  
-
     fileName:string=""
     fileUploadProgress: string = null;
     uploadedFilePath: string = null;
     error: string;
     userId: number = 1;
-    csv:any;
+    
+    //parsing EXCEL
     storeData:any;
     worksheet: any;
-    protected headers=[];
+    public modified:boolean=false;
+    
+    //parsing CSV
+    private delimitor:string;
+    private csv:any;
+    private headers=[];
+    private headers_select=[];
     private associated_headers={};
     private lines=[];
     //private loaded:boolean=false;
@@ -48,44 +55,82 @@ export class DownloadComponent implements OnInit {
     selected_term:OntologyTerm
     uploadResponse = { status: '', message: 0, filePath: '' };
   
-    constructor(private formBuilder: FormBuilder, private uploadService: UploadService,private router: Router,
-        private alertService: AlertService, private globalService: GlobalService,
-        private route: ActivatedRoute,public dialog: MatDialog) { 
+    constructor(
+            private formBuilder: FormBuilder, 
+            private uploadService: UploadService,
+            private router: Router,
+            private alertService: AlertService, 
+            private globalService: GlobalService,
+            private route: ActivatedRoute,
+            public dialog: MatDialog) { 
         
+        
+//        if (this.mode==="edit"){
+//                this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
+//                    console.log(received_data);
+//                    this.data=received_data;
+//                    this.headers=this.data["headers"];
+//                    this.associated_headers=this.data["associated_headers"];
+//                    this.lines=this.data["data"]
+//                })
+//            }
         
         this.route.queryParams.subscribe(
             params => {        
-            this.model_type=params['model_type'];
-            this.model_key=params['model_key'];
-            this.mode=params['mode'];
-            this.parent_id=params['parent_id']
+                this.model_type=params['model_type'];
+                this.model_key=params['model_key'];
+                this.mode=params['mode'];
+                this.parent_id=params['parent_id']
+            console.log(params)
             //this.investigation_key=params['key']
-            //console.log(this.investigation_key);
-            if (this.mode==="edit"){
-                this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(data => {
-                    console.log(data);
-                    this.data=data;
-                    this.headers=data["headers"];
-                    this.associated_headers=data["associated_headers"];
-                    this.lines=data["data"]
-                })
-            }
+            console.log(this.mode);
+            
             }
         );
+    }
+    get_headers(){
+        return this.headers
+    }
+    get_associated_headers(){
+        return this.associated_headers;
+    }
+    get_headers_select(){
+        return this.headers_select;
+    }
+    get_lines(){
+        return this.lines
     }
 //    fileProgress(fileInput: any) {
 //        this.fileData = <File>fileInput.target.files[0];
 //        this.preview();
 //    }
-    get_headers(){
-        return this.headers
-    }
-    get_lines(){
-        return this.lines
-    }
     ngOnInit() {
         console.log(this.mode)
+        if (this.mode==="edit"){
+                this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
+                    console.log(received_data);
+                    this.data=received_data;
+                    this.headers=this.data["headers"];
+                    this.associated_headers=this.data["associated_headers"];
+                    this.lines=this.data["data"]
+                    for (var i = 0; i < this.headers.length; i++){
+                        if (i===0){
+                            this.headers_select.push('time')
+                        }
+                        else{
+                            this.headers_select.push('others')
+                        }
+
+                    }
+                })
+            }
         this.form = this.formBuilder.group({file: ['']});
+    }
+    drop(event: CdkDragDrop<string[]>) {
+        moveItemInArray(this.headers_select, event.previousIndex, event.currentIndex);
+        this.modified=true
+        console.log(this.headers)
+        console.log(this.associated_headers)
     }
 //    reset(event){
 //        console.log("1#################################################")
@@ -93,7 +138,7 @@ export class DownloadComponent implements OnInit {
 //    }
     onFileChange(event) {
         console.log("1#################################################")
-        this.fileData = <File>event.target.files[0];
+        //this.fileUploaded = <File>event.target.files[0];
         
         
         if (event.target.files.length > 0) {
@@ -104,7 +149,21 @@ export class DownloadComponent implements OnInit {
             this.fileName=this.fileUploaded.name
                 
             if (this.fileUploaded.type==="text/csv"){
-                this.read_csv() 
+                const dialogRef = this.dialog.open(DelimitorDialogComponent, {width: '1000px', data: {delimitor: ""}});
+                dialogRef.afterClosed().subscribe(data => {
+                    console.log(data)
+                if (data!==undefined){
+                    console.log(data.delimitor)
+                    this.delimitor = data.delimitor;
+                    console.log(this.delimitor);
+                    this.read_csv(this.delimitor) 
+                };
+            });
+                
+                
+                
+                
+                
             }
             else{               
                 this.readExcel();
@@ -116,37 +175,11 @@ export class DownloadComponent implements OnInit {
         }
     }
     
-    read_csv(){
+    read_csv(delimitor:string){
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
             this.csv=fileReader.result;
-            
-            this.load_csv(this.csv,e)
-            
-//            let allTextLines = this.csv.split(/\r|\n|\r/);
-//            this.headers = allTextLines[0].split(',');
-//            if (allTextLines.length>100){
-//                this.alertService.error("Displaying 100 of "+this.lines.length+ "items")
-//            }
-//            this.lines = [];
-//            for (let i = 1; i < allTextLines.length; i++) {
-//                this.uploadResponse.message=Math.round(100* (e.loaded / e.total))
-//
-//                // split content based on comma
-//                let data = allTextLines[i].split(',');
-//                if (data.length === this.headers.length) {
-//                    let tarr = [];
-//                    for (let j = 0; j < this.headers.length; j++) {
-//                        tarr.push(data[j]);
-//                    }
-//                    // log each row to see output 
-//                    this.lines.push(tarr);
-//                }
-//            }
-//
-//            for (var i = 0; i < this.headers.length; i++){
-//                this.associated_headers[this.headers[i]]={selected:false,associated_term_id:"",is_time_values:false}
-//            }
+            this.load_csv(this.csv,e,delimitor)
         }
         fileReader.readAsText(this.fileUploaded); 
     }
@@ -162,36 +195,18 @@ export class DownloadComponent implements OnInit {
                     var book = XLSX.read(bstr, { type: "binary" }); 
                     var first_sheet_name = book.SheetNames[0];  
                     this.worksheet = book.Sheets[first_sheet_name]; 
-                    var csvData = XLSX.utils.sheet_to_csv(this.worksheet);  
+                    this.csv = XLSX.utils.sheet_to_csv(this.worksheet);  
+                    this.load_csv(this.csv,e) ;
 
-                    this.load_csv(csvData,e) 
-//                    let allTextLines = csvData.split(/\r|\n|\r/);
-//                    this.headers = allTextLines[0].split(',');
-//                    this.lines = [];
-//                    for (let i = 1; i < allTextLines.length; i++) {
-//                        this.uploadResponse.message=Math.round(100* (e.loaded / e.total))
-//                        // split content based on comma
-//                        let data = allTextLines[i].split(',');
-//                        if (data.length === this.headers.length) {
-//                            let tarr = [];
-//                            for (let j = 0; j < this.headers.length; j++) {
-//                                tarr.push(data[j]);
-//                            }
-//                            this.lines.push(tarr);
-//                        }
-//                    }
-//                    for (var i = 0; i < this.headers.length; i++){
-//                        this.associated_headers[this.headers[i]]={selected:false,associated_term_id:"",is_time_values:false}
-//                    }
 
         }  
         fileReader.readAsArrayBuffer(this.fileUploaded);  
     }
     
     
-    load_csv(csvData:any,e:any){
+    load_csv(csvData:any,e:any,delimitor:string=","){
         let allTextLines = csvData.split(/\r|\n|\r/);
-        this.headers = allTextLines[0].split(',');
+        this.headers = allTextLines[0].split(delimitor);
         this.lines = [];
         for (let i = 1; i < allTextLines.length; i++) {
             this.uploadResponse.message=Math.round(100* (e.loaded / e.total))
@@ -206,8 +221,18 @@ export class DownloadComponent implements OnInit {
             }
         }
         for (var i = 0; i < this.headers.length; i++){
+            
+            
             this.associated_headers[this.headers[i]]={selected:false,associated_term_id:"",is_time_values:false}
+            if (i===0){
+                this.headers_select.push('time')
+            }
+            else{
+                this.headers_select.push('others')
+            }
+            
         }
+        console.log(this.associated_headers)
     }
       
     readAsCSV() {  
@@ -256,7 +281,7 @@ export class DownloadComponent implements OnInit {
         console.log(values)
     }
     onSelect(values:string, key:string) {
-        console.log(this.selectedOntology)
+        //console.log(this.selectedOntology)
         console.log(values)
         console.log(key)
         const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[]}});
@@ -298,4 +323,3 @@ export class DownloadComponent implements OnInit {
 //    }
 
 }
-

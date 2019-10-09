@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-
 import { AlertService, AuthenticationService } from '../services';
+import {Md5} from 'ts-md5/dist/md5';
+
+
 
 @Component({templateUrl: 'login.component.html'})
 export class LoginComponent implements OnInit {
@@ -11,6 +13,7 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
+    encrypted_password:string=""
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,7 +33,7 @@ export class LoginComponent implements OnInit {
 
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-	console.log(this.returnUrl)
+        console.log(this.returnUrl);
     }
 
     // convenience getter for easy access to form fields
@@ -45,17 +48,27 @@ export class LoginComponent implements OnInit {
         if (this.loginForm.invalid) {
             return;
         }
+        const md5 = new Md5();
+        var encrypted_password=md5.appendStr(this.f.password.value).end();
+        //this.loading = true;
 
-        this.loading = true;
         this.authenticationService.login(this.f.username.value, this.f.password.value)
             .pipe(first())
-            .subscribe(
+            .toPromise().then(
                 data => {
+                    console.log(data)
+                    console.log(this.returnUrl)
                     this.router.navigate([this.returnUrl]);
+                    if (data.length===0){
+                        console.log("incorrect password or username");
+                        this.alertService.error("incorrect password or username");
+                    }
+                  
                 },
-                error => {
-                    this.alertService.error(error);
-                    this.loading = false;
-                });
+//                error => {
+//                    this.alertService.error("error");
+//                    this.loading = false;
+//                }
+                );
     }
 }

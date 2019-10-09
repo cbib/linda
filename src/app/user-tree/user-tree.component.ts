@@ -12,6 +12,7 @@ import { first } from 'rxjs/operators';
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
+import { MediaObserver} from "@angular/flex-layout";
 
 /**
  * Food data with nested structure.
@@ -55,6 +56,8 @@ export class UserTreeComponent implements OnInit{
     private current_data_array=[]
     private multiple_selection:boolean=false;
     private parent_key:string;
+    private parent_id:string;
+    private model_key:string;
     private model_selected:string
     nodekey:any;
 
@@ -64,6 +67,7 @@ export class UserTreeComponent implements OnInit{
         private router: Router,
         private alertService: AlertService,
         private route: ActivatedRoute,
+        public media: MediaObserver,
         public dialog: MatDialog
         ) 
         {
@@ -128,7 +132,7 @@ export class UserTreeComponent implements OnInit{
             this.globalService.get_parent(this.active_node.id).toPromise().then(
                     data => {
                         //parent_id=data
-                        //console.log(data._from)
+                        console.log(data)
                         this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
 
                     }
@@ -159,8 +163,11 @@ export class UserTreeComponent implements OnInit{
     
     
     remove_selected(node:ExampleFlatNode){
-        var descendants = this.treeControl.getDescendants(node);
-        var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));
+        //console.log(node)
+        //var descendants = this.treeControl.getDescendants(node);
+        //var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));
+                
+                
         //var selected_set=this.checklistSelection._selection
         var selected_set=this.checklistSelection.selected
         console.log(selected_set)
@@ -248,6 +255,7 @@ export class UserTreeComponent implements OnInit{
     
     
     add(model_type:string,template:boolean ) {
+
         var parent_key=this.active_node.id.split("/")[1];
         var model_coll=this.active_node.id.split("/")[0];
         let user=JSON.parse(localStorage.getItem('currentUser'));
@@ -434,31 +442,74 @@ export class UserTreeComponent implements OnInit{
     show_info(term:MiappeNode){
         //child node
         console.log(term.fill_percentage)
+        console.log(term.id)
         this.current_data=[]
         this.current_data_array=[]
-        if ((term["id"]!="History") && (!term["id"].includes("metadata_files"))){
-            this.active_node=term
-            this.displayed=true;
+        this.active_node=term
+        this.displayed=true;
+        
+        if ((term["id"]==="History") ){
+            
+            this.model_selected='History';
+        }
+        else if((term["id"].includes("metadata_files"))){
+            //get value for a given node
+            this.model_selected="metadata_files"
+            this.model_key=term.id.split("/")[1]
+            
+            
+            
+//            this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(
+//                received_data => {
+//                    console.log(received_data);
+//                    this.data=received_data;
+//                    this.headers=this.data["headers"];
+//                    this.associated_headers=this.data["associated_headers"];
+//                    this.lines=this.data["data"]
+//                }
+//            );
+            this.globalService.get_parent(term.id).toPromise().then(
+                data => {
+                    this.parent_id=data._from;
+                    console.log(data)
+                }
+            );
+            
+//            this.globalService.get_elem("metadata_files",this.model_key).toPromise().then(
+//                data => {
+//                    console.log(data)
+//                }
+//            );
+        }
+        else{
+            
             this.model_selected=term["id"].split("/")[0]
             var key=term.id.split("/")[1]
             var collection=term.id.split("/")[0]
-            this.globalService.get_elem(collection,key).toPromise().then(data => {
-                this.current_data=Object.keys(data);
-                this.current_data_array.push(data);
-                for( var i = 0; i < this.current_data.length; i++){ 
-                    if ( this.current_data[i].startsWith("_")) {
-                        this.current_data.splice(i, 1);
+            
+            //get value for a given node
+            this.globalService.get_elem(collection,key).toPromise().then(
+                data => {
+                    this.current_data=Object.keys(data);
+                    this.current_data_array.push(data);
+                    for( var i = 0; i < this.current_data.length; i++){ 
+                        if ( this.current_data[i].startsWith("_")) {
+                            this.current_data.splice(i, 1);
                             i--;
                         }
                     }
                 
-                })
-        }
-        else{
-            this.model_selected='History';
+                }
+            );
+            
         }
     }
-
+    get_model_key(){
+        return this.model_key;
+    }
+    get_parent_id(){
+        return this.parent_id;
+    }
     private ont_transformer = (node: MiappeNode, level: number) => {
           return {
         expandable: !!node.get_children() && node.get_children().length > 0,
@@ -486,6 +537,9 @@ export class UserTreeComponent implements OnInit{
     get_model_selected(){
         return this.model_selected;
     }
+
+
+
     expandNode(){
         console.log(this.treeControl.dataNodes[3])
         this.treeControl.expand(this.treeControl.dataNodes[3]);
@@ -763,4 +817,6 @@ export class UserTreeComponent implements OnInit{
 }
     
 
-
+/**  Copyright 2019 Google Inc. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license */

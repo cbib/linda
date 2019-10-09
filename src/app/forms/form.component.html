@@ -52,7 +52,7 @@
         
         <p>{{model.Definition}}</p>
         <!--<p>{{keys[0]}}</p>-->
-        <form [formGroup]="modelForm">
+        <form [formGroup]="modelForm" >
 <!--           <div class="form-group">   
             <label for="investigation_unique_id">Investigation Unique ID</label>
             <input type="text" formControlName="investigation_unique_id" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.investigation_unique_id.errors }" />
@@ -100,10 +100,13 @@
                         </span>
                     </div>
                     <div *ngIf="!model[key['key']].Format.includes('Ontology')">
+                        
                        <div *ngIf="!key['key'].includes('date')">
                        
-                        <input mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
-                    
+                        
+                        <input *ngIf="!model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                            <textarea *ngIf="model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" ></textarea> 
+
                     
                         </div>
                         <div *ngIf="key['key'].includes('date')">
@@ -177,8 +180,9 @@
                 <span style="margin-right:10px;"></span>
                 <button *ngIf="level==max_level" class="btn btn-outline-rounded btn-info" type="submit" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')" (click)="submit(modelForm)"> Submit <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span></button>
                 <span style="margin-right:10px;"></span>
-                <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
                 
+                
+                <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
                 <div class="[ btn-group ]">
                     <label for="fancy-checkbox-info" class="[ btn btn-info ]">
                         <span class="[ glyphicon glyphicon-ok ]"></span>

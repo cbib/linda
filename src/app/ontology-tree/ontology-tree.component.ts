@@ -55,7 +55,7 @@ export class OntologyTreeComponent {
     private ontologies:any = {};
     private investigations:any = [];
     private studies:any = [];
-    global_array:any=[]; 
+    private global_array:any=[]; 
     private displayed=false;
     private my_tree: FoodNode[]; 
     private ontology_tree: OntologyTerm[];
@@ -293,7 +293,7 @@ export class OntologyTreeComponent {
 
             }
         )
-        console.log(JSON.stringify(this.ontologyTerms))
+        //console.log(JSON.stringify(this.ontologyTerms))
         //second passage pour créer tous les termes 
         var cpt=0;    
         

@@ -28,12 +28,11 @@ const routes: Routes = [
 //  },
   {path: 'trees',component: OntologyTreeComponent,canActivate: [AuthGuard]},
   {path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
-
   {path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
   {path: 'home',component: HomeComponent},
   {path: 'navbars',component: NavbarComponent},
   {path: 'generic',component: FormComponent},
-  {path: 'ontologies',component: DialogComponent},
+  {path: 'ontologies',component: DialogComponent}
   ];
 
 @NgModule({
