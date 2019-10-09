@@ -43,11 +43,11 @@
       </li>-->
             <li ng-class="{'nav-item active' : selected == 'Home'}" ng-click="selected = 'Home'">
               <!--<span style="color: #99ffcc"> Home </span>-->
-              <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+              <a class="nav-link" [routerLink]="['/home']"><i class="fas fa-home"></i> Home</a>
             </li> 
             
             <li class="nav-item">
-                <a class="nav-link"  href="/tree"><i class="fas fa-download"></i>Projects</a>
+                <a class="nav-link"  [routerLink]="['/tree']"><i class="fas fa-download"></i>Projects</a>
             </li>
              <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-sign-out-alt"></i> Logout</a>
