@@ -270,6 +270,7 @@ export class UserTreeComponent implements OnInit{
                 
             dialogRef.afterClosed().subscribe(result => {
                     
+                if (result.values){
                     console.log(result.values)
                     console.log(model_type)
                     console.log(this.active_node.id)
@@ -333,7 +334,7 @@ export class UserTreeComponent implements OnInit{
 //                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
 //                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
 //                    }
-
+                }
 
             }); 
             this.router.routeReuseStrategy.shouldReuseRoute = ( ) => true;                              
