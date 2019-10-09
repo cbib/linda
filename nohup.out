@@ -1,0 +1,20 @@
+WARNING: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues. You might need to use "--disableHostCheck" if that's the
+case.
+[34mℹ[39m [90m｢wdm｣[39m: wait until bundle finished: /project?level=1&step=3
+
+Date: 2019-06-18T11:26:45.816Z
+Hash: de36e64c52a8be2edeb7
+Time: 15032ms
+chunk {main} main.js, main.js.map (main) 225 kB [initial] [rendered]
+chunk {polyfills} polyfills.js, polyfills.js.map (polyfills) 552 kB [initial] [rendered]
+chunk {polyfills-es5} polyfills-es5.js, polyfills-es5.js.map (polyfills-es5) 380 kB [initial] [rendered]
+chunk {runtime} runtime.js, runtime.js.map (runtime) 6.08 kB [entry] [rendered]
+chunk {styles} styles.js, styles.js.map (styles) 1.15 MB [initial] [rendered]
+chunk {vendor} vendor.js, vendor.js.map (vendor) 6.88 MB [initial] [rendered]
+** Angular Live Development Server is listening on 0.0.0.0:4200, open your browser on http://localhost:4200/ **
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
