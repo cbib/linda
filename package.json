@@ -26,6 +26,7 @@
     "core-js": "^3.2.1",
     "datatables.net": "^1.10.19",
     "datatables.net-dt": "^1.10.19",
+    "flex-layout": "^1.0.1",
     "jquery": "^3.4.1",
     "moment": "^2.19.3",
     "ng-bootstrap": "^1.6.3",
