@@ -303,7 +303,7 @@ export class UserTreeComponent implements OnInit{
                             if (data["success"]){
                                 console.log(data["message"])
                                 //this.model_id=data["_id"];
-
+                                this.ngOnInit(); 
                                 //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                                 //this.alertService.success("Your component has been successfully integrated in your history !!")
 
@@ -337,14 +337,15 @@ export class UserTreeComponent implements OnInit{
 ////                            }
 ////                        );
 //                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-//                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+//                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });  
+                             
 //                    }
                 }
 
             }); 
             
             
-            this.ngOnInit();
+            
             
 //            this.router.navigateByUrl(['/tree'], { skipLocationChange: true }).then(() => 
 //            {
