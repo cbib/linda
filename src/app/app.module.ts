@@ -77,6 +77,7 @@ import { TemplateSelectionDialogComponent } from './dialog/template-selection-di
 import { DelimitorDialogComponent } from './dialog/delimitor-dialog.component';
 import { UserComponent } from './users/user.component';
 import { AdminComponent } from './admin/admin.component';
+import { HelpComponent } from './help/help.component';
 
 
 
@@ -102,7 +103,8 @@ import { AdminComponent } from './admin/admin.component';
     TemplateSelectionDialogComponent,
     DelimitorDialogComponent,
     UserComponent,
-    AdminComponent
+    AdminComponent,
+    HelpComponent
     
 
     
