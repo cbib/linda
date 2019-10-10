@@ -338,6 +338,9 @@ export class UserTreeComponent implements OnInit{
 
             }); 
             
+            
+            //this.ngOnInit();
+            
             this.router.navigateByUrl(['/tree'], { skipLocationChange: true }).then(() => 
             {
                 this.router.navigate(['/tree']);
