@@ -11,6 +11,7 @@ import { OntologyTreeComponent } from './ontology-tree/ontology-tree.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { UserTreeComponent } from './user-tree/user-tree.component';
 import { AdminComponent } from './admin/admin.component';
+import { HelpComponent } from './help/help.component';
 
 
 
@@ -35,6 +36,7 @@ const routes: Routes = [
   {path: 'generic',component: FormComponent},
   {path: 'ontologies',component: DialogComponent},
   {path: 'admin',component: AdminComponent}
+  {path: 'help',component: HelpComponent}
   ];
 
 @NgModule({
