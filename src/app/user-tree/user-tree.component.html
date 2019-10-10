@@ -13,16 +13,38 @@
                 <li>Choose between creating Investigation from scratch or using a template if exists. </li>
                 <li>You will be redirect to the investigation form. </li>
             </ol>
-            <mat-sidenav-container class="example-container" (backdropClick)="close('backdrop')" mode="side">
-                <mat-sidenav #sidenav (keydown.escape)="close('escape')" disableClose>
-                    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
-                </mat-sidenav>
+            <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Personal data
+                </mat-panel-title>
+                <mat-panel-description>
+                  Type your name and age
+                </mat-panel-description>
+              </mat-expansion-panel-header>
 
-                <mat-sidenav-content>
-                    <p><button mat-button (click)="sidenav.open()">Open</button></p>
-                    <p>Closed due to: {{reason}}</p>
-                </mat-sidenav-content>
-            </mat-sidenav-container>
+              <mat-form-field>
+                <input matInput placeholder="First name">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Age">
+              </mat-form-field>
+            </mat-expansion-panel>
+            <mat-expansion-panel (opened)="panelOpenState = true"
+                                 (closed)="panelOpenState = false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Self aware panel
+                </mat-panel-title>
+                <mat-panel-description>
+                  Currently I am {{panelOpenState ? 'open' : 'closed'}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <p>I'm visible because I am open</p>
+            </mat-expansion-panel>
+          </mat-accordion>
             Please feel free to describe as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
             
             You can remove more than one node at the time if you use the right click button on History node and choose remove selected option. 
