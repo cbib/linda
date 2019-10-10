@@ -922,12 +922,12 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
     }
     
     var user_id="users/"+user_key
-    data=[];
-    edges_data = edges.byExample({"_from": user_id}).toArray();
+
+    var edges_data = edges.byExample({"_from": user_id}).toArray();
     for (var i = 0; i < edges_data.length; i++) {
         if (edges_data[i]['_to'].includes(coll_name)){
-            tmp={'_id':edges_data[i]['_to']};
-            data.push(tmp);
+            //var tmp={'_id':edges_data[i]['_to']};
+            data.push({'_id':edges_data[i]['_to']});
         }
     }
         
