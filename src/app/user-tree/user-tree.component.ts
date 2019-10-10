@@ -43,14 +43,7 @@ export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger) 
     @ViewChild(MatMenuTrigger,{static:true })
 
-    @ViewChild('sidenav', {static: false}) sidenav: MatSidenav;
-
-  reason = '';
-
-  close(reason: string) {
-    this.reason = reason;
-    this.sidenav.close();
-  }
+    panelOpenState = false;
 
 
     contextMenu: MatMenuTrigger;
