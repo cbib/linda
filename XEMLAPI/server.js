@@ -927,7 +927,8 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
     for (var i = 0; i < edges_data.length; i++) {
         if (edges_data[i]['_to'].includes(coll_name)){
             //var tmp={'_id':edges_data[i]['_to']};
-            data.push({'_id':edges_data[i]['_to']});
+            //data.push({'_id':edges_data[i]['_to']});
+            data.push(coll.byExample({"_id": edges_data[i]['_to']}).next());
         }
     }
         
