@@ -13,6 +13,16 @@
                 <li>Choose between creating Investigation from scratch or using a template if exists. </li>
                 <li>You will be redirect to the investigation form. </li>
             </ol>
+            <mat-sidenav-container class="example-container" (backdropClick)="close('backdrop')" *ngIf="shouldRun">
+                <mat-sidenav #sidenav (keydown.escape)="close('escape')" disableClose>
+                    <p><button mat-button (click)="close('toggle button')">Toggle</button></p>
+                </mat-sidenav>
+
+                <mat-sidenav-content>
+                    <p><button mat-button (click)="sidenav.open()">Open</button></p>
+                    <p>Closed due to: {{reason}}</p>
+                </mat-sidenav-content>
+            </mat-sidenav-container>
             Please feel free to describe as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
             
             You can remove more than one node at the time if you use the right click button on History node and choose remove selected option. 
