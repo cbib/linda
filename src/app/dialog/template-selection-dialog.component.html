@@ -1,5 +1,7 @@
 <h1 mat-dialog-title>Select template</h1>
-<div mat-dialog-content >
+
+<div *ngIf="get_result().length>0">
+    <div mat-dialog-content >
     <p> Which templates do you plan to use ? </p>
 </div>
 <select name="select_template" size="1" (change)="onSelect($event.target.value)">
@@ -10,3 +12,11 @@
   <button mat-button (click)="onNoClick()">Cancel</button>
   <button mat-button  (click)="onOkClick()">Ok</button>
 </div>
+
+<div *ngIf="get_result().length===0">
+    <div mat-dialog-content >
+    <p> There is no templte to use... Please create one... </p>
+    <button mat-button (click)="onNoClick()">OK</button>
+</div>
+ </div>   
+    
