@@ -108,12 +108,12 @@ export class UserTreeComponent implements OnInit{
      
     onContextMenu(event: MouseEvent, node: MiappeNode) {
         this.active_node=node
-//        console.log(node.id)
+        console.log(node.id)
 //        console.log(event.clientX)
         event.preventDefault();
         this.contextMenuPosition.x = event.clientX + 'px';
         this.contextMenuPosition.y = event.clientY + 'px';
-        //console.log(this.contextMenu)
+        console.log(this.contextMenu)
         this.contextMenu.menuData = { 'node': node };
         this.contextMenu.openMenu();
     //this.contextMenu.openMenu();
