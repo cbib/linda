@@ -41,8 +41,8 @@ interface ExampleFlatNode {
 })
 export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger) 
-    @ViewChild(MatMenuTrigger,{static:false })
-    //@ViewChild('contextMenu',{static:false })contextMenu: MatMenuTrigger;
+    //@ViewChild(MatMenuTrigger,{static:true })
+    @ViewChild('contextMenu',{static:false })contextMenu: MatMenuTrigger;
     
     
     
