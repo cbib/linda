@@ -73,7 +73,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
         this.dialogRef.close(this.data);
     }
     get_result(){
-        console.log(this.result);s
+        console.log(this.result);
         return this.result;
     }
 
