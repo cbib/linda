@@ -7,12 +7,8 @@
             <h3>History tree</h3>
             <mat-card>
             Below is the general tree of all your projects in LINDA database. You will find it under the History node. 
-<!--            <h3>1. How to create an investigation ? </h3>
-            <ol>
-                <li>Right click on History node and select add investigation. </li>
-                <li>Choose between creating Investigation from scratch or using a template if exists. </li>
-                <li>You will be redirect to the investigation form. </li>
-            </ol>-->
+            </mat-card>
+            <mat-card>
             <mat-accordion>
             <mat-expansion-panel (opened)="panelOpenState = true"
                                  (closed)="panelOpenState = false">
@@ -50,7 +46,7 @@
                                  (closed)="panelOpenState = false">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <h3>1. How to create an investigation ?</h3>
+                    <h3>1. How to creating an investigation ?</h3>
                 </mat-panel-title>
 <!--                <mat-panel-description>
                   Currently I am {{panelOpenState ? 'open' : 'closed'}}
