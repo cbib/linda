@@ -35,7 +35,7 @@ const routes: Routes = [
   {path: 'navbars',component: NavbarComponent},
   {path: 'generic',component: FormComponent},
   {path: 'ontologies',component: DialogComponent},
-  {path: 'admin',component: AdminComponent}
+  {path: 'admin',component: AdminComponent},
   {path: 'help',component: HelpComponent}
   ];
 
