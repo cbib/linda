@@ -41,12 +41,13 @@ interface ExampleFlatNode {
 })
 export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger) 
-    @ViewChild(MatMenuTrigger,{static:true })
-
+    //@ViewChild(MatMenuTrigger,{static:true })
+    @ViewChild('contextMenu',{static:false })contextMenu: MatMenuTrigger;
+    
+    
+    
     panelOpenState = false;
-
-
-    contextMenu: MatMenuTrigger;
+    
     contextMenuPosition = { x: '0px', y: '0px' };
 
     //@Input() ontology_type;
