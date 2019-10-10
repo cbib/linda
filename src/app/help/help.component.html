@@ -1,50 +1,46 @@
 <mat-accordion>
-            <mat-expansion-panel (opened)="panelOpenState = true"
-                                 (closed)="panelOpenState = false">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3>1. How to create an investigation ?</h3>
-                </mat-panel-title>
-<!--                <mat-panel-description>
-                  Currently I am {{panelOpenState ? 'open' : 'closed'}}
-                </mat-panel-description>-->
-              </mat-expansion-panel-header>
-              <ol>
-                <li>Right click on History node and select add investigation. </li>
-                <li>Choose between creating Investigation from scratch or using a template if exists. </li>
-                <li>You will be redirect to the investigation form. </li>
-            </ol>
-            </mat-expansion-panel>
-                <mat-expansion-panel (opened)="panelOpenState = true"
-                                 (closed)="panelOpenState = false">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3>1. How to create an investigation ?</h3>
-                </mat-panel-title>
-<!--                <mat-panel-description>
-                  Currently I am {{panelOpenState ? 'open' : 'closed'}}
-                </mat-panel-description>-->
-              </mat-expansion-panel-header>
-              <ol>
-                <li>Right click on History node and select add investigation. </li>
-                <li>Choose between creating Investigation from scratch or using a template if exists. </li>
-                <li>You will be redirect to the investigation form. </li>
-            </ol>
-            </mat-expansion-panel>
-                <mat-expansion-panel (opened)="panelOpenState = true"
-                                 (closed)="panelOpenState = false">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h3>1. How to creating an investigation ?</h3>
-                </mat-panel-title>
-<!--                <mat-panel-description>
-                  Currently I am {{panelOpenState ? 'open' : 'closed'}}
-                </mat-panel-description>-->
-              </mat-expansion-panel-header>
-              <ol>
-                <li>Right click on History node and select add investigation. </li>
-                <li>Choose between creating Investigation from scratch or using a template if exists. </li>
-                <li>You will be redirect to the investigation form. </li>
-            </ol>
-            </mat-expansion-panel>
-          </mat-accordion>
+    <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h4>1. How to create an investigation ?</h4>
+            </mat-panel-title>
+            <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+        </mat-expansion-panel-header>
+        <ol>
+            <li>Right click on History node and select add investigation. </li>
+            <li>Choose between creating Investigation from scratch or using a template if exists. </li>
+            <li>You will be redirect to the investigation form. </li>
+        </ol>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h3>1. How to load environmental metadata ?</h3>
+            </mat-panel-title>
+            <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+        </mat-expansion-panel-header>
+        <ol>
+            <li>Right click on study node and select add metadata_files. </li>
+            
+            <li>Choose between creating Investigation from scratch or using a template if exists. </li>
+            <li>You will be redirect to the investigation form. </li>
+        </ol>
+    </mat-expansion-panel>
+    
+    
+    <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h3>1. How to creating an investigation ?</h3>
+            </mat-panel-title>
+            <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+        </mat-expansion-panel-header>
+        <ol>
+            <li>Right click on History node and select add investigation. </li>
+            <li>Choose between creating Investigation from scratch or using a template if exists. </li>
+            <li>You will be redirect to the investigation form. </li>
+        </ol>
+    </mat-expansion-panel>
+</mat-accordion>
