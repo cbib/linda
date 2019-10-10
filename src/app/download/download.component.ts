@@ -138,6 +138,10 @@ export class DownloadComponent implements OnInit {
 //    }
     onFileChange(event) {
         console.log("1#################################################")
+        this.headers=[];
+        this.headers_select=[];
+        this.associated_headers={};
+        this.lines=[];
         //this.fileUploaded = <File>event.target.files[0];
         
         
