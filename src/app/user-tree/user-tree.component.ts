@@ -337,8 +337,13 @@ export class UserTreeComponent implements OnInit{
                 }
 
             }); 
-            this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
-            this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
+            
+            this.router.navigateByUrl(['/tree'], { skipLocationChange: true }).then(() => 
+            {
+                this.router.navigate(['/tree']);
+            }); 
+            //this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
+            //this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
 
            
             
