@@ -912,27 +912,27 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
 //    }
 //    else{
 
-
-
+    const edges = db._collection('templates_edge');
+    if (!edges) {
+        db._createDocumentCollection('templates_edge');
+    }
     const coll = db._collection(coll_name);
     if (!coll) {
         db._createDocumentCollection(coll_name);
     }
-    data = coll.byExample().toArray();
+    
+    var user_id="users/"+user_key
+    data=[];
+    edges_data = edges.byExample({"_from": user_id}).toArray();
+    for (var i = 0; i < edges_data.length; i++) {
+        if (edges_data[i]['_to'].includes(coll_name)){
+            tmp={'_id':edges_data[i]['_to']};
+            data.push(tmp);
+        }
+    }
+        
+    //data = coll.byExample().toArray();
 
-//    if (model_type==='investigation'){
-//        data = investigations.firstExample('_key',key);
-//    }
-//    else if (model_type==='study'){
-//        data = studies.firstExample('_key',key);
-//    }
-//    else if (model_type==='event'){
-//        data = events.firstExample('_key',key);
-//    }
-//    else {
-//        data = observation_units.firstExample('_key',key);
-//    }
-    //const data = investigations.firstExample('_key',key);
 
     res.send(data);
   } 
