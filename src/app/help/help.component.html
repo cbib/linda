@@ -2,7 +2,7 @@
     <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
         <mat-expansion-panel-header>
             <mat-panel-title>
-                <h4>1. How to create an investigation ?</h4>
+                <h4>How to create an investigation ?</h4>
             </mat-panel-title>
             <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
         </mat-expansion-panel-header>
@@ -17,7 +17,7 @@
     <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
         <mat-expansion-panel-header>
             <mat-panel-title>
-                <h4>1. How to load environmental metadata ?</h4>
+                <h4>How to load environmental metadata ?</h4>
             </mat-panel-title>
             <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
         </mat-expansion-panel-header>
@@ -34,14 +34,15 @@
     <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
         <mat-expansion-panel-header>
             <mat-panel-title>
-                <h4>1. How to creating an investigation ?</h4>
+                <h4>How to remove node in History tree ?</h4>
             </mat-panel-title>
             <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
         </mat-expansion-panel-header>
         <ol>
-            <li>Right click on History node and select add investigation. </li>
-            <li>Choose between creating Investigation from scratch or using a template if exists. </li>
-            <li>You will be redirect to the investigation form. </li>
+            <li>Right click on node and select remove if you want to remove a single node. </li>
+            <li>If you want to suppress multiple nodes, you need to click on window button setting 
+                and activate the multi selection mode. Then you can checked nodes you want to remove 
+                and click again on the window settoings button to remove selected </li>
         </ol>
     </mat-expansion-panel>
 </mat-accordion>
