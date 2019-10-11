@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { User } from '../models/user';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -11,11 +10,11 @@ export class AdminComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {}
-    private loadAllUsers() {
-        this.userService.getAll().pipe(first()).subscribe(users => { 
-            this.users = users; 
-        });
-    }
+//    private loadAllUsers() {
+//        this.userService.getAll().pipe(first()).subscribe(users => { 
+//            this.users = users; 
+//        });
+//    }
 //    deleteUser(id: string) {
 //        this.userService.delete(id).pipe(first()).subscribe(() => { 
 //            this.loadAllUsers() 
