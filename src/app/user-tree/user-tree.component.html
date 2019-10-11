@@ -93,8 +93,8 @@
                 <button *ngIf="!node.id.includes('History')" mat-menu-item (click)="onEdit(node)">Edit</button>
                 <button *ngIf="!node.id.includes('History')" mat-menu-item (click)="onRemove(node)" confirm="Are you sure?">Remove</button>
                 <button *ngIf="node.id.includes('History')" mat-menu-item [matMenuTriggerFor]="userMenu" >Add</button>
-                <button *ngIf="node.id.includes('History')" mat-menu-item [matMenuTriggerFor]="multipleMenu">Multiple selection</button>
-                <button *ngIf="node.id.includes('History')" mat-menu-item (click)="remove_selected(node)">Remove selected</button>
+                <!--<button *ngIf="node.id.includes('History')" mat-menu-item [matMenuTriggerFor]="multipleMenu">Multiple selection</button>-->
+                <!--<button *ngIf="node.id.includes('History')" mat-menu-item (click)="remove_selected(node)">Remove selected</button>-->
                 <button *ngIf="node.id.includes('investigations')" mat-menu-item [matMenuTriggerFor]="investigationMenu">Add</button>
                 <button *ngIf="node.id.includes('studies')" mat-menu-item [matMenuTriggerFor]="studyMenu">Add</button>
                 <button *ngIf="node.id.includes('observation_units')" mat-menu-item [matMenuTriggerFor]="OUMenu">Add</button>
