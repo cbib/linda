@@ -70,8 +70,6 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { DateformatComponent } from './dateformat/dateformat.component';
 import { ConfirmationDialogComponent } from './dialog/confirmation-dialog.component';
 //import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-
 import { EmailvalidatorComponent } from './validators/emailvalidator.component';
 import { TemplateSelectionDialogComponent } from './dialog/template-selection-dialog.component';
 import { DelimitorDialogComponent } from './dialog/delimitor-dialog.component';
@@ -109,8 +107,7 @@ import { HelpComponent } from './help/help.component';
 
     
 //    DialogOverviewExampleDialog,
-    //ModaltreeComponent,
-    
+//    ModaltreeComponent,
 //    EmailvalidatorComponent
     
     

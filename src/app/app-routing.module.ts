@@ -20,23 +20,15 @@ const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-
-    // otherwise redirect to home
-    //{ path: '**', redirectTo: 'investigation' },
-//  {
-//    path: '',
-//    redirectTo: 'home',
-//    pathMatch: 'full'
-//  },
-  {path: 'trees',component: OntologyTreeComponent,canActivate: [AuthGuard]},
-  {path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
-  {path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
-  {path: 'home',component: HomeComponent},
-  {path: 'navbars',component: NavbarComponent},
-  {path: 'generic',component: FormComponent},
-  {path: 'ontologies',component: DialogComponent},
-  {path: 'admin',component: AdminComponent},
-  {path: 'help',component: HelpComponent}
+  { path: 'trees',component: OntologyTreeComponent,canActivate: [AuthGuard]},
+  { path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
+  { path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
+  { path: 'home',component: HomeComponent},
+  { path: 'navbars',component: NavbarComponent},
+  { path: 'generic',component: FormComponent},
+  { path: 'ontologies',component: DialogComponent},
+  { path: 'admin',component: AdminComponent},
+  { path: 'help',component: HelpComponent}
   ];
 
 @NgModule({

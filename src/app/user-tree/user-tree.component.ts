@@ -14,14 +14,6 @@ import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.compo
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { MediaObserver} from "@angular/flex-layout";
 
-/**
- * Food data with nested structure.
- * Each node has a name and an optiona list of children.
- */
-//interface FoodNode {
-//    name: string;
-//    children?: FoodNode[];
-//}
 
 
 /** Flat node with expandable and level information */
@@ -31,9 +23,6 @@ interface ExampleFlatNode {
     level: number;
 }
 
-/**
- * @title Tree with flat nodes
- */
 @Component({
     selector: 'app-user-tree',
     templateUrl: './user-tree.component.html',
@@ -51,7 +40,6 @@ export class UserTreeComponent implements OnInit{
     
     contextMenuPosition = { x: '0px', y: '0px' };
 
-    //@Input() ontology_type;
     private nodes:MiappeNode[]
     private statistics:{};
     private displayed=false;
@@ -93,29 +81,19 @@ export class UserTreeComponent implements OnInit{
 
     async ngOnInit() {
           await this.get_vertices()
-          //await this.load();
-          //console.log(this.vertices)
-            
-
           this.nodes=[]
           this.nodes=this.build_hierarchy(this.vertices)
-
-
-
           this.dataSource.data = this.nodes; 
           this.tree.treeControl.expandAll();
-          this.tree.treeControl.expandAll();
-          //this.expandNode()
     }
      
     onContextMenu(event: MouseEvent, node: MiappeNode) {
         this.active_node=node
-        console.log(node.id)
-//        console.log(event.clientX)
+        //console.log(node.id)
         event.preventDefault();
         this.contextMenuPosition.x = event.clientX + 'px';
         this.contextMenuPosition.y = event.clientY + 'px';
-        console.log(this.contextMenu)
+        //console.log(this.contextMenu)
         this.contextMenu.menuData = { 'node': node };
         this.contextMenu.openMenu();
     //this.contextMenu.openMenu();
@@ -137,7 +115,7 @@ export class UserTreeComponent implements OnInit{
             this.globalService.get_parent(this.active_node.id).toPromise().then(
                     data => {
                         //parent_id=data
-                        console.log(data)
+                        //console.log(data)
                         this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
 
                     }
@@ -170,9 +148,7 @@ export class UserTreeComponent implements OnInit{
     remove_selected(node:ExampleFlatNode){
         //console.log(node)
         //var descendants = this.treeControl.getDescendants(node);
-        //var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));
-                
-                
+        //var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));                                
         //var selected_set=this.checklistSelection._selection
         var selected_set=this.checklistSelection.selected
         console.log(selected_set)
@@ -201,36 +177,12 @@ export class UserTreeComponent implements OnInit{
         }
         this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
         //this.router.navigate([this.router.url]);
-
-
         this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });
-
-        
-        
-        
-        
-        
-        
-//        for (let item of set){
-//        
-//            console.log(item)
-//        }
-        
+  
     }
 
     onRemove(node: MiappeNode) {
-//      alert(`Click on Action 2 for ${node.id}`);
-      //var model_type=this.globalService.get_model_type(this.active_node.id)
 
-//      console.log(node["expandable"])
-//      if (node["expandable"]){
-//          alert(`${node.id} contains data and data will be lost if remove.`);
-//          console.log(this.active_node.id);
-//      }
-//      else{
-//          console.log("not expandable");
-//
-//      }
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '500px', data: {validated: false}});
         
                 
@@ -308,7 +260,6 @@ export class UserTreeComponent implements OnInit{
                                 //this.alertService.success("Your component has been successfully integrated in your history !!")
 
                                 return true;
-                                //this.router.navigate(['/investigation'],{ queryParams: { key:  this.investigation_key} });
                             }
                             else{
                                 //console.log(data["message"])
@@ -318,28 +269,7 @@ export class UserTreeComponent implements OnInit{
                             }
                         }
                     );
-                     //this.router.navigate(['/tree'],{ queryParams: { key:  user["_id"].split('/')[1]} });
 
-                    
-                    
-                    
-                    
-                    
-//                    if(confirmed){
-////                        this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
-////                            data => {
-////                                if (data["success"]){
-////                                    console.log(data["message"])
-////                                }
-////                                else{
-////                                    this.alertService.error("this form contains errors! " + data["message"]);
-////                                }
-////                            }
-////                        );
-//                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-//                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });  
-                             
-//                    }
                 }
 
             }); 
@@ -353,25 +283,13 @@ export class UserTreeComponent implements OnInit{
 //            }); 
             //this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
             //this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
-
-           
-            
-            
-            
-            
-            
-//            this.globalService.get_templates(user._key,model_type).toPromise().then(
-//                data => {
-//                    console.log(data);
-//                }
-//            );
             
             
         }
         else{
             
         
-            console.log(this.active_node.id);
+            //console.log(this.active_node.id);
             var parent_id=""
             if (this.active_node.id!='History'){
                 parent_id= this.active_node.id
@@ -380,9 +298,7 @@ export class UserTreeComponent implements OnInit{
 
                 parent_id= user._id
             }
-            //var model_type=this.globalService.get_model_type(this.active_node.id)
-            //var model_type_cap=model_type.charAt(0).toUpperCase() + model_type.slice(1);
-            //console.log(model_type_cap);
+
             if (model_type==="metadata_file"){
                  this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:parent_key,model_type:model_type,mode:"create"}});
 
@@ -393,21 +309,6 @@ export class UserTreeComponent implements OnInit{
             }
         }
 
-//        if (model_type!="unknown"){
-//            //console.log(model_type)
-//            var parent_id=""
-//            this.globalService.get_model_child(model_type+"%2F"+model_type_cap).toPromise().then(
-//                    data => {
-//                        //parent_id=data
-//                        console.log(data)
-//                        //this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:this.active_node.id, model_key:model_key,model_type:model_type,mode:"edit"}});
-//
-//                    }
-//            )
-//        }
-//        else{
-//            this.alertService.error("this node is not editable ");
-//        }
     }
   
     
