@@ -35,7 +35,7 @@ export class UserTreeComponent implements OnInit{
     @ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
     
     
-    
+    disableSelect = new FormControl(false);
     panelOpenState = false;
     
     contextMenuPosition = { x: '0px', y: '0px' };
