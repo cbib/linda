@@ -1,17 +1,12 @@
 <alert></alert>
 
 <div id="user-tree"> 
-    <div> 
-        
-            
+    <div>  
         <h3>History tree</h3>
         <mat-card>
             Below is the general tree of all your projects in LINDA database. You will find it under the History node. 
         </mat-card><br>
-        
         <mat-card>
-            
-                
             <p>
                 Please feel free to describe as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
                 You can remove more than one node at the time if you use the right click button on History node and choose remove selected option. 
@@ -19,10 +14,23 @@
             <!--<div class="warning-msg"><i class="fa fa-warning"></i>You need to first select and check histories you want to suppress.</div>-->
         </mat-card><br>
     </div> 
-    
     <div> 
-
         <mat-card>
+            <mat-accordion>
+                <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <h4>How to create an investigation ?</h4>
+                        </mat-panel-title>
+                        <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+                    </mat-expansion-panel-header>
+                    <ol>
+                        <li>Right click on History node and select add investigation. </li>
+                        <li>Choose between creating Investigation from scratch or using a template if exists. </li>
+                        <li>You will be redirect to the investigation form. </li>
+                    </ol>
+                </mat-expansion-panel><br>
+           </mat-accordion>
             <mat-drawer-container class="example-container" autosize>
                 <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
                     <h1>Description</h1>
