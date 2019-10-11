@@ -361,7 +361,7 @@ export class UserTreeComponent implements OnInit{
             this.globalService.get_parent(term.id).toPromise().then(
                 data => {
                     this.parent_id=data._from;
-                    console.log(data)
+                    //console.log(data)
                 }
             );
         }
