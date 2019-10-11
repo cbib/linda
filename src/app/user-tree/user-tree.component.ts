@@ -387,12 +387,15 @@ export class UserTreeComponent implements OnInit{
             
         }
     }
+    
     get_model_key(){
         return this.model_key;
     }
+    
     get_parent_id(){
         return this.parent_id;
     }
+    
     private ont_transformer = (node: MiappeNode, level: number) => {
           return {
         expandable: !!node.get_children() && node.get_children().length > 0,
