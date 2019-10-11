@@ -13,6 +13,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { MediaObserver} from "@angular/flex-layout";
+import { FormBuilder, FormGroup, Validators ,FormArray, FormControl} from '@angular/forms';
 
 
 
