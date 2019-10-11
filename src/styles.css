@@ -39,6 +39,9 @@ body {
 .mat-icon-button {
     outline:none;
 }
+.mat-menu-item {
+    outline:none;
+}
 
 
 *:focus{
