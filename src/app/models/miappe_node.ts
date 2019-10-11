@@ -1,9 +1,5 @@
 
-
-
-
 export class MiappeNode {
-    
     
         private data;
         public children:MiappeNode[]
@@ -14,7 +10,6 @@ export class MiappeNode {
         public fill_percentage:number;
         //has_child = MiappeNode.has_child;
 
-        
         public get_id(){
             return this.id;
         }
@@ -53,22 +48,4 @@ export class MiappeNode {
             this.fill_percentage=fill_percentage
             
         }
-    
-    
-    
-    
-    
 }
-
-
-
-
-    
-
-
-
-
-
-
-
-

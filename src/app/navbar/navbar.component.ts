@@ -14,15 +14,6 @@ export class NavbarComponent implements OnInit {
   @Input() mode:string;
   @Input() levels : number[];
   constructor() {}
-
-  ngOnInit() {
-      console.log("#####################################")
-      console.log(this.levels)
-//      for (var i=1; i<this.max_level+1;i++ ){
-//          console.log(i)
-//          this.levels.push(i)
-//          
-//      }
-  }
+  ngOnInit() {}
 
 }

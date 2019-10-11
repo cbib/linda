@@ -7,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminComponent implements OnInit {
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {}
+    private loadAllUsers() {
+        this.userService.getAll().pipe(first()).subscribe(users => { 
+            this.users = users; 
+        });
+    }
+    deleteUser(id: string) {
+        this.userService.delete(id).pipe(first()).subscribe(() => { 
+            this.loadAllUsers() 
+        });
+    }
 
 }
