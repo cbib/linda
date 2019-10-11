@@ -41,11 +41,7 @@ body {
 }
 .mat-menu-item {
     outline:none;
-}
-
-
-*:focus{
-    outline:none; 
+    box-shadow: none;
 }
 
 .container{
