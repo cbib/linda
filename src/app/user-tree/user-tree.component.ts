@@ -339,7 +339,7 @@ export class UserTreeComponent implements OnInit{
 
                     }
                 );
-                console.log(this.statistics)
+                //console.log(this.statistics)
             }
         )
     }
