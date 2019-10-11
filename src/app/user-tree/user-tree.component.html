@@ -7,7 +7,7 @@
         <h3>History tree</h3>
         <mat-card>
             Below is the general tree of all your projects in LINDA database. You will find it under the History node. 
-        </mat-card><hr>
+        </mat-card><br>
         
         <mat-card>
             
@@ -81,7 +81,7 @@
             [matMenuTriggerFor]="contextMenu">
         </div> 
 
-        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon></button>
+        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
         <mat-menu #globalmenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button mat-menu-item [matMenuTriggerFor]="multipleMenu"><mat-icon>bookmarks</mat-icon><span>Multiple selection</span></button>
