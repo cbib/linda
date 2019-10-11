@@ -21,7 +21,6 @@
     </div> 
     
     <div> 
-        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
 
         <mat-card>
             <mat-drawer-container class="example-container" autosize>
@@ -83,7 +82,8 @@
             [matMenuTriggerFor]="contextMenu">
         </div> 
 
-        
+        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
+
 
         <mat-menu #contextMenu="matMenu">
             <ng-template matMenuContent let-node="node">
