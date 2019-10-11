@@ -61,11 +61,8 @@ export class OntologyTreeComponent {
     private ontology_tree: OntologyTerm[];
     private active_node: OntologyTerm;
     private context_term:OntologyTerm [];
-    private treeControl = new FlatTreeControl<ExampleFlatNode>(node => node.level, node => node.expandable);
-    private treeFlattener = new MatTreeFlattener(this.ont_transformer, node => node.level, node => node.expandable, node => node.children);
-    private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    private initialSelection = []
-    private checklistSelection = new SelectionModel<ExampleFlatNode>(true,this.initialSelection /* multiple */);
+    
+    
     
     
     constructor(
@@ -92,6 +89,23 @@ export class OntologyTreeComponent {
 
            
     }
+    private ont_transformer = (node: OntologyTerm, level: number) => {
+        return {
+            expandable: !!node.children && node.children.length > 0,
+            name: node.name ,
+            def:node.def,
+            id:node.id,
+            term:node,
+            level: level,
+        };
+    }
+    
+    private treeControl = new FlatTreeControl<ExampleFlatNode>(node => node.level, node => node.expandable);
+    private treeFlattener = new MatTreeFlattener(this.ont_transformer, node => node.level, node => node.expandable, node => node.children);
+    private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    private initialSelection = []
+    private checklistSelection = new SelectionModel<ExampleFlatNode>(true,this.initialSelection /* multiple */);
+    
     get_ontology(){
         return this.ontologiesService.get_ontologies(this.ontology_type).toPromise().then(data => {this.ontologies=data;})
     }
@@ -157,16 +171,7 @@ export class OntologyTreeComponent {
 //        }
     }
 
-    private ont_transformer = (node: OntologyTerm, level: number) => {
-        return {
-            expandable: !!node.children && node.children.length > 0,
-            name: node.name ,
-            def:node.def,
-            id:node.id,
-            term:node,
-            level: level,
-        };
-    }
+    
     get_dataSource(){
         return this.dataSource
     }

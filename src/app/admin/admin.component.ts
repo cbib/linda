@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
+import { User } from '../models/user';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
