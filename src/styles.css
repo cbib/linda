@@ -14,9 +14,7 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 
-textarea:focus, input:focus{
-    outline: none;
-}
+
 
 body {
   font-family: Roboto, Arial, sans-serif;
@@ -39,7 +37,10 @@ body {
 .mat-icon-button {
     outline:none;
 }
-.mat-menu-item {
+
+
+*{
+    outline:none; 
     box-shadow: none;
 }
 
