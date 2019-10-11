@@ -31,8 +31,8 @@ interface ExampleFlatNode {
 export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger) 
     //@ViewChild(MatMenuTrigger,{static:true })
-    //@ViewChild('contextMenu',{static:false }) contextMenu: MatMenuTrigger;
-    @ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
+    @ViewChild('contextMenu',{static:false }) contextMenu: MatMenuTrigger;
+    //@ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
     
     
     disableSelect = new FormControl(false);
