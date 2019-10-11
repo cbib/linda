@@ -345,60 +345,27 @@ export class UserTreeComponent implements OnInit{
     }
     
 
-
-//    private transformer = (node: FoodNode, level: number) => {
-//      return {
-//        expandable: !!node.children && node.children.length > 0,
-//        name: node.name,
-//        level: level,
-//      };
-//    }
-
     
     show_info(term:MiappeNode){
-        //child node
-        console.log(term.fill_percentage)
-        console.log(term.id)
         this.current_data=[]
         this.current_data_array=[]
         this.active_node=term
         this.displayed=true;
-        
-        if ((term["id"]==="History") ){
-            
+        if ((term["id"]==="History") ){            
             this.model_selected='History';
         }
         else if((term["id"].includes("metadata_files"))){
             //get value for a given node
             this.model_selected="metadata_files"
             this.model_key=term.id.split("/")[1]
-            
-            
-            
-//            this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(
-//                received_data => {
-//                    console.log(received_data);
-//                    this.data=received_data;
-//                    this.headers=this.data["headers"];
-//                    this.associated_headers=this.data["associated_headers"];
-//                    this.lines=this.data["data"]
-//                }
-//            );
             this.globalService.get_parent(term.id).toPromise().then(
                 data => {
                     this.parent_id=data._from;
                     console.log(data)
                 }
             );
-            
-//            this.globalService.get_elem("metadata_files",this.model_key).toPromise().then(
-//                data => {
-//                    console.log(data)
-//                }
-//            );
         }
-        else{
-            
+        else{            
             this.model_selected=term["id"].split("/")[0]
             var key=term.id.split("/")[1]
             var collection=term.id.split("/")[0]
@@ -453,19 +420,11 @@ export class UserTreeComponent implements OnInit{
     get_model_selected(){
         return this.model_selected;
     }
-
-
-
     expandNode(){
         console.log(this.treeControl.dataNodes[3])
         this.treeControl.expand(this.treeControl.dataNodes[3]);
-    }
-    
-    
-    
-    
+    }   
     build_hierarchy(edges:[]):MiappeNode[]{
-        //console.log(ontology);
         var cpt=0;
         var tmp_nodes=[]
         tmp_nodes.push(new MiappeNode("History","","",0))
@@ -476,42 +435,27 @@ export class UserTreeComponent implements OnInit{
                 
                 _from=e["e"]["_from"]
                 _to=e["e"]["_to"]
-                //console.log("########################")
-                //console.log(_from)
-                //console.log(_to)
                 var vertices:[]=e["s"]["vertices"]
                 var percent=0.0
                 vertices.forEach(
                     vertice=>{
-                        //console.log(vertice)
                         if (vertice['_id']===e["e"]["_to"]){
-                            //console.log(vertice)
                             var vertice_keys=Object.keys(vertice)
                             var total=0
                             for (var i = 0; i< vertice_keys.length; i++) {
                                 if (vertice[vertice_keys[i]]!==""){
                                     total+=1
-                                }
-                                
-                            }
-                            //console.log(total)
-                            //console.log(vertice_keys.length)
-                            //console.log(Math.round(100 *(total/vertice_keys.length)))       
+                                }                                
+                            }      
                             percent=Math.round(100 *((total-3)/(vertice_keys.length-3)))
                         }
                     }
                 )
-//                console.log(e["s"]["vertices"])
-//                console.log(e["e"]["_from"])
-                
-                
-                
                 if (_from.includes("users")){
                     if (cpt===0){
                          tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],"","",percent))
                     }
                     else{
-                         //tmp_nodes.push(new MiappeNode(e["e"]["_to"],"",""))
                          tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],"","",percent))
                     }
                    
@@ -520,30 +464,17 @@ export class UserTreeComponent implements OnInit{
                     this.searchTerm(tmp_nodes,e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"],"","",percent))
                 }
                 cpt+=1
-                
-                
-
             }
         )
-        console.log(tmp_nodes)
         return tmp_nodes;
     }
-    
-    
-    
-    
-  
 
-  
-  
-  
     get_term(term_id:string) : any{
         var term:MiappeNode;
         this.nodes.forEach(
             t=>{
                 if (t.id===term_id){
                   term=t
-                  //console.log(term_id)
                 }
             })
         return term
@@ -554,118 +485,103 @@ export class UserTreeComponent implements OnInit{
         var term:MiappeNode;
         terms.forEach(
             t=>{  
-                  //console.log(t)
                   if(t.id == term_id){
-                      //console.log(t)
-                      //console.log(term_id)
                       term=t
-                      //return t;
                   }
                   else if (t.get_children() != null){
                       var i;
-                      //var result = null;
                       for(i=0; i < t.get_children().length; i++){
-
-                      //for(i=0; result == null && i < t.get_children().length; i++){
-                          //console.log(t.children[i])
-                          //result = this.searchTerm([t.get_children()[i]], term_id);
                           term = this.searchTerm([t.get_children()[i]], term_id);
                       }
-                      //return result;
-
                   }
-
             }
       )
       return term
-
-
-      //return null
     }
      /** Whether all the descendants of the node are selected. */
-  descendantsAllSelected(node: ExampleFlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
-    );
-    return descAllSelected;
-  }
-
-  /** Whether part of the descendants are selected */
-  descendantsPartiallySelected(node: ExampleFlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(node);
-    const result = descendants.some(child => this.checklistSelection.isSelected(child));
-    return result && !this.descendantsAllSelected(node);
-  }
-
-  /** Toggle the to-do item selection. Select/deselect all the descendants node */
-  todoItemSelectionToggle(node: ExampleFlatNode): void {
-    this.checklistSelection.toggle(node);
-    const descendants = this.treeControl.getDescendants(node);
-    this.checklistSelection.isSelected(node)
-      ? this.checklistSelection.select(...descendants)
-      : this.checklistSelection.deselect(...descendants);
-
-    // Force update for the parent
-    descendants.every(child =>
-      this.checklistSelection.isSelected(child)
-    );
-    this.checkAllParentsSelection(node);
-  }
-
-  /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-  todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
-    this.checklistSelection.toggle(node);
-    this.checkAllParentsSelection(node);
-  }
-
-  /* Checks all the parents when a leaf node is selected/unselected */
-  checkAllParentsSelection(node: ExampleFlatNode): void {
-    let parent: ExampleFlatNode | null = this.getParentNode(node);
-    while (parent) {
-      this.checkRootNodeSelection(parent);
-      parent = this.getParentNode(parent);
+    descendantsAllSelected(node: ExampleFlatNode): boolean {
+        const descendants = this.treeControl.getDescendants(node);
+        const descAllSelected = descendants.every(child =>
+            this.checklistSelection.isSelected(child)
+        );
+        return descAllSelected;
     }
-  }
 
-  /** Check root node checked state and change it accordingly */
-  checkRootNodeSelection(node: ExampleFlatNode): void {
-    const nodeSelected = this.checklistSelection.isSelected(node);
-    const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
-    );
-    if (nodeSelected && !descAllSelected) {
-      this.checklistSelection.deselect(node);
-    } else if (!nodeSelected && descAllSelected) {
-      this.checklistSelection.select(node);
+    /** Whether part of the descendants are selected */
+    descendantsPartiallySelected(node: ExampleFlatNode): boolean {
+        const descendants = this.treeControl.getDescendants(node);
+        const result = descendants.some(child => this.checklistSelection.isSelected(child));
+        return result && !this.descendantsAllSelected(node);
     }
-  }
+
+    /** Toggle the to-do item selection. Select/deselect all the descendants node */
+    todoItemSelectionToggle(node: ExampleFlatNode): void {
+        this.checklistSelection.toggle(node);
+        const descendants = this.treeControl.getDescendants(node);
+        this.checklistSelection.isSelected(node) ? this.checklistSelection.select(...descendants) : this.checklistSelection.deselect(...descendants);
+
+        // Force update for the parent
+        descendants.every(child =>
+            this.checklistSelection.isSelected(child)
+        );
+        this.checkAllParentsSelection(node);
+    }
+
+    /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
+    todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
+        this.checklistSelection.toggle(node);
+        this.checkAllParentsSelection(node);
+    }
+
+    /* Checks all the parents when a leaf node is selected/unselected */
+    checkAllParentsSelection(node: ExampleFlatNode): void {
+        let parent: ExampleFlatNode | null = this.getParentNode(node);
+        while (parent) {
+            this.checkRootNodeSelection(parent);
+            parent = this.getParentNode(parent);
+        }
+    }
+
+    /** Check root node checked state and change it accordingly */
+    checkRootNodeSelection(node: ExampleFlatNode): void {
+        const nodeSelected = this.checklistSelection.isSelected(node);
+        const descendants = this.treeControl.getDescendants(node);
+        const descAllSelected = descendants.every(child =>
+            this.checklistSelection.isSelected(child)
+        );
+        if (nodeSelected && !descAllSelected) {
+            this.checklistSelection.deselect(node);
+        } 
+        else if (!nodeSelected && descAllSelected) {
+            this.checklistSelection.select(node);
+        }
+    }
   
-/* Get the parent node of a node */
-  getParentNode(node: ExampleFlatNode): ExampleFlatNode | null {
-    const currentLevel = this.getLevel(node);
+    /* Get the parent node of a node */
+    getParentNode(node: ExampleFlatNode): ExampleFlatNode | null {
+        const currentLevel = this.getLevel(node);
 
-    if (currentLevel < 1) {
-      return null;
+        if (currentLevel < 1) {
+            return null;
+        }
+
+        const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
+
+        for (let i = startIndex; i >= 0; i--) {
+            const currentNode = this.treeControl.dataNodes[i];
+
+            if (this.getLevel(currentNode) < currentLevel) {
+                return currentNode;
+            }
+        }
+        return null;
     }
-
-    const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
-
-    for (let i = startIndex; i >= 0; i--) {
-      const currentNode = this.treeControl.dataNodes[i];
-
-      if (this.getLevel(currentNode) < currentLevel) {
-        return currentNode;
-      }
-    }
-    return null;
-  }
   
     searchTree(term:MiappeNode, term_id:string){
-       if(term.id == term_id){
+        if(term.id == term_id){
             return term;
-       }else if (term.get_children() != null){
+        }
+        else if (term.get_children() != null){
             var i;
             var result = null;
             for(i=0; result == null && i < term.get_children().length; i++){
@@ -717,22 +633,12 @@ export class UserTreeComponent implements OnInit{
   
   
 
-  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
-  getLevel = (node: ExampleFlatNode) => node.level;
+    hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+    getLevel = (node: ExampleFlatNode) => node.level;
 
-  isExpandable = (node: ExampleFlatNode) => node.expandable;
+    isExpandable = (node: ExampleFlatNode) => node.expandable;
 
-  getChildren = (node: MiappeNode): MiappeNode[] => node.children;
+    getChildren = (node: MiappeNode): MiappeNode[] => node.children;
     @ViewChild('tree',{static:false}) tree;
 
-//  ngAfterViewInit() {
-//    this.tree.treeControl.expandAll();
-//  }
-
-//  hasNoContent = (_: number, _nodeData: MiappeNode) => _nodeData.item === '';
 }
-    
-
-/**  Copyright 2019 Google Inc. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at http://angular.io/license */
