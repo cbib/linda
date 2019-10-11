@@ -178,11 +178,9 @@ export class FormComponent implements OnInit//, AfterViewInit
     };
     
     get_model_by_key(){
-        //this.modelForm = new FormGroup({});
         this.model_to_edit=[];        
         this.globalService.get_by_key(this.model_key,this.model_type).toPromise().then(data => {
             this.model_to_edit = data;
-            //this.modelForm.value=this.model_to_edit
             this.modelForm.patchValue(this.model_to_edit);
         });
     };
