@@ -49,8 +49,9 @@ var nodemailer = require('nodemailer');
 //
 //
 //
-//router.get('/test:pwd', function (req, res) {
-//    var pwd=req.pathParams.pwd;
+router.get('/test:pwd', function (req, res) {
+    
+    var pwd=req.pathParams.pwd;
 //    var transporter = nodemailer.createTransport({
 //        service: 'gmail',
 //        auth: {
@@ -74,14 +75,15 @@ var nodemailer = require('nodemailer');
 //      } else {
 //          res.send('Email sent: ');
 //      }
-//    }); 
-//
-//
-//})
-//.pathParam('pwd', joi.string().required(), 'pwd of the entry.')
-//.response(joi.string().required(), 'List of entry keys.')
-//.summary('List entry keys')
-//.description('Assembles a list of keys of entries in the collection.');
+//    });   
+    res.send(pwd);
+
+
+})
+.pathParam('pwd', joi.string().required(), 'pwd of the entry.')
+.response(joi.string().required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
 
 
 //router.get(function (req, res) {
