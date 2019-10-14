@@ -10,5 +10,13 @@ const db = require('@arangodb').db;
 const nodemailer = require('nodemailer');
 
 
+var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'bdartigues@gmail.com',
+            pass: pwd
+        }
+    });
+
 
 

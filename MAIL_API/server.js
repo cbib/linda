@@ -208,20 +208,14 @@ router.get('/test/:pswd', function (req, res) {
     const nodemailer = require('nodemailer');
 
     var pwd=req.pathParams.pwd;
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'bdartigues@gmail.com',
-            pass: pwd
-        }
-    });
+    
 //
-//    var mailOptions = {
-//        from: 'youremail@gmail.com',
-//        to: 'myfriend@yahoo.com',
-//        subject: 'Sending Email using Node.js',
-//        text: 'That was easy!'
-//    };
+    var mailOptions = {
+        from: 'bdartigues@gmail.com',
+        to: 'benjamin.dartigues@u-bordeaux.fr',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+    };
 //
 //    transporter.sendMail(mailOptions, function(error, info){
 //      res.headers['Access-Control-Allow-Credentials'] = true;
