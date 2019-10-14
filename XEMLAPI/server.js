@@ -37,6 +37,13 @@ const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
 const queue1 = queues.create("my-queue");
+
+queue1.push(
+  {mount: "/xeml", name: "send-mail"},
+  {to: "bdartigues@gmail.com", body: "Hello world"}
+);
+
+
 //const writeFile = require('write-file')
 
 
