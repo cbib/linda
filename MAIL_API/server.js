@@ -205,38 +205,36 @@ router.get('/users', function (req, res) {
 .description('Assembles a list of keys of entries in the collection.');
 
 
-router.get('/test/:pwd', function (req, res) {
-    
-    //var pwd=req.pathParams.pwd;
-//    var transporter = nodemailer.createTransport({
-//        service: 'gmail',
-//        auth: {
-//            user: 'pwd',
-//            pass: pwd
-//        }
-//    });
-//
-//    var mailOptions = {
-//        from: 'youremail@gmail.com',
-//        to: 'myfriend@yahoo.com',
-//        subject: 'Sending Email using Node.js',
-//        text: 'That was easy!'
-//    };
-//
-//    transporter.sendMail(mailOptions, function(error, info){
-//      res.headers['Access-Control-Allow-Credentials'] = true;
-//        res.headers['Access-Control-Allow-Origin'] = true;
-//      if (error) {
-//        res.send('Error ');
-//      } else {
-//          res.send('Email sent: ');
-//      }
-//    });   
-    res.send(req.pathParams.pwd);
-
-
-})
-.pathParam('pwd', joi.string().required(), 'pwd of the entry.')
-.response(joi.string().required(), 'List of entry keys.')
-.summary('List entry keys')
-.description('Assembles a list of keys of entries in the collection.');
+//router.get('/test/:pswd', function (req, res) {
+//    
+//    //var pwd=req.pathParams.pwd;
+////    var transporter = nodemailer.createTransport({
+////        service: 'gmail',
+////        auth: {
+////            user: 'pwd',
+////            pass: pwd
+////        }
+////    });
+////
+////    var mailOptions = {
+////        from: 'youremail@gmail.com',
+////        to: 'myfriend@yahoo.com',
+////        subject: 'Sending Email using Node.js',
+////        text: 'That was easy!'
+////    };
+////
+////    transporter.sendMail(mailOptions, function(error, info){
+////      res.headers['Access-Control-Allow-Credentials'] = true;
+////        res.headers['Access-Control-Allow-Origin'] = true;
+////      if (error) {
+////        res.send('Error ');
+////      } else {
+////          res.send('Email sent: ');
+////      }
+////    });   
+//    res.send(req.pathParams.pswd);
+//})
+//.pathParam('pswd', joi.string().required(), 'pwd of the entry.')
+//.response(joi.string().required(), 'List of entry keys.')
+//.summary('List entry keys')
+//.description('Assembles a list of keys of entries in the collection.');
