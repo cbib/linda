@@ -205,7 +205,8 @@ router.get('/users', function (req, res) {
 
 
 router.get('/test/:pswd', function (req, res) {
-    
+    const nodemailer = require('nodemailer');
+
     var pwd=req.pathParams.pwd;
     var transporter = nodemailer.createTransport({
         service: 'gmail',
