@@ -36,12 +36,53 @@ const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
-const queue1 = queues.create("my-queue");
+//const queue1 = queues.create("my-queue");
 
-queue1.push(
-  { mount: "/mail", name: "send-mail"},
-  { to: "bdartigues@gmail.com", body: "Hello world"}
-);
+//queue1.push(
+//  { mount: "/mail", name: "send-mail"},
+//  { to: "bdartigues@gmail.com", body: "Hello world"}
+//);
+
+
+
+var nodemailer = require('nodemailer');
+
+
+
+router.get('/test:pwd', function (req, res) {
+    var pwd=req.pathParams.pwd;
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'pwd',
+            pass: pwd
+        }
+    });
+
+    var mailOptions = {
+        from: 'youremail@gmail.com',
+        to: 'myfriend@yahoo.com',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+      res.headers['Access-Control-Allow-Credentials'] = true;
+        res.headers['Access-Control-Allow-Origin'] = true;
+      if (error) {
+        res.send('Error ');
+      } else {
+          res.send('Email sent: ');
+      }
+    }); 
+
+
+})
+.pathParam('pwd', joi.string().required(), 'pwd of the entry.')
+.response(joi.string().required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
+
 
 //router.get(function (req, res) {
 //  //module.context.mount === '/my-foxx-1';
