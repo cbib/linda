@@ -45,7 +45,6 @@ const errors = require('@arangodb').errors;
 
 
 
-var nodemailer = require('nodemailer');
 //
 //
 //
