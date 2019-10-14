@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AlertComponent } from './directives/alert.component';
 import { AuthGuard } from './guards/auth.guards';
 import { JwtInterceptor, ErrorInterceptor } from './helpers';
-import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService, GMailService} from './services';
+import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService} from './services';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
