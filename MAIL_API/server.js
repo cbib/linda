@@ -49,7 +49,7 @@ var nodemailer = require('nodemailer');
 //
 //
 //
-router.get('/test:pwd', function (req, res) {
+router.get('/test/:pwd', function (req, res) {
     
     var pwd=req.pathParams.pwd;
 //    var transporter = nodemailer.createTransport({
