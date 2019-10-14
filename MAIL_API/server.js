@@ -39,9 +39,15 @@ const queues = require('@arangodb/foxx/queues')
 const queue1 = queues.create("my-queue");
 
 queue1.push(
-  {mount: "/xeml", name: "send-mail"},
+  {mount: "/mail", name: "send-mail"},
   {to: "bdartigues@gmail.com", body: "Hello world"}
 );
+
+router.get(function (req, res) {
+  module.context.mount === '/my-foxx-1';
+  req.context.mount === '/my-foxx-2';
+  res.write('Hello from my-foxx-1');
+});
 
 
 
