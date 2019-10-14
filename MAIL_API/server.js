@@ -35,6 +35,7 @@ const joi = require('joi');
 const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
+import * as nodemailer from 'nodemailer'; 
 //const queues = require('@arangodb/foxx/queues')
 //const queue1 = queues.create("my-queue");
 
@@ -215,7 +216,7 @@ router.get('/test/:pswd', function (req, res) {
         subject: 'Sending Email using Node.js',
         text: 'That was easy!'
     };
-//
+
 //    transporter.sendMail(mailOptions, function(error, info){
 //      res.headers['Access-Control-Allow-Credentials'] = true;
 //        res.headers['Access-Control-Allow-Origin'] = true;
@@ -224,7 +225,8 @@ router.get('/test/:pswd', function (req, res) {
 //      } else {
 //          res.send('Email sent: ');
 //      }
-//    });   
+//    });  
+    
     res.send(req.pathParams.pswd);
 })
 .pathParam('pswd', joi.string().required(), 'pwd of the entry.')
