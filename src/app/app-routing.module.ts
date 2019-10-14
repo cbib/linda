@@ -12,6 +12,7 @@ import { DialogComponent } from './dialog/dialog.component';
 import { UserTreeComponent } from './user-tree/user-tree.component';
 import { AdminComponent } from './admin/admin.component';
 import { HelpComponent } from './help/help.component';
+import { SendmailComponent } from './forms/sendmail.component';
 
 
 
@@ -28,7 +29,8 @@ const routes: Routes = [
   { path: 'generic',component: FormComponent},
   { path: 'ontologies',component: DialogComponent},
   { path: 'admin',component: AdminComponent},
-  { path: 'help',component: HelpComponent}
+  { path: 'help',component: HelpComponent},
+  { path: 'mail',component: SendmailComponent}
   ];
 
 @NgModule({
