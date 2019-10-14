@@ -76,6 +76,7 @@ import { DelimitorDialogComponent } from './dialog/delimitor-dialog.component';
 import { UserComponent } from './users/user.component';
 import { AdminComponent } from './admin/admin.component';
 import { HelpComponent } from './help/help.component';
+import { SendmailComponent } from './forms/sendmail.component';
 
 
 
@@ -102,7 +103,8 @@ import { HelpComponent } from './help/help.component';
     DelimitorDialogComponent,
     UserComponent,
     AdminComponent,
-    HelpComponent
+    HelpComponent,
+    SendmailComponent
     
 
     

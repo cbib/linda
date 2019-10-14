@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { User } from '../models/user';
 import {Constants} from "../constants";
+import * as nodemailer from 'nodemailer'; 
 
 @Injectable()
 export class UserService {
@@ -36,3 +37,33 @@ export class UserService {
 //        return this.http.delete(`${this.apiUrl}/users/` + _id);
 //    }
 }
+
+
+
+
+ 
+export class GMailService { 
+    private _transporter: nodemailer.Transporter; 
+    
+    constructor() { 
+        this._transporter = nodemailer.createTransport( 
+          `smtps://<username>%40gmail.com:<password>@smtp.gmail.com` 
+        ); 
+      } 
+      sendMail(to: string, subject: string, content: string) { 
+        let options = { 
+          from: 'bdartigues@gmail.com', 
+          to: to, 
+          subject: subject, 
+          text: content 
+        } 
+ 
+        this._transporter.sendMail(  
+          options, (error, info) => { 
+            if (error) { 
+              return console.log(`error: ${error}`); 
+            } 
+            console.log(`Message Sent ${info.response}`); 
+          }); 
+      } 
+    } 
