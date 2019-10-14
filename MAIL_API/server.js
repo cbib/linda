@@ -206,14 +206,14 @@ router.get('/users', function (req, res) {
 
 router.get('/test/:pswd', function (req, res) {
     
-    //var pwd=req.pathParams.pwd;
-//    var transporter = nodemailer.createTransport({
-//        service: 'gmail',
-//        auth: {
-//            user: 'pwd',
-//            pass: pwd
-//        }
-//    });
+    var pwd=req.pathParams.pwd;
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'bdartigues@gmail.com',
+            pass: pwd
+        }
+    });
 //
 //    var mailOptions = {
 //        from: 'youremail@gmail.com',
