@@ -37,6 +37,7 @@ export class UserTreeComponent implements OnInit{
     
     
     disableSelect = new FormControl(false);
+    
     panelOpenState = false;
     
     contextMenuPosition = { x: '0px', y: '0px' };
