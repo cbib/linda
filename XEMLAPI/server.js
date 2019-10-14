@@ -35,6 +35,7 @@ const joi = require('joi');
 const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
+var queue = Foxx.queues.create("my-queue");
 //const writeFile = require('write-file')
 
 
