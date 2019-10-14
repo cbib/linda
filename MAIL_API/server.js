@@ -44,8 +44,8 @@ queue1.push(
 );
 
 router.get(function (req, res) {
-  module.context.mount === '/my-foxx-1';
-  req.context.mount === '/my-foxx-2';
+  //module.context.mount === '/my-foxx-1';
+  //req.context.mount === '/my-foxx-2';
   res.write('Hello from my-foxx-1');
 });
 
