@@ -35,7 +35,29 @@ const joi = require('joi');
 const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
-import * as nodemailer from 'nodemailer'; 
+//import * as nodemailer from 'nodemailer'; 
+
+
+"use strict";
+const queues = require("@arangodb/foxx/queues");
+const queue = queues.get("default");
+
+// later
+router.post("/signup", (req, res) => {
+  const user = performSignup(req.body);
+  // schedule sending welcome e-mail using a script
+  queue.push(
+    {
+      mount: module.context.mount, // i.e. this current service
+      name: "send-mail" // script name in the service manifest
+    },
+    { to: user.email, body: welcomeEmailText } // arguments
+  );
+});
+
+
+
+
 //const queues = require('@arangodb/foxx/queues')
 //const queue1 = queues.create("my-queue");
 
@@ -205,31 +227,31 @@ router.get('/users', function (req, res) {
 .description('Assembles a list of keys of entries in the collection.');
 
 
-router.get('/test/:pswd', function (req, res) {
-
-    var pwd=req.pathParams.pwd;
-    
+//router.get('/test/:pswd', function (req, res) {
 //
-    var mailOptions = {
-        from: 'bdartigues@gmail.com',
-        to: 'benjamin.dartigues@u-bordeaux.fr',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-    };
-
-//    transporter.sendMail(mailOptions, function(error, info){
-//      res.headers['Access-Control-Allow-Credentials'] = true;
-//        res.headers['Access-Control-Allow-Origin'] = true;
-//      if (error) {
-//        res.send('Error ');
-//      } else {
-//          res.send('Email sent: ');
-//      }
-//    });  
-    
-    res.send(req.pathParams.pswd);
-})
-.pathParam('pswd', joi.string().required(), 'pwd of the entry.')
-.response(joi.string().required(), 'List of entry keys.')
-.summary('List entry keys')
-.description('Assembles a list of keys of entries in the collection.');
+//    var pwd=req.pathParams.pwd;
+//    
+////
+//    var mailOptions = {
+//        from: 'bdartigues@gmail.com',
+//        to: 'benjamin.dartigues@u-bordeaux.fr',
+//        subject: 'Sending Email using Node.js',
+//        text: 'That was easy!'
+//    };
+//
+////    transporter.sendMail(mailOptions, function(error, info){
+////      res.headers['Access-Control-Allow-Credentials'] = true;
+////        res.headers['Access-Control-Allow-Origin'] = true;
+////      if (error) {
+////        res.send('Error ');
+////      } else {
+////          res.send('Email sent: ');
+////      }
+////    });  
+//    
+//    res.send(req.pathParams.pswd);
+//})
+//.pathParam('pswd', joi.string().required(), 'pwd of the entry.')
+//.response(joi.string().required(), 'List of entry keys.')
+//.summary('List entry keys')
+//.description('Assembles a list of keys of entries in the collection.');
