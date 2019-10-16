@@ -234,7 +234,7 @@ a[data-toggle="collapse"] {
 }
 
 
-.navbar-light .navbar-nav .nav-link.active {
+.nav-link.active {
     color:blue;
 }
 
