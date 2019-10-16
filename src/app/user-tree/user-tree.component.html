@@ -76,9 +76,16 @@
                              <span style="display:outline-block; margin-right: 20px;"> 
                                  <i style="color : #006666" class="fas fa-info-circle" title="{{node.def}}"></i>
                                       </span> 
-                            <!-- use a disabled button to provide padding for tree leaf -->                            
-                            <button mat-icon-button><mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon><i *ngIf="multiple_selection===false">{{node.id}}</i><mat-progress-bar mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar></button>
-
+                            <!-- use a disabled button to provide padding for tree leaf -->
+                            <button mat-icon-button>
+                                <mat-icon>description</mat-icon>
+                            </button>
+                            <button mat-icon-button>
+                                <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
+                                <i *ngIf="multiple_selection===false">{{node.id}}</i>
+                                <mat-progress-bar mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
+                            </button>
+                            
                             <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
                         </mat-tree-node>
                         <!-- This is the tree node template for expandable nodes -->
