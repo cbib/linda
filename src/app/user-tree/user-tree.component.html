@@ -77,7 +77,7 @@
                                  <i style="color : #006666" class="fas fa-info-circle" title="{{node.def}}"></i>
                                       </span> 
                             <!-- use a disabled button to provide padding for tree leaf -->
-                            <button mat-icon-button>
+                            <button mat-icon-button (click)="onContextMenu($event, node)">
                                 <mat-icon>description</mat-icon>
                             </button>
                             <button mat-icon-button>
