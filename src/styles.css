@@ -233,6 +233,11 @@ a[data-toggle="collapse"] {
     background: #fff;
 }
 
+.navbar-nav>li>a.active{
+    color:blue;
+    
+}
+
 #sidebar ul li.active > a, a[aria-expanded="true"] {
     color: #fff;
     background: #6d7fcc;
