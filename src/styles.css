@@ -258,11 +258,11 @@ ul ul a {
 @media screen and (min-width: 300px) and (max-width: 767px) {
 
 
-    .logo_inra{
+    #img.logo_inra{
         height: 10px;
         width:10px;
     }
-    .logo_cgfb{
+    #img.logo_cgfb{
         height: 100px;
         width:100px;
     }
