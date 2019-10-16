@@ -289,8 +289,11 @@ ul ul a {
         padding: 20px;
         width: 200px;
         height: 500px;
-        font-size: 10px;
+        
   
+    }
+    table{
+        font-size: 10px;
     }
     mat-sidenav {
         width: 300px;
