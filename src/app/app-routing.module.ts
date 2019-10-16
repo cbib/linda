@@ -27,10 +27,10 @@ const routes: Routes = [
   { path: 'home',component: HomeComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
-  { path: 'ontologies',component: DialogComponent},
-  { path: 'admin',component: AdminComponent},
-  { path: 'help',component: HelpComponent},
-  { path: 'mail',component: SendmailComponent}
+//  { path: 'ontologies',component: DialogComponent},
+  { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
+  { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
+  { path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]}
   ];
 
 @NgModule({
