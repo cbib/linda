@@ -5,3 +5,7 @@
  */
 
 
+'use strict';
+const { argv } = module.context;
+
+module.exports = `Hello ${argv[0]}!`;

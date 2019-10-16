@@ -37,8 +37,6 @@ const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 //import * as nodemailer from 'nodemailer'; 
 
-
-"use strict";
 const queues = require("@arangodb/foxx/queues");
 const queue = queues.get("default");
 
