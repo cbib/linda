@@ -27,7 +27,10 @@
             
              <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
                 <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-user-crown"></i> Admin</a>
-            </li>   
+            </li>
+            <li *ngIf="!currentUser" class="nav-item">
+                <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
+            </li>
         </ul>
         <form id='search' class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
