@@ -293,7 +293,8 @@ ul ul a {
   
     }
     .table{
-        font-size: 2px;
+        /*font-size: 2px;*/
+        font-size-adjust: 0.58;
     }
     mat-sidenav {
         width: 300px;
