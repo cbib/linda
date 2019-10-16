@@ -3,13 +3,13 @@
     <a class="navbar-brand"  style="font-size: 20pt; background-color: white;color: #006666" href="#">{{ title }} <i style="font-size: 10pt"> pLant experImeNtal metaDatA </i></a>
 
     <!--<a class="navbar-brand" href="#">Navbar</a>-->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">        
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li ng-class="{'nav-item active' : selected == 'Home'}" ng-click="selected = 'Home'">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
                 <a class="nav-link" [routerLink]="['/home']"><i class="fas fa-home"></i> Home</a>
             </li> 
             <li class="nav-item">
