@@ -17,7 +17,7 @@
     <div> 
         <mat-card>
             <mat-accordion>
-                <mat-expansion-panel (opened)="panelOpenState = true"(closed)="panelOpenState = false">
+                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <h4>Configure options</h4>
@@ -38,7 +38,7 @@
                         </mat-select>
                     </mat-form-field>
 
-                    <h4>native html select</h4>
+<!--                    <h4>native html select</h4>
                     <mat-form-field>
                         <mat-label>Choose an option</mat-label>
                         <select matNativeControl [disabled]="disableSelect.value">
@@ -48,7 +48,7 @@
                             <option value="mercedes">Mercedes</option>
                             <option value="audi">Audi</option>
                         </select>
-                    </mat-form-field>
+                    </mat-form-field>-->
                 </mat-expansion-panel><br>
            </mat-accordion>
             <mat-drawer-container class="example-container" autosize>
