@@ -16,11 +16,7 @@
 
 
 
-body {
-  font-family: Roboto, Arial, sans-serif;
-  margin: 0;
-  border-radius:5px;
-}
+
 
 .basic-container {
   padding: 50px;
@@ -136,7 +132,16 @@ body {
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/*body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+}*/
+
+body {
+  font-family: Roboto, Arial, sans-serif;
+  margin: 0;
+  border-radius:5px;
+}
 
 mat-progress-bar .mat-progress-bar-buffer {
   background: #E4E8EB;
