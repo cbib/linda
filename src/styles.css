@@ -233,7 +233,7 @@ a[data-toggle="collapse"] {
     background: #fff;
 }
 
-.navbar-nav>li>a.active{
+a.nav-link.active{
     color:blue;
     
 }
