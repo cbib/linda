@@ -258,6 +258,10 @@ ul ul a {
 @media screen and (min-width: 300px) and (max-width: 767px) {
 
 
+    .logo_inra{
+        height: 100px;
+        width:100px;
+    }
 
     .example-container {
         /*width: 1200px;*/
