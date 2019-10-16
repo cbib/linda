@@ -109,15 +109,15 @@
             [style.top]="contextMenuPosition.y"
             [matMenuTriggerFor]="contextMenu">
         </div> 
-
-        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
-
-<!--        <mat-menu #globalmenu="matMenu">
+        <mat-menu #globalmenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button mat-menu-item [matMenuTriggerFor]="multipleMenu"><mat-icon>bookmarks</mat-icon><span>Multiple selection</span></button>
                 <button mat-menu-item (click)="remove_selected(node)"><span>Remove selected</span></button>
             </ng-template>
-        </mat-menu>-->
+        </mat-menu>
+        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
+
+
         <mat-menu #contextMenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button *ngIf="!node.id.includes('History')" mat-menu-item (click)="onEdit(node)">Edit</button>
