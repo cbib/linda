@@ -233,9 +233,9 @@ a[data-toggle="collapse"] {
     background: #fff;
 }
 
-a.nav-link.active{
+
+.navbar-light .navbar-nav .nav-link.active {
     color:blue;
-    
 }
 
 #sidebar ul li.active > a, a[aria-expanded="true"] {
