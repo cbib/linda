@@ -295,10 +295,10 @@ ul ul a {
         width: 300px;
         height: 500px;
     }
-    .mat-tree{
+/*    .mat-tree{
         height: 100%; 
         width: 200px;
-    }
+    }*/
 }
 @media screen and (min-width: 768px) and (max-width: 992px) {
 
