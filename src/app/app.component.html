@@ -21,9 +21,9 @@
             <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Help</a>
             </li>
-            <li class="nav-item">
+<!--            <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/mail']" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Mail</a>
-            </li>
+            </li>-->
             
              <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
                 <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-user-crown"></i> Admin</a>
