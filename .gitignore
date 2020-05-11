@@ -52,3 +52,5 @@ package-lock.json
 package.json
 /dist
 /nbproject/private/
+/src/app/constants.ts
+/src/app/constants_1.ts
