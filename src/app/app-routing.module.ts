@@ -13,6 +13,7 @@ import { UserTreeComponent } from './user-tree/user-tree.component';
 import { AdminComponent } from './admin/admin.component';
 import { HelpComponent } from './help/help.component';
 import { SendmailComponent } from './forms/sendmail.component';
+import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
 
 
 
@@ -27,7 +28,7 @@ const routes: Routes = [
   { path: 'home',component: HomeComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
-//  { path: 'ontologies',component: DialogComponent},
+  { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
   { path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]}

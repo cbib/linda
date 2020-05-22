@@ -8,12 +8,14 @@
 @import "assets/css/font-awesome/4.4.0/font-awesome.css";
 @import "assets/css/bootstrap/3.3.7/bootstrap.min.css";*/
 @import "assets/css/riliwan-rabo.css";
-@import "assets/css/style.css";
+/*@import "assets/css/style.css";
+@import "assets/css/style-responsive.css";*/
 @import "assets/css/form.css";
 @import "assets/css/loading-bars.css";
-@import '~bootstrap/dist/css/bootstrap.min.css';
+/*@import '~bootstrap/dist/css/bootstrap.min.css';*/
 
 
+      
 
 
 
@@ -42,6 +44,10 @@
 .container{
     width: 100%; 
 }
+#container {
+    width: 100%;
+    height: 100%;
+}
 .navbar {
     padding:0px;
     margin-bottom: 0px;
@@ -53,6 +59,11 @@
     min-width: 300px;
     max-width: 300px;
 }*/
+/*section {
+    width: 100%;
+    height: 100%;
+}*/
+
 .my_container {
   background-color:  #006666;
   color:white;
@@ -137,11 +148,11 @@ html, body { height: 100%; }
     font-family: Roboto, "Helvetica Neue", sans-serif; 
 }*/
 
-body {
+/*body {
   font-family: Roboto, Arial, sans-serif;
   margin: 0;
   border-radius:5px;
-}
+}*/
 
 mat-progress-bar .mat-progress-bar-buffer {
   background: #E4E8EB;
@@ -163,11 +174,11 @@ mat-progress-bar .mat-progress-bar-buffer {
 
 
 
-.wrapper {
+/*.wrapper {
     display: flex;
     width: 100%;
     align-items: stretch;
-}
+}*/
 p {
     font-family: 'Poppins', sans-serif;
     font-size: 1.1em;
@@ -197,16 +208,16 @@ a[data-toggle="collapse"] {
     right: 20px;
     transform: translateY(-50%);
 }
-#sidebar {
-    /* don't forget to add all the previously mentioned styles here too */
-    /*background: #7386D5;*/
+/*#sidebar {
+     don't forget to add all the previously mentioned styles here too 
+    background: #7386D5;
     background-color:  #006666;
     color: #fff;
     transition: all 0.3s;
     min-width: 300px;
     max-width: 300px;
     min-height: 100vh;
-}
+}*/
 
 #sidebar .sidebar-header {
     padding: 20px;
@@ -224,6 +235,7 @@ a[data-toggle="collapse"] {
 }
 
 #sidebar ul li a {
+    background: #2f323a;
     padding: 10px;
     font-size: 1.1em;
     display: block;
@@ -253,12 +265,13 @@ ul ul a {
     color: rgba(0,0,0,.87);
     }
 
+
+/*Used User-tree.component.html
     
 .example-sidenav-content {
         
     display: flex;
     min-width: 500px;
-
 
 
     align-items: center;
@@ -275,20 +288,20 @@ ul ul a {
     }
 
     .example-container {
-        /*width: 1200px;*/
+        width: 1200px;
         height: 500px;
         border: 1px solid rgba(0, 0, 0, 0.5);
 
     }
 
-/*    .example-sidenav-content {
+    .example-sidenav-content {
         display: flex;
         width:300px;
   
   
         align-items: center;
         justify-content: center;
-    }*/
+    }
 
     .example-sidenav {
         padding: 20px;
@@ -298,23 +311,23 @@ ul ul a {
   
     }
     .table{
-        /*font-size: 2px;*/
+        font-size: 2px;
         font-size: 4vw;
     }
     mat-sidenav {
         width: 300px;
         height: 500px;
     }
-/*    .mat-tree{
+    .mat-tree{
         height: 100%; 
         width: 200px;
-    }*/
+    }
 }
 @media screen and (min-width: 768px) and (max-width: 992px) {
 
 
     #content.container {
-        /*width: 1300px;*/
+        width: 1300px;
         padding: 20px;
         padding-top: 0px;
         margin-right: 20px;
@@ -325,18 +338,18 @@ ul ul a {
     #navBar>li>a{
         font-size: 10pt
     }
-/*    .a{
+    .a{
         font-size:10pt;
-    }*/
+    }
 
     .example-container {
-        /*width: 1200px;*/
+        width: 1200px;
         height: 500px;
         border: 1px solid rgba(0, 0, 0, 0.5);
 
     }
 
-/*    .example-sidenav-content {
+    .example-sidenav-content {
         display: flex;
         width:300px;
         height: 500px;
@@ -344,7 +357,7 @@ ul ul a {
   
         align-items: center;
         justify-content: center;
-    }*/
+    }
 
     .example-sidenav {
         padding: 20px;
@@ -364,7 +377,7 @@ ul ul a {
 @media screen and (min-width: 993px) and (max-width: 1199px) {
     
 #content.container {
-        /*width: 990px;*/
+        width: 990px;
         padding: 20px;
         padding-top: 0px;
         margin-right: 20px;
@@ -376,13 +389,13 @@ ul ul a {
         width: 1000px;
     }
     .example-container {
-        /*width: 1200px;*/
+        width: 1200px;
         height: 500px;
         border: 1px solid rgba(0, 0, 0, 0.5);
 
     }
 
-/*    .example-sidenav-content {
+    .example-sidenav-content {
         display: flex;
         width:450px;
         height: 100%;
@@ -391,7 +404,7 @@ ul ul a {
   
         align-items: center;
         justify-content: center;
-    }*/
+    }
 
     .example-sidenav {
         padding: 20px;
@@ -414,7 +427,7 @@ ul ul a {
 @media screen and (min-width: 1200px) and (max-width: 1299px) {
 
 #content.container {
-        /*width: 1200px;*/
+        width: 1200px;
         padding: 20px;
         padding-top: 0px;
         margin-right: 20px;
@@ -431,18 +444,18 @@ ul ul a {
     }
     .example-container {
         height: 500px;
-        /*border: 1px solid rgba(0, 0, 0, 0.5);*/
+        border: 1px solid rgba(0, 0, 0, 0.5);
 
     }
 
-/*    .example-sidenav-content {
+    .example-sidenav-content {
         width:500px;
         height: 100%;
   
   
         align-items: center;
         justify-content: center;
-    }*/
+    }
 
     .example-sidenav {
         padding: 20px;
@@ -461,7 +474,7 @@ ul ul a {
 
     
     #content.container {
-        /*width: 1300px;*/
+        width: 1300px;
         padding: 20px;
         padding-top: 0px;
         margin-right: 20px;
@@ -474,9 +487,9 @@ ul ul a {
 
 
     .example-container {
-        /*width: 1200px;*/
+        width: 1200px;
         height: 500px;
-        /*border: 1px solid rgba(0, 0, 0, 0.5);*/
+        border: 1px solid rgba(0, 0, 0, 0.5);
 
     }
     .example-sidenav {
@@ -490,10 +503,10 @@ ul ul a {
     
 
     
-/*    mat-sidenav {
+    mat-sidenav {
         width: 350px;
         height: 500px;
-    }*/
+    }
     .mat-tree{
         height: 100%; 
         width: 400px;
@@ -503,7 +516,7 @@ ul ul a {
     
 }
 
-/*.mat-progress-bar-fill::after {
+.mat-progress-bar-fill::after {
     background-color: #37474f;
   }
 

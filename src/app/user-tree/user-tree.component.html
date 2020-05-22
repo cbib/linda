@@ -4,7 +4,7 @@
     <div>  
         <h3>History tree</h3>
         <mat-card>
-            Below is the general tree of all your projects in LINDA database. You will find it under the History node. 
+            <p>Below is the general tree of all your projects in LINDA database. You will find it under the History node. </p>
         </mat-card><br>
         <mat-card>
             <p>
@@ -165,7 +165,7 @@
             <button mat-menu-item [matMenuTriggerFor]="observation_unitMenu">Observation unit</button>
             <button mat-menu-item [matMenuTriggerFor]="experimental_factorMenu">Experimental factor</button>
             <button mat-menu-item [matMenuTriggerFor]="biological_materialMenu">Biological material</button>
-            <button mat-menu-item [matMenuTriggerFor]="data_fileMenu">Data file</button>
+            <button mat-menu-item [matMenuTriggerFor]="data_fileMenu">experimental data file link</button>
             <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu">Observed variable</button>
             <button mat-menu-item [matMenuTriggerFor]="eventMenu">Event</button>
             <button mat-menu-item [matMenuTriggerFor]="environmentMenu">Dynamic variable</button>
@@ -188,8 +188,8 @@
         </mat-menu>
 
         <mat-menu #data_fileMenu="matMenu">
-            <button mat-menu-item (click)="add('data_file',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('data_file',true)">From templates</button>
+            <button mat-menu-item (click)="add('data_file',false)">Add</button>
+            <!--<button mat-menu-item (click)="add('data_file',true)">From templates</button>-->
         </mat-menu>
 
         <mat-menu #observed_variableMenu="matMenu">

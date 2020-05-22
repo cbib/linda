@@ -326,8 +326,6 @@ router.post('/register', function (req, res) {
  ******************************************************************************************/
 
 
-
-
 router.get('/get_max_level/:model_type', function (req, res) {
     var model_type=req.pathParams.model_type;
     
@@ -868,10 +866,6 @@ router.post('/update_field', function (req, res) {
             update=db._query(aql` FOR entry IN ${observation_units} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${observation_units} RETURN NEW.${field}`).toArray();
 
         }
-        
-        
-        
-        
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
         if (update[0] === value){
