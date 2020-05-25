@@ -13,4 +13,9 @@ export class HomeComponent implements OnInit {
     }
     
     ngOnInit() {}
+    
+    start_linda(){
+         this.router.navigate(['/tree']);
+
+    }
 }

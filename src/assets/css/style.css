@@ -1,3 +1,14 @@
+.my-mat-grid-tile {
+
+    padding-top: 300px !important;
+
+}
+/*.my-mat-grid-list {
+
+    padding-bottom: 800px !important;
+    padding-top: 800px !important;
+}*/
+
 .btn-default {
     border-color: #ccc;
 }
@@ -520,6 +531,40 @@ a.logo span {
     padding: 5px;
 }
 
+.notify-row2 {
+    float: left;
+    margin-top: 15px;
+    margin-left: 292px;
+}
+
+.notify-row2 .notification span.label {
+    display: inline-block;
+    height: 18px;
+    width: 20px;
+    padding: 5px;
+}
+
+/*.notify-row2 button.btn {
+    height: 24px;
+}*/
+
+.notify-row3 {
+    float: left;
+    margin-top: 15px;
+    margin-left: 42px;
+}
+
+.notify-row3 .notification span.label {
+    display: inline-block;
+    height: 18px;
+    width: 20px;
+    padding: 5px;
+}
+
+
+
+
+
 ul.top-menu > li > a {
     color: #666666;
     font-size: 16px;
@@ -528,6 +573,8 @@ ul.top-menu > li > a {
     border:1px solid #666666 !important;
     padding: 2px 6px;
     margin-right: 15px;
+    position: relative;
+    display: block;
 }
 
 ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {

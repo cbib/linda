@@ -16,14 +16,17 @@
 <!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>-->
-                
-            <div class="nav notify-row" id="top_menu">
-<!--                <a class="navbar-brand"  style="font-size: 20pt; color: #006666" href="#">
-                {{ title }} 
-                <i style="font-size: 10pt"> 
+               <a class="logo"  href="#">
+                <b style="color:#4ECDC4">{{ title }} </b>
+                P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
+
+<!--                <i style="font-size: 10pt"> 
+                    <b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b>
                     pLant experImeNtal metaDatA 
-                </i>
-                </a>-->
+                </i>-->
+                </a>  
+            <div class="nav notify-row" id="top_menu">
+               
                 <!--  notification start -->
                 <ul class="nav top-menu">
                   <!-- settings start -->
@@ -205,17 +208,40 @@
                     </ul>
                   </li>
                   <!-- notification dropdown end -->
+<!--                  <li *ngIf="!currentUser" class="nav-item">
+                    <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
+                  </li>
+                  <li *ngIf="currentUser" class="nav-item">
+                    <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                  </li>-->
+                   <!--<form id='search' class="form-inline my-2 my-lg-0">-->
+                  
+                <!--</form>-->
                 </ul>
-                <form id='search' class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-
-                </form>
                 <!--  notification end -->
   
             </div>
-            <div class="top-menu">
-                    <ul class="nav pull-right top-menu">
+
+
+            <div class="nav notify-row2" id="top_menu">
+               
+                <!--  search start -->
+                <ul class="nav top-menu">
+                    <li>
+                        <!--<input type="search" placeholder="Search" aria-label="Search">-->
+                        
+                        <input placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    
+                  </li>
+             </ul>
+                <!-- search end -->
+  
+            </div>  
+            <div class="nav notify-row3" id="top_menu">
+               
+                <!--  search start -->
+                <ul class="nav pull-right top-menu">
                         <li *ngIf="!currentUser" class="nav-item">
                                 <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
                             </li>
@@ -223,7 +249,13 @@
                                 <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
                             </li>
                     </ul>
-                </div>
+                <!-- search end -->
+  
+            </div> 
+           
+            <div class="top-menu">
+                    
+            </div>
         <!--</snav>-->
     </header>
     
@@ -283,12 +315,12 @@
         
     </aside>
         <section id="main-content">
-            <h2  style="font-size: 20pt; background-color: white; color: #006666" href="#">
+<!--            <h2  style="font-size: 20pt; background-color: white; color: #006666" href="#">
                       LINDA
                       <i style="font-size: 20pt"> 
                           pLant experImeNtal metaDatA 
                       </i>
-                        </h2>
+                        </h2>-->
             <section class="wrapper">
                       <router-outlet></router-outlet>
             </section>

@@ -1,11 +1,43 @@
-<div class="row">
-    
-    <mat-card>
-        <div>
+<div>
+    <div class="border-head">
+            <h3>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a>
+            </h3>
+    </div>
+    <div  fxLayout="row" fxLayout.xs="column"  fxLayoutGap="0.5%" fxLayoutAlign="center">
+        <div fxFlex="20%">
+        <mat-card >
+        
+        <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title><a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a></mat-card-title>
+<!--            <mat-card-subtitle>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a>
+            </mat-card-subtitle>-->
+        </mat-card-header>
+        <!--<img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">-->
+        <mat-card-content>
             <p style="font-size: 12pt"> Linda is a web application design to helps biologists to capture their environmental metadata </p>
-        </div>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button>LIKE</button>
+            <button mat-button>SHARE</button>
+        </mat-card-actions>        
     </mat-card>
-    <br>
+            </div>
+                <div fxFlex="20%">
+
+    <mat-card >
+        <h3>Start experiment Linda</h3>
+        First you need to describe an investigation using formular at your disposition. Only Id field are mandatory when you first register your investigation
+        <mat-card-actions>
+            <button mat-button class="btn-info" (click)="start_linda()">START</button>
+        </mat-card-actions>  
+    </mat-card>
+                    </div>
+    </div>
+
+    
     <mat-card>
         <h3>Project description</h3>
         <p style="font-size: 12pt">In order to allow biologists to store and store the environmental metadata associated with plant phenotyping experiments and to facilitate a standardized exchange of information, the LINDA Web interface allows the user to insert his metadata according to the MIAPPE model and related ontologies (Plant ontology, XEO, ENVo, etc.).
@@ -13,19 +45,66 @@
             The ontologies present in the MIAPPE model are integrated in order to describe the metadata associated with the experiment.
         </p>
     </mat-card>
-    <br>
     <mat-card>
+                
         <a href="https://cgfb.u-bordeaux.fr/">
             <img id="logo_cgfb" src="assets/images/cbib.jpg" >
         </a> 
-        <br>
+
+        
         <a href="http://www.inra.fr/"> 
             <img id="logo_inra" src="assets/images/inra.jpg" >
         </a>
+
     </mat-card>
-    <br>
-    <mat-card>
-        <h3>Start experiment Linda</h3>
-        First you need to describe an investigation using formular at your disposition. Only Id field are mandatory when you first register your investigation
-    </mat-card>
+    
+    
+<!--    <mat-grid-list cols="2">
+        <mat-grid-tile class="my-mat-grid-tile">
+            <mat-card>
+                <mat-card-header>
+                    <div mat-card-avatar class="example-header-image"></div>
+                    <mat-card-title>LINDA</mat-card-title>
+                    <mat-card-subtitle>
+                        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+                <mat-card-content>
+                    <p style="font-size: 12pt"> Linda is a web application design to helps biologists to capture their environmental metadata </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button>LIKE</button>
+                    <button mat-button>SHARE</button>
+                </mat-card-actions>        
+            </mat-card>
+        </mat-grid-tile >
+        <mat-grid-tile class="my-mat-grid-tile">
+            <mat-card >
+                <h3>Start experiment Linda</h3>
+                        First you need to describe an investigation using formular at your disposition. Only Id field are mandatory when you first register your investigation
+            </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile class="my-mat-grid-tile">
+            <mat-card>
+                <h3>Project description</h3>
+                <p style="font-size: 12pt">In order to allow biologists to store and store the environmental metadata associated with plant phenotyping experiments and to facilitate a standardized exchange of information, the LINDA Web interface allows the user to insert his metadata according to the MIAPPE model and related ontologies (Plant ontology, XEO, ENVo, etc.).
+                    Exporting to the ISA-tab format will allow subsequent interconnection with the FAIRDOM suite so that all metadata can be linked to existing experiments.
+                    The ontologies present in the MIAPPE model are integrated in order to describe the metadata associated with the experiment.
+                </p>
+            </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile class="my-mat-grid-tile">
+             <mat-card >        
+                <p style="font-size: 12pt"> Linda is a web application design to helps biologists to capture their environmental metadata </p>      
+                <a href="https://cgfb.u-bordeaux.fr/">
+                    <img id="logo_cgfb" src="assets/images/cbib.jpg" >
+                </a> 
+                <a href="http://www.inra.fr/"> 
+                    <img id="logo_inra" src="assets/images/inra.jpg" >
+                </a>
+            </mat-card>
+        </mat-grid-tile>
+    </mat-grid-list>-->
 </div>
+

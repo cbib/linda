@@ -4,7 +4,7 @@
 <!--<input type="text" matInput placeholder="search" #filter (keyup)="keyEvent.next($event)" [(ngModel)]="keyword">-->
 <!--<input matInput placeholder="Search" (input)="filterChanged($event.target.value)">-->
 
-<mat-tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()" class="col-md-6 panel">
+<mat-tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()">
   <!-- This is the tree node template for leaf nodes -->
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding (click)="show_info(node)"  title="{{node.def}}">
 <!--      <span style="display:inline-block; margin-left: 10px;"> 
@@ -12,10 +12,16 @@
                         </i>
                     </span> -->
     <!-- use a disabled button to provide padding for tree leaf -->
-    <button mat-icon-button disabled></button>
+    <button mat-icon-button disabled>
+          
+        <span style="display:inline-block; margin-left: 10px;"> 
+                        <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}"></i>
+                    </span> 
+        
+      </button>
+      
     
   <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
-
   </mat-tree-node>
   <!-- This is the tree node template for expandable nodes -->
   <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
@@ -26,7 +32,7 @@
   </mat-tree-node>
 </mat-tree>
     
-<div *ngIf="get_displayed()" class="col-md-6 panel">
+<div *ngIf="get_displayed()">
 <!--    <table class="table table-hover table-bordered  table-striped text-center" >
     <thead>
     <tr>
@@ -67,8 +73,7 @@
                 <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
                 <option *ngFor="let instance of searchTerm(ontologyEnum,context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">{{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}</option>
             </select>
-            
-            
+
            <!--{{ context_term[j].enumeration}}-->
             <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).name}}-->
             <!--{{searchTerm(ontologyEnum,context_term[j].enumeration)}}-->
@@ -81,19 +86,6 @@
         
         <a *ngIf="context_term[j].name==='FreeText'">
             Text:
-<!--           <mat-form-field>
-                <mat-label>Font size</mat-label>
-                <mat-select #fontSize value="16px" (selectionChange)="triggerResize()">
-                  <mat-option value="10px">10px</mat-option>
-                  <mat-option value="12px">12px</mat-option>
-                  <mat-option value="14px">14px</mat-option>
-                  <mat-option value="16px">16px</mat-option>
-                  <mat-option value="18px">18px</mat-option>
-                  <mat-option value="20px">20px</mat-option>
-                </mat-select>
-            </mat-form-field>-->
-
-            <!--<mat-form-field [style.fontSize]="fontSize.value">-->
             <mat-form-field >
                 <mat-label>Autosize textarea</mat-label>
                 <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
@@ -109,10 +101,7 @@
     </li>
     </ul>
     <pre>{{ selected_term | json }}</pre>
-
-
-
-
+    <pre>{{ selected_term.id | json }}</pre>
 </div>    
     
 </div>

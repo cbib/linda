@@ -91,11 +91,9 @@ export class UserTreeComponent implements OnInit{
      
     onContextMenu(event: MouseEvent, node: MiappeNode) {
         this.active_node=node
-        //console.log(node.id)
         event.preventDefault();
         this.contextMenuPosition.x = event.clientX + 'px';
         this.contextMenuPosition.y = event.clientY + 'px';
-        //console.log(this.contextMenu)
         this.contextMenu.menuData = { 'node': node };
         this.contextMenu.openMenu();
     //this.contextMenu.openMenu();
@@ -341,7 +339,7 @@ export class UserTreeComponent implements OnInit{
 
                     }
                 );
-                //console.log(this.statistics)
+                console.log(this.statistics)
             }
         )
     }
@@ -442,6 +440,7 @@ export class UserTreeComponent implements OnInit{
                 _to=e["e"]["_to"]
                 var vertices:[]=e["s"]["vertices"]
                 var percent=0.0
+                var short_name = ""
                 vertices.forEach(
                     vertice=>{
                         if (vertice['_id']===e["e"]["_to"]){
@@ -453,20 +452,28 @@ export class UserTreeComponent implements OnInit{
                                 }                                
                             }      
                             percent=Math.round(100 *((total-3)/(vertice_keys.length-3)))
+                            short_name=vertice['Short title']
                         }
                     }
                 )
+                console.log(short_name)
+                if (short_name==="" || short_name===undefined ){
+                   short_name = e["e"]["_to"]
+                }
                 if (_from.includes("users")){
+                    
                     if (cpt===0){
-                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],"","",percent))
+//                        console.log(e["s"]["vertices"]["Short title"])
+                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
                     }
                     else{
-                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],"","",percent))
+//                        console.log(e["s"]["vertices"]["Short title"])
+                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
                     }
                    
                 }
                 else{
-                    this.searchTerm(tmp_nodes,e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"],"","",percent))
+                    this.searchTerm(tmp_nodes,e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
                 }
                 cpt+=1
             }
