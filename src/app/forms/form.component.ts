@@ -90,13 +90,14 @@ export class FormComponent implements OnInit//, AfterViewInit
             });            
     }
 
-    isFormEmpty():boolean{
+    isStartFilling():boolean{
         this.keys.forEach(attr => {
             if (this.modelForm.value[attr]!==""){
                 this.startfilling=true;
             }
         });
-        return true
+        console.log(this.startfilling)
+        return this.startfilling
     }
     onTaskAdd(event){
         this.startfilling=false;
@@ -105,6 +106,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.startfilling=true;
             }
         }); 
+        console.log(this.startfilling)
     }
 
     get_max_level(){
@@ -116,6 +118,10 @@ export class FormComponent implements OnInit//, AfterViewInit
              }
         });
         
+    }
+    
+    isEmpty(obj) {
+        return Object.keys(obj).length === 0;
     }
     get_model(){
         
@@ -137,12 +143,13 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
                 
             }
+            console.log(this.dict_array)
 
             this.dict_array=this.dict_array.sort(function (a, b) {return a.pos - b.pos;});
 
             if (this.mode ==="create"){
 
-                let attributeFilters = [];
+                let attributeFilters = {};
 
                 this.dict_array.forEach(attr => {
                     
@@ -151,9 +158,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if  (attr["key"].includes("ID")){
                             //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                             //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                            attributeFilters[attr["key"]] = ['',[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr["key"])];
+                            attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr["key"])];
                             //attributeFilters[attr] = ['',[], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
                         }
+                        else if(attr["key"].includes("Short title")){
+                            attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)]];
+
+                        }
+                        
                         else{
                             attributeFilters[attr["key"]] = [''];
                         }
@@ -165,10 +177,25 @@ export class FormComponent implements OnInit//, AfterViewInit
                 let attributeFilters = [];
 
                 this.dict_array.forEach(attr => {  
-                    if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
+                    console.log(attr["key"])
+                    if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition") ){
 
                          this.validated_term[attr["key"]]={selected:false}
-                         attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
+                         
+                         if  (attr["key"].includes("ID")){
+                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]],[Validators.required, Validators.minLength(4)]];
+
+                         }
+                         else if(attr["key"].includes("Short title")){
+                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]],[Validators.required, Validators.minLength(4)]];
+
+                        }
+                        
+                        else{
+                            attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
+
+                        }
+//                        attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
                          //attributeFilters[attr] = ['']
                     }
                 });
@@ -202,12 +229,13 @@ export class FormComponent implements OnInit//, AfterViewInit
     save(form: any): boolean {
         
         if (!form.valid) {
+            console.log("this form contains errors! ")
             this.alertService.error("this form contains errors! ");
 
             return false;
         }
         else{
-            if (parseInt(this.level)==this.max_level){
+            //if (parseInt(this.level)==this.max_level){
 
                 if(this.marked){
                     this.globalService.saveTemplate(this.modelForm.value,this.model_type).pipe(first()).toPromise().then(
@@ -266,10 +294,10 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
                 
                 
-            }
-            else{
-                return true;
-            }
+            //}
+            //else{
+              //  return true;
+            //}
         }
         //Here register the form with the correct investigation id et study id
         //this.formDataService.setAddress(this.address);

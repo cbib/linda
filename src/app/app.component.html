@@ -25,81 +25,61 @@
                     pLant experImeNtal metaDatA 
                 </i>-->
                 </a>  
+            <!--  notification start -->
             <div class="nav notify-row" id="top_menu">
                
-                <!--  notification start -->
                 <ul class="nav top-menu">
                   <!-- settings start -->
                   <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
                       <i class="fa fa-tasks"></i>
-                      <span class="badge bg-theme">4</span>
+                      <span class="badge bg-theme">{{stats_advanced['investigations'].length+stats_advanced['studies'].length}}</span>
                       </a>
-                    <ul class="dropdown-menu extended tasks-bar">
+                    <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
                       <div class="notify-arrow notify-arrow-green"></div>
                       <li>
-                        <p class="green">You have 4 pending tasks</p>
+                        <p class="green">You have {{stats_advanced['investigations'].length}} pending investigations tasks</p>
                       </li>
-                      <li>
-                        <a href="index.html#">
+                      <li *ngFor="let obj of stats_advanced['investigations'] ; index as j;" >
+                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
                           <div class="task-info">
-                            <div class="desc">Dashio Admin Panel</div>
-                            <div class="percent">40%</div>
+                            <div class="desc">{{obj['id']}}</div>
+                            <div class="percent">{{obj['percent_fill']}}%</div>
                           </div>
                           <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                              <span class="sr-only">40% Complete (success)</span>
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
                             </div>
                           </div>
                         </a>
                       </li>
                       <li>
-                        <a href="index.html#">
+                        <p class="green">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
+                      </li>
+                      <li *ngFor="let obj of stats_advanced['studies'] ; index as j;" >
+                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
                           <div class="task-info">
-                            <div class="desc">Database Update</div>
-                            <div class="percent">60%</div>
+                            <div class="desc">{{obj['id']}}</div>
+                            <div class="percent">{{obj['percent_fill']}}%</div>
                           </div>
                           <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                              <span class="sr-only">60% Complete (warning)</span>
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
                             </div>
                           </div>
                         </a>
                       </li>
-                      <li>
-                        <a href="index.html#">
-                          <div class="task-info">
-                            <div class="desc">Product Development</div>
-                            <div class="percent">80%</div>
-                          </div>
-                          <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                              <span class="sr-only">80% Complete</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="index.html#">
-                          <div class="task-info">
-                            <div class="desc">Payments Sent</div>
-                            <div class="percent">70%</div>
-                          </div>
-                          <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-                              <span class="sr-only">70% Complete (Important)</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                      <li class="external">
+<!--                      <li class="external">
+                          
+                          <strong>Stats </strong> 
+                          <pre>{{ stats_advanced['investigations'] | json }}</pre>
                         <a href="#">See All Tasks</a>
-                      </li>
+                      </li>-->
                     </ul>
                   </li>
                   <!-- settings end -->
                   <!-- inbox dropdown start-->
-                  <li id="header_inbox_bar" class="dropdown">
+<!--                  <li id="header_inbox_bar" class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
                       <i class="fa fa-envelope-o"></i>
                       <span class="badge bg-theme">5</span>
@@ -162,8 +142,8 @@
                       </li>
                     </ul>
                   </li>
-                  <!-- inbox dropdown end -->
-                  <!-- notification dropdown start-->
+                   inbox dropdown end 
+                   notification dropdown start
                   <li id="header_notification_bar" class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
                       <i class="fa fa-bell-o"></i>
@@ -206,7 +186,7 @@
                         <a href="index.html#">See all notifications</a>
                       </li>
                     </ul>
-                  </li>
+                  </li>-->
                   <!-- notification dropdown end -->
 <!--                  <li *ngIf="!currentUser" class="nav-item">
                     <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
@@ -222,25 +202,29 @@
   
             </div>
 
-
-            <div class="nav notify-row2" id="top_menu">
+            <!--  search start -->
+            <div class="nav notify-row2">
                
-                <!--  search start -->
+                
                 <ul class="nav top-menu">
                     <li>
                         <!--<input type="search" placeholder="Search" aria-label="Search">-->
                         
                         <input placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
+                        <button type="submit" >Search</button>
+<!--                        <input #box (keyup)="0">
+                        <p>{{box.value}}</p>-->
                     
-                  </li>
-             </ul>
+                    </li>
+                </ul>
                 <!-- search end -->
   
             </div>  
-            <div class="nav notify-row3" id="top_menu">
+            
+            <!--  login/logout start -->
+            <div class="nav notify-row3" >
                
-                <!--  search start -->
+                <!--  login/logout start -->
                 <ul class="nav pull-right top-menu">
                         <li *ngIf="!currentUser" class="nav-item">
                                 <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
@@ -249,13 +233,13 @@
                                 <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
                             </li>
                     </ul>
-                <!-- search end -->
+                <!-- login/logout end -->
   
             </div> 
            
-            <div class="top-menu">
+<!--            <div class="top-menu">
                     
-            </div>
+            </div>-->
         <!--</snav>-->
     </header>
     
@@ -273,32 +257,32 @@
             <span class="heading">Main</span>
             <ul class="sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-home"></i> Home</a>
+                    <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fas fa-download"></i>Projects</a>
+                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-download"></i>Projects</a>
                 </li>
                 <li class="nav-item">
-                        <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Help</a>
+                        <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
                     </li>
                 <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
-                        <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-user-crown"></i> Admin</a>
+                        <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
                     </li>          
                 <li><a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
                   <ul id="AnalysisdropdownDropdown" class="collapse list-unstyled ">
                     
-                    <li class="nav-item"><a>Data import</a></li>
-                    <li class="nav-item"><a>Data annotation</a></li>
-                    <li class="nav-item"><a>Quality Check</a></li>
                     <li class="nav-item"><a>Data exploration</a></li>
-                    <li class="nav-item"><a>Differential expression analysis</a></li>    
+   
                   </ul>
                 </li>
                 
                 <li><a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Documentation </a>
                   <ul id="documentationdropdownDropdown" class="collapse list-unstyled ">
                     <li class="nav-item">
-                       <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fas fa-sitemap"></i>Ontologies description</a>
+                       <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Ontologies description</a>
+                    </li>
+                    <li class="nav-item">
+                       <a class="nav-link"  [routerLink]="['/miappe']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>MIAPPE description</a>
                     </li>
                     <li class="nav-item"><a>Data exploration</a></li>
                     <li class="nav-item"><a>Differential expression analysis</a></li>
@@ -307,8 +291,11 @@
              </ul><span class="heading">Extras</span>
              <ul class="sidebar-menu">
                 <li> <a href="#"> <i class="far fa-newspaper"></i>Publications</a></li>
-                <li> <a href="#"> <i class="fas fa-question-circle"></i>FAQ</a></li>
-                <li> <a href="#"> <i class="fas fa-cart-arrow-down"></i>Download</a></li>
+                <li> 
+                    <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i>FAQ</a>
+                    <!--<a href="#"> <i class="fas fa-question-circle"></i>FAQ</a>-->
+                </li>
+                <li> <a href="#"> <i class="fa fa-cart-arrow-down"></i>Download</a></li>
                 <li> <a href="#"> <i class="icon-picture"></i>Releases</a></li>
              </ul>
         </div>
@@ -321,8 +308,11 @@
                           pLant experImeNtal metaDatA 
                       </i>
                         </h2>-->
+
             <section class="wrapper">
-                      <router-outlet></router-outlet>
+                      <!--<router-outlet></router-outlet>-->
+                     <router-outlet (activate)="onActivate($event)"></router-outlet>
+
             </section>
             
         </section>

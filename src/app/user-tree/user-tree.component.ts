@@ -36,6 +36,7 @@ export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
     
     
+    
     disableSelect = new FormControl(false);
     
     panelOpenState = false;
@@ -43,7 +44,7 @@ export class UserTreeComponent implements OnInit{
     contextMenuPosition = { x: '0px', y: '0px' };
 
     private nodes:MiappeNode[]
-    private statistics:{};
+    public statistics:{};
     private displayed=false;
     private vertices:any=[]
     private active_node: MiappeNode;
@@ -85,26 +86,30 @@ export class UserTreeComponent implements OnInit{
           await this.get_vertices()
           this.nodes=[]
           this.nodes=this.build_hierarchy(this.vertices)
-          this.dataSource.data = this.nodes; 
+          this.dataSource.data = this.nodes;
           this.tree.treeControl.expandAll();
     }
      
     onContextMenu(event: MouseEvent, node: MiappeNode) {
         this.active_node=node
         event.preventDefault();
-        this.contextMenuPosition.x = event.clientX + 'px';
-        this.contextMenuPosition.y = event.clientY + 'px';
-        this.contextMenu.menuData = { 'node': node };
-        this.contextMenu.openMenu();
+//        this.contextMenuPosition.x = event.clientX + 'px';
+//        this.contextMenuPosition.y = event.clientY + 'px';
+//        this.contextMenu.menuData = { 'node': node };
+//        this.contextMenu.openMenu();
     //this.contextMenu.openMenu();
     }
-    onDisplay(node:MiappeNode){
-        
+    
+    onClick(node:MiappeNode){
+        console.log(node.id)
+        this.active_node=node
+        //this.contextMenu.openMenu();
     }
+   
     
     onEdit(node:MiappeNode) {
         //console.log(this.active_node.id);
-        
+        this.active_node=node
         var model_key=this.active_node.id.split("/")[1];
         var model_coll=this.active_node.id.split("/")[0];
         var model_type=this.globalService.get_model_type(this.active_node.id)
@@ -117,6 +122,7 @@ export class UserTreeComponent implements OnInit{
                         //parent_id=data
                         //console.log(data)
                         this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
+
 
                     }
             )
@@ -180,9 +186,38 @@ export class UserTreeComponent implements OnInit{
         this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });
   
     }
-
+    getStyle(node: MiappeNode): Object {
+        
+        if (node.id.includes('Investigations tree')){
+           
+           return {backgroundColor: 'white',  width: '250px', 'margin-left':'10px'}
+        }
+        else if (node.id.includes('studies')){
+            
+           return {backgroundColor: 'Gainsboro',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else if(node.id.includes('investigations')){
+            
+            return {backgroundColor: 'lightblue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else if(node.id.includes('events')){
+            
+            return {backgroundColor: 'lightyellow',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else if(node.id.includes('metadata')){
+            
+            return {backgroundColor: 'OldLace',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else{
+            return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        } 
+           
+        
+    
+    }
+ 
     onRemove(node: MiappeNode) {
-
+        this.active_node=node
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '500px', data: {validated: false}});
         
                 
@@ -211,7 +246,7 @@ export class UserTreeComponent implements OnInit{
     
     
     
-    add(model_type:string,template:boolean ) {
+    add(model_type:string,template:boolean) {
 
         var parent_key=this.active_node.id.split("/")[1];
         var model_coll=this.active_node.id.split("/")[0];
@@ -232,7 +267,7 @@ export class UserTreeComponent implements OnInit{
                     console.log(model_type)
                     console.log(this.active_node.id)
                     parent_id=""
-                    if (this.active_node.id==='History'){
+                    if (this.active_node.id==='Investigations tree'){
                         parent_id=user["_id"]
                     }
                     else{
@@ -291,7 +326,7 @@ export class UserTreeComponent implements OnInit{
         
             //console.log(this.active_node.id);
             var parent_id=""
-            if (this.active_node.id!='History'){
+            if (this.active_node.id!='Investigations tree'){
                 parent_id= this.active_node.id
             }
             else{
@@ -312,7 +347,12 @@ export class UserTreeComponent implements OnInit{
     }
   
     
-  
+    get_statistics(){
+        console.log(this.statistics)
+    }
+    identify(){
+        console.log('Hello, Im user tree!');
+    }
   
     get_vertices(){
         let user=JSON.parse(localStorage.getItem('currentUser'));
@@ -340,25 +380,40 @@ export class UserTreeComponent implements OnInit{
                     }
                 );
                 console.log(this.statistics)
+                
+
+                
             }
         )
     }
     
 
+//     onExpand(node:MiappeNode){
+//        this.active_node=node
+//        var model_key=this.active_node.id.split("/")[1];
+//        var model_coll=this.active_node.id.split("/")[0];
+//        var model_type=this.globalService.get_model_type(this.active_node.id)
+//        this.model_selected=this.globalService.get_model_type(this.active_node.id)
+//        console.log(this.model_selected)
+//    }
     
-    show_info(term:MiappeNode){
+    
+    
+    
+    show_info(node:MiappeNode){
         this.current_data=[]
         this.current_data_array=[]
-        this.active_node=term
+        this.active_node=node
+        console.log(node)
         this.displayed=true;
-        if ((term["id"]==="History") ){            
-            this.model_selected='History';
+        if ((node["id"]==="Investigations tree") ){            
+            this.model_selected='Investigations tree';
         }
-        else if((term["id"].includes("metadata_files"))){
+        else if((node["id"].includes("metadata_files"))){
             //get value for a given node
             this.model_selected="metadata_files"
-            this.model_key=term.id.split("/")[1]
-            this.globalService.get_parent(term.id).toPromise().then(
+            this.model_key=node.id.split("/")[1]
+            this.globalService.get_parent(node.id).toPromise().then(
                 data => {
                     this.parent_id=data._from;
                     //console.log(data)
@@ -366,44 +421,62 @@ export class UserTreeComponent implements OnInit{
             );
         }
         else{            
-            this.model_selected=term["id"].split("/")[0]
-            var key=term.id.split("/")[1]
-            var collection=term.id.split("/")[0]
+            this.model_selected=node["id"].split("/")[0]
+            var key=node.id.split("/")[1]
+            this.model_key=node.id.split("/")[1]
+            var collection=node.id.split("/")[0]
             
             //get value for a given node
             this.globalService.get_elem(collection,key).toPromise().then(
                 data => {
                     this.current_data=Object.keys(data);
                     this.current_data_array.push(data);
+                    node["term"].set_current_data_array(this.current_data_array)
+
                     for( var i = 0; i < this.current_data.length; i++){ 
                         if ( this.current_data[i].startsWith("_")) {
                             this.current_data.splice(i, 1);
                             i--;
                         }
                     }
+                    //console.log(this.current_data)
+                    node["term"].set_current_data(this.current_data)
+                    node["term"].set_model_key(node.id.split("/")[1])
                 
                 }
             );
             
         }
     }
-    
-    get_model_key(){
-        return this.model_key;
+    get_current_data(node:MiappeNode){
+        return node["term"].get_current_data()
+    }
+    get_current_data_array(node:MiappeNode){
+        return node["term"].get_current_data_array()
     }
     
-    get_parent_id(){
-        return this.parent_id;
+    get_model_key(node:MiappeNode){
+//        return this.model_key;
+        //console.log(node)
+        return node["term"].get_model_key()
+    }
+    
+    get_parent_id(node:MiappeNode){
+//        console.log(node["term"].get_parent_id())
+        return node["term"].get_parent_id()
+    }
+    get_model_type(node:MiappeNode){
+        return this.globalService.get_model_type(node.id)
     }
     
     private ont_transformer = (node: MiappeNode, level: number) => {
           return {
         expandable: !!node.get_children() && node.get_children().length > 0,
         name: node.name ,
-        def:node.def,
-        id:node.id,
-        fill_percentage:node.fill_percentage,
-        term:node,
+        def: node.def,
+        id: node.id,
+        fill_percentage: node.fill_percentage,
+        term: node,
         level: level,
       };
     }
@@ -421,7 +494,13 @@ export class UserTreeComponent implements OnInit{
         return this.treeControl;
     }
     get_model_selected(){
-        return this.model_selected;
+        if (this.model_selected===undefined){
+            return ""
+        }
+        else{
+            return this.model_selected;
+
+        }
     }
     expandNode(){
         console.log(this.treeControl.dataNodes[3])
@@ -430,7 +509,7 @@ export class UserTreeComponent implements OnInit{
     build_hierarchy(edges:[]):MiappeNode[]{
         var cpt=0;
         var tmp_nodes=[]
-        tmp_nodes.push(new MiappeNode("History","","",0))
+        tmp_nodes.push(new MiappeNode("Investigations tree","","",0))
         edges.forEach(
             e=>{
                 var _from:string;
@@ -456,24 +535,26 @@ export class UserTreeComponent implements OnInit{
                         }
                     }
                 )
-                console.log(short_name)
+                //console.log(short_name)
                 if (short_name==="" || short_name===undefined ){
                    short_name = e["e"]["_to"]
                 }
+                var parent_id=e["e"]["_from"]
+                
                 if (_from.includes("users")){
                     
                     if (cpt===0){
-//                        console.log(e["s"]["vertices"]["Short title"])
-                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
+                         //console.log(e)
+                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
                     }
                     else{
-//                        console.log(e["s"]["vertices"]["Short title"])
-                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
+                         //console.log(e["s"]["vertices"][1]["_key"])
+                         tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
                     }
                    
                 }
                 else{
-                    this.searchTerm(tmp_nodes,e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"],short_name,"",percent))
+                    this.searchTerm(tmp_nodes,e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
                 }
                 cpt+=1
             }

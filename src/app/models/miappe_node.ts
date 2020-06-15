@@ -4,18 +4,46 @@ export class MiappeNode {
         private data;
         public children:MiappeNode[]
         private element_type:string
+        public current_data=[]
+        public current_data_array=[]
         public id:string;
         public def:string
+        public model_type:string
+        public model_key:string
         public name:string;
         public fill_percentage:number;
+        public parent_id:string;
         //has_child = MiappeNode.has_child;
 
         public get_id(){
             return this.id;
         }
+        public get_parent_id(){
+            return this.parent_id;
+        }
+        public set_current_data_array(current_data_array:[]){
+            return this.current_data_array=current_data_array
+        }
+        public get_current_data_array(){
+            return this.current_data_array
+        }
+        public get_current_data(){
+            return this.current_data
+        }
+        public set_current_data(current_data:[]){
+            this.current_data=current_data
+        }
         
-        public get_key(){
-            return this.id.split("/")[1];
+        public get_model_key(){
+            
+            return this.model_key
+        }
+        public set_model_key(_model_key){
+            
+            this.model_key=_model_key
+        }
+        public get_model_type(){
+            return this.model_type
         }
         public get_name(){
             return this.name;
@@ -40,12 +68,16 @@ export class MiappeNode {
             this.children.push(term);
         }
 
-        constructor(id:string="", name:string="",def:string="",fill_percentage:number) {
+        constructor(id:string="", name:string="",def:string="",fill_percentage:number, parent_id:string="") {
             this.id=id;
+            this.parent_id=parent_id
             this.def=def
             this.name=name;
             this.children=[]
             this.fill_percentage=fill_percentage
+            this.current_data=[]
+            this.current_data_array=[]
+            this.model_key=this.id.split("/")[1]
             
         }
 }

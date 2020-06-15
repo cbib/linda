@@ -1,35 +1,88 @@
-
+<div class="border-head">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </div>
 <h1 mat-dialog-title>Please select a term in {{data.ontology_type}} Ontology</h1>
 <div mat-dialog-content >
 <!--<input type="text" matInput placeholder="search" #filter (keyup)="keyEvent.next($event)" [(ngModel)]="keyword">-->
 <!--<input matInput placeholder="Search" (input)="filterChanged($event.target.value)">-->
 
 <mat-tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()">
-  <!-- This is the tree node template for leaf nodes -->
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding (click)="show_info(node)"  title="{{node.def}}">
-<!--      <span style="display:inline-block; margin-left: 10px;"> 
-                        <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}">        
-                        </i>
-                    </span> -->
-    <!-- use a disabled button to provide padding for tree leaf -->
-    <button mat-icon-button disabled>
-          
-        <span style="display:inline-block; margin-left: 10px;"> 
-                        <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}"></i>
-                    </span> 
-        
-      </button>
-      
     
-  <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
-  </mat-tree-node>
-  <!-- This is the tree node template for expandable nodes -->
-  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
-    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-      <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-    </button>
-    {{node.name}}
-  </mat-tree-node>
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node  *matTreeNodeDef="let node" matTreeNodePadding title="{{node.def}}">
+        <div [ngStyle]="getStyle()">
+        <!--<span style="display:inline-block; margin-left: 10px;"> 
+        <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}">        </i>
+        </span> -->
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <button mat-icon-button disabled>
+            <span style="display:inline-block; margin-left: 10px;"> 
+                <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
+            </span> 
+        </button>
+        <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
+        
+        <mat-accordion>
+            <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{Description}}
+                     </mat-panel-title>
+
+                 </mat-expansion-panel-header>
+
+                 <div >
+                    <mat-card>
+                        <pre>Term Id: {{ node.id}}</pre>
+                        <pre>Term name: {{ node.name}}</pre>
+                        <pre>Term definition: {{ node.def }}</pre>                
+                    </mat-card>
+                 </div>
+             </mat-expansion-panel>
+
+         </mat-accordion>
+        </div>
+    </mat-tree-node>
+  
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding (click)="show_info(node)">
+<!--        <button mat-icon-button disabled>
+            <span style="display:inline-block"> 
+                <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}"></i>
+            </span> 
+        </button>-->
+        <div [ngStyle]="getStyle(node)">
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
+            </button>
+
+            <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
+            <mat-accordion>
+            <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{Description}}
+                     </mat-panel-title>
+
+                 </mat-expansion-panel-header>
+
+                 <div >
+                    <mat-card>
+                        <pre>Term Id: {{ node.id}}</pre>
+                        <pre>Term name: {{ node.name}}</pre>
+                        <pre>Term definition: {{ node.def }}</pre>                
+                    </mat-card>
+                 </div>
+             </mat-expansion-panel>
+
+         </mat-accordion>
+        </div>
+    
+    </mat-tree-node>
 </mat-tree>
     
 <div *ngIf="get_displayed()">
@@ -100,8 +153,8 @@
         
     </li>
     </ul>
-    <pre>{{ selected_term | json }}</pre>
-    <pre>{{ selected_term.id | json }}</pre>
+<!--    <pre>{{ selected_term | json }}</pre>
+    <pre>{{ selected_term.id | json }}</pre>-->
 </div>    
     
 </div>

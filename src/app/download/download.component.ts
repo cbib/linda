@@ -82,6 +82,8 @@ export class DownloadComponent implements OnInit {
                 this.mode=params['mode'];
                 this.parent_id=params['parent_id']
             console.log(params)
+            console.log(params['model_key'])
+            console.log(params['parent_id'])
             //this.investigation_key=params['key']
             console.log(this.mode);
             
@@ -106,6 +108,8 @@ export class DownloadComponent implements OnInit {
 //    }
     ngOnInit() {
         console.log(this.mode)
+        console.log(this.model_key)
+        console.log(this.model_type)
         if (this.mode==="edit"){
                 this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
                     console.log(received_data);

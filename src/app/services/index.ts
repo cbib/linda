@@ -8,7 +8,7 @@ export * from './observation-unit.service';
 export * from './global.service';
 export * from './upload.service';
 export * from './ontologies.service';
-
+export * from './ad.service';
 
 
 

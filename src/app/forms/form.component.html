@@ -1,12 +1,61 @@
 <!--{{diagnostic}}-->
-<alert></alert>
+
     <div>
+        <div class="border-head">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        <div class="form-group text-center" style="float: right;">
+
+                <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
+                    <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> 
+                    Back
+                </button><span style="margin-right:10px;"></span>
+                
+                <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger"> 
+                    <span style="margin-right:10px;"></span> 
+                    Cancel
+                </button><span style="margin-right:10px;"></span>
+
+                <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)" > 
+                    Next 
+                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                </button><span style="margin-right:10px;"></span>
+                
+                
+                <button  class="btn btn-xs btn-info" type="submit" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')" (click)="submit(modelForm)"> 
+                    Submit
+                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                </button><span style="margin-right:10px;"></span>
+                
+                
+                <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
+                
+                <div class="[ btn-group ]">
+                    <label for="fancy-checkbox-info" class="[ btn btn-info ]">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
+                        Save as template
+                    </label>
+                </div>
+
+
+        </div>
+        </h3>
+            
+        </div>
+        <alert></alert>
         <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
+        
+        
         <p>{{model.Definition}}</p>
         <form [formGroup]="modelForm" >
             <div class="form-group" *ngFor="let key of dict_array ; index as i;">
                 <div *ngIf="model[key['key']].Level==level">
                     <label for="{{key['key']}}">{{key['key']}}</label>
+                    
+                    <!--{{f[key['key']].errors.minLength}}-->
                     <span style="display:inline-block; margin-left: 10px;"> 
                         <i style="color :lightblue" class="fas fa-info-circle" title="{{model[key['key']].Definition}}"></i>
                     </span>  
@@ -24,31 +73,55 @@
                             <option value='CO_715'>Crop Ontology 715 </option>
                             </select> 
                         <span *ngIf="validated_term[key['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
-                            <input style="color:lightgrey"  mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                            <input style="color:black"  mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </span>
                             
                     <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[key].Example}}" type="text" formControlName="{{key}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
 
                         <span *ngIf="validated_term[key['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
-                            <input style="color:black"  mdbInput value="{{selected_term.id}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                            <input style="color:black"  mdbInput value="{{selected_term.id}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors }"/> 
+                            
                         </span>
                     </div>
+                    
                     <div *ngIf="!model[key['key']].Format.includes('Ontology')"> 
                        <div *ngIf="!key['key'].includes('date')">
-                        <input *ngIf="!model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
-                            <textarea *ngIf="model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" ></textarea> 
+                        <input *ngIf="!model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors }"/> 
+                        <textarea *ngIf="model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors}" ></textarea> 
+                            <div *ngIf="f[key['key']].errors" class="invalid-feedback">
+                                <div style="color :red" *ngIf="f[key['key']].errors.required">{{key['key']}} is required</div>
+                                <div style="color :red" *ngIf="f[key['key']].errors.minlength">minimum length is required</div>
+                                <div style="color :red" *ngIf="f[key['key']].errors.create">Unique ID is required - already used !! </div>
+
+                            </div>
                         </div>
                         <div *ngIf="key['key'].includes('date')">
                             <input mdbInput placeholder="{{model[key['key']].Example}}" type="date" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </div>
                     </div>
+                    
+<!--                    <div *ngIf="key['key'].includes('ID')">
+                        {{f[key['key']].errors.create}}
+                            {{f[key['key']].errors}}
+                        <pre>{{ f[key['key']].errors | json }}</pre>
+                        Object.keys(f[key['key']].errors).length === 0
+                         f[key['key']].errors"
+                        <div *ngIf="f[key['key']].errors" class="invalid-feedback">
 
-                    <div *ngIf="key['key'].includes('ID')">
-                        <div *ngIf="submitted && f[key['key']].errors" class="invalid-feedback">
-                            <div style="color :red" *ngIf="f[key['key']].errors.create ">Unique ID is required</div>
-                            <div style="color :red" *ngIf="f[key['key']].errors.minLength ">Unique ID is required</div>
+                            <div style="color :yellow" *ngIf="f[key['key']].errors.create">Unique ID is required</div>
                         </div>
                     </div>
+                    <div *ngIf="!key['key'].includes('ID')">
+                        {{f[key['key']].errors.create}}
+                            {{f[key['key']].errors}}
+                        <pre>{{ f[key['key']].errors | json }}</pre>
+                        Object.keys(f[key['key']].errors).length === 0
+                         f[key['key']].errors"
+                        <div *ngIf="f[key['key']].errors" class="invalid-feedback">
+
+                            <div style="color :red" *ngIf="f[key['key']].errors.minLength">minimum length is required</div>
+                        </div>
+                    </div>-->
                     <!--to force date format-->
                     <!--<div *ngIf="submitted && f[key].errors && key.includes('date')" class="invalid-feedback">
                         <div style="color :red" *ngIf="f[key].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
@@ -68,40 +141,15 @@
                     
                  </div>
             </div>
+<!--            <div class="form-group col">
+                    <label>Password</label>
+                    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f.password.errors }" />
+                    <div *ngIf=" f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.errors.required">Password is required</div>
+                        <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                    </div>
+                </div>-->
         </form>
-        <div class="form-group text-center">
-
-                <button class="btn btn-outline-rounded btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
-                    <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> Back
-                </button><span style="margin-right:10px;"></span>
-                
-                <button (click)="cancel(modelForm)" class="btn btn-outline-rounded btn-info"> 
-                    <span style="margin-right:10px;"></span> Cancel
-                </button><span style="margin-right:10px;"></span>
-
-                <button *ngIf="level<max_level" class="btn btn-outline-rounded btn-info" (click)="goToNext(modelForm,level)"> Next 
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button><span style="margin-right:10px;"></span>
-                
-                
-                <button *ngIf="level==max_level" class="btn btn-outline-rounded btn-info" type="submit" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')" (click)="submit(modelForm)"> Submit
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button><span style="margin-right:10px;"></span>
-                
-                
-                <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
-                
-                <div class="[ btn-group ]">
-                    <label for="fancy-checkbox-info" class="[ btn btn-info ]">
-                        <span class="[ glyphicon glyphicon-ok ]"></span>
-                        <span> </span>
-                    </label>
-                    <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
-                        Save as template
-                    </label>
-                </div>
-
-
-        </div>
+        
         <!--<pre>{{ modelForm.value | json }}</pre>-->
     </div>

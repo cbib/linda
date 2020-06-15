@@ -154,18 +154,34 @@ export class OntologyTreeComponent {
     todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
         this.checklistSelection.toggle(node);
     }
+    
+    getStyle(): Object {
+        
+        return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+
+    }
+    
+    
+    
     show_info(term:OntologyTerm){
         
-        if (term["term"].children.length==0){                        
-            this.selected_term=term
+//        if (term["term"].children.length==0){                        
+//            this.selected_term=term
+//            this.data.selected_term=this.selected_term
+//            this.data.selected_set=this.selected_set
+//            console.log(this.selected_term)
+//            this.active_node=term
+//            this.displayed=true;
+//            this.context_term=term["term"].get_context()
+//
+//        }
+        this.selected_term=term
             this.data.selected_term=this.selected_term
             this.data.selected_set=this.selected_set
             console.log(this.selected_term)
             this.active_node=term
             this.displayed=true;
             this.context_term=term["term"].get_context()
-
-        }
 //        else{
 //            
 //        }
@@ -181,7 +197,7 @@ export class OntologyTreeComponent {
     get_displayed(){
         return this.displayed
     }
-    
+
     
     build_eo_isa_hierarchy(ontology:{}):OntologyTerm[]{
         var cpt=0;

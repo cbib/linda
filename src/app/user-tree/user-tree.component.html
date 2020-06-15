@@ -2,32 +2,31 @@
 
 <div id="user-tree"> 
     <div class="border-head">
-            <h3>
-                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a>
-            </h3>
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        </h3>
     </div>
     <div>  
-
+<!--        <mat-card>
+            <p>Below is the general tree of all your projects in LINDA database. You will find it under the Investigations tree node. </p>
+        </mat-card>-->
         <mat-card>
-            <p>Below is the general tree of all your projects in LINDA database. You will find it under the History node. </p>
-        </mat-card>
-        <mat-card>
-            <p>
+            <p> Below is the general tree of all your projects in LINDA database.
                 Please feel free to describe as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
-                You can remove more than one node at the time if you use the right click button on History node and choose remove selected option. 
+                You can remove more than one node at the time if you use the right click button on Investigations tree node and choose remove selected option. 
             </p>
-            <!--<div class="warning-msg"><i class="fa fa-warning"></i>You need to first select and check histories you want to suppress.</div>-->
+        <!--<div class="warning-msg"><i class="fa fa-warning"></i>You need to first select and check histories you want to suppress.</div>-->
         </mat-card>
     </div> 
     <div> 
         <mat-card>
-            <mat-accordion>
+<!--            <mat-accordion>
                 <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <h4>Configure options</h4>
                         </mat-panel-title>
-                        <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+                        <mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>
                     </mat-expansion-panel-header>
                     <p>
                         <mat-checkbox [formControl]="disableSelect">Multiselection</mat-checkbox>
@@ -43,8 +42,8 @@
                         </mat-select>
                     </mat-form-field>
 
-<!--                    <h4>native html select</h4>
--->                    <mat-form-field>
+                    <h4>native html select</h4>
+                    <mat-form-field>
                         <mat-label>Choose an option</mat-label>
                         <select matNativeControl [disabled]="disableSelect.value">
                             <option value="" selected></option>
@@ -55,11 +54,11 @@
                         </select>
                     </mat-form-field>
                 </mat-expansion-panel><br>
-           </mat-accordion>
-            <mat-drawer-container class="example-container" autosize>
-                <mat-drawer #drawer class="example-sidenav" mode="over" position="start">
+           </mat-accordion>-->
+            <mat-drawer-container  class="example-container" >
+<!--                <mat-drawer  #drawer class="example-sidenav" mode="over" position="start">
                     <h1>Description</h1>
-                    <div *ngIf="get_model_selected()==='History'">
+                    <div *ngIf="get_model_selected()==='Investigations tree'">
                         <mat-card>You have {{ this.statistics['investigations'] }} investigations in your history</mat-card>
                     </div>
                     <table *ngIf="get_model_selected()!=='metadata_files'" class="table table-hover table-bordered  table-striped text-center" >
@@ -71,59 +70,176 @@
                         </tbody>
                     </table>
                       <div *ngIf="get_model_selected()==='metadata_files'">
-                          <app-download [parent_id]="get_parent_id()" [model_key]="get_model_key()" model_type="metadata_file" mode="edit" ></app-download>
+                          <app-download [parent_id]="get_parent_id(node)" [model_key]="get_model_key(node)" [model_type]="get_model_type(node)" mode="edit" ></app-download>
                       </div>
-                </mat-drawer>
-                <div class="example-sidenav-content">
-                    <mat-tree #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"  class="col-md-12 panel" >
+                </mat-drawer>-->
+                <div  class="example-sidenav-content"  >
+                    <mat-tree  #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"  class="col-md-12 panel" >      
                         
+                        <!--#############@######################################-->
                         <!-- This is the tree node template for leaf nodes -->
-                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding   (contextmenu)="onContextMenu($event, node)"  title="{{node.def}}" >
-                             <span style="display:outline-block; margin-right: 20px;"> 
-                                 <i style="color : #006666" class="fas fa-info-circle" title="{{node.def}}"></i>
-                                      </span> 
-                            <!-- use a disabled button to provide padding for tree leaf -->
-                            <button mat-stroked-button (click)="show_info(node);drawer.toggle()" class="btn-info" title="{{node.def}}">
-                                    <mat-icon>description</mat-icon>
-                            </button>
-                            <button mat-icon-button>
-                                <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
-                                <i *ngIf="multiple_selection===false">{{node.name}}</i>
-                                <mat-progress-bar mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
-                            </button>
-                            
-                            <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
-                        </mat-tree-node>
+                        <!--#############@######################################-->
+
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding  title="{{node.def}}" >   
+                             <div [ngStyle]="getStyle(node)">
+                                 <!-- use a disabled button to provide padding for tree leaf -->
+                                 <button mat-icon-button style="margin-right:  200px" >
+                                     <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
+                                     <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
+                                     <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>-->
+
+                                     <i style="margin-right:  50px; margin-left:  15px" *ngIf="multiple_selection===false">{{node.name}}</i>
+                                 </button>
+                                 <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                 <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
+                                 <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
+
+                                 <a  style="float: right;" *ngIf="node.id.includes('Investigations tree')"  > 
+                                     <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                 </a>
+                                 <a  style="float: right;" *ngIf="node.id.includes('studies')"> 
+                                    <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                 </a>
+                                 <a style="float: right;" *ngIf="node.id.includes('investigations')" > 
+                                    <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                 </a>
+                                 <a style="float: right;" *ngIf="node.id.includes('observation_units')"> 
+                                    <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                 </a>
+                                 <mat-accordion>
+                                     <mat-expansion-panel *ngIf="get_model_selected()==='Investigations tree'" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+
+                                                 <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                             </mat-panel-title>
+
+                                         </mat-expansion-panel-header>
+
+                                         <div >
+                                            <mat-card>You have {{ this.statistics['investigations'] }} investigations in your history</mat-card>
+                                         </div>
+                                     </mat-expansion-panel>
+                                     
+                                     <mat-expansion-panel *ngIf="!node.id.includes('Investigations tree') && !node.id.includes('metadata_files')" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                 <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
+
+                                                 <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                             </mat-panel-title>
+
+                                         </mat-expansion-panel-header>
+                                        
+                                         <table  class="table table-hover table-bordered  table-striped text-center" >
+                                             <tbody >
+                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
+                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
+                                                 <td style="font-size:14px;text-align: center; " scope="row">{{get_current_data_array(node)[0][key]}}</td>
+                                                 </tr>
+                                             </tbody>
+                                         </table>
+                                         
+                                    
+                                     </mat-expansion-panel>
+                                     
+                                     <mat-expansion-panel *ngIf="node.id.includes('metadata_files')" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+
+                                                 <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                             </mat-panel-title>
+
+                                         </mat-expansion-panel-header>
+
+                                         <div>
+<!--                                             <p>{{get_parent_id(node)}}</p>
+                                             <p>{{get_model_key(node)}}</p>-->
+              
+                                             <app-download [parent_id]="get_parent_id(node)" [model_key]="get_model_key(node)" model_type="metadata_file" mode="edit" ></app-download>
+                                         </div>  
+                                    
+                                     </mat-expansion-panel>
+                                 </mat-accordion>
+                                 
+                             </div>
+                         </mat-tree-node>
                         
                         
+                        
+                        <!--#############@######################################-->
                         <!-- This is the tree node template for expandable nodes -->
-                        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding (click)="drawer.toggle()" (contextmenu)="onContextMenu($event, node)" >
-                            <span style="display:inline-block; margin-right: 20px;"> 
-                                 <i style="color : #006666" class="fas fa-info-circle" title="{{node.def}}"></i>
-                            </span> 
-                            
-                            <button mat-stroked-button (click)="show_info(node)" class="btn-info">
-                                <mat-icon>description</mat-icon>
-                            </button>
-                            
-                            <button *ngIf="!node.id.includes('History')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-                                <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-                                <i *ngIf="multiple_selection===false">{{node.name}}</i><mat-progress-bar mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
-                            </button>
-                            
-                            <button *ngIf="node.id.includes('History')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-                                <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-                                {{node.id}}
-                            </button>
+                        <!--#############@######################################-->
 
-                            <mat-checkbox *ngIf="!node.id.includes('History') && multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding >
+                            
+                            <div [ngStyle]="getStyle(node)">
+                                
+                               
+                          
+                                <button *ngIf="node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                    <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
+                                    {{node.id}}
+                                </button>
+                                <a style="float: right;" *ngIf="node.id.includes('Investigations tree')"> 
+                                     <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                </a>
+                                
+                                <button style="margin-right: 200px"  *ngIf="!node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                    <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
+                                    <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
+                                    <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>-->
+
+                                    <i style='padding-left: 15px' *ngIf="multiple_selection===false">{{node.name}}</i>
+                                </button>
+                                
+                                <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
+                                <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
+                                
+                                <a style="float: right;" *ngIf="node.id.includes('studies')"  > 
+                                    <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                </a>
+                                <a style="float: right;" *ngIf="node.id.includes('investigations')" > 
+                                    <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                </a>
+                                <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
+                                    <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                </a>
+                                <mat-accordion *ngIf="!node.id.includes('Investigations tree')">
+                                    <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false" [expanded]="isFirst">
+                                    
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+
+                                                <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
+                                                <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox>
+                                            </mat-panel-title>
+
+                                         </mat-expansion-panel-header>
+
+                                        <table *ngIf="get_model_selected()!=='metadata_files'" class="table table-hover table-bordered  table-striped text-center" >
+                                             <tbody >
+                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
+                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
+                                                 <td style="font-size:14px;text-align: center; " scope="row">{{get_current_data_array(node)[0][key]}}</td>
+                                                 </tr>
+                                             </tbody>
+                                         </table>
+
+                                    
+                                    </mat-expansion-panel>
+                                    
+                                </mat-accordion>
+                            </div>            
                         </mat-tree-node>
-
                     </mat-tree>
                 </div>
             </mat-drawer-container>  
         </mat-card>    
-   
         <div style="visibility: hidden; position: fixed"
             [style.left]="contextMenuPosition.x"
             [style.top]="contextMenuPosition.y"
@@ -136,44 +252,36 @@
             </ng-template>
         </mat-menu>
         <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
-
-
         <mat-menu #contextMenu="matMenu">
             <ng-template matMenuContent let-node="node">
-                <button *ngIf="!node.id.includes('History')" mat-menu-item (click)="onEdit(node)">Edit</button>
-                <button *ngIf="!node.id.includes('History')" mat-menu-item (click)="onRemove(node)" confirm="Are you sure?">Remove</button>
-                <button *ngIf="node.id.includes('History')" mat-menu-item [matMenuTriggerFor]="userMenu" >Add</button>
-                <!--<button *ngIf="node.id.includes('History')" mat-menu-item [matMenuTriggerFor]="multipleMenu">Multiple selection</button>-->
-                <!--<button *ngIf="node.id.includes('History')" mat-menu-item (click)="remove_selected(node)">Remove selected</button>-->
+                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onEdit(node)">Edit</button>
+                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onRemove(node)" confirm="Are you sure?">Remove</button>
+                <button *ngIf="node.id.includes('Investigations tree')" mat-menu-item [matMenuTriggerFor]="userMenu" >Add</button>
+                <!--<button *ngIf="node.id.includes('Investigations tree')" mat-menu-item [matMenuTriggerFor]="multipleMenu">Multiple selection</button>-->
+                <!--<button *ngIf="node.id.includes('Investigations tree')" mat-menu-item (click)="remove_selected(node)">Remove selected</button>-->
                 <button *ngIf="node.id.includes('investigations')" mat-menu-item [matMenuTriggerFor]="investigationMenu">Add</button>
                 <button *ngIf="node.id.includes('studies')" mat-menu-item [matMenuTriggerFor]="studyMenu">Add</button>
                 <button *ngIf="node.id.includes('observation_units')" mat-menu-item [matMenuTriggerFor]="OUMenu">Add</button>
             </ng-template>
         </mat-menu> 
-
         <mat-menu #userMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="userMenusecond" >Investigation</button>
         </mat-menu>
-
         <mat-menu #userMenusecond="matMenu">
             <button mat-menu-item (click)="add('investigation',false)">From Scratch</button>
             <button mat-menu-item (click)="add('investigation',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #multipleMenu="matMenu">
             <button mat-menu-item (click)="activate_multiple_selection(false)">Deactivate</button>
             <button mat-menu-item (click)="activate_multiple_selection(true)">Activate</button>
         </mat-menu>
-
         <mat-menu #investigationMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond">Study</button>
         </mat-menu>
-
         <mat-menu #investigationMenusecond="matMenu">
             <button mat-menu-item (click)="add('study',false)">From Scratch</button>
             <button mat-menu-item (click)="add('study',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #studyMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="observation_unitMenu">Observation unit</button>
             <button mat-menu-item [matMenuTriggerFor]="experimental_factorMenu">Experimental factor</button>
@@ -184,52 +292,39 @@
             <button mat-menu-item [matMenuTriggerFor]="environmentMenu">Dynamic variable</button>
             <button mat-menu-item (click)="add('metadata_file',false)">Metadata file</button>
         </mat-menu>
-
         <mat-menu #observation_unitMenu="matMenu">
             <button mat-menu-item (click)="add('observation_unit',false)">From Scratch</button>
             <button mat-menu-item (click)="add('observation_unit',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #experimental_factorMenu="matMenu">
             <button mat-menu-item (click)="add('experimental_factor',false)">From Scratch</button>
             <button mat-menu-item (click)="add('experimental_factor',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #biological_materialMenu="matMenu">
             <button mat-menu-item (click)="add('biological_material',false)">From Scratch</button>
             <button mat-menu-item (click)="add('biological_material',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #data_fileMenu="matMenu">
             <button mat-menu-item (click)="add('data_file',false)">Add</button>
             <!--<button mat-menu-item (click)="add('data_file',true)">From templates</button>-->
         </mat-menu>
-
         <mat-menu #observed_variableMenu="matMenu">
             <button mat-menu-item (click)="add('observed_variable',false)">From Scratch</button>
             <button mat-menu-item (click)="add('observed_variable',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #eventMenu="matMenu">
             <button mat-menu-item (click)="add('event',false)">From Scratch</button>
             <button mat-menu-item (click)="add('event',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #environmentMenu="matMenu">
             <button mat-menu-item (click)="add('environment',false)">From Scratch</button>
             <button mat-menu-item (click)="add('environment',true)">From templates</button>
         </mat-menu>
-
         <mat-menu #OUMenu="matMenu">
             <button mat-menu-item (click)="add('sample',false)">Sample</button>
             <button mat-menu-item (click)="add('event',false)">Event</button>
             <button mat-menu-item (click)="add('biological_material',false)">Biological material</button>
             <button mat-menu-item (click)="add('experimental_factor',false)">Experimental factor</button>
-        </mat-menu>
-        
-        
-        
-        
-        
+        </mat-menu>  
     </div>
 </div>

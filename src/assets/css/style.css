@@ -100,7 +100,7 @@ Website: http://Alvarez.is/
 /* BASIC THEME CONFIGURATION */
 body {
     color: #797979;
-	background: #eaeaea;
+	/*background: #eaeaea;*/
     padding: 0px !important;
     margin: 0px !important;
     font-size:13px;
@@ -521,6 +521,7 @@ a.logo span {
 .notify-row {
     float: left;
     margin-top: 15px;
+    margin-bottom: 15px;
     margin-left: 92px;
 }
 
@@ -532,12 +533,15 @@ a.logo span {
 }
 
 .notify-row2 {
-    float: left;
+    margin-bottom: 15px;
+    width: 250px;
     margin-top: 15px;
     margin-left: 292px;
+    float: left;
 }
 
 .notify-row2 .notification span.label {
+    
     display: inline-block;
     height: 18px;
     width: 20px;
@@ -549,9 +553,12 @@ a.logo span {
 }*/
 
 .notify-row3 {
-    float: left;
+
+    margin-bottom: 15px;
     margin-top: 15px;
+    width: 150px;
     margin-left: 42px;
+    float: right;
 }
 
 .notify-row3 .notification span.label {
@@ -588,6 +595,20 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 }
 
 .notify-row .badge {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    z-index: 100;
+}
+
+.notify-row2 .badge {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    z-index: 100;
+}
+
+.notify-row3 .badge {
     position: absolute;
     right: -10px;
     top: -10px;
