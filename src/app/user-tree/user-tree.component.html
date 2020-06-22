@@ -251,7 +251,7 @@
                 <button mat-menu-item (click)="remove_selected(node)"><span>Remove selected</span></button>
             </ng-template>
         </mat-menu>
-        <button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>
+        <!--<button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>-->
         <mat-menu #contextMenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onEdit(node)">Edit</button>
