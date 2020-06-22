@@ -5,9 +5,14 @@ import { AdComponent }      from './ad.component';
 @Component({
   template: `
     <div class="job-ad">
-      <h4>{{data.headline}}</h4>
+      
+    <!--<mat-card style="height: 350px">-->
+            <h4>{{data.headline}}</h4>
+          <a href="https://cgfb.u-bordeaux.fr/">
+            <img src="{{data.body}}">
+          </a>
 
-      {{data.body}}
+      <!--</mat-card>-->
     </div>
   `
 })

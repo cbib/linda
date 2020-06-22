@@ -5,6 +5,8 @@ import { AdItem }      from './ad-item';
 import { AdComponent } from './ad.component';
 
 @Component({
+  //<a href="https://cgfb.u-bordeaux.fr/"><img src="assets/images/cbib.jpg" ></a>
+
   selector: 'app-ad-banner',
   template: `
               <div class="ad-banner-example">
@@ -22,8 +24,11 @@ export class AdBannerComponent implements OnInit, OnDestroy {
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
+    console.log(window.location.href )
+
     this.loadComponent();
     this.getAds();
+    
   }
 
   ngOnDestroy() {
