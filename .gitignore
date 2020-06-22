@@ -53,3 +53,4 @@ package.json
 /dist
 /nbproject/private/
 /src/app/constants_1.ts
+/src/app/constants.ts
