@@ -8,8 +8,8 @@ export class AdService {
   getAds() {
     
     //console.log(window.location.href )
-    var image_path_cbib=window.location.href+'assets/images/cbib.jpg'
-    var image_path_inra='assets/images/inra.jpg'
+    var image_path_cbib='assets/images/cbib.jpg'
+    var image_path_inra='assets/images/inrae.png'
     return [
 //      new AdItem(HeroProfileComponent, {name: 'Bombasto', bio: 'Brave as they come'}),
 //
@@ -22,7 +22,7 @@ export class AdService {
                                         //body: '<a href="https://cgfb.u-bordeaux.fr/"><img src="assets/images/cbib.jpg"></a>'}),
                                         body: image_path_cbib}),
                                         
-      new AdItem(PubAdComponent,   {headline: 'INRA',
+      new AdItem(PubAdComponent,   {headline: 'INRAE',
                                         //body: '<a href="https://cgfb.u-bordeaux.fr/"><img src="assets/images/cbib.jpg"></a>'}),
                                         body: image_path_inra}),
                                         //body: image_path}),
