@@ -51,17 +51,27 @@
         
         <p>{{model.Definition}}</p>
         <form [formGroup]="modelForm" >
-            <div class="form-group" *ngFor="let key of dict_array ; index as i;">
-                <div *ngIf="model[key['key']].Level==level">
-                    <label for="{{key['key']}}">{{key['key']}}</label>
+            
+            
+            
+            <div class="form-group" *ngFor="let field of field_array ; index as i;">
+                <div *ngIf="model[field['key']].Level==level">
+                    <label for="{{field['key']}}">{{field['key']}}</label>
+<!--                    <mat-form-field appearance="fill">
+                        <mat-label>Toppings</mat-label>
+                        <mat-select [formControl]="ont" multiple>
+                        <mat-option *ngFor="let ont of ontologies" [value]="ont">{{ont}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>-->
                     
-                    <!--{{f[key['key']].errors.minLength}}-->
+                    
+                    <!--{{f[field['key']].errors.minLength}}-->
                     <span style="display:inline-block; margin-left: 10px;"> 
-                        <i style="color :lightblue" class="fas fa-info-circle" title="{{model[key['key']].Definition}}"></i>
+                        <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
                     </span>  
-                    <div *ngIf="model[key['key']].Format.includes('Ontology')">
-                        <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[key].Example}}" type="text" formControlName="{{key}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
-                        <select name="nom" size="1" (change)="onSelect($event.target.value,key['key'])">
+                    <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                        <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
+                        <select name="nom" size="1" (change)="onSelect($event.target.value,field['key'])">
                             <option value="" disabled>Select Ontology</option>
                             <option value='XEO'>XEO</option>
                             <option value='EO'>EO</option>
@@ -72,71 +82,69 @@
                             <option value='CO_20'>Crop Ontology 20 </option>
                             <option value='CO_715'>Crop Ontology 715 </option>
                             </select> 
-                        <span *ngIf="validated_term[key['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
-                            <input style="color:black"  mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                        <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
+                            <input style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </span>
                             
-                    <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[key].Example}}" type="text" formControlName="{{key}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
+                    <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
 
-                        <span *ngIf="validated_term[key['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
-                            <input style="color:black"  mdbInput value="{{selected_term.id}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors }"/> 
-                            
+                        <span *ngIf="validated_term[field['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
+                            <input style="color:black"  mdbInput value="{{selected_term.id}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
                         </span>
                     </div>
                     
-                    <div *ngIf="!model[key['key']].Format.includes('Ontology')"> 
-                       <div *ngIf="!key['key'].includes('date')">
-                        <input *ngIf="!model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors }"/> 
-                        <textarea *ngIf="model[key['key']].Format.includes('Free text')" mdbInput placeholder="{{model[key['key']].Example}}" type="text" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[key['key']].errors}" ></textarea> 
-                            <div *ngIf="f[key['key']].errors" class="invalid-feedback">
-                                <div style="color :red" *ngIf="f[key['key']].errors.required">{{key['key']}} is required</div>
-                                <div style="color :red" *ngIf="f[key['key']].errors.minlength">minimum length is required</div>
-                                <div style="color :red" *ngIf="f[key['key']].errors.create">Unique ID is required - already used !! </div>
-
+                    <div *ngIf="!model[field['key']].Format.includes('Ontology')"> 
+                       <div *ngIf="!field['key'].includes('date')">
+                        <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
+                        <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" ></textarea> 
+                            <div *ngIf="f[field['key']].errors" class="invalid-feedback">
+                                <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is required</div>
+                                <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is required</div>
+                                <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required - already used !! </div>
                             </div>
                         </div>
-                        <div *ngIf="key['key'].includes('date')">
-                            <input mdbInput placeholder="{{model[key['key']].Example}}" type="date" formControlName="{{key['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                        <div *ngIf="field['key'].includes('date')">
+                            <input mdbInput placeholder="{{model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </div>
                     </div>
                     
-<!--                    <div *ngIf="key['key'].includes('ID')">
-                        {{f[key['key']].errors.create}}
-                            {{f[key['key']].errors}}
-                        <pre>{{ f[key['key']].errors | json }}</pre>
-                        Object.keys(f[key['key']].errors).length === 0
-                         f[key['key']].errors"
-                        <div *ngIf="f[key['key']].errors" class="invalid-feedback">
+<!--                    <div *ngIf="field['key'].includes('ID')">
+                        {{f[field['key']].errors.create}}
+                            {{f[field['key']].errors}}
+                        <pre>{{ f[field['key']].errors | json }}</pre>
+                        Object.keys(f[field['key']].errors).length === 0
+                         f[field['key']].errors"
+                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
 
-                            <div style="color :yellow" *ngIf="f[key['key']].errors.create">Unique ID is required</div>
+                            <div style="color :yellow" *ngIf="f[field['key']].errors.create">Unique ID is required</div>
                         </div>
                     </div>
-                    <div *ngIf="!key['key'].includes('ID')">
-                        {{f[key['key']].errors.create}}
-                            {{f[key['key']].errors}}
-                        <pre>{{ f[key['key']].errors | json }}</pre>
-                        Object.keys(f[key['key']].errors).length === 0
-                         f[key['key']].errors"
-                        <div *ngIf="f[key['key']].errors" class="invalid-feedback">
+                    <div *ngIf="!field['key'].includes('ID')">
+                        {{f[field['key']].errors.create}}
+                            {{f[field['key']].errors}}
+                        <pre>{{ f[field['key']].errors | json }}</pre>
+                        Object.keys(f[field['key']].errors).length === 0
+                         f[field['key']].errors"
+                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
 
-                            <div style="color :red" *ngIf="f[key['key']].errors.minLength">minimum length is required</div>
+                            <div style="color :red" *ngIf="f[field['key']].errors.minLength">minimum length is required</div>
                         </div>
                     </div>-->
                     <!--to force date format-->
-                    <!--<div *ngIf="submitted && f[key].errors && key.includes('date')" class="invalid-feedback">
-                        <div style="color :red" *ngIf="f[key].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
+                    <!--<div *ngIf="submitted && f[field].errors && field.includes('date')" class="invalid-feedback">
+                        <div style="color :red" *ngIf="f[field].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
                     </div>-->
                     
-                    <!--<div *ngIf="key.includes('Investigation unique ID')">
-                        <div *ngIf="f[key].errors" class="invalid-feedback">
-                            <pre>{{f[key].errors| json }}</pre>
-                            <div style="color :red" *ngIf="f[key].errors.create ">Study Unique ID is required</div>
+                    <!--<div *ngIf="field.includes('Investigation unique ID')">
+                        <div *ngIf="f[field].errors" class="invalid-feedback">
+                            <pre>{{f[field].errors| json }}</pre>
+                            <div style="color :red" *ngIf="f[field].errors.create ">Study Unique ID is required</div>
                         </div>
                     </div>
-                    <pre>{{f[key].errors| json }}</pre>
-                    <div *ngIf="f[key].errors && key.includes('date')" class="invalid-feedback">
-                        <div style="color :red" *ngIf="f[key].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
-                        <pre>{{f[key].errors.ptDate| json }}</pre>
+                    <pre>{{f[field].errors| json }}</pre>
+                    <div *ngIf="f[field].errors && field.includes('date')" class="invalid-feedback">
+                        <div style="color :red" *ngIf="f[field].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
+                        <pre>{{f[field].errors.ptDate| json }}</pre>
                     </div>-->
                     
                  </div>

@@ -34,7 +34,7 @@ export class OntologiesService {
         //console.log(body);
         return body || { };
     }
-  get_ontologies(ontology_id:string){
+  get_ontology(ontology_id:string){
     return this.http.get(this.APIUrl+"get_ontology/"+ontology_id).pipe(map(this.extractData));
 
   }

@@ -34,6 +34,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     marked = false;
     theCheckbox = false;
     modelForm: FormGroup;
+    ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']
     submitted = false;
     loading = false;
     model_id:string;
@@ -41,7 +42,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     model:any = [];
     model_to_edit:any = [];
     levels=[] 
-    dict_array:any=[];
+    field_array:any=[];
     keys:any = [];
 
     constructor(
@@ -78,9 +79,11 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
     
     onSelect(values:string, key:string) {
+        console.log(values)
         const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[]}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
+                console.log(result)
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
                 this.selected_term = result.selected_term;
@@ -129,7 +132,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         this.globalService.get_model(this.model_type).toPromise().then(data => {
             this.model = data;
             this.keys=Object.keys(this.model);
-            this.dict_array=[]
+            this.field_array=[]
             for( var i = 0; i < this.keys.length; i++){     
                 if ( this.keys[i].startsWith("_") || this.keys[i].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                     this.keys.splice(i, 1); 
@@ -139,19 +142,19 @@ export class FormComponent implements OnInit//, AfterViewInit
                     var dict={}
                     dict["key"]=this.keys[i]
                     dict["pos"]=this.model[this.keys[i]]["Position"]
-                    this.dict_array.push(dict)
+                    dict["extra_infos"]=[]
+                    this.field_array.push(dict)
                 }
-                
+             
             }
-            console.log(this.dict_array)
-
-            this.dict_array=this.dict_array.sort(function (a, b) {return a.pos - b.pos;});
+            
+            this.field_array=this.field_array.sort(function (a, b) {return a.pos - b.pos;});
 
             if (this.mode ==="create"){
 
                 let attributeFilters = {};
 
-                this.dict_array.forEach(attr => {
+                this.field_array.forEach(attr => {
                     
                     this.validated_term[attr["key"]]={selected:false}
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
@@ -176,7 +179,7 @@ export class FormComponent implements OnInit//, AfterViewInit
             else{  
                 let attributeFilters = [];
 
-                this.dict_array.forEach(attr => {  
+                this.field_array.forEach(attr => {  
                     console.log(attr["key"])
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition") ){
 
@@ -200,7 +203,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                     }
                 });
                 this.modelForm= this.formBuilder.group(attributeFilters);
-            }                
+            }
+            console.log(this.field_array)         
+            console.log(this.modelForm.value)         
         });
     };
     
