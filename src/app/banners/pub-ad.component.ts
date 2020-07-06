@@ -8,8 +8,8 @@ import { AdComponent }      from './ad.component';
       
     <!--<mat-card style="height: 350px">-->
             <h4>{{data.headline}}</h4>
-          <a href="https://cgfb.u-bordeaux.fr/">
-            <img src="{{data.body}}">
+          <a href={{data.link}}>
+            <img style="width:50%;height:50%" src="{{data.body}}">
           </a>
 
       <!--</mat-card>-->
