@@ -81,7 +81,7 @@ export class OntologyTreeComponent {
             console.log(this.data);
             this.ontology_type=this.data.ontology_type;
             this.selected_set=this.data.selected_set;
-            console.log(this.selected_set);
+            //console.log(this.selected_set);
             this.ontology_tree=[];
             this.ontologyTerms=[];
             this.ontologyContext=[];
@@ -151,7 +151,7 @@ export class OntologyTreeComponent {
         this.dialogRef.close();
     }
     onOkClick(){
-        console.log(this.selected_term)
+        //console.log(this.selected_term)
         console.log(this.selected_set)
         
     }
@@ -160,40 +160,35 @@ export class OntologyTreeComponent {
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
     todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
         this.checklistSelection.toggle(node);
+        console.log(this.checklistSelection)
+        console.log(this.checklistSelection.isSelected(node))
+        if (this.checklistSelection.isSelected(node)){
+            this.data.selected_set.push(node)
+            this.displayed=true;
+            this.context_term=node["term"].get_context()
+        }
+        else{
+            for(var i = this.data.selected_set.length - 1; i >= 0; i--) {
+                if(this.data.selected_set[i].id === node.id) {
+                    this.data.selected_set.splice(i, 1);
+                }
+            }
+            this.displayed=false;
+            //this.context_term=term["term"].get_context()
+        }
+        console.log(this.data.selected_set)
     }
-    
-    getStyle(): Object {
-        
-        return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
-
-    }
-    
     
     
     show_info(term:OntologyTerm){
         
-//        if (term["term"].children.length==0){                        
-//            this.selected_term=term
-//            this.data.selected_term=this.selected_term
-//            this.data.selected_set=this.selected_set
-//            console.log(this.selected_term)
-//            this.active_node=term
-//            this.displayed=true;
-//            this.context_term=term["term"].get_context()
-//
-//        }
-        
-        this.selected_term=term
-        this.data.selected_term=this.selected_term
-        this.data.selected_set=this.selected_set
-        console.log(this.selected_term)
-        console.log(this.data)
+        //this.selected_term=term
+        //this.data.selected_term=this.selected_term
+        //this.data.selected_set=this.selected_set
         this.active_node=term
-        this.displayed=true;
-        this.context_term=term["term"].get_context()
-//        else{
-//            
-//        }
+        //this.displayed=true;
+        //this.context_term=term["term"].get_context()
+
     }
 
     
@@ -561,4 +556,7 @@ export class OntologyTreeComponent {
     }
 
     hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+    getStyle(): Object {
+        return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+    }
 }

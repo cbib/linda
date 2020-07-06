@@ -86,9 +86,15 @@ export class FormComponent implements OnInit//, AfterViewInit
                 console.log(result)
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
-                this.selected_term = result.selected_term;
-                this.validated_term[key]={selected:true};
-                this.modelForm.controls[key].patchValue(this.selected_term.id)
+                console.log(this.selected_set)
+                var term_ids=""
+                for(var i = this.selected_set.length - 1; i >= 0; i--) {
+                    term_ids+=this.selected_set[i].id+";"
+                }
+                //this.selected_term = result.selected_term;
+                this.validated_term[key]={selected:true, values:term_ids};
+                
+                this.modelForm.controls[key].patchValue(term_ids)
             }
             });            
     }
@@ -156,7 +162,7 @@ export class FormComponent implements OnInit//, AfterViewInit
 
                 this.field_array.forEach(attr => {
                     
-                    this.validated_term[attr["key"]]={selected:false}
+                    this.validated_term[attr["key"]]={selected:false, values:""}
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
                         if  (attr["key"].includes("ID")){
                             //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
@@ -183,7 +189,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                     console.log(attr["key"])
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition") ){
 
-                         this.validated_term[attr["key"]]={selected:false}
+                         this.validated_term[attr["key"]]={selected:false, values:""}
                          
                          if  (attr["key"].includes("ID")){
                              attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]],[Validators.required, Validators.minLength(4)]];

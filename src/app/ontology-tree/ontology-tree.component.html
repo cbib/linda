@@ -17,38 +17,36 @@
             <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}">        </i>
             </span> -->
             <!-- use a disabled button to provide padding for tree leaf -->
-            <button mat-icon-button disabled>
-                <span style="display:inline-block; margin-left: 10px;"> 
-                    <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
-                </span> 
-            </button>
-            <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
+                <button mat-icon-button disabled>
+                    <span style="display:inline-block; margin-left: 10px;"> 
+                        <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
+                    </span> 
+                </button>
+                <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
 
-            <mat-accordion>
-                <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                <mat-accordion>
+                    <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
 
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
                             {{Description}}
-                         </mat-panel-title>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
 
-                     </mat-expansion-panel-header>
-
-                     <div >
-                        <mat-card>
-                            <pre>Term Id: {{ node.id}}</pre>
-                            <pre>Term name: {{ node.name}}</pre>
-                            <pre>Term definition: {{ node.def }}</pre>                
-                        </mat-card>
-                     </div>
-                 </mat-expansion-panel>
-
-             </mat-accordion>
+                        <div >
+                            <mat-card>
+                                <pre>Term Id: {{ node.id}}</pre>
+                                <pre>Term name: {{ node.name}}</pre>
+                                <pre>Term definition: {{ node.def }}</pre>                
+                            </mat-card>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
             </div>
         </mat-tree-node>
 
         <!-- This is the tree node template for expandable nodes -->
-        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding (click)="show_info(node)">
+        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
     <!--        <button mat-icon-button disabled>
                 <span style="display:inline-block"> 
                     <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}"></i>
@@ -61,101 +59,99 @@
                 {{node.name}}
                 <!--<mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>-->
                 <mat-accordion>
-                <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                    <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
 
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            {{Description}}
-                         </mat-panel-title>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{Description}}
+                             </mat-panel-title>
 
-                     </mat-expansion-panel-header>
+                         </mat-expansion-panel-header>
 
-                     <div >
-                        <mat-card>
-                            <pre>Term Id: {{ node.id}}</pre>
-                            <pre>Term name: {{ node.name}}</pre>
-                            <pre>Term definition: {{ node.def }}</pre>                
-                        </mat-card>
-                     </div>
-                 </mat-expansion-panel>
+                         <div >
+                            <mat-card>
+                                <pre>Term Id: {{ node.id}}</pre>
+                                <pre>Term name: {{ node.name}}</pre>
+                                <pre>Term definition: {{ node.def }}</pre>                
+                            </mat-card>
+                         </div>
+                     </mat-expansion-panel>
 
-             </mat-accordion>
+                </mat-accordion>
             </div>
-
         </mat-tree-node>
     </mat-tree>
     
-<div *ngIf="get_displayed()">
-<!--    <table class="table table-hover table-bordered  table-striped text-center" >
-    <thead>
-    <tr>
-      <th style="font-size:14px;" scope="col">ID</th>
-      <th style="font-size:14px;" scope="col">test</th>
-    </tr>
-    </thead>
-    <tbody>
-     <tr  *ngFor="let term of context_term ; index as j; trackBy: trackInvestigation " >
-      <td contenteditable="true" style="font-size:14px;" scope="row">{{context_term[term].id}}</td>
-      <td contenteditable="true" (keyup)="changeValue(j, key, $event)" (blur)="updateList(j, key, $event)" style="font-size:14px;" scope="row">{{investigation[0][key]}}</td>
-    </tr>
-</tbody>
-</table>-->
-    
-    <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
-    <li>
-        <!--Name: {{context_term[j].name}}-->
-        <!--Id: {{context_term[j].id}}-->
-        <!--datatype: {{get_term(context_term[j].datatype).name}}-->
-        
-        <a *ngIf="context_term[j].instances.length > 0">
-            Value: <input (keypress)="onValueAdd($event)">
-            Units:
-            
-            <select (change)="onUnitSelect($event.target.value)">
-                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
-                <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
-            </select>
-<!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
-                symbol: {{context_term[j].instances[l]._symbol}}
-            </p>-->
-        </a>
-        
-        <a *ngIf="context_term[j].enumeration!=='' && searchTerm(ontologyEnum,context_term[j].enumeration).instances.length > 0  "> 
-            Response Range
-            <select (change)="onResponseRangeSelect($event.target.value)">
-                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
-                <option *ngFor="let instance of searchTerm(ontologyEnum,context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">{{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}</option>
-            </select>
+    <div *ngIf="get_displayed()===true">
+    <!--    <table class="table table-hover table-bordered  table-striped text-center" >
+        <thead>
+        <tr>
+          <th style="font-size:14px;" scope="col">ID</th>
+          <th style="font-size:14px;" scope="col">test</th>
+        </tr>
+        </thead>
+        <tbody>
+         <tr  *ngFor="let term of context_term ; index as j; trackBy: trackInvestigation " >
+          <td contenteditable="true" style="font-size:14px;" scope="row">{{context_term[term].id}}</td>
+          <td contenteditable="true" (keyup)="changeValue(j, key, $event)" (blur)="updateList(j, key, $event)" style="font-size:14px;" scope="row">{{investigation[0][key]}}</td>
+        </tr>
+    </tbody>
+    </table>-->
 
-           <!--{{ context_term[j].enumeration}}-->
-            <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).name}}-->
-            <!--{{searchTerm(ontologyEnum,context_term[j].enumeration)}}-->
-            <!--<p *ngFor="let instance of get_term(context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">-->
-        <!--<p> enum: {{get_term(context_term[j].enumeration).instances[0]}}</p>-->
-        </a>
-        
-        
-        
-        
-        <a *ngIf="context_term[j].name==='FreeText'">
-            Text:
-            <mat-form-field >
-                <mat-label>Autosize textarea</mat-label>
-                <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
-            </mat-form-field>
-            
-            
-            
-<!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
-                symbol: {{context_term[j].instances[l]._symbol}}
-            </p>-->
-        </a>
-        
-    </li>
-    </ul>
-<!--    <pre>{{ selected_term | json }}</pre>
-    <pre>{{ selected_term.id | json }}</pre>-->
-</div>    
+        <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
+        <li>
+            <!--Name: {{context_term[j].name}}-->
+            <!--Id: {{context_term[j].id}}-->
+            <!--datatype: {{get_term(context_term[j].datatype).name}}-->
+            <a *ngIf="context_term[j].instances.length > 0">
+                Value: <input (keypress)="onValueAdd($event)">
+                Units:
+
+                <select (change)="onUnitSelect($event.target.value)">
+                    <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
+                    <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
+                </select>
+    <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
+                    symbol: {{context_term[j].instances[l]._symbol}}
+                </p>-->
+            </a>
+
+            <a *ngIf="context_term[j].enumeration!=='' && searchTerm(ontologyEnum,context_term[j].enumeration).instances.length > 0  "> 
+                Response Range
+                <select (change)="onResponseRangeSelect($event.target.value)">
+                    <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
+                    <option *ngFor="let instance of searchTerm(ontologyEnum,context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">{{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}</option>
+                </select>
+
+               <!--{{ context_term[j].enumeration}}-->
+                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).name}}-->
+                <!--{{searchTerm(ontologyEnum,context_term[j].enumeration)}}-->
+                <!--<p *ngFor="let instance of get_term(context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">-->
+            <!--<p> enum: {{get_term(context_term[j].enumeration).instances[0]}}</p>-->
+            </a>
+
+
+
+
+            <a *ngIf="context_term[j].name==='FreeText'">
+                Text:
+                <mat-form-field >
+                    <mat-label>Autosize textarea</mat-label>
+                    <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+                </mat-form-field>
+
+
+
+    <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
+                    symbol: {{context_term[j].instances[l]._symbol}}
+                </p>-->
+            </a>
+
+        </li>
+        </ul>
+    <!--    <pre>{{ selected_term | json }}</pre>
+        <pre>{{ selected_term.id f| json }}</pre>-->
+    </div>    
     
 </div>
 
