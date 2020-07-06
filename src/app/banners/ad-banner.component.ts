@@ -6,11 +6,10 @@ import { AdComponent } from './ad.component';
 
 @Component({
   //<a href="https://cgfb.u-bordeaux.fr/"><img src="assets/images/cbib.jpg" ></a>
-
+  //<h3>Partners</h3>
   selector: 'app-ad-banner',
   template: `
               <div class="ad-banner-example">
-                <h3>Partners</h3>
                 <ng-template ad-host></ng-template>
               </div>
             `
