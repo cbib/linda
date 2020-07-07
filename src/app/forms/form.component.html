@@ -71,16 +71,18 @@
                     </span>  
                     <div *ngIf="model[field['key']].Format.includes('Ontology')">
                         <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
-                        <select name="nom" size="1" (change)="onSelect($event.target.value,field['key'])">
+                        <select  name="nom" size="1" (change)="onSelect($event.target.value,field['key'])">
                             <option value="" disabled>Select Ontology</option>
-                            <option value='XEO'>XEO</option>
-                            <option value='EO'>EO</option>
+                            <option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" 
+                                [value]='ont'>{{ont}}
+                            </option>
+<!--                            <option value='EO'>EO</option>
                             <option value='EnvO'>EnvO</option>
                             <option value='PO_Structure'>PO Structure</option>
-                            <!--<option value='EFO'>EFO</option>-->
+                            <option value='EFO'>EFO</option>
                             <option value='PO_Development'>PO Development</option>
                             <option value='CO_20'>Crop Ontology 20 </option>
-                            <option value='CO_715'>Crop Ontology 715 </option>
+                            <option value='CO_715'>Crop Ontology 715 </option>-->
                             </select> 
                         <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
                             <input style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 

@@ -118,7 +118,7 @@ export class OntologyTreeComponent {
     async ngOnInit() {
         await this.get_ontology()
         this.ontologyNode=[]        
-        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715"]
+        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715", "CO_322"]
         
         if(this.ontology_type==="XEO"){
             this.ontologyNode=this.build_xeo_isa_hierarchy(this.ontology);
@@ -169,7 +169,7 @@ export class OntologyTreeComponent {
         }
         else{
             for(var i = this.data.selected_set.length - 1; i >= 0; i--) {
-                if(this.data.selected_set[i].id === node.id) {
+                if(this.data.selected_set[i]['id'] === node.id) {
                     this.data.selected_set.splice(i, 1);
                 }
             }
