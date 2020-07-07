@@ -297,7 +297,14 @@ export class DownloadComponent implements OnInit {
             if (result!==undefined){
                 this.ontology_type = result.ontology_type;
                 this.selected_term = result.selected_term;
-                this.associated_headers[key]={selected:true, associated_term_id:this.selected_term.id,is_time_values:false}
+                this.selected_set = result.selected_set;
+                console.log(this.selected_set)
+                var term_ids=""
+                for(var i = this.selected_set.length - 1; i >= 0; i--) {
+                    term_ids+=this.selected_set[i]['id']
+                }
+                
+                this.associated_headers[key]={selected:true, associated_term_id:term_ids,is_time_values:false}
                 console.log(this.associated_headers);
             };
         });

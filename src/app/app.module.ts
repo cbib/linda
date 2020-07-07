@@ -82,6 +82,8 @@ import { MiappeDescriptionComponent } from './documentation/miappe-description.c
 import { AdBannerComponent } from './banners/ad-banner.component';
 import { PubAdComponent } from './banners/pub-ad.component';
 import { AdDirective } from './directives/ad.directive';
+import { DragDropDirective } from './directives/drag-drop.directive';
+import { UploadFileComponent } from './download/upload-file.component';
 
 
 
@@ -116,6 +118,8 @@ import { AdDirective } from './directives/ad.directive';
     AdBannerComponent,
     PubAdComponent,
     AdDirective,
+    DragDropDirective,
+    UploadFileComponent,
     
     
 
