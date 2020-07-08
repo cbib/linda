@@ -29,8 +29,14 @@
                 
                 
                 <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
-                
-                <div class="[ btn-group ]">
+                <label for="fancy-checkbox-info" class="[ btn btn-info ]">
+                        <span class="[ glyphicon glyphicon-ok ]"></span>
+                        <span> </span>
+                    </label>
+                    <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
+                        Save as template
+                    </label>
+<!--                <div class="[ btn-group ]">
                     <label for="fancy-checkbox-info" class="[ btn btn-info ]">
                         <span class="[ glyphicon glyphicon-ok ]"></span>
                         <span> </span>
@@ -38,7 +44,7 @@
                     <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
                         Save as template
                     </label>
-                </div>
+                </div>-->
 
 
         </div>

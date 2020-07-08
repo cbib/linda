@@ -33,6 +33,7 @@ export class GlobalService {
     }
     
     get_model_type(model_id:string){
+        console.log(model_id)
         var model_type=""
         if (model_id.split("/")[0]==="investigations"){
             model_type="investigation" 

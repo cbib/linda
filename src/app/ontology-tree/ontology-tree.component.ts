@@ -21,7 +21,7 @@ interface FoodNode {
 interface DialogData {
   ontology_type: string;
   selected_term:OntologyTerm ;
-  selected_set:[]
+  selected_set:OntologyTerm[]
 
 }
 
@@ -45,7 +45,7 @@ export class OntologyTreeComponent {
 
     //@Input() ontology_type;
     private ontology_type:string;
-    private selected_set:[]
+    private selected_set:OntologyTerm[]
     private selected_term:OntologyTerm;
     
     private ontologyTerms:OntologyTerm[];
@@ -158,18 +158,18 @@ export class OntologyTreeComponent {
     
 
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-    todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
-        this.checklistSelection.toggle(node);
+    todoLeafItemSelectionToggle(term:OntologyTerm): void {
+        this.checklistSelection.toggle(term);
         console.log(this.checklistSelection)
-        console.log(this.checklistSelection.isSelected(node))
-        if (this.checklistSelection.isSelected(node)){
-            this.data.selected_set.push(node)
+        console.log(this.checklistSelection.isSelected(term))
+        if (this.checklistSelection.isSelected(term)){
+            this.data.selected_set.push(term)
             this.displayed=true;
-            this.context_term=node["term"].get_context()
+            this.context_term=term["term"].get_context()
         }
         else{
             for(var i = this.data.selected_set.length - 1; i >= 0; i--) {
-                if(this.data.selected_set[i]['id'] === node.id) {
+                if(this.data.selected_set[i]['id'] === term.id) {
                     this.data.selected_set.splice(i, 1);
                 }
             }

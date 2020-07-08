@@ -12,6 +12,8 @@ import { first } from 'rxjs/operators';
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
+import { ExportDialogComponent } from '../dialog/export-dialog.component';
+
 import { MediaObserver} from "@angular/flex-layout";
 import { FormBuilder, FormGroup, Validators ,FormArray, FormControl} from '@angular/forms';
 
@@ -106,6 +108,44 @@ export class UserTreeComponent implements OnInit{
         //this.contextMenu.openMenu();
     }
    
+    onExport(node:MiappeNode){
+
+        var model_key=node.id.split("/")[1];
+        var model_coll=node.id.split("/")[0];
+        var model_type=this.globalService.get_model_type(node.id)
+        console.log(model_type)
+        if (model_type=='unknown'){
+           model_type='metadata_file' 
+        }
+        console.log(model_key)
+        console.log(model_type)
+//        this.globalService.get_by_key(model_key, model_type).pipe(first()).toPromise().then(
+//            received_data => {
+//                console.log(received_data)
+//            }
+//        )
+        var model_data=this.globalService.get_by_key(model_key,model_type).toPromise().then(data => {
+            console.log(data)
+            //open a dialog and ask user if save in recursive way or only the selected model
+            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type}});
+        
+                
+            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+                
+                if(confirmed){
+                    console.log("file saved")
+                    this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
+                    this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+                }
+                
+
+            });
+        });
+        
+        
+        
+    }
+    
     
     onEdit(node:MiappeNode) {
         //console.log(this.active_node.id);

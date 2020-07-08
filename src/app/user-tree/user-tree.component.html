@@ -91,6 +91,7 @@
                                      <i style="margin-right:  50px; margin-left:  15px" *ngIf="multiple_selection===false">{{node.name}}</i>
                                  </button>
                                  <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                 <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                  <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
 
@@ -197,8 +198,11 @@
                                 </button>
                                 
                                 <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                 <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+
                                 <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
                                 <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
+
                                 
                                 <a style="float: right;" *ngIf="node.id.includes('studies')"  > 
                                     <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>

@@ -53,6 +53,7 @@ export class DownloadComponent implements OnInit {
     //private loaded:boolean=false;
     ontology_type:string
     selected_term:OntologyTerm
+    selected_set:[]
     uploadResponse = { status: '', message: 0, filePath: '' };
   
     constructor(
@@ -74,18 +75,19 @@ export class DownloadComponent implements OnInit {
 //                    this.lines=this.data["data"]
 //                })
 //            }
-        
+        //use this when you pass argument using this.router.navigate
+        // else use @input if you pass argument in template html  
         this.route.queryParams.subscribe(
             params => {        
                 this.model_type=params['model_type'];
                 this.model_key=params['model_key'];
                 this.mode=params['mode'];
                 this.parent_id=params['parent_id']
-            console.log(params)
-            console.log(params['model_key'])
-            console.log(params['parent_id'])
-            //this.investigation_key=params['key']
-            console.log(this.mode);
+//            console.log(params)
+//            console.log(params['model_key'])
+//            console.log(params['parent_id'])
+//            //this.investigation_key=params['key']
+//            console.log(this.mode);
             
             }
         );
@@ -107,10 +109,12 @@ export class DownloadComponent implements OnInit {
 //        this.preview();
 //    }
     ngOnInit() {
-        console.log(this.mode)
-        console.log(this.model_key)
-        console.log(this.model_type)
+//        console.log(this.mode)
+//        console.log(this.model_key)
+//        console.log(this.model_type)
         if (this.mode==="edit"){
+                console.log(this.model_key)
+                console.log(this.model_type)
                 this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
                     console.log(received_data);
                     this.data=received_data;

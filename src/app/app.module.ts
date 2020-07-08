@@ -84,6 +84,7 @@ import { PubAdComponent } from './banners/pub-ad.component';
 import { AdDirective } from './directives/ad.directive';
 import { DragDropDirective } from './directives/drag-drop.directive';
 import { UploadFileComponent } from './download/upload-file.component';
+import { ExportDialogComponent } from './dialog/export-dialog.component';
 
 
 
@@ -120,6 +121,7 @@ import { UploadFileComponent } from './download/upload-file.component';
     AdDirective,
     DragDropDirective,
     UploadFileComponent,
+    ExportDialogComponent
     
     
 
@@ -182,7 +184,8 @@ import { UploadFileComponent } from './download/upload-file.component';
                    DateformatComponent, 
                    ConfirmationDialogComponent, 
                    TemplateSelectionDialogComponent, 
-                   DelimitorDialogComponent, 
+                   DelimitorDialogComponent,
+                   ExportDialogComponent,
                    PubAdComponent
                    ],
   providers: [AuthGuard,

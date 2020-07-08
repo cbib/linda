@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
 
         // reset login status
         this.authenticationService.logout();
+        console.log(localStorage);
         localStorage.removeItem('currentUser');
 
         // get return url from route parameters or default to '/'
