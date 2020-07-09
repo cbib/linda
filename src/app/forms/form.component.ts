@@ -87,10 +87,11 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
                 console.log(this.selected_set)
-                var term_ids=""
+                var term_ids=''
                 for(var i = this.selected_set.length - 1; i >= 0; i--) {
-                    term_ids+=this.selected_set[i]['id'] +";"
+                    term_ids+=this.selected_set[i]['id'] +'/'
                 }
+                term_ids = term_ids.slice(0, -1);
                 //this.selected_term = result.selected_term;
                 this.validated_term[key]={selected:true, values:term_ids};
                 

@@ -85,6 +85,7 @@ import { AdDirective } from './directives/ad.directive';
 import { DragDropDirective } from './directives/drag-drop.directive';
 import { UploadFileComponent } from './download/upload-file.component';
 import { ExportDialogComponent } from './dialog/export-dialog.component';
+import { DonwloadedComponent } from './download/donwloaded.component';
 
 
 
@@ -121,7 +122,8 @@ import { ExportDialogComponent } from './dialog/export-dialog.component';
     AdDirective,
     DragDropDirective,
     UploadFileComponent,
-    ExportDialogComponent
+    ExportDialogComponent,
+    DonwloadedComponent
     
     
 

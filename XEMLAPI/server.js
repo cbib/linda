@@ -416,6 +416,21 @@ router.get('/get_vertices/:user_key', function (req, res) {
 .description('Assembles a list of keys of entries in the collection.');
 
 
+router.get('/get_vertices_by_model/:model_type/:model_key', function (req, res) {
+    var model_type=req.pathParams.model_type;
+    var model_key=req.pathParams.model_key;
+    var model_id=model_type+"/"+model_key;
+    var data=[];
+    data=db._query(aql`FOR v, e, s IN 1..4 ANY ${model_id} GRAPH 'global'  RETURN {e:e,s:s}`);
+    res.send(data);
+})
+.pathParam('model_type', joi.string().required(), 'username of the entry.')
+.pathParam('model_key', joi.string().required(), 'username of the entry.')
+.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
+
+
 
 
 

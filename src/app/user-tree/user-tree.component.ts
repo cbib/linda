@@ -109,11 +109,10 @@ export class UserTreeComponent implements OnInit{
     }
    
     onExport(node:MiappeNode){
-
+        console.log(node)
         var model_key=node.id.split("/")[1];
         var model_coll=node.id.split("/")[0];
         var model_type=this.globalService.get_model_type(node.id)
-        console.log(model_type)
         if (model_type=='unknown'){
            model_type='metadata_file' 
         }
@@ -127,7 +126,7 @@ export class UserTreeComponent implements OnInit{
         var model_data=this.globalService.get_by_key(model_key,model_type).toPromise().then(data => {
             console.log(data)
             //open a dialog and ask user if save in recursive way or only the selected model
-            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type}});
+            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type, expandable:node.expandable}});
         
                 
             dialogRef.afterClosed().subscribe((confirmed: boolean) => {
