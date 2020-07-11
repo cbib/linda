@@ -7,6 +7,7 @@ export class MiappeNode {
         public current_data=[]
         public current_data_array=[]
         public id:string;
+        public expandable:boolean;
         public def:string
         public model_type:string
         public model_key:string

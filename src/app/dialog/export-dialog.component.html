@@ -1,14 +1,14 @@
 <h1 mat-dialog-title></h1>
 <div mat-dialog-content >
-    <p> Which format do you want to use ? </p>
+    <p> Which formats do you want to use ? </p>
   
     <section *ngFor="let format of file_format;let i= index"  class="format-section">
-        <mat-checkbox class="example-margin">{{format}}</mat-checkbox>
+        <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_format($event.checked, format)" >{{format}}</mat-checkbox>
     </section>
    
     <section *ngIf="is_expandable_node" class="format-section">
         <p > How do you want to save your model ? </p>
-        <mat-checkbox class="example-margin">Save all recursively</mat-checkbox>
+        <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_recursive($event.checked)" >Save all recursively</mat-checkbox>
     </section>
 </div>
 

@@ -116,6 +116,7 @@ export class UserTreeComponent implements OnInit{
         if (model_type=='unknown'){
            model_type='metadata_file' 
         }
+
         console.log(model_key)
         console.log(model_type)
 //        this.globalService.get_by_key(model_key, model_type).pipe(first()).toPromise().then(
@@ -123,23 +124,44 @@ export class UserTreeComponent implements OnInit{
 //                console.log(received_data)
 //            }
 //        )
-        var model_data=this.globalService.get_by_key(model_key,model_type).toPromise().then(data => {
-            console.log(data)
-            //open a dialog and ask user if save in recursive way or only the selected model
-            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type, expandable:node.expandable}});
+        var parent_model=this.globalService.get_parent(node.id).toPromise().then(parent_data => {
         
-                
-            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-                
-                if(confirmed){
-                    console.log("file saved")
-                    this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-                    this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
-                }
-                
+            console.log(parent_data['_from'])
+            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_id: node.id, model_type:model_type, expandable:node.expandable, parent_id:parent_data['_from']}});
 
-            });
+            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+
+                    if(confirmed){
+                        console.log("file saved")
+
+                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
+                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+                    }
+
+
+                });
+                
         });
+        
+        
+//        var model_data=this.globalService.get_by_key(model_key,model_type).toPromise().then(data => {
+//            console.log(data)
+//            //open a dialog and ask user if save in recursive way or only the selected model
+//            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type, expandable:node.expandable}});
+//        
+//                
+//            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+//                
+//                if(confirmed){
+//                    console.log("file saved")
+//                    
+//                    this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
+//                    this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+//                }
+//                
+//
+//            });
+//        });
         
         
         
