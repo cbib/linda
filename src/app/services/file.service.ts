@@ -93,56 +93,56 @@ export class FileService {
         return str;
     }
     
-    public build_path(result, paths, root_id, models ){
+    public build_path(result, paths, root_id, models, selected_format ){
         var _id:string=result["v"]["_id"]
         var model_type= result["v"]["_id"].split('/')[0]
         var _from:string=result["e"]["_from"]
         var _to:string=result["e"]["_to"]
+        var formats=Object.keys(selected_format);
+
         let path = ''
-        //console.log("_from", _from);
-        //console.log("_to", _to);
+
+
         if (_from == root_id){
-            //path = _to.replace('/','_')
             models.forEach(
                 result_bis=>{
 
                     var _from_bis:string=result_bis["e"]["_from"]
                     var _to_bis:string=result_bis["e"]["_to"]
-                    //console.log("_from_bis", _from_bis);
-                    //console.log("_to_bis", _to_bis);
-                    if (_to == _from_bis) {
+
+                    if ((_to == _from_bis) && (_to == _to_bis)){
 
                         path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
-                        if (!paths.includes(path)){
-                             paths.push(path)
-
-                        }
-                        //console.log("path1", path);
-                    }
-                    else if (_from == _to_bis){
-                        path = _from_bis.replace('/','_') +'/'+ _from.replace('/','_')
-                        if (!paths.includes(path)){
-                             paths.push(path)
-
-                        }
-                        //console.log("path3", path);
+                        for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path + formats[i])){
+                                    paths.push(path + formats[i])
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
+                        }                               
                     }
                     else{
                         path = _to.replace('/','_') +'/'+_to.replace('/','_')
-                        if (!paths.includes(path)){
-                             paths.push(path)
-
+                        for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path + formats[i])){
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
                         }
-                        //console.log("path2", path);
                     }
                 }
             )
             if (path ==''){
                  path = _to.replace('/','_') +'/'+_to.replace('/','_')
-                 if (!paths.includes(path)){
-                     paths.push(path)
-
-                }
+                 for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path + formats[i])){
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
+                        }
             }
         }
         else{
@@ -150,41 +150,50 @@ export class FileService {
                 result_bis=>{
                     var _from_bis:string=result_bis["e"]["_from"]
                     var _to_bis:string=result_bis["e"]["_to"]
-                    //console.log("_from_bis", _from_bis);
-                    //console.log("_to_bis", _to_bis);
                     if ((_to == _from_bis) && (_from != root_id)){
                         path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
-                        if (!paths.includes(path)){
-                             paths.push(path)
-
+                        for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path+ formats[i])){
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
                         }
-                        //console.log("path3", path);
                     }
-                    else if ((_from == _to_bis) && (_from_bis != root_id)){
-                        path = _from_bis.replace('/','_') +'/'+ _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to.replace('/','_')
-                        if (!paths.includes(path)){
-                             paths.push(path)
-
+                    if ((_from == _to_bis) && (_from_bis != root_id)){
+                        path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
+                        for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path+ formats[i])){
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
                         }
-                        //console.log("path3", path);
                     }
-//                            else{
-//                                path = _from.replace('/','_') +'/'+ _to.replace('/','_')
-//                                console.log("path4", path);
-//                            }
+                    if ((_from == _to_bis) && (_from_bis == root_id)){
+                        path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
+                        for( var i = 0; i < formats.length; i++){
+                            if (selected_format[formats[i]]['selected']){
+                                if (!paths.includes(path+ formats[i])){
+                                    paths.push({'path':path + formats[i],'data':result["v"]})
+                                }
+                            }
+                        }
+                    }
 
                 }
             )
             if (path ==''){
-                path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to.replace('/','_')
-                if (!paths.includes(path)){
-                    paths.push(path)
-
-                }
+                path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
+                for( var i = 0; i < formats.length; i++){
+                     if (selected_format[formats[i]]['selected']){
+                         if (!paths.includes(path + formats[i])){
+                             paths.push({'path':path + formats[i],'data':result["v"]})
+                         }
+                     }
+                 }
             }
-            //path = _from.replace('/','_') +'/'+ _to.replace('/','_')
         }
-        return paths
     }
     
     
@@ -210,7 +219,8 @@ export class FileService {
         for( var i = 0; i < formats.length; i++){
             if (selected_format[formats[i]]['selected']){
                 var dir_root_path=collection_name + '_' + model_key + formats[i]
-                paths.push(dir_root_path)
+                
+                //paths.push({'path':dir_root_path,'data':model_data})
                 console.log(formats[i])
                 if (formats[i]==".csv"){
                     
@@ -238,56 +248,23 @@ export class FileService {
                 }
             }
         }
-//        console.log(models.reverse())
-//        reverse_model=models.reverse()
-//        models.forEach(
-//            result=>{
-//                //paths=this.build_path(result, paths, root_id, models)
-//                var _id:string=result["v"]["_id"]
-//                var model_type= result["v"]["_id"].split('/')[0]
-//                var _from:string=result["e"]["_from"]
-//                var _to:string=result["e"]["_to"]
-//                
-//                let path = ''
-//                reverse_model.forEach(
-//                        result_bis=>{
-//                            var _from_bis:string = result_bis["e"]["_from"]
-//                            var _to_bis:string = result_bis["e"]["_to"]
-//                            if (_from == _to_bis){
-//                                
-//                            }
-//                            else{
-//                                path=_from + '/'+ _to + ".json"
-//                            }
-//                            
-//                        }
-//                )        
-//                
-//                
-//            }
-//        );    
-        
-        
         //Build path to inject in zip
         models.forEach(
             result=>{
-                //paths=this.build_path(result, paths, root_id, models)
                 var _id:string=result["v"]["_id"]
                 var model_type= result["v"]["_id"].split('/')[0]
                 var _from:string=result["e"]["_from"]
                 var _to:string=result["e"]["_to"]
                 let path = ''
-                //console.log("_from", _from);
-                //console.log("_to", _to);
+                
+                
                 if (_from == root_id){
-                    //path = _to.replace('/','_')
                     models.forEach(
                         result_bis=>{
                             
                             var _from_bis:string=result_bis["e"]["_from"]
                             var _to_bis:string=result_bis["e"]["_to"]
-                            //console.log("_from_bis", _from_bis);
-                            //console.log("_to_bis", _to_bis);
+
                             if ((_to == _from_bis) && (_to == _to_bis)){
                                 
                                 path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
@@ -295,23 +272,20 @@ export class FileService {
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path + formats[i])){
                                             paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
-                                }
-
-                               
-                                //console.log("path1", path);
+                                }                               
                             }
                             else{
                                 path = _to.replace('/','_') +'/'+_to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path + formats[i])){
-                                            paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
                                 }
-                                //console.log("path2", path);
                             }
                         }
                     )
@@ -320,7 +294,7 @@ export class FileService {
                          for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path + formats[i])){
-                                            paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
                                 }
@@ -331,160 +305,112 @@ export class FileService {
                         result_bis=>{
                             var _from_bis:string=result_bis["e"]["_from"]
                             var _to_bis:string=result_bis["e"]["_to"]
-                            //console.log("_from_bis", _from_bis);
-                            //console.log("_to_bis", _to_bis);
                             if ((_to == _from_bis) && (_from != root_id)){
                                 path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path+ formats[i])){
-                                            paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
                                 }
-                                //console.log("path3", path);
                             }
                             if ((_from == _to_bis) && (_from_bis != root_id)){
                                 path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path+ formats[i])){
-                                            paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
                                 }
-                                //console.log("path3", path);
                             }
                             if ((_from == _to_bis) && (_from_bis == root_id)){
                                 path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         if (!paths.includes(path+ formats[i])){
-                                            paths.push(path + formats[i])
+                                            paths.push({'path':path + formats[i],'data':result["v"]})
                                         }
                                     }
                                 }
-                                //console.log("path3", path);
                             }
-//                            else{
-//                                //path = _from.replace('/','_') +'/'+ _to.replace('/','_')
-//                                path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to.replace('/','_')
-//                                if (!paths.includes(path)){
-//                                     paths.push(path)
-//
-//                                }
-//                                console.log("path4", path);
-//                            }
                             
                         }
                     )
                     if (path ==''){
                         path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                         for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path + formats[i])){
-                                            paths.push(path + formats[i])
-                                        }
-                                    }
-                                }
+                             if (selected_format[formats[i]]['selected']){
+                                 if (!paths.includes(path + formats[i])){
+                                     paths.push({'path':path + formats[i],'data':result["v"]})
+                                 }
+                             }
+                         }
                     }
-                    //path = _from.replace('/','_') +'/'+ _to.replace('/','_')
                 }
                 
-                    for ( var i = 0; i < paths.length; i++){
-                    //for( var i = 0; i < formats.length; i++){
+                for ( var i = 0; i < paths.length; i++){
 
-                        //if (selected_format[formats[i]]['selected']){
-                            //var _from:string=result["e"]["_from"]
-                            //var _to:string=result["e"]["_to"]
-                        var _id:string=result["v"]["_id"]
+                    if (model_type == "metadata_files"){
 
-                        if (model_type == "metadata_files"){
-//                            let csvData = this.ConvertMetadataJsonTo(result["v"], ",");
-//                            let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-//                            zipFile.file(path + formats[i], blob);
+                        if (paths[i]['path'].includes(".csv")){
 
-                            if (paths[i].includes(".csv")){
-
-                                let csvData = this.ConvertMetadataJsonTo(result["v"], ",");
-                                let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-                                zipFile.file(paths[i], blob);
-                            }
-                            else if (paths[i].includes(".tsv")){
-                                let tsvData = this.ConvertMetadataJsonTo(result["v"], "\t");
-                                let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
-                                zipFile.file(paths[i], blob_tsv);
-                            }
-                            else{
-//                                    let blob_json = new Blob([JSON.stringify(result["v"])], {type : 'application/json'});
-//                                    zipFile.file(path + formats[i], blob_json);
-                                var keys=Object.keys(result["v"]);
-                                for( var j = 0; j < keys.length; j++){     
-                                   if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-                                       keys.splice(j, 1); 
-                                       j--;
-                                   }
-                                }
-                                var clean_modeldata={}
-                                keys.forEach(attr => {clean_modeldata[attr]=result["v"][attr]})
-                                console.log(clean_modeldata)
-                                let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
-                                zipFile.file(paths[i], blob_json);
-
-
-                            }
-
-
-
+                            let csvData = this.ConvertMetadataJsonTo(paths[i]['data'], ",");
+                            let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
+                            zipFile.file(paths[i]['path'], blob);
+                        }
+                        else if (paths[i]['path'].includes(".tsv")){
+                            let tsvData = this.ConvertMetadataJsonTo(paths[i]['data'], "\t");
+                            let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
+                            zipFile.file(paths[i]['path'], blob_tsv);
                         }
                         else{
-
-                            if ((paths[i].includes(".csv"))){
-
-                                let csvData = this.ConvertJsonModelTo(result["v"], ",");
-                                let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-                                zipFile.file(paths[i], blob);
+                            var keys=Object.keys(paths[i]['data']);
+                            for( var j = 0; j < keys.length; j++){     
+                               if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                                   keys.splice(j, 1); 
+                                   j--;
+                               }
                             }
-                            else if ((paths[i].includes(".tsv"))){
-                                let tsvData = this.ConvertJsonModelTo(result["v"], "\t");
-                                let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
-                                zipFile.file(paths[i], blob_tsv);
-                            }
-                            else{
-//                                  let blob_json = new Blob([JSON.stringify(result["v"])], {type : 'application/json'});
-//                                  zipFile.file(path + formats[i], blob_json);
-
-                                    var keys=Object.keys(result["v"]);
-                                    for( var j = 0; j < keys.length; j++){     
-                                        if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-                                            keys.splice(j, 1); 
-                                            j--;
-                                        }
-                                    }
-                                    var clean_modeldata={}
-                                    keys.forEach(attr => {clean_modeldata[attr]=result["v"][attr]})
-                                    let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
-                                    zipFile.file(paths[i], blob_json);
-
-
-                            }
-
-
+                            var clean_modeldata={}
+                            keys.forEach(attr => {clean_modeldata[attr]=paths[i]['data'][attr]})
+                            console.log(clean_modeldata)
+                            let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
+                            zipFile.file(paths[i]['path'], blob_json);
 
                         }
-
-
-
-
-                        //}
                     }
-                        
-                    
-                    
-                    
+                    else{
+
+                        if ((paths[i]['path'].includes(".csv"))){
+
+                            let csvData = this.ConvertJsonModelTo(paths[i]['data'], ",");
+                            let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
+                            zipFile.file(paths[i]['path'], blob);
+                        }
+                        else if ((paths[i]['path'].includes(".tsv"))){
+                            let tsvData = this.ConvertJsonModelTo(paths[i]['data'], "\t");
+                            let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
+                            zipFile.file(paths[i]['path'], blob_tsv);
+                        }
+                        else{
+                            var keys=Object.keys(paths[i]['data']);
+                            for( var j = 0; j < keys.length; j++){     
+                                if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                                    keys.splice(j, 1); 
+                                    j--;
+                                }
+                            }
+                            var clean_modeldata={}
+                            keys.forEach(attr => {clean_modeldata[attr]=paths[i]['data'][attr]})
+                            let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
+                            zipFile.file(paths[i]['path'], blob_json);
+                        }
+                    }
+                }    
             }
         );
-        console.log(paths)
         zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id+".zip");});    
         
     }

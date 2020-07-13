@@ -156,7 +156,7 @@ export class DownloadComponent implements OnInit {
             
             this.uploadResponse.status='progress'
             this.fileUploaded = event.target.files[0];
-            let fileReader = new FileReader();
+            //let fileReader = new FileReader();
             this.fileName=this.fileUploaded.name
                 
             if (this.fileUploaded.type==="text/csv"){

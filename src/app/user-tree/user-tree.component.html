@@ -280,8 +280,9 @@
             <button mat-menu-item [matMenuTriggerFor]="userMenusecond" >Investigation</button>
         </mat-menu>
         <mat-menu #userMenusecond="matMenu">
-            <button mat-menu-item (click)="add('investigation',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('investigation',true)">From templates</button>
+            <button mat-menu-item (click)="add('investigation','original')">From original model template</button>
+            <button mat-menu-item (click)="add('investigation','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #multipleMenu="matMenu">
             <button mat-menu-item (click)="activate_multiple_selection(false)">Deactivate</button>
@@ -291,8 +292,10 @@
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond">Study</button>
         </mat-menu>
         <mat-menu #investigationMenusecond="matMenu">
-            <button mat-menu-item (click)="add('study',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('study',true)">From templates</button>
+            <button mat-menu-item (click)="add('study','original')">From original model template</button>
+            <button mat-menu-item (click)="add('study','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('study','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            
         </mat-menu>
         <mat-menu #studyMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="observation_unitMenu">Observation unit</button>
@@ -302,41 +305,81 @@
             <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu">Observed variable</button>
             <button mat-menu-item [matMenuTriggerFor]="eventMenu">Event</button>
             <button mat-menu-item [matMenuTriggerFor]="environmentMenu">Dynamic variable</button>
-            <button mat-menu-item (click)="add('metadata_file',false)">Metadata file</button>
+            
+            <!--here need to change the name of download.component.ts and put read csv functions in file service and call them in user.tree.ts-->
+            <button mat-menu-item (click)="add('metadata_file','original')">Metadata file</button>
+            <!--<button mat-menu-item (click)="add('metadata_file','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
+
         </mat-menu>
         <mat-menu #observation_unitMenu="matMenu">
-            <button mat-menu-item (click)="add('observation_unit',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('observation_unit',true)">From templates</button>
+            <button mat-menu-item (click)="add('observation_unit','original')">From original model template</button>
+            <button mat-menu-item (click)="add('observation_unit','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('observation_unit','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #experimental_factorMenu="matMenu">
-            <button mat-menu-item (click)="add('experimental_factor',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('experimental_factor',true)">From templates</button>
+            <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
+            <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #biological_materialMenu="matMenu">
-            <button mat-menu-item (click)="add('biological_material',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('biological_material',true)">From templates</button>
+            <button mat-menu-item (click)="add('biological_material','original')">From original model template</button>
+            <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #data_fileMenu="matMenu">
-            <button mat-menu-item (click)="add('data_file',false)">Add</button>
+            <button mat-menu-item (click)="add('data_file','original')">Add</button>
+            <button mat-menu-item (click)="add('data_file','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
             <!--<button mat-menu-item (click)="add('data_file',true)">From templates</button>-->
         </mat-menu>
         <mat-menu #observed_variableMenu="matMenu">
-            <button mat-menu-item (click)="add('observed_variable',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('observed_variable',true)">From templates</button>
+            <button mat-menu-item (click)="add('observed_variable','original')">From original model template</button>
+            <button mat-menu-item (click)="add('observed_variable','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('observed_variable','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #eventMenu="matMenu">
-            <button mat-menu-item (click)="add('event',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('event',true)">From templates</button>
+            <button mat-menu-item (click)="add('event','original')">From original model template</button>
+            <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #environmentMenu="matMenu">
-            <button mat-menu-item (click)="add('environment',false)">From Scratch</button>
-            <button mat-menu-item (click)="add('environment',true)">From templates</button>
+            <button mat-menu-item (click)="add('environment','original')">From original model template</button>
+            <button mat-menu-item (click)="add('environment','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('environment','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #OUMenu="matMenu">
-            <button mat-menu-item (click)="add('sample',false)">Sample</button>
-            <button mat-menu-item (click)="add('event',false)">Event</button>
-            <button mat-menu-item (click)="add('biological_material',false)">Biological material</button>
-            <button mat-menu-item (click)="add('experimental_factor',false)">Experimental factor</button>
-        </mat-menu>  
+            <button mat-menu-item [matMenuTriggerFor]="eventMenu2">Event</button>
+            <button mat-menu-item [matMenuTriggerFor]="biological_materialMenu2">Biological material</button>
+            <button mat-menu-item [matMenuTriggerFor]="experimental_factorMenu2">Experimental factor</button>
+            <button mat-menu-item [matMenuTriggerFor]="sampleMenu">Sample</button>
+            <!--<button mat-menu-item (click)="add('sample','original')">Sample</button>-->
+            <!--<button mat-menu-item (click)="add('sample','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
+            <!--<button mat-menu-item (click)="add('event','original')">Event</button>-->
+            <!--<button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
+            <!--<button mat-menu-item (click)="add('biological_material','original')">Biological material</button>-->
+            <!--<button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
+            <!--<button mat-menu-item (click)="add('experimental_factor','original')">Experimental factor</button>-->
+            <!--<button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
+        </mat-menu> 
+        
+        <mat-menu #eventMenu2="matMenu">
+            <button mat-menu-item (click)="add('event','original')">From original model template</button>
+            <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+        </mat-menu>
+        <mat-menu #biological_materialMenu2="matMenu">
+            <button mat-menu-item (click)="add('biological_material','original')">From original model template</button>
+            <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+        </mat-menu>
+        <mat-menu #experimental_factorMenu2="matMenu">
+            <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
+            <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+        </mat-menu>
+        <mat-menu #sampleMenu="matMenu">
+            <button mat-menu-item (click)="add('sample','original')">From original model template</button>
+            <button mat-menu-item (click)="add('sample','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('sample','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+        </mat-menu>
     </div>
 </div>

@@ -13,7 +13,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling'
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { ExportDialogComponent } from '../dialog/export-dialog.component';
-
+import * as JSZip from 'jszip';
 import { MediaObserver} from "@angular/flex-layout";
 import { FormBuilder, FormGroup, Validators ,FormArray, FormControl} from '@angular/forms';
 
@@ -302,17 +302,55 @@ export class UserTreeComponent implements OnInit{
 
             });
         }
- 
      
+    onFileChange(event) {
+
+        //this.fileUploaded = <File>event.target.files[0];
+        let uploadResponse = { status: '', message: 0, filePath: '' };
+        
+        if (event.target.files.length > 0) {
+            
+            uploadResponse.status='progress'
+            let fileUploaded = event.target.files[0];
+            let fileReader = new FileReader();
+            let fileName=fileUploaded.name                
+            fileReader.onload = function ( e )
+                    {
+                        //Create JSZip instance
+                        //var new_zip = new JSZip();
+                        var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
+                            var files= zip['files'];
+                             Object.keys(zip.files).forEach(function (filename) {
+                                 console.log(zip.files)
+                                 console.log(zip.files[filename]['dir'])
+                                //if (!zip.files[filename]['dir']){
+                                    zip.files[filename].async('string').then(function (fileData) {
+                                        console.log(fileData) // These are your file contents      
+                                    })
+                                //}
+                            })
+                            
+                            zip.forEach(function (relativePath, zipEntry) {
+                                console.log(zipEntry)
+                                //for each filepath build the corresponding hierarchy in user tree
+                            });
+
+                        });
+            } 
+            fileReader.readAsArrayBuffer( fileUploaded );              
+
+            
+
+        }
+    }
     
     
-    
-    add(model_type:string,template:boolean) {
+    add(model_type:string,template:string) {
 
         var parent_key=this.active_node.id.split("/")[1];
         var model_coll=this.active_node.id.split("/")[0];
         let user=JSON.parse(localStorage.getItem('currentUser'));
-        if (template){
+        if (template=='saved'){
             
             //var model_type=this.globalService.get_model_type(this.active_node.id)
             console.log(model_type)
@@ -379,6 +417,10 @@ export class UserTreeComponent implements OnInit{
 //            }); 
             //this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
             //this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
+            
+            
+        }
+        else if (template=='zip'){
             
             
         }
