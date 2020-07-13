@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from  '@angular/forms';
-import { UploadService,GlobalService,  AlertService } from '../services';
+import { FileService, GlobalService,  AlertService } from '../services';
 import { OntologyTerm } from '../ontology/ontology-term';
-
 import { first } from 'rxjs/operators';
 import { Router,ActivatedRoute } from '@angular/router';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -58,7 +57,7 @@ export class DownloadComponent implements OnInit {
   
     constructor(
             private formBuilder: FormBuilder, 
-            private uploadService: UploadService,
+            private fileService: FileService,
             private router: Router,
             private alertService: AlertService, 
             private globalService: GlobalService,
@@ -264,7 +263,7 @@ export class DownloadComponent implements OnInit {
                 formData.append('file', this.form.get('file').value);
                 let user=JSON.parse(localStorage.getItem('currentUser'));
                 //let parent_id="studies/981995"
-                this.uploadService.upload2(this.fileName,this.lines,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
+                this.fileService.upload2(this.fileName,this.lines,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
                 this.router.navigate(['/tree'],{ queryParams: { key: user._key  } });
             }
             else{
@@ -284,7 +283,7 @@ export class DownloadComponent implements OnInit {
             }
         }
 
-        //    this.uploadService.upload(this.lines).subscribe(
+        //    this.fileService.upload(this.lines).subscribe(
         //      (res) => this.uploadResponse = res,
         //      (err) => this.error = err
         //    );

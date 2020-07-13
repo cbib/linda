@@ -101,16 +101,21 @@
                         </span>
                     </div>
                     
+                    
+                    <!--not a ontology format =-->
                     <div *ngIf="!model[field['key']].Format.includes('Ontology')"> 
-                       <div *ngIf="!field['key'].includes('date')">
-                        <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
-                        <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" ></textarea> 
+                        <!--not a date format-->
+                        <div *ngIf="!field['key'].includes('date')">
+                            <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
+                            <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" ></textarea> 
                             <div *ngIf="f[field['key']].errors" class="invalid-feedback">
                                 <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is required</div>
                                 <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is required</div>
                                 <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required - already used !! </div>
                             </div>
                         </div>
+                        
+                        <!--not a date format-->
                         <div *ngIf="field['key'].includes('date')">
                             <input mdbInput placeholder="{{model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </div>

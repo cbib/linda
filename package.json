@@ -31,6 +31,7 @@
     "file-saver": "^2.0.2",
     "flex-layout": "^1.0.1",
     "jquery": "^3.5.0",
+    "jszip": "^3.5.0",
     "mkdirp": "^1.0.4",
     "moment": "^2.19.3",
     "ng-bootstrap": "^1.6.3",
