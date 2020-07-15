@@ -48,8 +48,8 @@ Thumbs.db
 # e2e
 /e2e/*.js
 /e2e/*.map
-/package-lock.json
-/package.json
+*package-lock.json
+*package.json
 /dist
 /nbproject/private/
 /src/app/constants_1.ts
