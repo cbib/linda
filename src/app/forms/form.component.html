@@ -2,40 +2,67 @@
 
     <div>
         <div class="border-head">
-        <h3>
-            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-        <div class="form-group text-center" style="float: right;">
+            <h3>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                <div class="form-group text-center" style="float: right;">
 
-                <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
-                    <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> 
-                    Back
-                </button><span style="margin-right:10px;"></span>
+                    <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
+                        <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> 
+                        Back
+                    </button><span style="margin-right:10px;"></span>
                 
-                <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger"> 
-                    <span style="margin-right:10px;"></span> 
-                    Cancel
-                </button><span style="margin-right:10px;"></span>
+                    <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger"> 
+                        <span style="margin-right:10px;"></span> 
+                        Cancel
+                    </button><span style="margin-right:10px;"></span>
 
-                <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)" > 
-                    Next 
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button><span style="margin-right:10px;"></span>
+                    <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)" > 
+                        Next 
+                        <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                    </button><span style="margin-right:10px;"></span>
+
+
+                    <button  class="btn btn-xs btn-info" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')"> 
+                        Submit
+                        <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                    </button>
                 
-                
-                <button  class="btn btn-xs btn-info" type="submit" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')" (click)="submit(modelForm)"> 
-                    Submit
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button><span style="margin-right:10px;"></span>
-                
-                
-                <input type="checkbox" [disabled]="!get_startfilling()" (change)="toggleVisibility($event)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" />
-                <label for="fancy-checkbox-info" class="[ btn btn-info ]">
+<!--                <input type="checkbox" name="fancy-checkbox-default" id="fancy-checkbox-default" autocomplete="off" />
+                <div class="[ btn-group ]">
+                    <label for="fancy-checkbox-default" class="[ btn btn-default ]">
                         <span class="[ glyphicon glyphicon-ok ]"></span>
                         <span> </span>
                     </label>
-                    <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
-                        Save as template
+                    <label for="fancy-checkbox-default" class="[ btn btn-default active ]">
+                        Default Checkbox
                     </label>
+                </div>-->
+                
+<!--                <div class="btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                    <mat-checkbox class="example-margin" [checked]="Checked" (click)="notify_checkbox_disabled();" [disabled]="!get_startfilling()" (change)="toggleVisibility($event.checked)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" ></mat-checkbox>
+
+                    <input type="checkbox" checked autocomplete="off"> Save as template
+                    </label>
+                </div>-->
+                Save as template
+                <label class="switch ">
+                    <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
+                    <span class="slider round"></span>
+                </label>
+                
+                
+<!--                <span style="margin-right:10px;">
+                </span>
+                 <mat-checkbox class="example-margin" [checked]="Checked" (click)="notify_checkbox_disabled();" [disabled]="!get_startfilling()" (change)="toggleVisibility($event.checked)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" ></mat-checkbox>
+                <label for="fancy-checkbox-info" class="[ btn btn-info ]">
+
+                    <span class="[ glyphicon glyphicon-ok ]"></span>
+                    <span> </span>
+                </label>
+                <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
+                        Save as template
+                </label>-->
 <!--                <div class="[ btn-group ]">
                     <label for="fancy-checkbox-info" class="[ btn btn-info ]">
                         <span class="[ glyphicon glyphicon-ok ]"></span>
@@ -47,14 +74,11 @@
                 </div>-->
 
 
+                </div>
+            </h3>    
         </div>
-        </h3>
-            
-        </div>
-        <alert></alert>
+        
         <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
-        
-        
         <p>{{model.Definition}}</p>
         <form [formGroup]="modelForm" >
             

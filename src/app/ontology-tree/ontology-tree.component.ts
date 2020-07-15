@@ -21,7 +21,8 @@ interface FoodNode {
 interface DialogData {
   ontology_type: string;
   selected_term:OntologyTerm ;
-  selected_set:OntologyTerm[]
+  selected_set:OntologyTerm[];
+  uncheckable: boolean
 
 }
 
@@ -53,7 +54,7 @@ export class OntologyTreeComponent {
     private ontologyEnum:OntologyTerm[];
     private ontologyContext:OntologyTerm[];
     private ontologyNode:OntologyTerm[];
-    
+    private uncheckable:boolean=false
     //model ontology    
     private ontology:any = {};
     
@@ -81,6 +82,7 @@ export class OntologyTreeComponent {
             console.log(this.data);
             this.ontology_type=this.data.ontology_type;
             this.selected_set=this.data.selected_set;
+            this.uncheckable=this.data.uncheckable;
             //console.log(this.selected_set);
             this.ontology_tree=[];
             this.ontologyTerms=[];
