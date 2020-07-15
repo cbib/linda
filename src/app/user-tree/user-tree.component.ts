@@ -363,8 +363,8 @@ export class UserTreeComponent implements OnInit{
                     
                 if (result){
                     console.log(result.values)
-                    console.log(model_type)
-                    console.log(this.active_node.id)
+                    //console.log(model_type)
+                    //console.log(this.active_node.id)
                     parent_id=""
                     if (this.active_node.id==='Investigations tree'){
                         parent_id=user["_id"]
@@ -387,11 +387,13 @@ export class UserTreeComponent implements OnInit{
                     this.globalService.add(new_values,model_type, parent_id).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]){
-                                console.log(data["message"])
+                                //console.log(data["message"])
                                 //this.model_id=data["_id"];
                                 this.ngOnInit(); 
                                 //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                                //this.alertService.success("Your component has been successfully integrated in your history !!")
+                                var message = "A new "+ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ") + " based on " + result.values['_id']+ " has been successfully integrated in your history !!"
+
+                                this.alertService.success(message)
 
                                 return true;
                             }

@@ -80,7 +80,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     
     onSelect(values:string, key:string) {
         console.log(values)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[]}});
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
                 console.log(result)
@@ -233,9 +233,16 @@ export class FormComponent implements OnInit//, AfterViewInit
         return this.startfilling;
     };
     
+    notify_checkbox_disabled(){
+        if (!this.startfilling){
+            this.alertService.error('need to fill the form first');
+
+        }
+
+    }
+    
     toggleVisibility(e){
         this.marked= e.target.checked;
-        (console.log("checkbox checked is " +this.marked))
     };
     
     save(form: any): boolean {
@@ -253,6 +260,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                     this.globalService.saveTemplate(this.modelForm.value,this.model_type).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]){
+                                //this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
+                                //var message = "Template saved! " + data["message"]
+
                                 this.alertService.success("Template saved! " + data["message"]);
                             }
                             else{
@@ -328,7 +338,13 @@ export class FormComponent implements OnInit//, AfterViewInit
         
     };
     submit(form: any){
-        if (this.save(form)) {
+        console.log(this.startfilling)
+        if (!this.startfilling){
+            this.alertService.error('need to fill the form first');
+
+        }
+        else{
+            this.save(form) 
         }
     };
     goToNext(form: any,level) {
