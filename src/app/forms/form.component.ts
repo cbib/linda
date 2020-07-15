@@ -149,7 +149,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                     var dict={}
                     dict["key"]=this.keys[i]
                     dict["pos"]=this.model[this.keys[i]]["Position"]
-                    dict["extra_infos"]=[]
+                    dict["Associated_ontologies"]=this.model[this.keys[i]]["Associated_ontologies"]
                     this.field_array.push(dict)
                 }
              
@@ -268,7 +268,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 this.model_id=data["_id"];
                                 //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                                 this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                                this.alertService.success("Your component has been successfully integrated in your history !!")
+                                var message = "A new "+ this.model_type[0].toUpperCase() +  this.model_type.slice(1).replace("_"," ") + " has been successfully integrated in your history !!"
+                                this.alertService.success(message)
 
                                 return true;
                                 //this.router.navigate(['/investigation'],{ queryParams: { key:  this.investigation_key} });
