@@ -1,74 +1,216 @@
+<section id="container">
+    <header class="header black-bg">
+        <!--<nav class="navbar navbar-expand-lg navbar-light">-->
+<!--            <a class="navbar-brand"> 
+                <div class="sidebar-header d-flex align-items-center">
+                    <div><img height="100" width="250" src="assets/images/logo_linda.png" alt="..." ></div>
+                </div>    
+            </a>-->
+<!--            <a class="navbar-brand"  style="font-size: 20pt; color: #006666" href="#">
+                {{ title }} 
+                <i style="font-size: 10pt"> 
+                    pLant experImeNtal metaDatA 
+                </i>
+            </a>-->
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand"  style="font-size: 20pt; background-color: white;color: #006666" href="#">{{ title }} <i style="font-size: 10pt"> pLant experImeNtal metaDatA </i></a>
+<!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>-->
+               <a class="logo"  href="#">
+                <b style="color:#4ECDC4">{{ title }} </b>
+                P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
 
-    <!--<a class="navbar-brand" href="#">Navbar</a>-->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<!--                <i style="font-size: 10pt"> 
+                    <b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b>
+                    pLant experImeNtal metaDatA 
+                </i>-->
+                </a>  
+            <!--  notification start -->
+            <div class="nav notify-row" id="top_menu">
+               
+                <ul class="nav top-menu">
+                  <!-- settings start -->
+                  <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+                      <i class="fa fa-tasks"></i>
+                      <span class="badge bg-theme">{{stats_advanced['investigations'].length+stats_advanced['studies'].length}}</span>
+                      </a>
+                    <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+                      <div class="notify-arrow notify-arrow-green"></div>
+                      <li>
+                        <p class="green">You have {{stats_advanced['investigations'].length}} pending investigations tasks</p>
+                      </li>
+                      <li *ngFor="let obj of stats_advanced['investigations'] ; index as j;" >
+                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
+                          <div class="task-info">
+                            <div class="desc">{{obj['id']}}</div>
+                            <div class="percent">{{obj['percent_fill']}}%</div>
+                          </div>
+                          <div class="progress progress-striped">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <p class="green">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
+                      </li>
+                      <li *ngFor="let obj of stats_advanced['studies'] ; index as j;" >
+                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
+                          <div class="task-info">
+                            <div class="desc">{{obj['id']}}</div>
+                            <div class="percent">{{obj['percent_fill']}}%</div>
+                          </div>
+                          <div class="progress progress-striped">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+<!--                      <li class="external">
+                          
+                          <strong>Stats </strong> 
+                          <pre>{{ stats_advanced['investigations'] | json }}</pre>
+                        <a href="#">See All Tasks</a>
+                      </li>-->
+                    </ul>
+                  </li>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">        
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fas fa-home"></i> Home</a>
-            </li> 
-            <li class="nav-item">
-                <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fas fa-download"></i>Projects</a>
-            </li>
-             <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/login']" routerLinkActive="active-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Help</a>
-            </li>
-<!--            <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/mail']" routerLinkActive="active-link"><i class="fas fa-question-circle"></i> Mail</a>
-            </li>-->
+                </ul>
+                <!--  notification end -->
+  
+            </div>
+
+            <!--  search start -->
+            <div class="nav notify-row2">
+               
+                
+                <ul class="nav top-menu">
+                    <li>
+                        <!--<input type="search" placeholder="Search" aria-label="Search">-->
+                        
+                        <input placeholder="Search" aria-label="Search">
+                        <button type="submit" >Search</button>
+<!--                        <input #box (keyup)="0">
+                        <p>{{box.value}}</p>-->
+                    
+                    </li>
+                </ul>
+                <!-- search end -->
+  
+            </div>  
             
-             <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
-                <a class="nav-link" [routerLink]="['/admin']" ><i class="fas fa-user-crown"></i> Admin</a>
-            </li>
-            <li *ngIf="!currentUser" class="nav-item">
-                <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
-            </li>
-        </ul>
-        <form id='search' class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <!--  login/logout start -->
+            <div class="nav notify-row3" >
+               
+                <!--  login/logout start -->
+                <ul class="nav pull-right top-menu">
+                        <li *ngIf="!currentUser" class="nav-item">
+                                <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
+                            </li>
+                            <li *ngIf="currentUser" class="nav-item">
+                                <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
+                    </ul>
+                <!-- login/logout end -->
+  
+            </div> 
+           
+<!--            <div class="top-menu">
+                    
+            </div>-->
+        <!--</snav>-->
+    </header>
+    
+    <!--<div class="page-content d-flex align-items-stretch">--> 
+      <aside>
+      <div id="sidebar" class="nav-collapse ">
+        <!--<nav class="side-navbar">-->
+<!--    <aside>
+      <div id="sidebar" class="nav-collapse ">-->
+            <!-- Sidebar Header-->
+            <!--<div class="sidebar-header d-flex align-items-center">
+            <div><img src="assets/images/logo_proteomix.png" alt="..." class="img-fluid rounded-circle"></div>
+            </div>-->
+            <!-- Sidebar Navidation Menus-->
+            <span class="heading">Main</span>
+            <ul class="sidebar-menu">
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-download"></i>Projects</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
+                    </li>
+                <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
+                        <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
+                    </li>          
+                <li><a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
+                  <ul id="AnalysisdropdownDropdown" class="collapse list-unstyled ">
+                    
+                    <li class="nav-item"><a>Data exploration</a></li>
+   
+                  </ul>
+                </li>
+                
+                <li><a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Documentation </a>
+                  <ul id="documentationdropdownDropdown" class="collapse list-unstyled ">
+                    <li class="nav-item">
+                       <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Ontologies description</a>
+                    </li>
+                    <li class="nav-item">
+                       <a class="nav-link"  [routerLink]="['/miappe']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>MIAPPE description</a>
+                    </li>
+                    <li class="nav-item"><a>Data exploration</a></li>
+                    <li class="nav-item"><a>Differential expression analysis</a></li>
+                  </ul>
+                </li>
+             </ul><span class="heading">Extras</span>
+             <ul class="sidebar-menu">
+                <li> <a href="#"> <i class="far fa-newspaper"></i>Publications</a></li>
+                <li> 
+                    <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i>FAQ</a>
+                    <!--<a href="#"> <i class="fas fa-question-circle"></i>FAQ</a>-->
+                </li>
+                <li> 
+                    <a class="nav-link" [routerLink]="['/downloaded']" routerLinkActive="active-link"><i class="fa fa-cart-arrow-down"></i>Download</a>
+                    <!--<a href="#"> <i class="fas fa-question-circle"></i>FAQ</a>-->
+                </li>
+                <!--<li> <a href="#"> <i class="fa fa-cart-arrow-down"></i>Download</a></li>-->
+                <li> <a href="#"> <i class="icon-picture"></i>Releases</a></li>
+             </ul>
+        </div>
+        
+    </aside>
+        <section id="main-content">
+<!--            <h2  style="font-size: 20pt; background-color: white; color: #006666" href="#">
+                      LINDA
+                      <i style="font-size: 20pt"> 
+                          pLant experImeNtal metaDatA 
+                      </i>
+                        </h2>-->
 
-        </form>
-    </div>
-</nav>
-<div class="wrapper">
-    <!-- Page Content -->
-    <div id="content" class="container">
-        <div fxFlex fxLayout="column">
-            <router-outlet></router-outlet>
-        </div>    
-    </div>
-</div>
+            <section class="wrapper">
+                    <alert></alert>
+                      <!--<router-outlet></router-outlet>-->
+                     <router-outlet (activate)="onActivate($event)"></router-outlet>
+
+            </section>
+            
+        </section>
+    
+    
+    
 
 
+    
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  </section>
 
 
 

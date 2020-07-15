@@ -34,6 +34,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     marked = false;
     theCheckbox = false;
     modelForm: FormGroup;
+    ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']
     submitted = false;
     loading = false;
     model_id:string;
@@ -41,7 +42,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     model:any = [];
     model_to_edit:any = [];
     levels=[] 
-    dict_array:any=[];
+    field_array:any=[];
     keys:any = [];
 
     constructor(
@@ -78,25 +79,35 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
     
     onSelect(values:string, key:string) {
+        console.log(values)
         const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[]}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
+                console.log(result)
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
-                this.selected_term = result.selected_term;
-                this.validated_term[key]={selected:true};
-                this.modelForm.controls[key].patchValue(this.selected_term.id)
+                console.log(this.selected_set)
+                var term_ids=''
+                for(var i = this.selected_set.length - 1; i >= 0; i--) {
+                    term_ids+=this.selected_set[i]['id'] +'/'
+                }
+                term_ids = term_ids.slice(0, -1);
+                //this.selected_term = result.selected_term;
+                this.validated_term[key]={selected:true, values:term_ids};
+                
+                this.modelForm.controls[key].patchValue(term_ids)
             }
             });            
     }
 
-    isFormEmpty():boolean{
+    isStartFilling():boolean{
         this.keys.forEach(attr => {
             if (this.modelForm.value[attr]!==""){
                 this.startfilling=true;
             }
         });
-        return true
+        console.log(this.startfilling)
+        return this.startfilling
     }
     onTaskAdd(event){
         this.startfilling=false;
@@ -105,6 +116,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.startfilling=true;
             }
         }); 
+        console.log(this.startfilling)
     }
 
     get_max_level(){
@@ -117,13 +129,17 @@ export class FormComponent implements OnInit//, AfterViewInit
         });
         
     }
+    
+    isEmpty(obj) {
+        return Object.keys(obj).length === 0;
+    }
     get_model(){
         
         this.model=[];        
         this.globalService.get_model(this.model_type).toPromise().then(data => {
             this.model = data;
             this.keys=Object.keys(this.model);
-            this.dict_array=[]
+            this.field_array=[]
             for( var i = 0; i < this.keys.length; i++){     
                 if ( this.keys[i].startsWith("_") || this.keys[i].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                     this.keys.splice(i, 1); 
@@ -133,27 +149,33 @@ export class FormComponent implements OnInit//, AfterViewInit
                     var dict={}
                     dict["key"]=this.keys[i]
                     dict["pos"]=this.model[this.keys[i]]["Position"]
-                    this.dict_array.push(dict)
+                    dict["extra_infos"]=[]
+                    this.field_array.push(dict)
                 }
-                
+             
             }
-
-            this.dict_array=this.dict_array.sort(function (a, b) {return a.pos - b.pos;});
+            
+            this.field_array=this.field_array.sort(function (a, b) {return a.pos - b.pos;});
 
             if (this.mode ==="create"){
 
-                let attributeFilters = [];
+                let attributeFilters = {};
 
-                this.dict_array.forEach(attr => {
+                this.field_array.forEach(attr => {
                     
-                    this.validated_term[attr["key"]]={selected:false}
+                    this.validated_term[attr["key"]]={selected:false, values:""}
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
                         if  (attr["key"].includes("ID")){
                             //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                             //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                            attributeFilters[attr["key"]] = ['',[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr["key"])];
+                            attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr["key"])];
                             //attributeFilters[attr] = ['',[], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
                         }
+                        else if(attr["key"].includes("Short title")){
+                            attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)]];
+
+                        }
+                        
                         else{
                             attributeFilters[attr["key"]] = [''];
                         }
@@ -164,16 +186,33 @@ export class FormComponent implements OnInit//, AfterViewInit
             else{  
                 let attributeFilters = [];
 
-                this.dict_array.forEach(attr => {  
-                    if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
+                this.field_array.forEach(attr => {  
+                    console.log(attr["key"])
+                    if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition") ){
 
-                         this.validated_term[attr["key"]]={selected:false}
-                         attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
+                         this.validated_term[attr["key"]]={selected:false, values:""}
+                         
+                         if  (attr["key"].includes("ID")){
+                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]],[Validators.required, Validators.minLength(4)]];
+
+                         }
+                         else if(attr["key"].includes("Short title")){
+                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]],[Validators.required, Validators.minLength(4)]];
+
+                        }
+                        
+                        else{
+                            attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
+
+                        }
+//                        attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
                          //attributeFilters[attr] = ['']
                     }
                 });
                 this.modelForm= this.formBuilder.group(attributeFilters);
-            }                
+            }
+            console.log(this.field_array)         
+            console.log(this.modelForm.value)         
         });
     };
     
@@ -202,12 +241,13 @@ export class FormComponent implements OnInit//, AfterViewInit
     save(form: any): boolean {
         
         if (!form.valid) {
+            console.log("this form contains errors! ")
             this.alertService.error("this form contains errors! ");
 
             return false;
         }
         else{
-            if (parseInt(this.level)==this.max_level){
+            //if (parseInt(this.level)==this.max_level){
 
                 if(this.marked){
                     this.globalService.saveTemplate(this.modelForm.value,this.model_type).pipe(first()).toPromise().then(
@@ -266,10 +306,10 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
                 
                 
-            }
-            else{
-                return true;
-            }
+            //}
+            //else{
+              //  return true;
+            //}
         }
         //Here register the form with the correct investigation id et study id
         //this.formDataService.setAddress(this.address);

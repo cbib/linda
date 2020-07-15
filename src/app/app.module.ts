@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AlertComponent } from './directives/alert.component';
 import { AuthGuard } from './guards/auth.guards';
 import { JwtInterceptor, ErrorInterceptor } from './helpers';
-import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService} from './services';
+import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService, AdService} from './services';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -77,6 +77,16 @@ import { UserComponent } from './users/user.component';
 import { AdminComponent } from './admin/admin.component';
 import { HelpComponent } from './help/help.component';
 import { SendmailComponent } from './forms/sendmail.component';
+import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
+import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
+import { AdBannerComponent } from './banners/ad-banner.component';
+import { PubAdComponent } from './banners/pub-ad.component';
+import { AdDirective } from './directives/ad.directive';
+import { DragDropDirective } from './directives/drag-drop.directive';
+import { UploadFileComponent } from './download/upload-file.component';
+import { ExportDialogComponent } from './dialog/export-dialog.component';
+import { DonwloadedComponent } from './download/donwloaded.component';
+
 
 
 
@@ -104,7 +114,17 @@ import { SendmailComponent } from './forms/sendmail.component';
     UserComponent,
     AdminComponent,
     HelpComponent,
-    SendmailComponent
+    SendmailComponent,
+    OntologyDescriptionComponent,
+    MiappeDescriptionComponent,
+    AdBannerComponent,
+    PubAdComponent,
+    AdDirective,
+    DragDropDirective,
+    UploadFileComponent,
+    ExportDialogComponent,
+    DonwloadedComponent
+    
     
 
     
@@ -161,7 +181,15 @@ import { SendmailComponent } from './forms/sendmail.component';
     DataTablesModule,
     DragDropModule
   ],
-  entryComponents:[DialogComponent,OntologyTreeComponent,DateformatComponent,ConfirmationDialogComponent,TemplateSelectionDialogComponent,DelimitorDialogComponent],
+  entryComponents:[DialogComponent,
+                   OntologyTreeComponent,
+                   DateformatComponent, 
+                   ConfirmationDialogComponent, 
+                   TemplateSelectionDialogComponent, 
+                   DelimitorDialogComponent,
+                   ExportDialogComponent,
+                   PubAdComponent
+                   ],
   providers: [AuthGuard,
               AlertService,
               AuthenticationService,
@@ -170,6 +198,7 @@ import { SendmailComponent } from './forms/sendmail.component';
               ObservationUnitService,
               UserService,
               GlobalService,
+              AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
               ],

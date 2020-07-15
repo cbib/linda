@@ -208,7 +208,7 @@ if __name__ == "__main__":
     else:
         ontologies = linda_db.create_collection('ontologies')
 
-    sys.exit()
+    #sys.exit()
 
 
     if args.verbose:

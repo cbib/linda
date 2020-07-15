@@ -48,7 +48,6 @@ export class UniqueIDValidatorComponent{
             data => {
 //                    setTimeout(() => {control.updateValueAndValidity();}, 10);
                     console.log(control.value)
-                    
                     if (control.value ===""){
                         return { 'create': true };
                     }
@@ -56,6 +55,7 @@ export class UniqueIDValidatorComponent{
                     if (data["success"]){
                         //console.log(data["message"])
                         alertService.clear()
+                        //alertService.success(data["message"])
                         //return null
                         //console.log(control.errors);
                     }else{

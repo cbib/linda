@@ -6,9 +6,9 @@ export * from './study.service';
 export * from './event.service';
 export * from './observation-unit.service';
 export * from './global.service';
-export * from './upload.service';
+export * from './file.service';
 export * from './ontologies.service';
-
+export * from './ad.service';
 
 
 

@@ -21,7 +21,7 @@ interface FoodNode {
 interface DialogData {
   ontology_type: string;
   selected_term:OntologyTerm ;
-  selected_set:[]
+  selected_set:OntologyTerm[]
 
 }
 
@@ -45,17 +45,19 @@ export class OntologyTreeComponent {
 
     //@Input() ontology_type;
     private ontology_type:string;
-    private selected_set:[]
+    private selected_set:OntologyTerm[]
     private selected_term:OntologyTerm;
+    
     private ontologyTerms:OntologyTerm[];
     private ontologyDatatype:OntologyTerm[];
     private ontologyEnum:OntologyTerm[];
     private ontologyContext:OntologyTerm[];
-    private ontologyNode:OntologyTerm[];    
-    private ontologies:any = {};
-    private investigations:any = [];
-    private studies:any = [];
-    private global_array:any=[]; 
+    private ontologyNode:OntologyTerm[];
+    
+    //model ontology    
+    private ontology:any = {};
+    
+    
     private displayed=false;
     private my_tree: FoodNode[]; 
     private ontology_tree: OntologyTerm[];
@@ -79,7 +81,7 @@ export class OntologyTreeComponent {
             console.log(this.data);
             this.ontology_type=this.data.ontology_type;
             this.selected_set=this.data.selected_set;
-            console.log(this.selected_set);
+            //console.log(this.selected_set);
             this.ontology_tree=[];
             this.ontologyTerms=[];
             this.ontologyContext=[];
@@ -107,7 +109,7 @@ export class OntologyTreeComponent {
     private checklistSelection = new SelectionModel<ExampleFlatNode>(true,this.initialSelection /* multiple */);
     
     get_ontology(){
-        return this.ontologiesService.get_ontologies(this.ontology_type).toPromise().then(data => {this.ontologies=data;})
+        return this.ontologiesService.get_ontology(this.ontology_type).toPromise().then(data => {this.ontology=data;})
     }
     async load(){
         await this.get_ontology()
@@ -116,13 +118,13 @@ export class OntologyTreeComponent {
     async ngOnInit() {
         await this.get_ontology()
         this.ontologyNode=[]        
-        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715"]
+        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715", "CO_322"]
         
         if(this.ontology_type==="XEO"){
-            this.ontologyNode=this.build_xeo_isa_hierarchy(this.ontologies);
+            this.ontologyNode=this.build_xeo_isa_hierarchy(this.ontology);
         }
         else if(ontologies_list.includes(this.ontology_type )){  
-            this.ontologyNode=this.build_eo_isa_hierarchy(this.ontologies);
+            this.ontologyNode=this.build_eo_isa_hierarchy(this.ontology);
         } 
         else{
             console.log("no ontology defined")  
@@ -148,27 +150,45 @@ export class OntologyTreeComponent {
         console.log("closed")
         this.dialogRef.close();
     }
+    onOkClick(){
+        //console.log(this.selected_term)
+        console.log(this.selected_set)
+        
+    }
     
 
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-    todoLeafItemSelectionToggle(node: ExampleFlatNode): void {
-        this.checklistSelection.toggle(node);
-    }
-    show_info(term:OntologyTerm){
-        
-        if (term["term"].children.length==0){                        
-            this.selected_term=term
-            this.data.selected_term=this.selected_term
-            this.data.selected_set=this.selected_set
-            console.log(this.selected_term)
-            this.active_node=term
+    todoLeafItemSelectionToggle(term:OntologyTerm): void {
+        this.checklistSelection.toggle(term);
+        console.log(this.checklistSelection)
+        console.log(this.checklistSelection.isSelected(term))
+        if (this.checklistSelection.isSelected(term)){
+            this.data.selected_set.push(term)
             this.displayed=true;
             this.context_term=term["term"].get_context()
-
         }
-//        else{
-//            
-//        }
+        else{
+            for(var i = this.data.selected_set.length - 1; i >= 0; i--) {
+                if(this.data.selected_set[i]['id'] === term.id) {
+                    this.data.selected_set.splice(i, 1);
+                }
+            }
+            this.displayed=false;
+            //this.context_term=term["term"].get_context()
+        }
+        console.log(this.data.selected_set)
+    }
+    
+    
+    show_info(term:OntologyTerm){
+        
+        //this.selected_term=term
+        //this.data.selected_term=this.selected_term
+        //this.data.selected_set=this.selected_set
+        this.active_node=term
+        //this.displayed=true;
+        //this.context_term=term["term"].get_context()
+
     }
 
     
@@ -181,7 +201,7 @@ export class OntologyTreeComponent {
     get_displayed(){
         return this.displayed
     }
-    
+
     
     build_eo_isa_hierarchy(ontology:{}):OntologyTerm[]{
         var cpt=0;
@@ -386,8 +406,8 @@ export class OntologyTreeComponent {
             }
         )
         //Add instances for ontologyTerm
-        if (this.ontologies.instance){
-            this.ontologies.instance.forEach(
+        if (this.ontology.instance){
+            this.ontology.instance.forEach(
                 instance=>{
                     if (Array.isArray(instance.instance_of)){
                         for (var elem in instance.instance_of){
@@ -536,4 +556,7 @@ export class OntologyTreeComponent {
     }
 
     hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+    getStyle(): Object {
+        return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+    }
 }

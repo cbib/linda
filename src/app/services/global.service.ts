@@ -33,6 +33,7 @@ export class GlobalService {
     }
     
     get_model_type(model_id:string){
+        console.log(model_id)
         var model_type=""
         if (model_id.split("/")[0]==="investigations"){
             model_type="investigation" 
@@ -147,6 +148,10 @@ export class GlobalService {
     
     get_all_vertices(user_key:string){
         return this.http.get(this.APIUrl+"get_vertices/"+user_key).pipe(map(this.extractData));
+    }
+    
+    get_all_vertices_by_model(model_type:string, model_key:string){
+        return this.http.get(this.APIUrl+"get_vertices_by_model/" + model_type + "/" + model_key).pipe(map(this.extractData));
     }
     
     saveTemplate(values:{}, model_type:string) {

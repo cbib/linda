@@ -326,8 +326,6 @@ router.post('/register', function (req, res) {
  ******************************************************************************************/
 
 
-
-
 router.get('/get_max_level/:model_type', function (req, res) {
     var model_type=req.pathParams.model_type;
     
@@ -418,7 +416,19 @@ router.get('/get_vertices/:user_key', function (req, res) {
 .description('Assembles a list of keys of entries in the collection.');
 
 
-
+router.get('/get_vertices_by_model/:model_type/:model_key', function (req, res) {
+    var model_type=req.pathParams.model_type;
+    var model_key=req.pathParams.model_key;
+    var model_id=model_type+"/"+model_key;
+    var data=[];
+    data=db._query(aql`FOR v, e, s IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {e:e,s:s,v:v}`);
+    res.send(data);
+})
+.pathParam('model_type', joi.string().required(), 'username of the entry.')
+.pathParam('model_key', joi.string().required(), 'username of the entry.')
+.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
 
 
 router.get('/get_model/:model_type', function (req, res) {
@@ -868,10 +878,6 @@ router.post('/update_field', function (req, res) {
             update=db._query(aql` FOR entry IN ${observation_units} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${observation_units} RETURN NEW.${field}`).toArray();
 
         }
-        
-        
-        
-        
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
         if (update[0] === value){

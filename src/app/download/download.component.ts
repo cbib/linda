@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from  '@angular/forms';
-import { UploadService,GlobalService,  AlertService } from '../services';
+import { FileService, GlobalService,  AlertService } from '../services';
 import { OntologyTerm } from '../ontology/ontology-term';
-
 import { first } from 'rxjs/operators';
 import { Router,ActivatedRoute } from '@angular/router';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -53,11 +52,12 @@ export class DownloadComponent implements OnInit {
     //private loaded:boolean=false;
     ontology_type:string
     selected_term:OntologyTerm
+    selected_set:[]
     uploadResponse = { status: '', message: 0, filePath: '' };
   
     constructor(
             private formBuilder: FormBuilder, 
-            private uploadService: UploadService,
+            private fileService: FileService,
             private router: Router,
             private alertService: AlertService, 
             private globalService: GlobalService,
@@ -74,16 +74,19 @@ export class DownloadComponent implements OnInit {
 //                    this.lines=this.data["data"]
 //                })
 //            }
-        
+        //use this when you pass argument using this.router.navigate
+        // else use @input if you pass argument in template html  
         this.route.queryParams.subscribe(
             params => {        
                 this.model_type=params['model_type'];
                 this.model_key=params['model_key'];
                 this.mode=params['mode'];
                 this.parent_id=params['parent_id']
-            console.log(params)
-            //this.investigation_key=params['key']
-            console.log(this.mode);
+//            console.log(params)
+//            console.log(params['model_key'])
+//            console.log(params['parent_id'])
+//            //this.investigation_key=params['key']
+//            console.log(this.mode);
             
             }
         );
@@ -105,8 +108,12 @@ export class DownloadComponent implements OnInit {
 //        this.preview();
 //    }
     ngOnInit() {
-        console.log(this.mode)
+//        console.log(this.mode)
+//        console.log(this.model_key)
+//        console.log(this.model_type)
         if (this.mode==="edit"){
+                console.log(this.model_key)
+                console.log(this.model_type)
                 this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
                     console.log(received_data);
                     this.data=received_data;
@@ -149,7 +156,7 @@ export class DownloadComponent implements OnInit {
             
             this.uploadResponse.status='progress'
             this.fileUploaded = event.target.files[0];
-            let fileReader = new FileReader();
+            //let fileReader = new FileReader();
             this.fileName=this.fileUploaded.name
                 
             if (this.fileUploaded.type==="text/csv"){
@@ -256,7 +263,7 @@ export class DownloadComponent implements OnInit {
                 formData.append('file', this.form.get('file').value);
                 let user=JSON.parse(localStorage.getItem('currentUser'));
                 //let parent_id="studies/981995"
-                this.uploadService.upload2(this.fileName,this.lines,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
+                this.fileService.upload2(this.fileName,this.lines,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
                 this.router.navigate(['/tree'],{ queryParams: { key: user._key  } });
             }
             else{
@@ -276,7 +283,7 @@ export class DownloadComponent implements OnInit {
             }
         }
 
-        //    this.uploadService.upload(this.lines).subscribe(
+        //    this.fileService.upload(this.lines).subscribe(
         //      (res) => this.uploadResponse = res,
         //      (err) => this.error = err
         //    );
@@ -293,7 +300,14 @@ export class DownloadComponent implements OnInit {
             if (result!==undefined){
                 this.ontology_type = result.ontology_type;
                 this.selected_term = result.selected_term;
-                this.associated_headers[key]={selected:true, associated_term_id:this.selected_term.id,is_time_values:false}
+                this.selected_set = result.selected_set;
+                console.log(this.selected_set)
+                var term_ids=""
+                for(var i = this.selected_set.length - 1; i >= 0; i--) {
+                    term_ids+=this.selected_set[i]['id']
+                }
+                
+                this.associated_headers[key]={selected:true, associated_term_id:term_ids,is_time_values:false}
                 console.log(this.associated_headers);
             };
         });

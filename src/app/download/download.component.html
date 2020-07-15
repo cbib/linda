@@ -1,8 +1,15 @@
 <alert></alert>
-
+ 
+<div class="border-head">
+            <h3>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+            </h3>
+    </div>
+    
 
 <div *ngIf= "mode==='create'" >
   <h1>Upload your Data files!</h1>
+  <!--<app-upload-file ></app-upload-file>-->
   <div *ngIf="error">
     {{ error.message }}
   </div>
@@ -39,15 +46,6 @@
   </form>
      <br>
 </div>     
- 
-<!-- <pre>
-{{csv}}     
-
- </pre>
- -->
- 
- 
-
 <!--<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">-->
 <table cdkDropList cdkDropListOrientation="horizontal" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
     <thead>
@@ -55,38 +53,38 @@
         <!--<th scope="col"  style="font-size:10px;text-align: center; "><i class="fas fa-cogs"></i></th>-->
     <!--</tr>-->   
         
-    <tr>
-        <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">{{key}}</th>
-    </tr>
-    <tr>
-        <th scope="col" *ngFor="let key of get_headers_select() ; index as i; "  style="font-size:10px;text-align: center;" cdkDrag>
-            <span *ngIf="key==='others'" style="display:inline-block; margin-left: 10px;"> 
-                <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,get_headers()[i])" >
-                    <!--<option value="" disabled>Assign Ontology term</option>-->
-                    <option [value]="undefined" selected>Assign Ontology term</option>
-                    <option value='XEO' (change)="onSelect($event.target.value,key)">XEO</option>
-                    <option value='EO'>EO</option>
-                    <option value='EnvO'>EnvO</option>
-                    <option value='PO_Structure'>PO Structure</option>
-                    <option value='EFO'>EFO</option>
-                    <option value='PO_Development'>PO Development</option>
-                    <option value='CO_20'>Crop Ontology 20 </option>
-                    <option value='CO_715'>Crop Ontology 715 </option>
-                </select> 
-            </span>
-            
-            <span *ngIf="key==='time'" style="display:inline-block; margin-left: 10px;"> 
-                <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
-                    <option value="" disabled>Select time format</option>
-                    <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
-                    <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
-                    <option value='yyyy/MM/ddThh:mm:ss'>yyyy/MM/ddThh:mm:ss</option>
-                    <option value='custom_date_format'>build custom date format</option>
-                </select> 
-            </span>
-            
-        </th>
-    </tr>
+        <tr>
+            <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">{{key}}</th>
+        </tr>
+        <tr>
+            <th scope="col" *ngFor="let key of get_headers_select() ; index as i; "  style="font-size:10px;text-align: center;" cdkDrag>
+                <span *ngIf="key==='others'" style="display:inline-block; margin-left: 10px;"> 
+                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,get_headers()[i])" >
+                        <!--<option value="" disabled>Assign Ontology term</option>-->
+                        <option [value]="undefined" selected>Assign Ontology term</option>
+                        <option value='XEO' (change)="onSelect($event.target.value,key)">XEO</option>
+                        <option value='EO'>EO</option>
+                        <option value='EnvO'>EnvO</option>
+                        <option value='PO_Structure'>PO Structure</option>
+                        <option value='PO_Development'>PO Development</option>
+                        <option value='CO_322'>Crop Ontology 322</option>
+                        <option value='CO_20'>Crop Ontology 20 </option>
+                        <option value='CO_715'>Crop Ontology 715 </option>
+                    </select> 
+                </span>
+
+                <span *ngIf="key==='time'" style="display:inline-block; margin-left: 10px;"> 
+                    <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
+                        <option value="" disabled>Select time format</option>
+                        <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
+                        <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
+                        <option value='yyyy/MM/ddThh:mm:ss'>yyyy/MM/ddThh:mm:ss</option>
+                        <option value='custom_date_format'>build custom date format</option>
+                    </select> 
+                </span>
+
+            </th>
+        </tr>
         <tr>
             <th scope="col" *ngFor="let key of get_headers() ; index as i;"  style="font-size:10px;text-align: center;">
 
@@ -99,18 +97,23 @@
                 </span>
             </th>
         </tr>
-        </thead>
-    <tbody *ngIf="get_lines().length<100">
+    </thead>
+<!--    <tbody *ngIf="get_lines().length<100">
         <tr *ngFor="let l of get_lines() ; index as j;">
-         <!--{{l}}-->
+         {{l}}
         <td  style="font-size:14px;" scope="row" *ngFor="let h_key of l ; index as k;" >{{h_key}}</td>
     </tr>
-    </tbody>
-    <tbody *ngIf="get_lines().length>100">
+    </tbody>-->
+<!--    <tbody *ngIf="get_lines().length>100">
         <tr *ngFor="let l of get_lines()| slice:0:100 ; index as j;">
-         <!--{{l}}-->
+         {{l}}
         <td  style="font-size:14px;" scope="row" *ngFor="let h_key of l ; index as k;" >{{h_key}}</td>
     </tr>
+    </tbody>-->
+    <tbody>
+        <tr>
+            <td  style="font-size:14px;" scope="row" *ngFor="let h_key of get_lines()[1] ; index as k;" >{{h_key}}</td>
+        </tr>
     </tbody>
 </table>
 <!--<div>
