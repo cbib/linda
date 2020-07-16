@@ -407,7 +407,7 @@ router.get('/get_model_child/:model_type', function (req, res) {
 router.get('/get_vertices/:user_key', function (req, res) {
     var user_id="users/"+req.pathParams.user_key;
     var data=[];
-    data=db._query(aql`FOR v, e, s IN 1..4 ANY ${user_id} GRAPH 'global'  RETURN {e:e,s:s}`);
+    data=db._query(aql`FOR v, e, s IN 1..5 ANY ${user_id} GRAPH 'global'  RETURN {e:e,s:s}`);
     res.send(data);
 })
 .pathParam('user_key', joi.string().required(), 'user id of the entry.')
