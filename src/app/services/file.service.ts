@@ -81,6 +81,7 @@ export class FileService {
     
     public build_path(root_id, models, selected_format){
         var paths:any=[]
+        var paths2={'filepath':[], 'data':[], 'parent_id':[]}
         models.forEach(
             result=>{
                 var _id:string=result["v"]["_id"]
@@ -101,35 +102,89 @@ export class FileService {
 
                             if ((_to == _from_bis) && (_to == _to_bis)){
 
-                                path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
+                                //path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path + formats[i])){
-                                            //paths.push(path + formats[i])
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path + formats[i])){
+//                                            //paths.push(path + formats[i])
+//                                            paths.push({'path':path + formats[i],'data':result["v"]})
+//                                        }
                                     }
                                 }                               
                             }
                             else{
-                                path = _to.replace('/','_') +'/'+_to.replace('/','_')
+                                //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path + formats[i])){
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _to.replace('/','_') +'/'+_to.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path + formats[i])){
+                                            paths2['filepath'].push(path + formats[i])
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path + formats[i])){
+//                                            paths.push({'path':path + formats[i],'data':result["v"]})
+//                                        }
                                     }
                                 }
                             }
                         }
                     )
                     if (path ==''){
-                         path = _to.replace('/','_') +'/'+_to.replace('/','_')
+                         //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                          for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path + formats[i])){
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _to.replace('/','_') +'/'+_to.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path + formats[i])){
+//                                            paths.push({'path':path + formats[i],'data':result["v"]})
+//                                        }
                                     }
                                 }
                     }
@@ -140,32 +195,86 @@ export class FileService {
                             var _from_bis:string=result_bis["e"]["_from"]
                             var _to_bis:string=result_bis["e"]["_to"]
                             if ((_to == _from_bis) && (_from != root_id)){
-                                path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
+                                //path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path+ formats[i])){
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path)){
+//                                            paths.push({'path':path,'data':result["v"]})
+//                                        }
                                     }
                                 }
                             }
                             if ((_from == _to_bis) && (_from_bis != root_id)){
-                                path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
+                                //path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path+ formats[i])){
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path+ formats[i])){
+//                                            paths.push({'path':path + formats[i],'data':result["v"]})
+//                                        }
                                     }
                                 }
                             }
                             if ((_from == _to_bis) && (_from_bis == root_id)){
-                                path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
+                                //path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
-                                        if (!paths.includes(path+ formats[i])){
-                                            paths.push({'path':path + formats[i],'data':result["v"]})
+                                        path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_') + formats[i]
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
                                         }
+//                                        if (!paths.includes(path+ formats[i])){
+//                                            paths.push({'path':path,'data':result["v"]})
+//                                        }
                                     }
                                 }
                             }
@@ -173,40 +282,86 @@ export class FileService {
                         }
                     )
                     if (path ==''){
-                        path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
+                        //path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                         for( var i = 0; i < formats.length; i++){
                              if (selected_format[formats[i]]['selected']){
-                                 if (!paths.includes(path + formats[i])){
-                                     paths.push({'path':path + formats[i],'data':result["v"]})
-                                 }
+                                 let path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_') + formats[i]
+                                 if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
+                                            paths2['data'].push(result["v"])
+                                            if (path.split('/').length>2){
+                                                paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
+                                            }
+                                            else if(path.split('/').length==2){
+                                                paths2['parent_id'].push(path.split('/')[0])
+                                                
+                                            }
+                                            else{
+                                                paths2['parent_id'].push(root_id)
+                                                console.log(path.split('/'))
+                                                console.log(path.split('/').length)
+                                                
+                                            }
+                                        }
+//                                 if (!paths.includes(path + formats[i])){
+//                                     
+//                                     paths.push({'path':path + formats[i],'data':result["v"]})
+//                                 }
                              }
                          }
                     }
                 }
             }
         );
-        return paths
+        console.log(paths2)
+        return paths2
     }
     
     public build_zip(paths){
         let zipFile: JSZip = new JSZip();
-        for ( var i = 0; i < paths.length; i++){
-            let model_type= paths[i]['data']["_id"].split('/')[0]
+        //save a config file to reload
+        //let unique = [...new Set(paths['filepath'])];
+        //console.log(unique)
+        var dict={'filepath':[],'model_type':[], 'parent_id':[]}
+        for ( var i = 0; i < paths['filepath'].length; i++){
+
+        //for ( var i = 0; i < paths.length; i++){
+            let model_type= paths['data'][i]["_id"].split('/')[0]
+            //let model_type= paths[i]['data']["_id"].split('/')[0]
             if (model_type == "metadata_files"){
 
-                if (paths[i]['path'].includes(".csv")){
+                if (paths['filepath'][i].includes(".csv")){
+                //if (paths[i]['path'].includes(".csv")){
 
-                    let csvData = this.ConvertMetadataJsonTo(paths[i]['data'], ",");
+                    //let csvData = this.ConvertMetadataJsonTo(paths[i]['data'], ",");
+
+                    let csvData = this.ConvertMetadataJsonTo(paths['data'][i], ",");
                     let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-                    zipFile.file(paths[i]['path'], blob);
-                }
-                else if (paths[i]['path'].includes(".tsv")){
-                    let tsvData = this.ConvertMetadataJsonTo(paths[i]['data'], "\t");
+                    
+                    zipFile.file(paths['filepath'][i], blob);
+                    dict['filepath'].push(paths['filepath'][i])
+                    //zipFile.file(paths[i]['path'], blob);
+                    //dict['filepath'].push(paths[i]['path'])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
+                }                
+                else if (paths['filepath'][i].includes(".tsv")){
+                //else if (paths[i]['path'].includes(".tsv")){
+                    let tsvData = this.ConvertMetadataJsonTo(paths['data'][i], "\t");
+
+                    //let tsvData = this.ConvertMetadataJsonTo(paths[i]['data'], "\t");
                     let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
-                    zipFile.file(paths[i]['path'], blob_tsv);
+                    zipFile.file(paths['filepath'][i], blob_tsv);
+                    dict['filepath'].push(paths['filepath'][i])
+                    //zipFile.file(paths[i]['path'], blob_tsv);
+                    //dict['filepath'].push(paths[i]['path'])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
                 }
                 else{
-                    var keys=Object.keys(paths[i]['data']);
+                    var keys=Object.keys(paths['data'][i]);
+
+                    //var keys=Object.keys(paths[i]['data']);
                     for( var j = 0; j < keys.length; j++){     
                        if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                            keys.splice(j, 1); 
@@ -214,27 +369,40 @@ export class FileService {
                        }
                     }
                     var clean_modeldata={}
-                    keys.forEach(attr => {clean_modeldata[attr]=paths[i]['data'][attr]})
+                    keys.forEach(attr => {clean_modeldata[attr]=paths['data'][i][attr]})
+
+                    //keys.forEach(attr => {clean_modeldata[attr]=paths[i]['data'][attr]})
                     let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
-                    zipFile.file(paths[i]['path'], blob_json);
+                    zipFile.file(paths['filepath'][i], blob_json);
+                    dict['filepath'].push(paths['filepath'][i])
+                    //zipFile.file(paths[i]['path'], blob_json);
+                    //dict['filepath'].push(paths[i]['path'])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
 
                 }
             }
             else{
 
-                if ((paths[i]['path'].includes(".csv"))){
+                if ((paths['filepath'][i].includes(".csv"))){
 
-                    let csvData = this.ConvertJsonModelTo(paths[i]['data'], ",");
+                    let csvData = this.ConvertJsonModelTo(paths['data'][i], ",");
                     let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-                    zipFile.file(paths[i]['path'], blob);
+                    zipFile.file(paths['filepath'][i], blob);
+                    dict['filepath'].push(paths['filepath'][i])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
                 }
-                else if ((paths[i]['path'].includes(".tsv"))){
-                    let tsvData = this.ConvertJsonModelTo(paths[i]['data'], "\t");
+                else if ((paths['filepath'][i].includes(".tsv"))){
+                    let tsvData = this.ConvertJsonModelTo(paths['data'][i], "\t");
                     let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
-                    zipFile.file(paths[i]['path'], blob_tsv);
+                    zipFile.file(paths['filepath'][i], blob_tsv);
+                    dict['filepath'].push(paths['filepath'][i])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
                 }
                 else{
-                    var keys=Object.keys(paths[i]['data']);
+                    var keys=Object.keys(paths['data'][i]);
                     for( var j = 0; j < keys.length; j++){     
                         if ( keys[j].startsWith("_") || keys[j].startsWith("Definition")){// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                             keys.splice(j, 1); 
@@ -242,12 +410,22 @@ export class FileService {
                         }
                     }
                     var clean_modeldata={}
-                    keys.forEach(attr => {clean_modeldata[attr]=paths[i]['data'][attr]})
+                    keys.forEach(attr => {clean_modeldata[attr]=paths['data'][i][attr]})
                     let blob_json = new Blob([JSON.stringify(clean_modeldata)], {type : 'application/json'});
-                    zipFile.file(paths[i]['path'], blob_json);
+                    zipFile.file(paths['filepath'][i], blob_json);
+                    dict['filepath'].push(paths['filepath'][i])
+                    dict['model_type'].push(model_type)
+                    dict['parent_id'].push(paths['parent_id'][i])
                 }
             }
         }
+        
+        
+        console.log(dict)
+        let blob_json = new Blob([JSON.stringify(dict)], {type : 'application/json'});
+        zipFile.file('hierarchy.json', blob_json);
+
+        
         return zipFile
     }
     
@@ -267,7 +445,8 @@ export class FileService {
         
        
         //Build path to inject in zip
-        var paths:any=[]
+        //var paths:any=[]
+        var paths={'filepath':[], 'data':[], 'parent_id':[]}
         var root_id=collection_name + '/' + model_key
         paths=this.build_path(root_id, models, selected_format)
         
@@ -276,14 +455,19 @@ export class FileService {
         for( var i = 0; i < formats.length; i++){
             if (selected_format[formats[i]]['selected']){
                 var dir_root_path=collection_name + '_' + model_key + formats[i]
-                paths.push({'path':dir_root_path,'data':model_data})
+                //paths.push({'path':dir_root_path,'data':model_data})
+                paths['filepath'].push(dir_root_path)
+                paths['data'].push(model_data)
+                paths['parent_id'].push('root')
+
             }
         }
+        
         //build zipfilez with differents paths
         let dir_root_id=collection_name + '_' + model_key
         let zipFile: JSZip = new JSZip();
         zipFile = this.build_zip(paths)    
-        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
+        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
         
     }
     
