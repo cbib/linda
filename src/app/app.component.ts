@@ -80,11 +80,11 @@ export class AppComponent implements OnInit {
     onActivate(componentReference) {
         
         if(componentReference instanceof UserTreeComponent){
-            console.log("This is the UserTreeComponent");
+            //console.log("This is the UserTreeComponent");
             
          return;
          }
-         console.log("This is not the ChildWithWorksMethodComponent");
+         //console.log("This is not the ChildWithWorksMethodComponent");
         //this.stats_advanced = {}
         
         //this.get_vertices()
@@ -110,7 +110,7 @@ export class AppComponent implements OnInit {
 //                      "observed_variables":0 
 //                }
                 
-                console.log(this.vertice_data)
+                //console.log(this.vertice_data)
                 this.vertice_data.forEach(
                     d => {
                         var stat_object={

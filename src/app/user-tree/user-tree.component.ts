@@ -525,7 +525,7 @@ export class UserTreeComponent implements OnInit{
 
                     }
                 );
-                console.log(this.statistics)
+                //console.log(this.statistics)
                 
 
                 
@@ -653,6 +653,7 @@ export class UserTreeComponent implements OnInit{
         this.treeControl.expand(this.treeControl.dataNodes[3]);
     }   
     build_hierarchy(edges:[]):MiappeNode[]{
+        console.log(edges)
         var cpt=0;
         var tmp_nodes=[]
         tmp_nodes.push(new MiappeNode("Investigations tree","","",0))
