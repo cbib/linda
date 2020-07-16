@@ -91,16 +91,16 @@ export class DownloadComponent implements OnInit {
             }
         );
     }
-    get_headers(){
+    public get_headers(){
         return this.headers
     }
-    get_associated_headers(){
+    public get_associated_headers(){
         return this.associated_headers;
     }
-    get_headers_select(){
+    public get_headers_select(){
         return this.headers_select;
     }
-    get_lines(){
+    public get_lines(){
         return this.lines
     }
 //    fileProgress(fileInput: any) {
@@ -112,10 +112,10 @@ export class DownloadComponent implements OnInit {
 //        console.log(this.model_key)
 //        console.log(this.model_type)
         if (this.mode==="edit"){
-                console.log(this.model_key)
-                console.log(this.model_type)
+                //console.log(this.model_key)
+                //console.log(this.model_type)
                 this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
-                    console.log(received_data);
+                    //console.log(received_data);
                     this.data=received_data;
                     this.headers=this.data["headers"];
                     this.associated_headers=this.data["associated_headers"];
