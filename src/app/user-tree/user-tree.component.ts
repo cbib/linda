@@ -502,6 +502,7 @@ export class UserTreeComponent implements OnInit{
   
     get_vertices(){
         let user=JSON.parse(localStorage.getItem('currentUser'));
+        console.log(user)
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 this.vertices=data;

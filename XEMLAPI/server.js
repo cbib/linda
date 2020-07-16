@@ -972,195 +972,150 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
 
 //Post new templates data
 router.post('/saveTemplate', function (req, res) {
-    //posted variables
-    var username=req.body.username;
-    var password=req.body.password;
-    var values=req.body.values;
-    var model_type=req.body.model_type;
+//posted variables
+var username=req.body.username;
+var password=req.body.password;
+var values=req.body.values;
+var model_type=req.body.model_type;
 
-    if (!db._collection(model_type+"_templates")) {
-        db._createDocumentCollection(model_type+"_templates");
-    }
-    var coll = db._collection(model_type+"_templates");
+if (!db._collection(model_type+"_templates")) {
+    db._createDocumentCollection(model_type+"_templates");
+}
+var coll = db._collection(model_type+"_templates");
 
-    var edge_coll='templates_edge'
-    if (!db._collection(edge_coll)) {
-      db._createEdgeCollection(edge_coll);
-    }
-    const edge = db._collection(edge_coll); 
-    
-    
-   
-    const user = db._query(aql`
-        FOR entry IN ${users}
-        FILTER entry.username == ${username}
-        FILTER entry.password == ${password}
-        RETURN entry
-      `).toArray();
-    if (user[0] === null){
-        res.send({success:false,message:'Username '+ username + ' doesn\'t exists',_id:null});
-    }
-    else{
-        /////////////////////////////
-        //now check if investigation exists else add to database
-        /////////////////////////////
-        var data=[];
-        data =db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray(); 
-
-        //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-            if (data[0].new !== null){
-                var obj={
-                "_from":user[0]._id,
-                "_to":data[0].id
-                };
-                const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `); 
-                res.send({success:true, message:'Everything is good ', _id: data[0].id});
-            }
-            //Document exists
-            else{
-                res.send({success:false,message: model_type +' collection already have document with this title ', _id:'none'});
-            } 
-        };
-    })
-    .body(joi.object({
-        username: joi.string().required(),
-        password: joi.string().required(),
-        values: joi.object().required(),
-        model_type: joi.string().required()
-    }).required(), 'Values to check.')
-    .response(joi.object({
-        success: true, 
-        message:joi.string().required(),
-        _id:joi.string().required()
-    }).required(),'response.')
-    .summary('List entry keys')
-    .description('add MIAPPE description for given model.');
+var edge_coll='templates_edge'
+if (!db._collection(edge_coll)) {
+  db._createEdgeCollection(edge_coll);
+}
+const edge = db._collection(edge_coll); 
 
 
 
+const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+  `).toArray();
+if (user[0] === null){
+    res.send({success:false,message:'Username '+ username + ' doesn\'t exists',_id:null});
+}
+else{
+    /////////////////////////////
+    //now check if investigation exists else add to database
+    /////////////////////////////
+    var data=[];
+    data =db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray(); 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
+        if (data[0].new !== null){
+            var obj={
+            "_from":user[0]._id,
+            "_to":data[0].id
+            };
+            const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `); 
+            res.send({success:true, message:'Everything is good ', _id: data[0].id});
+        }
+        //Document exists
+        else{
+            res.send({success:false,message: model_type +' collection already have document with this title ', _id:'none'});
+        } 
+    };
+})
+.body(joi.object({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    values: joi.object().required(),
+    model_type: joi.string().required()
+}).required(), 'Values to check.')
+.response(joi.object({
+    success: true, 
+    message:joi.string().required(),
+    _id:joi.string().required()
+}).required(),'response.')
+.summary('List entry keys')
+.description('add MIAPPE description for given model.');
 
 
 
 router.post('/remove', function (req, res) {
-var username=req.body.username;
-var password=req.body.password;
-var id=req.body.id;
-//var data={} 
+    var username=req.body.username;
+    var password=req.body.password;
+    var id=req.body.id;
 
-//get all childs and remove in collection document and edges
-var childs=db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${id} GRAPH 'global' FILTER e._from==${id} RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
-//example format data returned
-//[ 
-//  { 
-//    "v" : "data_files/1421872", 
-//    "e" : "studies_edge/1421874" 
-//  }, 
-//  { 
-//    "v" : "data_files/1421929", 
-//    "e" : "studies_edge/1421931" 
-//  }, 
-//  { 
-//    "v" : "data_files/1422022", 
-//    "e" : "studies_edge/1422024" 
-//  } 
-//]
-var errors=[];
-for (var i = 0; i < childs.length; i++) {
-    //var child_coll=childs[i].v_id.split("/")[0];
-    //var edge_coll=childs[i].e_id.split("/")[0];
-    //var child_vkey=childs[i].v_key;
-    //var child_ekey=childs[i].e_key;
-    
-    //Delete child vertice in collection
-    if ((childs[i].v_id !==null) || (childs[i].v_key !==null)){
-        var child_coll=childs[i].v_id.split("/")[0];
-        var child_vkey=childs[i].v_key;
-        try{
-            db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+    const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+          `).toArray();
+    if (user[0] === null){
+        res.send({success:false,message:['Username '+ username + ' doesn\'t exists']});
+    }
+    else{
+        var errors=[];
+
+        //Remove relation for parent of selected node parent in edge collection
+        var parent=db._query(aql`FOR v, e IN 1..1 INBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+        var parent_edge_coll=parent[0].e_id.split("/")[0];
+        var parent_key=parent[0].e_key;
+        try{    
+            db._query(`REMOVE "${parent_key}" IN ${parent_edge_coll}`);
         }
         catch(e){
-            errors.push(e+" "+ childs[i].v_id);
+            errors.push(e  +" "+ parent[0].e_id);
         }
-    }
-    if ((childs[i].e_id !==null) || (childs[i].e_key !==null)){
-        var edge_coll=childs[i].e_id.split("/")[0];
-        var child_ekey=childs[i].e_key;
-        try{
-            db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+        
+        //get all childs and remove in collection document and edges
+        var childs=db._query(aql`FOR v, e IN 1..4 OUTBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+
+
+        //Remove all childs for selected node
+        for (var i = 0; i < childs.length; i++) {
+
+            //Delete child vertice in collection
+            if ((childs[i].v_id !==null) || (childs[i].v_key !==null)){
+                var child_coll=childs[i].v_id.split("/")[0];
+                var child_vkey=childs[i].v_key;
+                try{
+                    db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+                }
+                catch(e){
+                    errors.push(e+" "+ childs[i].v_id);
+                }
+            }
+            if ((childs[i].e_id !==null) || (childs[i].e_key !==null)){
+                var edge_coll=childs[i].e_id.split("/")[0];
+                var child_ekey=childs[i].e_key;
+                try{
+                    db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+                }
+                catch(e){
+                    errors.push(e + " " +childs[i].e_id);
+                }
+            }
+
+            //Delete child edge in edge collection
+
+        }
+        //Remove selected node
+        var key=id.split('/')[1];
+        var coll=id.split('/')[0];
+        try{    
+            db._query(`REMOVE "${key}" IN ${coll}`);
         }
         catch(e){
-            errors.push(e + " " +childs[i].e_id);
+            errors.push(e+" "+ id);
+        }
+        //Delete selected document and the egde in the parent collection edge
+
+        if (errors.length === 0){
+            res.send({success:true, message: ["No errors detected"]});
+        }
+        else{
+            res.send({success:false, message:errors});
         }
     }
-    
-    //Delete child edge in edge collection
-    
-}
-
-
-//Delete selected document and the egde in the parent collection edge
-var data=db._query(aql`FOR v, e, s IN 1..2 ANY ${id} GRAPH 'global' FILTER e._to==${id} RETURN {e:e._id}`).toArray();
-
-var parent_id=data[0].e;
-var parent_key=parent_id.split('/')[1];
-var parent_coll=parent_id.split('/')[0];
-var key=id.split('/')[1];
-var coll=id.split('/')[0];
-try{    
-    db._query(`REMOVE "${key}" IN ${coll}`);
-}
-catch(e){
-    errors.push(e+" "+ id);
-}
-try{ 
-    db._query(`REMOVE "${parent_key}" IN ${parent_coll}`);
-}
-catch(e){
-    errors.push(e+" "+ parent_id);
-}
-if (errors.length === 0){
-    res.send({success:true, message: "No errors detected"});
-}
-else{
-    res.send({success:false, message:errors});
-
-}
-//   [ 
-//  { 
-//    "e" : "investigations_edge/1421707" 
-//  } 
-//    ]
-   
-   
-
 })
 .body(joi.object({
     username: joi.string().required(),
