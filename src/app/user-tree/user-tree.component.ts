@@ -321,25 +321,6 @@ export class UserTreeComponent implements OnInit{
             let fileName=fileUploaded.name   
             
             this.add_multiple_model(fileReader)            
-//            fileReader.onload = function ( e )
-//                    {
-//                        //Create JSZip instance
-//                        //var new_zip = new JSZip();
-//                        var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
-//                            var files= zip['files'];
-//                             Object.keys(zip.files).forEach(function (filename) {
-//                                 console.log(zip.files)
-//                                 console.log(zip.files[filename]['dir'])
-//                                //if (!zip.files[filename]['dir']){
-//                                    zip.files[filename].async('string').then(function (fileData) {
-//                                        console.log(fileData) // These are your file contents      
-//                                    })
-//                            })
-//                            
-//                            
-//
-//                        });
-//            } 
             fileReader.readAsArrayBuffer( fileUploaded );              
 
             
@@ -657,7 +638,7 @@ export class UserTreeComponent implements OnInit{
         console.log(edges)
         var cpt=0;
         var tmp_nodes=[]
-        tmp_nodes.push(new MiappeNode("Investigations tree","","",0))
+        tmp_nodes.push(new MiappeNode("Investigations tree","Investigations tree","",0))
         edges.forEach(
             e=>{
                 var _from:string;
