@@ -135,8 +135,8 @@ export class FileService {
                                 for( var i = 0; i < formats.length; i++){
                                     if (selected_format[formats[i]]['selected']){
                                         path = _to.replace('/','_') +'/'+_to.replace('/','_') + formats[i]
-                                        if (!paths2['filepath'].includes(path + formats[i])){
-                                            paths2['filepath'].push(path + formats[i])
+                                        if (!paths2['filepath'].includes(path)){
+                                            paths2['filepath'].push(path)
                                             paths2['data'].push(result["v"])
                                             if (path.split('/').length>2){
                                                 paths2['parent_id'].push(path.split('/')[path.split('/').length-3])
@@ -467,7 +467,7 @@ export class FileService {
         let dir_root_id=collection_name + '_' + model_key
         let zipFile: JSZip = new JSZip();
         zipFile = this.build_zip(paths)    
-        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
+        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
         
     }
     
