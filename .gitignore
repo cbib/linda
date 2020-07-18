@@ -52,7 +52,7 @@ Thumbs.db
 /package.json
 /dist
 /nbproject/private/
-*src/app/constants_1.ts
-*src/app/constants.ts
+src/app/constants_1.ts
+src/app/constants.ts
 *relaunch_api.sh
 *.sh
