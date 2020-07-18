@@ -25,6 +25,23 @@
 //});
 //db.useDatabase("_admin");
 //db.useBasicAuth("root", "benjamin");
+
+
+//const   cors = require('cors');
+//const express = require('express')
+//var app = express();
+//app.use(express.json({limit: '50mb'}));
+//app.use(express.urlencoded({extended: false, limit: '50mb'}));
+//app.use(cors());
+//const data_folder=config.get("data_folder");
+//
+//
+//let appPort = config.get('api_server.port');
+//app.listen(appPort, () => {
+// console.log("Server running on port ${appPort}");
+//});
+
+
 'use strict';
 var log = require("console").log;
 const createRouter = require('@arangodb/foxx/router');

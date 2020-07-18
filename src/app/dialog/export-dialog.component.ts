@@ -90,6 +90,7 @@ export class ExportDialogComponent implements OnInit {
 
                 //Parse in a recursive way all submodels
                 if ((this.is_expandable_node) && (this.recursive_check)){
+                    
                     var models:any=[]
                     var submodel_data=this.globalService.get_all_vertices_by_model(collection_name, model_key).toPromise().then(submodel_data => {
                         var formats=Object.keys(this.selected_format);

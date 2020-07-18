@@ -83,15 +83,25 @@
                         <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding  title="{{node.def}}" >   
                              <div [ngStyle]="getStyle(node)">
                                  
-                                 
                                  <!-- use a disabled button to provide padding for tree leaf -->
-                                 <button mat-icon-button style="margin-right:  200px" >
+<!--                                 <button mat-icon-button style="margin-right:  200px" [attr.aria-label]="node.name">
                                      <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
-                                     <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
-                                     <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>-->
-
+                                     <mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>
+                                     <mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>
+                                     {{node.name}}
+                                     <i style="margin-right:  50px; margin-left:  15px" class="material-icons mat-icon-rtl-mirror">{{'arrow_right'}}{{node.name}}</i>
                                      <i style="margin-right:  50px; margin-left:  15px" *ngIf="multiple_selection===false">{{node.name}}</i>
-                                 </button>
+                                 </button>-->
+                                 
+<!--                                 <button style="width:300px;padding-right: 200px" mat-icon-button [attr.aria-label]="node.name">
+                                    <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
+                                    {{node.name}}
+                                </button>-->
+                                <button  mat-icon-button [attr.aria-label]="node.name">
+                                    <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
+                                </button>
+                                {{node.name}}
+                                 
                                  <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                  <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
@@ -109,9 +119,9 @@
                                  <a style="float: right;" *ngIf="node.id.includes('observation_units')"> 
                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                  </a>
-                                 <a style="float: right;"> 
+<!--                                 <a style="float: right;"> 
                                   {{node.def}}
-                                 </a>   
+                                 </a>   -->
                                  
                                  
                                  <mat-accordion>
@@ -190,7 +200,7 @@
                                 
                                
                           
-                                <button *ngIf="node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                <button style="width:300px; padding-right: 200px"*ngIf="node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
                                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
                                     {{node.id}}
                                 </button>
@@ -198,13 +208,14 @@
                                      <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                 </a>
                                 
-                                <button style="margin-right: 200px"  *ngIf="!node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                <button  *ngIf="!node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
                                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
                                     <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
                                     <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>-->
 
-                                    <i style='padding-left: 15px' *ngIf="multiple_selection===false">{{node.name}}</i>
+                                    
                                 </button>
+                                <i style='padding-left: 15px' *ngIf="!node.id.includes('Investigations tree')">{{node.name}}</i>
                                 
                                 <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>

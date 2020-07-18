@@ -38,7 +38,7 @@ ehthumbs.db
 Thumbs.db
 
 
-
+*start_angular_server.sh
 
 # Angular specific directory
 
@@ -54,5 +54,5 @@ Thumbs.db
 /nbproject/private/
 /src/app/constants_1.ts
 /src/app/constants.ts
-/relaunch_api.sh
-
+*relaunch_api.sh
+*.sh
