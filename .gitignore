@@ -56,3 +56,12 @@ src/app/constants_1.ts
 src/app/constants.ts
 *relaunch_api.sh
 *.sh
+
+.#
+e2e/
+nbproject/
+src/.idea/
+src/assets/css/google_api_mat-icon.css
+src/assets/css/iconfont/
+useful_command.txt
+
