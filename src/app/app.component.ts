@@ -35,7 +35,9 @@ export class AppComponent implements OnInit {
     }
     async ngOnInit() {
           await this.get_vertices()  
-          
+        /**
+            * // TODO: here need to get same parameter as for edit fucntion in user tree
+        */
      
     }
     
