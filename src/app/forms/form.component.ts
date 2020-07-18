@@ -276,18 +276,15 @@ export class FormComponent implements OnInit//, AfterViewInit
                         data => {
                             if (data["success"]){
                                 this.model_id=data["_id"];
-                                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                                 this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                                 var message = "A new "+ this.model_type[0].toUpperCase() +  this.model_type.slice(1).replace("_"," ") + " has been successfully integrated in your history !!"
                                 this.alertService.success(message)
 
                                 return true;
-                                //this.router.navigate(['/investigation'],{ queryParams: { key:  this.investigation_key} });
                             }
                             else{
                                 this.alertService.error("this form contains errors! " + data["message"]);
                                 return false;
-                                //this.router.navigate(['/studies']);
                             }
                         }
                     );
@@ -298,17 +295,15 @@ export class FormComponent implements OnInit//, AfterViewInit
                     this.globalService.update(this.model_key, this.modelForm.value,this.model_type,).pipe(first()).toPromise().then(
                             data => {
                                 if (data["success"]){
-                                    //this.alertService.success('INVESTIGATION successful registration', true);
-                                    //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
+                                    var message = this.model_type[0].toUpperCase() +  this.model_type.slice(1).replace("_"," ") + " has been successfully updated in your history !!"
+                                    this.alertService.success(message)
                                     this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                                     return true;
-                                    //this.router.navigate(['/home']);
                                 }
                                 else{
                                     this.alertService.error("this form contains errors! " + data["message"]);
 
                                     return false;
-                                    //this.router.navigate(['/studies']);
                                 };
 
 
