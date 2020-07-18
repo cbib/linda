@@ -12,6 +12,7 @@
 @import "assets/css/style-responsive.css";*/
 @import "assets/css/form.css";
 @import "assets/css/loading-bars.css";
+/*@import '~material-design-icons/iconfont/material-icons.css';*/
 /*@import '~bootstrap/dist/css/bootstrap.min.css';*/
 
 
@@ -41,9 +42,9 @@
 }*/
 
 
-*{
+/**{
     box-shadow: none;
-}
+}*/
 
 .container{
     width: 100%; 
