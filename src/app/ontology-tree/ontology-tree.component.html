@@ -22,7 +22,10 @@
                         <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
                     </span> 
                 </button>
-                <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>
+                {{node.name}}
+                <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                    {{node.name}}
+                </mat-checkbox>
 
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">

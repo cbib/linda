@@ -487,7 +487,7 @@ ul.sidebar-menu li a.active i {
     padding-left: 15px;
     padding-right: 15px;
     padding-bottom: 15px;
-    padding-top: 0px;
+    padding-top: 15px;
     width: 100%;
 }
 
@@ -495,7 +495,7 @@ a.logo {
     font-size: 24px;
     color: #f2f2f2;
     float: left;
-    margin-top: 15px;
+    margin-top: 0px;
     text-transform: uppercase;
 }
 
@@ -631,8 +631,8 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
     /* Safari and Chrome */
     .dropdown-menu.extended  {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.176) !important;
-    };
     }
+}
 
 .dropdown-menu.extended li p {
     background-color: #F1F2F7;

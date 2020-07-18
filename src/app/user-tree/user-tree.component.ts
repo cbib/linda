@@ -289,6 +289,10 @@ export class UserTreeComponent implements OnInit{
                         data => {
                             if (data["success"]){
                                 console.log(data["message"])
+                                var message =  this.active_node.id + " has been removed from your history !!"
+
+                                this.alertService.success(message)
+
                             }
                             else{
                                 this.alertService.error("this form contains errors! " + data["message"]);
@@ -304,6 +308,7 @@ export class UserTreeComponent implements OnInit{
         }
      
     onFileChange(event) {
+        console.log(this.active_node)
 
         //this.fileUploaded = <File>event.target.files[0];
         let uploadResponse = { status: '', message: 0, filePath: '' };
@@ -313,41 +318,58 @@ export class UserTreeComponent implements OnInit{
             uploadResponse.status='progress'
             let fileUploaded = event.target.files[0];
             let fileReader = new FileReader();
-            let fileName=fileUploaded.name                
-            fileReader.onload = function ( e )
-                    {
-                        //Create JSZip instance
-                        //var new_zip = new JSZip();
-                        var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
-                            var files= zip['files'];
-                             Object.keys(zip.files).forEach(function (filename) {
-                                 console.log(zip.files)
-                                 console.log(zip.files[filename]['dir'])
-                                //if (!zip.files[filename]['dir']){
-                                    zip.files[filename].async('string').then(function (fileData) {
-                                        console.log(fileData) // These are your file contents      
-                                    })
-                                //}
-                            })
-                            
-                            zip.forEach(function (relativePath, zipEntry) {
-                                console.log(zipEntry)
-                                //for each filepath build the corresponding hierarchy in user tree
-                            });
-
-                        });
-            } 
+            let fileName=fileUploaded.name   
+            
+            this.add_multiple_model(fileReader)            
             fileReader.readAsArrayBuffer( fileUploaded );              
 
             
 
         }
     }
+    add_multiple_model(fileReader:FileReader){
+        let user=JSON.parse(localStorage.getItem('currentUser'));
+        var parent_id=''
+        if (this.active_node.id==='Investigations tree'){
+            parent_id=user["_id"]
+        }
+        else{
+            parent_id=this.active_node.id
+        }
+        fileReader.onload = function ( e )
+        {
+            var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
+                var files= zip['files'];
+                 Object.keys(zip.files).forEach(function (filename) {
+                     console.log(zip.files)
+                     
+                     console.log(zip.files[filename]['dir'])
+                    if (!zip.files[filename]['dir']){
+                        zip.files[filename].async('string').then(function (fileData) {
+                            console.log(filename)
+                            console.log(fileData) // These are your file contents      
+                        })
+                        
+                    }
+                })
+
+                zip.forEach(function (relativePath, zipEntry) {
+                    console.log(zipEntry.name)
+                    console.log(zipEntry.dir)
+                    //console.log(zipEntry[relativePath]['dir'])
+                    console.log(relativePath)
+                    //for each filepath build the corresponding hierarchy in user tree
+                });
+            });
+        }
+    }
     
     
     add(model_type:string,template:string) {
 
-        var parent_key=this.active_node.id.split("/")[1];
+        var parent_key=this.active_node.id.split("/")[1]
+        console.log(parent_key)
+        
         var model_coll=this.active_node.id.split("/")[0];
         let user=JSON.parse(localStorage.getItem('currentUser'));
         if (template=='saved'){
@@ -363,8 +385,8 @@ export class UserTreeComponent implements OnInit{
                     
                 if (result){
                     console.log(result.values)
-                    console.log(model_type)
-                    console.log(this.active_node.id)
+                    //console.log(model_type)
+                    //console.log(this.active_node.id)
                     parent_id=""
                     if (this.active_node.id==='Investigations tree'){
                         parent_id=user["_id"]
@@ -387,11 +409,13 @@ export class UserTreeComponent implements OnInit{
                     this.globalService.add(new_values,model_type, parent_id).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]){
-                                console.log(data["message"])
+                                //console.log(data["message"])
                                 //this.model_id=data["_id"];
                                 this.ngOnInit(); 
                                 //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                                //this.alertService.success("Your component has been successfully integrated in your history !!")
+                                var message = "A new "+ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ") + " based on " + result.values['_id']+ " has been successfully integrated in your history !!"
+
+                                this.alertService.success(message)
 
                                 return true;
                             }
@@ -421,7 +445,7 @@ export class UserTreeComponent implements OnInit{
             
         }
         else if (template=='zip'){
-            
+            console.log('add zip file');
             
         }
         else{
@@ -459,6 +483,7 @@ export class UserTreeComponent implements OnInit{
   
     get_vertices(){
         let user=JSON.parse(localStorage.getItem('currentUser'));
+        console.log(user)
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 this.vertices=data;
@@ -482,7 +507,7 @@ export class UserTreeComponent implements OnInit{
 
                     }
                 );
-                console.log(this.statistics)
+                //console.log(this.statistics)
                 
 
                 
@@ -610,9 +635,10 @@ export class UserTreeComponent implements OnInit{
         this.treeControl.expand(this.treeControl.dataNodes[3]);
     }   
     build_hierarchy(edges:[]):MiappeNode[]{
+        console.log(edges)
         var cpt=0;
         var tmp_nodes=[]
-        tmp_nodes.push(new MiappeNode("Investigations tree","","",0))
+        tmp_nodes.push(new MiappeNode("Investigations tree","Investigations tree","",0))
         edges.forEach(
             e=>{
                 var _from:string;
