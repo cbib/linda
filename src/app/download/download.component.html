@@ -47,18 +47,25 @@
      <br>
 </div>     
 <!--<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">-->
-<table cdkDropList cdkDropListOrientation="horizontal" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
+
+
+
+    
+
+
+<table cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
     <thead>
-<!--    <tr>-->
-        <!--<th scope="col"  style="font-size:10px;text-align: center; "><i class="fas fa-cogs"></i></th>-->
-    <!--</tr>-->   
-        
         <tr>
-            <th scope="col" *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">{{key}}</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
         </tr>
-        <tr>
-            <th scope="col" *ngFor="let key of get_headers_select() ; index as i; "  style="font-size:10px;text-align: center;" cdkDrag>
-                <span *ngIf="key==='others'" style="display:inline-block; margin-left: 10px;"> 
+    </thead>
+    <tbody>
+        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <th scope="col" >{{key}}</th>
+            <th scope="col" cdkDrag>
+                <span *ngIf="get_headers_select()[i]==='others'" style="display:inline-block; margin-left: 10px;"> 
                     <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,get_headers()[i])" >
                         <!--<option value="" disabled>Assign Ontology term</option>-->
                         <option [value]="undefined" selected>Assign Ontology term</option>
@@ -73,7 +80,7 @@
                     </select> 
                 </span>
 
-                <span *ngIf="key==='time'" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
                     <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
                         <option value="" disabled>Select time format</option>
                         <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
@@ -84,9 +91,7 @@
                 </span>
 
             </th>
-        </tr>
-        <tr>
-            <th scope="col" *ngFor="let key of get_headers() ; index as i;"  style="font-size:10px;text-align: center;">
+            <th scope="col">
 
                 <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
                     {{associated_headers[key].associated_term_id}} 
@@ -97,25 +102,10 @@
                 </span>
             </th>
         </tr>
-    </thead>
-<!--    <tbody *ngIf="get_lines().length<100">
-        <tr *ngFor="let l of get_lines() ; index as j;">
-         {{l}}
-        <td  style="font-size:14px;" scope="row" *ngFor="let h_key of l ; index as k;" >{{h_key}}</td>
-    </tr>
-    </tbody>-->
-<!--    <tbody *ngIf="get_lines().length>100">
-        <tr *ngFor="let l of get_lines()| slice:0:100 ; index as j;">
-         {{l}}
-        <td  style="font-size:14px;" scope="row" *ngFor="let h_key of l ; index as k;" >{{h_key}}</td>
-    </tr>
-    </tbody>-->
-    <tbody>
-        <tr>
-            <td  style="font-size:14px;" scope="row" *ngFor="let h_key of get_lines()[1] ; index as k;" >{{h_key}}</td>
-        </tr>
     </tbody>
 </table>
+
+
 <!--<div>
    <p>Today is {{today | date}}</p>
    <p>Or if you prefer, {{today | date:'fullDate'}}</p>

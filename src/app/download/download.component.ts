@@ -64,16 +64,6 @@ export class DownloadComponent implements OnInit {
             private route: ActivatedRoute,
             public dialog: MatDialog) { 
         
-        
-//        if (this.mode==="edit"){
-//                this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
-//                    console.log(received_data);
-//                    this.data=received_data;
-//                    this.headers=this.data["headers"];
-//                    this.associated_headers=this.data["associated_headers"];
-//                    this.lines=this.data["data"]
-//                })
-//            }
         //use this when you pass argument using this.router.navigate
         // else use @input if you pass argument in template html  
         this.route.queryParams.subscribe(
@@ -82,12 +72,6 @@ export class DownloadComponent implements OnInit {
                 this.model_key=params['model_key'];
                 this.mode=params['mode'];
                 this.parent_id=params['parent_id']
-//            console.log(params)
-//            console.log(params['model_key'])
-//            console.log(params['parent_id'])
-//            //this.investigation_key=params['key']
-//            console.log(this.mode);
-            
             }
         );
     }
@@ -108,14 +92,8 @@ export class DownloadComponent implements OnInit {
 //        this.preview();
 //    }
     ngOnInit() {
-//        console.log(this.mode)
-//        console.log(this.model_key)
-//        console.log(this.model_type)
         if (this.mode==="edit"){
-                //console.log(this.model_key)
-                //console.log(this.model_type)
                 this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
-                    //console.log(received_data);
                     this.data=received_data;
                     this.headers=this.data["headers"];
                     this.associated_headers=this.data["associated_headers"];
@@ -140,20 +118,15 @@ export class DownloadComponent implements OnInit {
         console.log(this.associated_headers)
     }
 //    reset(event){
-//        console.log("1#################################################")
 //        console.log(event.target)
 //    }
     onFileChange(event) {
-        console.log("1#################################################")
         this.headers=[];
         this.headers_select=[];
         this.associated_headers={};
         this.lines=[];
         //this.fileUploaded = <File>event.target.files[0];
-        
-        
         if (event.target.files.length > 0) {
-            
             this.uploadResponse.status='progress'
             this.fileUploaded = event.target.files[0];
             //let fileReader = new FileReader();
@@ -257,8 +230,6 @@ export class DownloadComponent implements OnInit {
         if(this.mode==="create"){
             console.log(this.lines.length)
             if (this.lines.length!==0){
-                //console.log(this.form.get('avatar').value)
-                //console.log(this.loaded)
                 const formData = new FormData();
                 formData.append('file', this.form.get('file').value);
                 let user=JSON.parse(localStorage.getItem('currentUser'));
@@ -304,8 +275,9 @@ export class DownloadComponent implements OnInit {
                 console.log(this.selected_set)
                 var term_ids=""
                 for(var i = this.selected_set.length - 1; i >= 0; i--) {
-                    term_ids+=this.selected_set[i]['id']
+                    term_ids+=this.selected_set[i]['id'] + '/'
                 }
+                term_ids = term_ids.slice(0, -1);
                 
                 this.associated_headers[key]={selected:true, associated_term_id:term_ids,is_time_values:false}
                 console.log(this.associated_headers);

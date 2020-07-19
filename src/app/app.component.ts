@@ -1,16 +1,21 @@
-import { Component,ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
+import { Component,ViewEncapsulation, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import {GlobalService } from './services';
 import { UserTreeComponent } from './user-tree/user-tree.component';
-
+import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 
 @Component({
   selector: 'app-linda',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   encapsulation: ViewEncapsulation.None
+  
 })
 export class AppComponent implements OnInit {
     //@ViewChild(RouterOutlet) outlet;
+    //@ViewChild(RouterOutlet) outlet!: RouterOutlet;
+    //@ViewChild(RouterOutlet, { static: false }) outlet;
+    //@ViewChild('outlet', { static: false })
+    //@ViewChild('outlet', { static: false }) outlet: RouterOutlet;
     title = 'LINDA';
     selected="Home";
     currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -18,6 +23,9 @@ export class AppComponent implements OnInit {
     public stats_advanced = {};
     public vertice_data:any=[];
   
+    // ngAfterViewInit() {
+    //     console.log("ngAfterViewInit parent with child = ", this.outlet);
+    //   }
     constructor(private globalService : GlobalService){
             this.stats_advanced={
                       "investigations":[],
@@ -34,7 +42,7 @@ export class AppComponent implements OnInit {
                 }
     }
     async ngOnInit() {
-          await this.get_vertices()  
+          //await this.get_vertices()  
         /**
          * test modif
             * // TODO: here need to get same parameter as for edit fucntion in user tree
@@ -79,22 +87,36 @@ export class AppComponent implements OnInit {
             return {backgroundColor: 'LightSteelBlue'}
         } 
     }
+    onNotify(message:string):void{
+        console.log(message)
+    }
   
-    onActivate(componentReference) {
-        
+    onActivate(componentReference:any) {        
         if(componentReference instanceof UserTreeComponent){
-            //console.log("This is the UserTreeComponent");
-            
-         return;
+            console.log("This is a message from the UserTreeComponent");
+            this.get_vertices()
+            return;
+         }
+         else{
+            console.log("This is not the UserTreeComponent")
          }
          //console.log("This is not the ChildWithWorksMethodComponent");
-        //this.stats_advanced = {}
-        
-        //this.get_vertices()
-        
     }
     
     get_vertices(){
+        this.stats_advanced={
+            "investigations":[],
+            "studies":[],
+            "experimental_factors":[],
+            "environments": [],
+            "metadata_files": [],
+            "observation_units": [],
+            "samples": [],
+            "events": [],
+            "data_files":[],
+            "biological_materials":[],
+            "observed_variables":[]
+      }
         let user=JSON.parse(localStorage.getItem('currentUser'));
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {

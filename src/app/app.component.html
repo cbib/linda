@@ -40,6 +40,7 @@
                       <li>
                         <p class="green">You have {{stats_advanced['investigations'].length}} pending investigations tasks</p>
                       </li>
+                      
                       <li *ngFor="let obj of stats_advanced['investigations'] ; index as j;" >
                         <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
                           <div class="task-info">
@@ -141,8 +142,11 @@
                     <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-download"></i>Projects</a>
+                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
                 </li>
+
+                
+
                 <li class="nav-item">
                         <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
                     </li>
@@ -199,7 +203,9 @@
                     <alert></alert>
                </div>
                       <!--<router-outlet></router-outlet>-->
-                     <router-outlet (activate)="onActivate($event)"></router-outlet>
+                     <!-- <router-outlet (notify)="onNotify($event)"></router-outlet> -->
+                     <router-outlet (activate)="onActivate($event)" #outlet></router-outlet>
+
 
             </section>
             

@@ -141,15 +141,14 @@ export class OntologyTreeComponent {
         console.log(event.target.value)
         this.selected_term["term"].set_value(event.target.value)
     }
-    onUnitSelect(value){
+    onUnitSelect(value:string){
         this.selected_term["term"].set_unit(value)
 
     }
-    onResponseRangeSelect(value){
+    onResponseRangeSelect(value:string){
         this.selected_term["term"].set_response_range(value)
     }
     onNoClick(): void {
-        console.log("closed")
         this.dialogRef.close();
     }
     onOkClick(){
@@ -207,21 +206,22 @@ export class OntologyTreeComponent {
     
     build_eo_isa_hierarchy(ontology:{}):OntologyTerm[]{
         var cpt=0;
-        ontology["term"].forEach(
+        var ontology_data:Array<{is_obsolete:boolean;is_a: string; id: string; def: any; comment: any;name: any; relationship: string;}>=ontology["term"]
+        ontology_data.forEach(
             term=>{
-                if (!term["is_obsolete"]){
+                if (!term.is_obsolete){
                     this.ontologyTerms.push(new OntologyTerm(term.id,term.name,[],""))
                     cpt+=1;
                 }
-
             }
         )
         //second passage pour créer tous les termes 
         var cpt=0;    
-        
-        ontology["term"].forEach(
+        //var ontology_data:Array<{is_obsolete:boolean;is_a: string; id: string; def: any; comment: any;name: any; relationship: string; }>=ontology["term"]
+
+        ontology_data.forEach(
             term=>{
-                if (!term["is_obsolete"]){
+                if (!term.is_obsolete){
                     if (term.is_a){ 
                         if (Array.isArray(term.is_a)){
                             for (var isa in term.is_a){
@@ -286,7 +286,9 @@ export class OntologyTreeComponent {
         //premier passage pour créer tous les termes 
         var cpt=0;
         this.ontologyTerms.push(new OntologyTerm(this.ontology_type,"",[],""));
-        ontology["term"].forEach(
+        var ontology_data:Array<{is_obsolete:boolean; is_a: string; id: string; def: any; comment: any; name: any; relationship: string;}>=ontology["term"]
+
+        ontology_data.forEach(
             term=>{
                     this.ontologyTerms.push(new OntologyTerm(term.id,term.name,[],""))
                     cpt+=1;
@@ -294,7 +296,7 @@ export class OntologyTreeComponent {
         )
         //second passage pour créer tous les termes 
         var cpt=0;    
-        ontology["term"].forEach(
+        ontology_data.forEach(
             term=>{
                     if (term.name=="Context" || term.name=="QuantityContext" ){
                         this.get_term(term.id).set_is_context(true)
@@ -409,7 +411,10 @@ export class OntologyTreeComponent {
         )
         //Add instances for ontologyTerm
         if (this.ontology.instance){
-            this.ontology.instance.forEach(
+            console.log(this.ontology)
+            var ontology_instance_data:Array<{name:string; instance_of: any; id: string; property_value: any;}>=this.ontology.instance
+
+            ontology_instance_data.forEach(
                 instance=>{
                     if (Array.isArray(instance.instance_of)){
                         for (var elem in instance.instance_of){

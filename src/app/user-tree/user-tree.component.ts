@@ -1,6 +1,6 @@
 import { FlatTreeControl} from '@angular/cdk/tree';
 import {SelectionModel} from '@angular/cdk/collections';
-import { Component, Input, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, Inject, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { UserService, GlobalService, OntologiesService, AlertService } from '../services';
 import { MiappeNode } from '../models';
@@ -36,7 +36,7 @@ export class UserTreeComponent implements OnInit{
     //@ViewChild(MatMenuTrigger,{static:true })
     @ViewChild(MatMenuTrigger,{static:false }) contextMenu: MatMenuTrigger;
     //@ViewChild(MatMenuTrigger) contextMenu: MatMenuTrigger;
-    
+    @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     
     
     disableSelect = new FormControl(false);
@@ -48,7 +48,7 @@ export class UserTreeComponent implements OnInit{
     private nodes:MiappeNode[]
     public statistics:{};
     private displayed=false;
-    private vertices:any=[]
+    public vertices:any=[]
     private active_node: MiappeNode;
     private current_data=[]
     private current_data_array=[]
@@ -90,6 +90,7 @@ export class UserTreeComponent implements OnInit{
           this.nodes=this.build_hierarchy(this.vertices)
           this.dataSource.data = this.nodes;
           this.tree.treeControl.expandAll();
+          
     }
      
     onContextMenu(event: MouseEvent, node: MiappeNode) {
@@ -105,6 +106,7 @@ export class UserTreeComponent implements OnInit{
     onClick(node:MiappeNode){
         console.log(node.id)
         this.active_node=node
+       
         //this.contextMenu.openMenu();
     }
    
@@ -474,8 +476,10 @@ export class UserTreeComponent implements OnInit{
     }
   
     
-    get_statistics(){
+    public get_statistics(){
+        
         console.log(this.statistics)
+        //return this.statistics
     }
     identify(){
         console.log('Hello, Im user tree!');
@@ -533,6 +537,7 @@ export class UserTreeComponent implements OnInit{
         this.current_data_array=[]
         this.active_node=node
         console.log(node)
+        this.notify.emit("hello");
         this.displayed=true;
         if ((node["id"]==="Investigations tree") ){            
             this.model_selected='Investigations tree';
@@ -615,7 +620,7 @@ export class UserTreeComponent implements OnInit{
     private checklistSelection = new SelectionModel<ExampleFlatNode>(true,this.initialSelection /* multiple */);
 
 
-    get_dataSource(){
+    public get_dataSource(){
         return this.dataSource;
     }
     get_treeControl(){
