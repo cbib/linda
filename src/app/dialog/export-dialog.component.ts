@@ -24,8 +24,8 @@ interface DialogData2 {
 export class ExportDialogComponent implements OnInit {
 //    @ViewChild('file') file
 //    public files: Set<File> = new Set()
-    public file_format = ['.csv', '.tsv', '.json']
-    public selected_format = {'.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
+    public file_format = ['.csv', '.tsv', '.json', 'isa_tab (.txt)']
+    public selected_format = {'isa_tab (.txt)': {'selected':false, separator:'\t',type: 'text/csv;charset=utf-8;'}, '.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
     private recursive_check:boolean =false
     private is_checked:boolean=false
     private is_expandable_node:boolean=false;

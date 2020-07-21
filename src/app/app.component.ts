@@ -100,7 +100,6 @@ export class AppComponent implements OnInit {
          else{
             console.log("This is not the UserTreeComponent")
          }
-         //console.log("This is not the ChildWithWorksMethodComponent");
     }
     
     get_vertices(){

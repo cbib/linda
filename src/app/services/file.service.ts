@@ -104,7 +104,7 @@ export class FileService {
 
                                 //path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -133,7 +133,7 @@ export class FileService {
                             else{
                                 //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _to.replace('/','_') +'/'+_to.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -163,7 +163,7 @@ export class FileService {
                     if (path ==''){
                          //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                          for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _to.replace('/','_') +'/'+_to.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -197,7 +197,7 @@ export class FileService {
                             if ((_to == _from_bis) && (_from != root_id)){
                                 //path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -225,7 +225,7 @@ export class FileService {
                             if ((_from == _to_bis) && (_from_bis != root_id)){
                                 //path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -253,7 +253,7 @@ export class FileService {
                             if ((_from == _to_bis) && (_from_bis == root_id)){
                                 //path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                                 for( var i = 0; i < formats.length; i++){
-                                    if (selected_format[formats[i]]['selected']){
+                                    if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                         path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_') + formats[i]
                                         if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -284,7 +284,7 @@ export class FileService {
                     if (path ==''){
                         //path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                         for( var i = 0; i < formats.length; i++){
-                             if (selected_format[formats[i]]['selected']){
+                             if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                                  let path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_') + formats[i]
                                  if (!paths2['filepath'].includes(path)){
                                             paths2['filepath'].push(path)
@@ -429,7 +429,6 @@ export class FileService {
         return zipFile
     }
     
-    
     public loadMultipleFiles(){
         
         // read a zip file
@@ -453,7 +452,7 @@ export class FileService {
         // write the data for the selected root node
         var formats=Object.keys(selected_format);
         for( var i = 0; i < formats.length; i++){
-            if (selected_format[formats[i]]['selected']){
+            if (selected_format[formats[i]]['selected'] && formats[i]!= "isa_tab (.txt)"){
                 var dir_root_path=collection_name + '_' + model_key + formats[i]
                 //paths.push({'path':dir_root_path,'data':model_data})
                 paths['filepath'].push(dir_root_path)
@@ -461,13 +460,16 @@ export class FileService {
                 paths['parent_id'].push('root')
 
             }
+            if (selected_format[formats[i]]['selected'] && formats[i]== "isa_tab (.txt)"){
+                console.log(model_data)
+            }
         }
         
         //build zipfilez with differents paths
         let dir_root_id=collection_name + '_' + model_key
         let zipFile: JSZip = new JSZip();
         zipFile = this.build_zip(paths)    
-        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
+        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
         
     }
     
