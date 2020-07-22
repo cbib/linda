@@ -81,7 +81,7 @@
         <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
         <p>{{model.Definition}}</p>
         <form [formGroup]="modelForm" >
-            <div class="form-group" *ngFor="let field of field_array ; index as i;">
+            <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
                 <div *ngIf="model[field['key']].Level==level">
                     <label for="{{field['key']}}">{{field['key']}}</label>
 
