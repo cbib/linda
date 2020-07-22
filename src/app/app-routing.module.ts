@@ -8,11 +8,11 @@ import { DownloadComponent } from './download/download.component';
 import { AuthGuard } from './guards/auth.guards';
 import { NavbarComponent } from './navbar/navbar.component';
 import { OntologyTreeComponent } from './ontology-tree/ontology-tree.component';
-import { DialogComponent } from './dialog/dialog.component';
+//import { DialogComponent } from './dialog/dialog.component';
 import { UserTreeComponent } from './user-tree/user-tree.component';
 import { AdminComponent } from './admin/admin.component';
 import { HelpComponent } from './help/help.component';
-import { SendmailComponent } from './forms/sendmail.component';
+//import { SendmailComponent } from './forms/sendmail.component';
 import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
 import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
 import { DonwloadedComponent } from './download/donwloaded.component';
@@ -33,7 +33,7 @@ const routes: Routes = [
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
-  { path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
+  //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
   { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
   ];
 
