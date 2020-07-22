@@ -110,3 +110,14 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+
+.boxed {
+  border: 1px solid green ;
+  background-color: #8bc34a;
+}
+
+.btn-group button {
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}

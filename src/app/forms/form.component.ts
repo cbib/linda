@@ -78,7 +78,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         return this.modelForm.controls; 
     }
     
-    onSelect(values:string, key:string, multiple:boolean=true) {
+    onOntologyTermSelection(values:string, key:string, multiple:boolean=true) {
         console.log(values)
         console.log("multiple choice is activated: ", multiple)
         const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false, multiple: multiple}});
@@ -89,7 +89,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.selected_set = result.selected_set;
                 console.log(this.selected_set)
                 if (multiple){
-                    var term_ids=''
+                    //console.log(this.modelForm.controls[key].value)
+                    var term_ids=this.modelForm.controls[key].value +'/'
                     for(var i = this.selected_set.length - 1; i >= 0; i--) {
                         term_ids+=this.selected_set[i]['id'] +'/'
                     }
