@@ -547,7 +547,7 @@ export class FileService {
                                 var mapping_data= this.get_mapping_data_by_key(model,keys[i])
                                 var isa_file=mapping_data["ISA-Tab File"]
                                 var isa_section=mapping_data["ISA-Tab Section (for Investigation file)"]
-                                var isa_field=mapping_data["ISA-Tab Field"]
+                                var isa_field:string=mapping_data["ISA-Tab Field"]
                                 console.log(isa_file)
                                 console.log(isa_section)
                                 console.log(isa_field)
@@ -565,20 +565,18 @@ export class FileService {
                                     
                                     if (isa_model[isa_section][isa_field]){
                                         console.log(isa_model[isa_section][isa_field])
-                                        if ('Type' in isa_model[isa_section][isa_field]){
+                                        if (isa_field.includes("Type")){
+                                            console.log("type found in ",isa_model[isa_section][isa_field])
                                             data[keys[i]].split("/").forEach(element => {
-                                                
-                                                if ("Type Term Accession Number" in isa_model[isa_section][isa_field]){
-                                                    isa_model[isa_section][isa_field].push(element.split(":")[0])
-                                                }
-                                                else if ("Type Term Source REF" in isa_model[isa_section][isa_field]) {
-                                                    isa_model[isa_section][isa_field].push(element)
-                                                }
-                                                else{
-                                                    isa_model[isa_section][isa_field].push(element)
-                                                }
+                                                console.log("element ",element)
+                                                isa_model[isa_section][isa_field].push(element)
+                                                let tmp_isa_field:string = isa_field +' Term Accession Number'
+                                                console.log(tmp_isa_field)
+                                                isa_model[isa_section][tmp_isa_field].push(element)
+                                                tmp_isa_field=isa_field+' Term Source REF'
+                                                console.log(tmp_isa_field)
+                                                isa_model[isa_section][tmp_isa_field].push(element.split(":")[0])
                                             });
-                                            isa_model[isa_section][isa_field].push(data[keys[i]])
                                         }
                                         
                                         else{
@@ -711,6 +709,7 @@ export class FileService {
 
                         }
                         
+                        
                     }
 
                     else{
@@ -724,7 +723,7 @@ export class FileService {
             }
         }
         
-        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, model_id.replace('/','_') +".zip");});
+        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, model_id.replace('/','_') +".zip");});
 
 
         

@@ -484,6 +484,22 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 .description('Assembles a list of keys of entries in the collection.');
 
 
+// router.get('/get_ontology_term/:term_id', function (req, res) {
+   
+//     var term_id=req.pathParams.term_id;
+//     var data={} 
+//     const coll = db._collection("ontologies");
+//     if (!coll) {
+//          db._createDocumentCollection("ontologies");
+//      }
+//     data = db._query(aql`FOR entry IN ${coll} FILTER entry.term.id == ${term_id} RETURN entry`);
+//     res.send(data.next());
+//  })
+//  .pathParam('term_id', joi.string().required(), 'username of the entry.')
+//  .response(joi.object().required(), 'List of entry keys.')
+//  .summary('List entry keys')
+//  .description('Assembles a list of keys of entries in the collection.');
+ 
 
 //router.get('/delete/:model_type/:key', function (req, res) {
 //  try {

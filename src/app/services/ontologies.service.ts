@@ -38,6 +38,9 @@ export class OntologiesService {
     return this.http.get(this.APIUrl+"get_ontology/"+ontology_id).pipe(map(this.extractData));
 
   }
+  // get_ontology_term(term_id:string){
+  //   return this.http.get(this.APIUrl+"get_ontology_term/"+term_id).pipe(map(this.extractData));
+  // }
   
   get_crop_ontologies(ontology_id:string){
     return this.http.get(this.APIUrl+"get_crop_ontology/"+ontology_id).pipe(map(this.extractData));

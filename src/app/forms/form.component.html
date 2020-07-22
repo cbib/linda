@@ -81,37 +81,46 @@
         <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
         <p>{{model.Definition}}</p>
         <form [formGroup]="modelForm" >
-            
-            
-            
             <div class="form-group" *ngFor="let field of field_array ; index as i;">
                 <div *ngIf="model[field['key']].Level==level">
                     <label for="{{field['key']}}">{{field['key']}}</label>
-<!--                    <mat-form-field appearance="fill">
-                        <mat-label>Toppings</mat-label>
-                        <mat-select [formControl]="ont" multiple>
-                        <mat-option *ngFor="let ont of ontologies" [value]="ont">{{ont}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>-->
-                    
-                    
+
                     <!--{{f[field['key']].errors.minLength}}-->
                     <span style="display:inline-block; margin-left: 10px;"> 
                         <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
                     </span>  
                     <div *ngIf="model[field['key']].Format.includes('Ontology')">
                         <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
-                        <select name="nom" size="1" (change)="onSelect($event.target.value,field['key'], model[field['key']].Multiple)">
+                        <!-- <mat-select name="ont">
+                            <mat-option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" [value]="ont.value">
+                              {{ont}}
+                            </mat-option>
+                          </mat-select> -->
+                          <!-- onfocus="this.selectedIndex = -1;" -->
+
+                        <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group" >
+                           <button class="btn btn-success btn-xs fa fa-plus" (click)="onOntologyTermSelection(ont,field['key'],model[field['key']].Multiple)" > 
+                                {{ont}}
+                           </button>
+                        </div>  
+                        <!-- <select name="nom" size="1"  (change)="onOntologyTermSelection($event.target.value,field['key'], model[field['key']].Multiple)">
                             <option value="" disabled>Select Ontology</option>
-                            <option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" [value]='ont'>{{ont}}</option>
-                            </select> 
+                            <option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" [value]='ont.value'>
+                                    {{ont}}
+                            </option>
+                        </select>  -->
+                        
                         <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
+
                             <input style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </span>
                             
                     <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
 
                         <span *ngIf="validated_term[field['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
+                            <!-- <textarea style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" >
+                                <mat-card><div class="boxed">{{validated_term[field['key']].values}}</div></mat-card>
+                            </textarea> -->
                             <input style="color:black"  mdbInput value="{{validated_term[field['key']].values}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
                         </span>
                     </div>
