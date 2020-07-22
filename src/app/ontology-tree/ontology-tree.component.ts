@@ -22,7 +22,8 @@ interface DialogData {
   ontology_type: string;
   selected_term:OntologyTerm ;
   selected_set:OntologyTerm[];
-  uncheckable: boolean
+  uncheckable: boolean;
+  multiple: boolean;
 
 }
 
@@ -55,6 +56,7 @@ export class OntologyTreeComponent {
     private ontologyContext:OntologyTerm[];
     private ontologyNode:OntologyTerm[];
     private uncheckable:boolean=false
+    private multiple:boolean
     //model ontology    
     private ontology:any = {};
     
@@ -83,7 +85,8 @@ export class OntologyTreeComponent {
             this.ontology_type=this.data.ontology_type;
             this.selected_set=this.data.selected_set;
             this.uncheckable=this.data.uncheckable;
-            //console.log(this.selected_set);
+            this.multiple=this.data.multiple;
+            console.log("multiple choice is activated: ", this.multiple)
             this.ontology_tree=[];
             this.ontologyTerms=[];
             this.ontologyContext=[];
@@ -108,7 +111,7 @@ export class OntologyTreeComponent {
     private treeFlattener = new MatTreeFlattener(this.ont_transformer, node => node.level, node => node.expandable, node => node.children);
     private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     private initialSelection = []
-    private checklistSelection = new SelectionModel<ExampleFlatNode>(true,this.initialSelection /* multiple */);
+    private checklistSelection = new SelectionModel<ExampleFlatNode>(this.data.multiple,this.initialSelection /* multiple */);
     
     get_ontology(){
         return this.ontologiesService.get_ontology(this.ontology_type).toPromise().then(data => {this.ontology=data;})
@@ -120,7 +123,7 @@ export class OntologyTreeComponent {
     async ngOnInit() {
         await this.get_ontology()
         this.ontologyNode=[]        
-        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715", "CO_322"]
+        var ontologies_list=["EnvO","EO","PO_Structure","PO_Development","CO_20","EFO","CO_715", "CO_322", "OBI"]
         
         if(this.ontology_type==="XEO"){
             this.ontologyNode=this.build_xeo_isa_hierarchy(this.ontology);
@@ -405,7 +408,6 @@ export class OntologyTreeComponent {
                 }  
                 if (term.is_enumeration){
                     this.ontologyEnum.push(new OntologyTerm(term.id,term.name,[],""));
-
                 }                        
             }
         )

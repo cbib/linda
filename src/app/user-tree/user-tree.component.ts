@@ -2,7 +2,7 @@ import { FlatTreeControl} from '@angular/cdk/tree';
 import {SelectionModel} from '@angular/cdk/collections';
 import { Component, Input, Inject, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import { UserService, GlobalService, OntologiesService, AlertService } from '../services';
+import { UserService, GlobalService, OntologiesService, AlertService, FileService } from '../services';
 import { MiappeNode } from '../models';
 import { Router,ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -62,6 +62,7 @@ export class UserTreeComponent implements OnInit{
     constructor(
         private globalService : GlobalService, 
         private ontologiesService: OntologiesService,
+        private fileService: FileService,
         private router: Router,
         private alertService: AlertService,
         private route: ActivatedRoute,
@@ -118,6 +119,8 @@ export class UserTreeComponent implements OnInit{
         if (model_type=='unknown'){
            model_type='metadata_file' 
         }
+        var isa_model=this.globalService.get_model("investigation_isa").toPromise().then(isa => {return isa})
+        console.log(isa_model)
 
         console.log(model_key)
         console.log(model_type)
@@ -126,22 +129,92 @@ export class UserTreeComponent implements OnInit{
 //                console.log(received_data)
 //            }
 //        )
-        var parent_model=this.globalService.get_parent(node.id).toPromise().then(parent_data => {
+        this.globalService.get_parent(node.id).toPromise().then(parent_data => {
         
             console.log(parent_data['_from'])
-            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_id: node.id, model_type:model_type, expandable:node.expandable, parent_id:parent_data['_from']}});
+            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {expandable:node.expandable}});
 
-            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+            dialogRef.afterClosed().subscribe(result=> {
+                if (result.event){
+                    var selected_format=result.selected_format
+                    var recursive_check=result.recursive_check
+                    console.log(selected_format)
+                    var model_key=node.id.split("/")[1];
+                    var model_id=node.id
+                    var collection_name=node.id.split("/")[0];
+                    var parent_collection_name=parent_data['_from'].split("/")[0];
+                    var vertice_list=[]
+                    this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {    
 
-                    if(confirmed){
-                        console.log("file saved")
+                        //Parse in a recursive way all submodels
+                        if ((node.expandable) && (recursive_check)){
+                                
+                            var models:any=[]
+                            this.globalService.get_all_vertices_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                                
+                                
+                                this.fileService.saveMultipleFiles(model_data, submodel_data, model_type,collection_name, model_id, selected_format);
+                            });
+                        }
+                        else{
+                            this.globalService.get_model(model_type).toPromise().then(model => { 
+                                console.log(model_type)
+                                var isa_model=""
+                                if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor'){
+                                    isa_model="investigation_isa"
+                                }
+                                else if(model_type=="observed_variable"){
+                                    isa_model="trait_definition_file_isa"
+                                }
+                                else{
+                                    isa_model="assay_isa"
+                                }
+                                console.log(isa_model)
 
-                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
-                    }
+                                this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
+                                    this.fileService.saveFile(model_data, model_id, model_type, model, isa_model, selected_format);
+                                });
+                            });
+                        }
+                    });
+
+                }
+
+            })
+            // dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+
+            //         if(confirmed){
+            //             console.log("file saved")
+            //             // console.log(this.selected_format)
+            //             // var model_key=node.id.split("/")[1];
+            //             // var collection_name=node.id.split("/")[0];
+            //             // var parent_collection_name=parent_data['_from'].split("/")[0];
+            //             // var vertice_list=[]
+            //             // var model_data=this.globalService.get_by_key(model_key,this.data.model_type).toPromise().then(model_data => {    
+
+            //             //     //Parse in a recursive way all submodels
+            //             //     if ((this.is_expandable_node) && (this.recursive_check)){
+                                
+            //             //         var models:any=[]
+            //             //         var submodel_data=this.globalService.get_all_vertices_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+            //             //             var formats=Object.keys(this.selected_format);
+            //             //             this.fileService.saveMultipleFiles(model_data, submodel_data,this.data.model_type,collection_name, this.data.model_id, this.selected_format);
+            //             //         });
+            //             //     }
+            //             //     else{
+            //             //         this.globalService.get_model(this.data.model_type).toPromise().then(model => {  
+            //             //             this.fileService.saveFile(model_data,this.data.model_id, this.data.model_type, model, this.selected_format);
+            //             //         });
+            //             //     }
+            //             // }); 
 
 
-                });
+            //             this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
+            //             this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+            //         }
+
+
+            //     });
                 
         });
         

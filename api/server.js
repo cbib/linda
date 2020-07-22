@@ -448,6 +448,8 @@ router.get('/get_vertices_by_model/:model_type/:model_key', function (req, res) 
 .description('Assembles a list of keys of entries in the collection.');
 
 
+ 
+
 router.get('/get_model/:model_type', function (req, res) {
    
    var model_type=req.pathParams.model_type;
@@ -463,6 +465,7 @@ router.get('/get_model/:model_type', function (req, res) {
 .response(joi.object().required(), 'List of entry keys.')
 .summary('List entry keys')
 .description('Assembles a list of keys of entries in the collection.');
+
 
 router.get('/get_ontology/:ontology_id', function (req, res) {
    

@@ -78,24 +78,63 @@ export class FormComponent implements OnInit//, AfterViewInit
         return this.modelForm.controls; 
     }
     
-    onSelect(values:string, key:string) {
+    onSelect(values:string, key:string, multiple:boolean=true) {
         console.log(values)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false}});
+        console.log("multiple choice is activated: ", multiple)
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false, multiple: multiple}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
                 console.log(result)
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
                 console.log(this.selected_set)
-                var term_ids=''
-                for(var i = this.selected_set.length - 1; i >= 0; i--) {
-                    term_ids+=this.selected_set[i]['id'] +'/'
+                if (multiple){
+                    var term_ids=''
+                    for(var i = this.selected_set.length - 1; i >= 0; i--) {
+                        term_ids+=this.selected_set[i]['id'] +'/'
+                    }
+                    term_ids = term_ids.slice(0, -1);
+                    //this.selected_term = result.selected_term;
+                    this.validated_term[key]={selected:true, values:term_ids};
+                    
+                    this.modelForm.controls[key].patchValue(term_ids)
                 }
-                term_ids = term_ids.slice(0, -1);
-                //this.selected_term = result.selected_term;
-                this.validated_term[key]={selected:true, values:term_ids};
-                
-                this.modelForm.controls[key].patchValue(term_ids)
+                else{
+                    if (this.selected_set.length>0){
+                        var term_id=result.selected_set[0]['id']
+                        var term_def=result.selected_set[0]['def']
+                        var term_name=result.selected_set[0]['name']
+                        this.validated_term[key]={selected:true, values:term_id};
+                        var var_key= key.split(" accession number")[0]
+                        var var_name=var_key+" name"
+                        var var_name_id=var_key+" ID"
+                        var var_description=var_key+" description"
+
+
+                        this.modelForm.controls[key].patchValue(term_id)
+                        if (this.modelForm.controls[var_key]){
+                            this.modelForm.controls[var_key].patchValue(term_name)
+                        }
+                        if (this.modelForm.controls[key]){
+                            this.modelForm.controls[key].patchValue(term_id)
+                        }
+                        if (this.modelForm.controls[var_description]){
+                            this.modelForm.controls[var_description].patchValue(term_def)
+                        }
+                        if (this.modelForm.controls[var_name]){
+                            this.modelForm.controls[var_name].patchValue(term_name)
+                        }
+                        if (this.modelForm.controls[var_name_id]){
+                            this.modelForm.controls[var_name_id].patchValue(term_name)
+                        }
+                        // else{
+
+                        //      this.modelForm.controls[var_name]..patchValue("<"+var_name+">")
+                        // }
+                    }
+                    
+                }
+                this.startfilling=true;
             }
             });            
     }
