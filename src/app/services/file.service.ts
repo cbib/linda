@@ -529,11 +529,6 @@ export class FileService {
                         zipFile.file(path, blob_tsv);
                     }
                     else if (formats[i]=="isa_tab (.txt)"){
-                        console.log(model_type)
-                        // console.log(model_id)
-                        // console.log(model)
-                        // console.log(isa_model)
-                        // console.log(data)
                         var trait_dict={}
                         var keys=Object.keys(data);                       
                         for( var i = 0; i < keys.length; i++){   
@@ -542,69 +537,39 @@ export class FileService {
                                 i--;
                             }
                             else{
-                                console.log(keys[i]) 
-                                //console.log(model[keys[i]])
                                 var mapping_data= this.get_mapping_data_by_key(model,keys[i])
                                 var isa_file=mapping_data["ISA-Tab File"]
                                 var isa_section=mapping_data["ISA-Tab Section (for Investigation file)"]
                                 var isa_field:string=mapping_data["ISA-Tab Field"]
-                                console.log(isa_file)
-                                console.log(isa_section)
-                                console.log(isa_field)
                                 // specific model to write in investigation
                                 if (isa_file == 'Investigation'){
-                                    console.log(isa_field)
-                                    console.log(isa_model[isa_section])
-                                    //when model is study need to get back ontology term definition to describe:  
-                                    // - "Study Design Type": Array [ "CO_715:0000246/CO_715:0000148" ]
-    ​​                                // - "Study Design Type Term Accession Number": Array []
-                                    // - "Study Design Type Term Source REF": Array []
-                                    // data[keys[i]].split("/").forEach(element => {
-                                        
-                                    // });
-                                    
                                     if (isa_model[isa_section][isa_field]){
-                                        console.log(isa_model[isa_section][isa_field])
                                         if (isa_field.includes("Type")){
-                                            console.log("type found in ",isa_model[isa_section][isa_field])
                                             data[keys[i]].split("/").forEach(element => {
-                                                console.log("element ",element)
                                                 isa_model[isa_section][isa_field].push(element)
                                                 let tmp_isa_field:string = isa_field +' Term Accession Number'
-                                                console.log(tmp_isa_field)
                                                 isa_model[isa_section][tmp_isa_field].push(element)
                                                 tmp_isa_field=isa_field+' Term Source REF'
-                                                console.log(tmp_isa_field)
                                                 isa_model[isa_section][tmp_isa_field].push(element.split(":")[0])
                                             });
                                         }
-                                        
                                         else{
                                             isa_model[isa_section][isa_field].push(data[keys[i]])
                                         }
-
-                                        
                                     }
                                     else{
                                         isa_model[isa_section][isa_field]=data[keys[i]]
-
                                     }
                                 }
                                 else if (isa_file == 'Study'){
-                                    console.log(isa_field)
-                                    console.log(isa_model[isa_section])
-
                                     if (isa_model[isa_section][isa_field]){
-                                        console.log(isa_model[isa_section][isa_field])
                                         isa_model[isa_section][isa_field].push(data[keys[i]])
                                     }
                                     else{
                                         isa_model[isa_section][isa_field]=data[keys[i]]
                                     }
                                 }
-                                else if (isa_file == 'Assay'){
-
-                                }
+                                else if (isa_file == 'Assay'){}
                                 else if (isa_file == 'Event'){
                                     //Create event file and add reference in Investigation isa
 
@@ -617,73 +582,7 @@ export class FileService {
                                         isa_model[isa_field]=data[keys[i]]
                                     }
                                 }
-                                else{
-
-                                }
-    //                             if (model[keys[i]]["Mapping"]){
-    //                                 var mapping_data=model[keys[i]]["Mapping"]
-    //                                 //console.log(mapping_data)
-    //                                 var isa_file=mapping_data["ISA-Tab File"]
-    //                                 var isa_section=mapping_data["ISA-Tab Section (for Investigation file)"]
-    //                                 var isa_field=mapping_data["ISA-Tab Field"]
-
-    //                                 console.log(isa_file)
-    //                                 console.log(isa_section)
-    //                                 console.log(isa_field)
-    //                                 // specific model to write in investigation
-    //                                 if (isa_file == 'Investigation'){
-    //                                     console.log(isa_field)
-    //                                     console.log(isa_model[isa_section])
-    //                                     //when model is study need to get back ontology term definition to describe:  
-    //                                     // - "Study Design Type": Array [ "CO_715:0000246/CO_715:0000148" ]
-    // ​​                                    // - "Study Design Type Term Accession Number": Array []
-    //                                     // - "Study Design Type Term Source REF": Array []
-    //                                     if (isa_model[isa_section][isa_field]){
-    //                                         console.log(isa_model[isa_section][isa_field])
-
-    //                                         isa_model[isa_section][isa_field].push(data[keys[i]])
-    //                                     }
-    //                                     else{
-    //                                         isa_model[isa_section][isa_field]=data[keys[i]]
-
-    //                                     }
-    //                                 }
-    //                                 else if (isa_file == 'Study'){
-    //                                     console.log(isa_field)
-    //                                     console.log(isa_model[isa_section])
-    //                                     //when miodel is study need to get back ontology term definition 
-    //                                     // to dexfribe 
-    //                                     //"Study Design Type": Array [ "CO_715:0000246/CO_715:0000148" ]
-    // ​​                                    //"Study Design Type Term Accession Number": Array []
-    //                                     //"Study Design Type Term Source REF": Array []
-    //                                     if (isa_model[isa_section][isa_field]){
-    //                                         console.log(isa_model[isa_section][isa_field])
-
-    //                                         isa_model[isa_section][isa_field].push(data[keys[i]])
-    //                                     }
-    //                                     else{
-    //                                         isa_model[isa_section][isa_field]=data[keys[i]]
-
-    //                                     }
-
-    //                                 }
-    //                                 else if (isa_file == 'Assay'){
-
-    //                                 }
-    //                                 else if (isa_file =='Trait Definition File'){
-    //                                     if (isa_model[isa_field]){
-    //                                         isa_model[isa_field].push(data[keys[i]])
-    //                                     }
-    //                                     else{
-    //                                         isa_model[isa_field]=data[keys[i]]
-
-    //                                     }
-    //                                 }
-    //                                 else{
-
-    //                                 }
-    //                             }
-             
+                                else{} 
                             }
                         }
 
