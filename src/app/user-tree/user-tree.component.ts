@@ -328,7 +328,7 @@ export class UserTreeComponent implements OnInit{
         }
         else if (node.id.includes('studies')){
             
-           return {backgroundColor: 'Gainsboro',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+           return {backgroundColor: 'AquaMarine',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
         }
         else if(node.id.includes('investigations')){
             
@@ -336,11 +336,24 @@ export class UserTreeComponent implements OnInit{
         }
         else if(node.id.includes('events')){
             
-            return {backgroundColor: 'lightyellow',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+            return {backgroundColor: 'lightcoral',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
         }
         else if(node.id.includes('metadata')){
             
             return {backgroundColor: 'OldLace',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else if(node.id.includes('observed')){
+            
+            return {backgroundColor: 'LightGreen',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        
+        else if(node.id.includes('biological_materials')){
+            
+            return {backgroundColor: 'LightBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+        }
+        else if(node.id.includes('observation_units')){
+            
+            return {backgroundColor: 'Lightyellow3',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
         }
         else{
             return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
