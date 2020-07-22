@@ -1,21 +1,19 @@
 import { FlatTreeControl} from '@angular/cdk/tree';
 import {SelectionModel} from '@angular/cdk/collections';
-import { Component, Input, Inject, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import { UserService, GlobalService, OntologiesService, AlertService, FileService } from '../services';
+import { GlobalService, OntologiesService, AlertService, FileService } from '../services';
 import { MiappeNode } from '../models';
 import { Router,ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { MatDialog} from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material';
 import { first } from 'rxjs/operators';
-import { ScrollingModule } from '@angular/cdk/scrolling'
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { ExportDialogComponent } from '../dialog/export-dialog.component';
 import * as JSZip from 'jszip';
 import { MediaObserver} from "@angular/flex-layout";
-import { FormBuilder, FormGroup, Validators ,FormArray, FormControl} from '@angular/forms';
+import { FormControl} from '@angular/forms';
 
 
 

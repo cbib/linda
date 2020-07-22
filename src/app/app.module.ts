@@ -76,6 +76,8 @@ import { DragDropDirective } from './directives/drag-drop.directive';
 import { UploadFileComponent } from './download/upload-file.component';
 import { ExportDialogComponent } from './dialog/export-dialog.component';
 import { DonwloadedComponent } from './download/donwloaded.component';
+import { PublicationsComponent } from './documentation/publications.component';
+import { ReleasesComponent } from './documentation/releases.component';
 
 
 
@@ -113,7 +115,9 @@ import { DonwloadedComponent } from './download/donwloaded.component';
     DragDropDirective,
     UploadFileComponent,
     ExportDialogComponent,
-    DonwloadedComponent
+    DonwloadedComponent,
+    PublicationsComponent,
+    ReleasesComponent
     
     
 

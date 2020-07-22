@@ -16,6 +16,7 @@ import { HelpComponent } from './help/help.component';
 import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
 import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
 import { DonwloadedComponent } from './download/donwloaded.component';
+import { ReleasesComponent } from './documentation/releases.component';
 
 
 
@@ -33,6 +34,7 @@ const routes: Routes = [
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
+  { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
   //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
   { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
   ];

@@ -1,29 +1,8 @@
 <section id="container">
     <header class="header black-bg">
-        <!--<nav class="navbar navbar-expand-lg navbar-light">-->
-<!--            <a class="navbar-brand"> 
-                <div class="sidebar-header d-flex align-items-center">
-                    <div><img height="100" width="250" src="assets/images/logo_linda.png" alt="..." ></div>
-                </div>    
-            </a>-->
-<!--            <a class="navbar-brand"  style="font-size: 20pt; color: #006666" href="#">
-                {{ title }} 
-                <i style="font-size: 10pt"> 
-                    pLant experImeNtal metaDatA 
-                </i>
-            </a>-->
-
-<!--            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>-->
                <a class="logo"  href="#">
                 <b style="color:#4ECDC4">{{ title }} </b>
                 P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
-
-<!--                <i style="font-size: 10pt"> 
-                    <b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b>
-                    pLant experImeNtal metaDatA 
-                </i>-->
                 </a>  
             <!--  notification start -->
             <div class="nav notify-row" id="top_menu">
@@ -70,12 +49,6 @@
                           </div>
                         </a>
                       </li>
-<!--                      <li class="external">
-                          
-                          <strong>Stats </strong> 
-                          <pre>{{ stats_advanced['investigations'] | json }}</pre>
-                        <a href="#">See All Tasks</a>
-                      </li>-->
                     </ul>
                   </li>
 
@@ -132,9 +105,6 @@
 <!--    <aside>
       <div id="sidebar" class="nav-collapse ">-->
             <!-- Sidebar Header-->
-            <!--<div class="sidebar-header d-flex align-items-center">
-            <div><img src="assets/images/logo_proteomix.png" alt="..." class="img-fluid rounded-circle"></div>
-            </div>-->
             <!-- Sidebar Navidation Menus-->
             <span class="heading">Main</span>
             <ul class="sidebar-menu">
@@ -175,17 +145,18 @@
                 </li>
              </ul><span class="heading">Extras</span>
              <ul class="sidebar-menu">
-                <li> <a href="#"> <i class="far fa-newspaper"></i>Publications</a></li>
+                <li> 
+                  <a class="nav-link" [routerLink]="['/publications']" routerLinkActive="active-link"><i class="icon-picture"></i>Publications</a>
+                </li>
                 <li> 
                     <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i>FAQ</a>
-                    <!--<a href="#"> <i class="fas fa-question-circle"></i>FAQ</a>-->
                 </li>
                 <li> 
                     <a class="nav-link" [routerLink]="['/downloaded']" routerLinkActive="active-link"><i class="fa fa-cart-arrow-down"></i>Download</a>
-                    <!--<a href="#"> <i class="fas fa-question-circle"></i>FAQ</a>-->
                 </li>
-                <!--<li> <a href="#"> <i class="fa fa-cart-arrow-down"></i>Download</a></li>-->
-                <li> <a href="#"> <i class="icon-picture"></i>Releases</a></li>
+                <li> 
+                <a class="nav-link" [routerLink]="['/releases']" routerLinkActive="active-link"><i class="icon-picture"></i>Releases</a>
+              </li>
              </ul>
         </div>
         
@@ -205,65 +176,7 @@
                       <!--<router-outlet></router-outlet>-->
                      <!-- <router-outlet (notify)="onNotify($event)"></router-outlet> -->
                      <router-outlet (activate)="onActivate($event)" #outlet></router-outlet>
-
-
             </section>
             
         </section>
-    
-    
-    
-
-
-    
-
-
   </section>
-
-
-
-
-
-
-
-
-<!--<div class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">{{ title }}</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</div>-->
-
-
-
-
-
