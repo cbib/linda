@@ -153,6 +153,10 @@ export class GlobalService {
     get_all_vertices_by_model(model_type:string, model_key:string){
         return this.http.get(this.APIUrl+"get_vertices_by_model/" + model_type + "/" + model_key).pipe(map(this.extractData));
     }
+
+    get_all_childs_by_model(model_type:string, model_key:string){
+        return this.http.get(this.APIUrl+"get_childs_by_model/" + model_type + "/" + model_key).pipe(map(this.extractData));
+    }
     
     saveTemplate(values:{}, model_type:string) {
         let user=JSON.parse(localStorage.getItem('currentUser'));

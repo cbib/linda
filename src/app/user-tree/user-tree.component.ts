@@ -133,25 +133,44 @@ export class UserTreeComponent implements OnInit{
             const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {expandable:node.expandable}});
 
             dialogRef.afterClosed().subscribe(result=> {
-                if (result.event){
+                if (result.event=='Confirmed'){
                     var selected_format=result.selected_format
                     var recursive_check=result.recursive_check
-                    console.log(selected_format)
+                    //console.log(selected_format)
                     var model_key=node.id.split("/")[1];
                     var model_id=node.id
                     var collection_name=node.id.split("/")[0];
-                    var parent_collection_name=parent_data['_from'].split("/")[0];
-                    var vertice_list=[]
+                    //var parent_collection_name=parent_data['_from'].split("/")[0];
+                    //var vertice_list=[]
                     this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {    
-
                         //Parse in a recursive way all submodels
                         if ((node.expandable) && (recursive_check)){
-                                
-                            var models:any=[]
-                            this.globalService.get_all_vertices_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-                                
-                                
-                                this.fileService.saveMultipleFiles(model_data, submodel_data, model_type,collection_name, model_id, selected_format);
+                            //var models:any=[]
+                            this.globalService.get_model(model_type).toPromise().then(model => { 
+                                var isa_model=""
+                                if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor' || model_type== 'data_file' || model_type== 'event'){
+                                    isa_model="investigation_isa"
+                                }
+                                else if(model_type=="observed_variable"){
+                                    isa_model="trait_definition_file_isa"
+                                }
+                                else if(model_type=="biological_material"){
+                                    isa_model="study_isa"
+                                }
+                                else{
+                                    isa_model="assay_isa"
+                                }
+                                //console.log(isa_model)
+                                // this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                                //     console.log(submodel_data)
+                                // });
+
+                                this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                                    console.log(submodel_data)
+                                    this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
+                                        this.fileService.saveMultipleFiles(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model, selected_format);
+                                    });
+                                });
                             });
                         }
                         else{
@@ -163,6 +182,9 @@ export class UserTreeComponent implements OnInit{
                                 }
                                 else if(model_type=="observed_variable"){
                                     isa_model="trait_definition_file_isa"
+                                }
+                                else if(model_type=="biological_material"){
+                                    isa_model="study_isa"
                                 }
                                 else{
                                     isa_model="assay_isa"
@@ -328,7 +350,7 @@ export class UserTreeComponent implements OnInit{
         }
         else if (node.id.includes('studies')){
             
-           return {backgroundColor: 'AquaMarine',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
+           return {backgroundColor: 'Gainsboro',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
         }
         else if(node.id.includes('investigations')){
             

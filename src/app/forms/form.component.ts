@@ -135,6 +135,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false, multiple: multiple}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
+                this.startfilling=true;
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
                 if (multiple){
@@ -172,10 +173,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                         var term_ids=this.modelForm.controls[key].value +'/'
                         term_ids+=term_name
                         this.modelForm.controls[var_name_id].patchValue(term_name)
+                        this.startfilling=true;
                     }
-                    
                 }
-                this.startfilling=true;
             }
         });            
     }

@@ -57,7 +57,7 @@ export class ExportDialogComponent implements OnInit {
 //    }
     
     onNoClick(): void {
-        this.dialogRef.close({event:"Confirmed"});
+        this.dialogRef.close({event:"Cancelled"});
         this.alertService.clear();
     }
     

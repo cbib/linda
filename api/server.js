@@ -448,6 +448,71 @@ router.get('/get_vertices_by_model/:model_type/:model_key', function (req, res) 
 .description('Assembles a list of keys of entries in the collection.');
 
 
+
+router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
+    var model_type=req.pathParams.model_type;
+    var model_key=req.pathParams.model_key;
+    var model_id=model_type+"/"+model_key;
+    //var data=[];
+
+    var final_obj={"models_data":[]}
+    var childs_data=db._query(aql`FOR v, e, s IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {e:e,s:s,v:v}`).toArray();
+    final_obj["models_data"]=childs_data
+    //childs_model=[]
+    childs_data.forEach(
+        child_data=>{
+            var model= ""
+	        var id=child_data["v"]["_id"]
+            if (id.split("/")[0] == "studies"){
+                model ="study/Study"
+                model_type= "study"
+            }
+            else{
+                model= id.split("/")[0].slice(0, -1) + "/"+ id.split("/")[0][0].toUpperCase() + id.split("/")[0].slice(1).slice(0, -1);
+                model_type= id.split("/")[0].slice(0, -1)
+            }
+            console.log(model_type)
+            var child_model =db._query(aql`RETURN DOCUMENT(${model})`).toArray();
+            child_data["model"]=child_model[0]
+
+            var isa_model=""
+            if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor'){
+                isa_model="investigation_isa/investigation_Isa"
+            }
+            else if(model_type=="observed_variable"){
+                isa_model="trait_definition_file_isa/trait_definition_file_Isa"
+            }
+            else if(model_type=="biological_material"){
+                isa_model="study_isa/Study_isa"
+            }
+            else{
+                isa_model="assay_isa"
+            }
+            var child_model =db._query(aql`RETURN DOCUMENT(${isa_model})`).toArray();
+            child_data["isa_model"]= child_model[0]
+            //final_obj["models_data"].push(child_model[0])	
+            // childs_model.push(child_model[0]) 
+        }
+    )
+
+    res.send(final_obj);
+})
+.pathParam('model_type', joi.string().required(), 'username of the entry.')
+.pathParam('model_key', joi.string().required(), 'username of the entry.')
+.response(joi.object().required(), 'List of entry keys.')
+
+// .response(joi.object({
+//         model_real_data: joi.array().items().required(), 
+//         model_data:joi.array().items().required()
+//                     }).required(), 'List of entry keys.'
+// )
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
+
+//.response(joi.object({"model_data": joi.array().items(joi.object().required()).required(), "model_real_data":joi.array().items(joi.object().required()).required()}).required(), 'List of entry keys.')
+//joi.array().items
+//.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+
  
 
 router.get('/get_model/:model_type', function (req, res) {
