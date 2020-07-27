@@ -428,7 +428,9 @@ export class FileService {
 
 
     public build_isa_model(data, model, isa_model, return_data, model_type) {
+        console.log(return_data)
         var keys = Object.keys(data);
+        console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
         for (var i = 0; i < keys.length; i++) {
             if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                 keys.splice(i, 1);
@@ -475,7 +477,7 @@ export class FileService {
                             }
                         }
                         else {
-                            return_data[isa_file][isa_section][isa_field] = data[keys[i]]
+                            return_data[isa_file][isa_section][isa_field] = [data[keys[i]]]
                         }
                         //return_data.push({'Investigation':isa_model})
                         //return_data['isa_model']=isa_model
@@ -499,7 +501,7 @@ export class FileService {
                             }
                         }
                         else {
-                            return_data[isa_file][isa_field] = data[keys[i]]
+                            return_data[isa_file][isa_field] = [data[keys[i]]]
                         }
                         //return_data.push({'Study':isa_model})
                     }
@@ -521,7 +523,7 @@ export class FileService {
                             }
                         }
                         else {
-                            return_data[isa_file][isa_field] = data[keys[i]]
+                            return_data[isa_file][isa_field] = [data[keys[i]]]
                         }
 
                     }
@@ -533,7 +535,7 @@ export class FileService {
                             return_data[isa_file][isa_field].push(data[keys[i]])
                         }
                         else {
-                            return_data[isa_file][isa_field] = data[keys[i]]
+                            return_data[isa_file][isa_field] = [data[keys[i]]]
                         }
                     }
                     else { 
@@ -757,7 +759,7 @@ export class FileService {
         }
         return str;
     }
-    public ConvertInvestigationModelTo(objArray, sep = ',') {
+    public ConvertInvestigationModelTo(objArray, sep = '\t') {
         //console.log(objArray)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';
@@ -815,7 +817,7 @@ export class FileService {
     }
 
 
-    public ConvertStudyModelTo(objArray, sep = ',') {
+    public ConvertStudyModelTo(objArray, sep = '\t') {
         console.log(objArray)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';

@@ -59,8 +59,10 @@
                 <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
                 </button>
-                {{node.name}}
-                <!--<mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">{{node.name}}</mat-checkbox>-->
+                <!-- {{node.name}} -->
+                <mat-checkbox *ngIf="!uncheckable"  class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                    {{node.name}}
+                </mat-checkbox>
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
 

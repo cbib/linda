@@ -7,6 +7,7 @@ import { UniqueIDValidatorComponent} from '../validators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
+import { isBuffer } from 'util';
 
 @Component({
   selector: 'app-form',
@@ -149,14 +150,55 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
                 else{
                     if (this.selected_set.length>0){
+                        console.log(this.selected_set)
+                        console.log(key)
                         var term_id=result.selected_set[0]['id']
                         var term_def=result.selected_set[0]['def']
                         var term_name=result.selected_set[0]['name']
                         this.validated_term[key]={selected:true, values:term_id};
-                        var var_key= key.split(" accession number")[0]
-                        var var_name=var_key+" name"
-                        var var_name_id=var_key+" ID"
-                        var var_description=var_key+" description"
+                        var var_key=""
+                        var var_name=""
+                        var var_name_id=""
+                        var var_description=""
+                        if (key.includes(" accession number")){
+                            var_key= key.split(" accession number")[0]
+                            var_name=var_key+" name"
+                            var_name_id=var_key+" ID"
+                            var_description=var_key+" description"
+                            if (this.modelForm.controls[var_description]){
+                                if (term_def){
+                                    this.modelForm.controls[var_description].patchValue(term_def)
+                                }
+                                else{
+                                    this.modelForm.controls[var_description].patchValue(term_name)
+                                }
+                            }
+                        }
+                        else if(key.includes("Type of ")){
+                            var_key= key.split("Type of ")[1]
+                            var_description="Description of "+var_key
+                            if (this.modelForm.controls[var_description]){
+                                if (term_def){
+                                    this.modelForm.controls[var_description].patchValue(term_def)
+                                }
+                                else{
+                                    this.modelForm.controls[var_description].patchValue(term_name)
+                                }
+                            }
+                            var_description="Description of the "+var_key
+                            if (this.modelForm.controls[var_description]){
+                                if (term_def){
+                                    this.modelForm.controls[var_description].patchValue(term_def)
+                                }
+                                else{
+                                    this.modelForm.controls[var_description].patchValue(term_name)
+                                }
+                            }
+                        }
+                        
+                        //var var_name=var_key+" name"
+                        //var var_name_id=var_key+" ID"
+                        //var var_description=var_key+" description"
                         this.modelForm.controls[key].patchValue(term_id)
                         if (this.modelForm.controls[var_key]){
                             this.modelForm.controls[var_key].patchValue(term_name)
@@ -164,9 +206,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (this.modelForm.controls[key]){
                             this.modelForm.controls[key].patchValue(term_id)
                         }
-                        if (this.modelForm.controls[var_description]){
-                            this.modelForm.controls[var_description].patchValue(term_def)
-                        }
+                    
                         if (this.modelForm.controls[var_name]){
                             this.modelForm.controls[var_name].patchValue(term_name)
                         }

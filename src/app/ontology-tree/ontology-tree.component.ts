@@ -166,8 +166,16 @@ export class OntologyTreeComponent {
         this.checklistSelection.toggle(term);
         console.log(this.checklistSelection)
         console.log(this.checklistSelection.isSelected(term))
+        console.log(this.data.selected_set)
         if (this.checklistSelection.isSelected(term)){
-            this.data.selected_set.push(term)
+            if (this.multiple){
+                this.data.selected_set.push(term)
+            }
+            else{
+                this.data.selected_set.pop()
+                this.data.selected_set.push(term)
+            }
+            
             this.displayed=true;
             this.context_term=term["term"].get_context()
         }
