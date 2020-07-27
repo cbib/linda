@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Select template</h1>
+<h1 mat-dialog-title>Select {{search_type}}</h1>
 
 <div *ngIf="get_result().length>0">
     <div mat-dialog-content >
@@ -16,7 +16,7 @@
 
 <div *ngIf="get_result().length===0">
     <div mat-dialog-content >
-        <p> There is no {{search_type}} to use... Please create one... </p>
+        <p> There is no {{search_type}} to use... Please add one to {{parent_id}} </p>
     </div>
     <div mat-dialog-actions>
         <button mat-button (click)="onNoClick()">OK</button>
