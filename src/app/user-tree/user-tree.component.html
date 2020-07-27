@@ -379,9 +379,10 @@
             <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #biological_materialMenu2="matMenu">
-            <button mat-menu-item (click)="add('biological_material','original')">From original model template</button>
-            <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('biological_material','original')">From original model template</button> -->
+            <button mat-menu-item (click)="add('biological_material','parent')">Select from biological materials</button>
+            <!-- <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #experimental_factorMenu2="matMenu">
             <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>

@@ -335,6 +335,100 @@ router.post('/register', function (req, res) {
 }).required(),'response.')
 .summary('List entry keys')
 .description('check if user exist.');
+
+
+
+
+router.post('/search', function (req, res) {
+    var username=req.body.username;
+    var password=req.body.password;
+    var search_string=req.body.search_string;
+
+    const user = db._query(aql`
+        FOR entry IN ${users}
+        FILTER entry.username == ${username}
+        FILTER entry.password == ${password}
+        RETURN entry
+      `).toArray();
+    if (user[0] === null){
+        res.send([{success:false,message:'Username '+ username + ' doesn\'t exists',_id:null}]);
+    }
+    else{
+        /////////////////////////////
+        //now search in all descendants node of user the search string
+        /////////////////////////////
+        //var data=[{"search_string":search_string, 'user_key':user[0]}];
+        var data=[]
+        var user_id=user[0]["_id"];
+        var all_descendants_nodes=db._query(aql`FOR v, e, s IN 1..5 OUTBOUND ${user_id} GRAPH 'global'  RETURN {v:v, e:e}`).toArray();
+        all_descendants_nodes.forEach(
+            descendants_node=>{
+                var descendants_node_values=descendants_node["v"]
+                var descendants_node_id=descendants_node["v"]["_id"]
+                Object.keys(descendants_node_values).forEach(
+                    descendants_node_key=> {
+                        if (!descendants_node_key.startsWith("_")){
+                            var descendants_node_value=descendants_node_values[descendants_node_key]
+                            if ((typeof descendants_node_value==='string') && (descendants_node_value.includes(search_string))){
+                                data.push({'search_string':search_string,'id':descendants_node_id, 'found_as':descendants_node_key, 'data':descendants_node_values, parent_id:descendants_node["e"]["_from"]});
+                            }
+                            //descendants_node_value type metadata file
+                            else{
+
+                                if (descendants_node_key==="headers"){
+                                    if (descendants_node_value.includes(search_string)){
+                                        data.push({'search_string':search_string,'id':descendants_node_id, 'found_as':descendants_node_key, 'data':descendants_node_values, parent_id:descendants_node["e"]["_from"]});
+                                    }
+                                }
+                                else if (descendants_node_key==="associated_headers"){
+                                    Object.keys(descendants_node_value).forEach(
+                                        descendants_node_matadata_key=> {
+                                            if (!descendants_node_matadata_key.startsWith("_")){
+                                                var descendants_node_matadata_value=descendants_node_value[descendants_node_matadata_key]
+                                                Object.keys(descendants_node_matadata_value).forEach(
+                                                    descendants_node_matadata_subkey=> {
+                                                        var descendants_node_matadata_subvalue=descendants_node_matadata_value[descendants_node_matadata_subkey]
+                                                        if ((typeof descendants_node_matadata_subvalue==='string') && (descendants_node_matadata_subvalue.includes(search_string))){
+                                                            data.push({'search_string':search_string,'id':descendants_node_id, 'found_as':descendants_node_matadata_key, 'data':descendants_node_values, parent_id:descendants_node["e"]["_from"]});
+                                                        }
+                                                    
+                                                    }
+                                                )
+                                            }  
+                                            
+                                        }
+                                    
+                                    )
+                                }
+                                //here search in data key : need to add it if data are not numerical
+                                else{
+                                    //console.log(descendants_node_key)
+                                }
+            
+                            }
+                        }
+                        
+                    }
+                )
+        
+            }
+        );
+
+        res.send(data);
+        }
+    })
+    .body(joi.object({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        search_string: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(joi.array().items(joi.object().required()).required(),'response.')
+    .summary('List entry keys')
+    .description('add MIAPPE description for given model.');
+    
+    
+
+
 /*****************************************************************************************
  ******************************************************************************************
  *********************************GLOBAL*******************************************
@@ -365,6 +459,22 @@ router.get('/get_max_level/:model_type', function (req, res) {
 })
 .pathParam('model_type', joi.string().required(), 'username of the entry.')
 .response(joi.number().required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
+
+
+router.get('/get_parent_id/:model_name/:model_key', function (req, res) {
+   
+    var model_name=req.pathParams.model_name;
+    var model_key=req.pathParams.model_key;
+    var model_id=model_name+"/"+model_key;
+    var data={} 
+    data=db._query(aql`FOR v, e IN 1..1 INBOUND ${model_id} GRAPH 'global' RETURN {v_id:v._id}`).toArray();
+    res.send(data);
+})
+.pathParam('model_name', joi.string().required(), 'username of the entry.')
+.pathParam('model_key', joi.string().required(), 'username of the entry.')
+.response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
 .summary('List entry keys')
 .description('Assembles a list of keys of entries in the collection.');
 
@@ -486,7 +596,7 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
                 isa_model="study_isa/Study_isa"
             }
             else{
-                isa_model="assay_isa"
+                isa_model="assay_isa/assay_Isa"
             }
             var child_model =db._query(aql`RETURN DOCUMENT(${isa_model})`).toArray();
             child_data["isa_model"]= child_model[0]
@@ -1005,7 +1115,39 @@ router.post('/update_field', function (req, res) {
 .summary('List entry keys')
 .description('check if user exist and update specific field in MIAPPE model.');
 
-
+router.get('/get_data_from_child_model/:parent_name/:parent_key/:child_type/', function (req, res) {
+    try {
+        var parent_name=req.pathParams.parent_name;
+        var parent_key=req.pathParams.parent_key;
+        var parent_id=parent_name+'/'+parent_key
+        var child_type=req.pathParams.child_type;
+        var childs=db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global' RETURN {v_id:v._id,v:v}`).toArray();
+        var data=[]
+        for (var i = 0; i < childs.length; i++) {
+            if (childs[i]["v_id"].split("/")[0]==child_type){
+                data.push(childs[i]["v"])
+            }
+        }
+        res.send(data);
+    } 
+    catch (e) {
+      if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+        throw e;
+      }
+      res.throw(404, 'The entry does not exist', e);
+    }
+      
+  })
+  .pathParam('parent_name', joi.string().required(), 'parent name requested.')
+  .pathParam('parent_key', joi.string().required(), 'parent key requested.')
+  .pathParam('child_type', joi.string().required(), 'child type.')
+  .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
+  .summary('Retrieve an entry')
+  .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+  
+  
+  
+  
 
 
 //Get templates

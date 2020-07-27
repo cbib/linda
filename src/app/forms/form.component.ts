@@ -172,7 +172,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                         }
                         var term_ids=this.modelForm.controls[key].value +'/'
                         term_ids+=term_name
-                        this.modelForm.controls[var_name_id].patchValue(term_name)
+                        if (this.modelForm.controls[var_name_id]){
+                            this.modelForm.controls[var_name_id].patchValue(term_name)
+                        } 
                         this.startfilling=true;
                     }
                 }
@@ -200,10 +202,11 @@ export class FormComponent implements OnInit//, AfterViewInit
     onTaskAdd(event){
         this.startfilling=false;
         this.keys.forEach(attr => {
-            if (this.modelForm.value.attr!==""){
+            if (this.modelForm.value[attr]!==""){
                 this.startfilling=true;
             }
-        }); 
+        });
+        console.log(this.startfilling) 
     }
 
     get_max_level(){

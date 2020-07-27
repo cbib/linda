@@ -35,42 +35,49 @@ export class GlobalService {
     get_model_type(model_id:string){
         console.log(model_id)
         var model_type=""
-        if (model_id.split("/")[0]==="investigations"){
-            model_type="investigation" 
-        }
-        else if (model_id.split("/")[0]==="studies"){
+        if (model_id.split("/")[0]==="studies"){
             model_type="study" 
-
-        }
-        else if (model_id.split("/")[0]==="observation_units"){
-            model_type="observation_unit" 
-
-        }
-        else if (model_id.split("/")[0]==="biological_materials"){
-            model_type="biological_material" 
-
-        }
-        else if (model_id.split("/")[0]==="data_files"){
-            model_type="data_file"             
-        }
-        else if (model_id.split("/")[0]==="environments"){
-            model_type="environment"             
-        }
-        else if (model_id.split("/")[0]==="events"){
-            model_type="event"             
-        }
-        else if (model_id.split("/")[0]==="experimental_factors"){
-            model_type="experimental_factor"             
-        }
-        else if (model_id.split("/")[0]==="observed_variables"){
-            model_type="observed_variable"             
-        }
-        else if (model_id.split("/")[0]==="samples"){
-            model_type="sample"             
         }
         else{
-            model_type="unknown" 
+            model_type=model_id.split("/")[0].slice(0, -1)
         }
+
+        // if (model_id.split("/")[0]==="investigations"){
+        //     model_type="investigation" 
+        // }
+        // else if (model_id.split("/")[0]==="studies"){
+        //     model_type="study" 
+
+        // }
+        // else if (model_id.split("/")[0]==="observation_units"){
+        //     model_type="observation_unit" 
+
+        // }
+        // else if (model_id.split("/")[0]==="biological_materials"){
+        //     model_type="biological_material" 
+
+        // }
+        // else if (model_id.split("/")[0]==="data_files"){
+        //     model_type="data_file"             
+        // }
+        // else if (model_id.split("/")[0]==="environments"){
+        //     model_type="environment"             
+        // }
+        // else if (model_id.split("/")[0]==="events"){
+        //     model_type="event"             
+        // }
+        // else if (model_id.split("/")[0]==="experimental_factors"){
+        //     model_type="experimental_factor"             
+        // }
+        // else if (model_id.split("/")[0]==="observed_variables"){
+        //     model_type="observed_variable"             
+        // }
+        // else if (model_id.split("/")[0]==="samples"){
+        //     model_type="sample"             
+        // }
+        // else{
+        //     model_type="unknown" 
+        // }
         return model_type
     }
     
@@ -171,6 +178,15 @@ export class GlobalService {
     
     get_templates(user_key:string,model_coll:string): Observable<any>{
         return this.http.get(this.APIUrl+"get_templates/"+user_key+"/"+model_coll).pipe(map(this.extractData));        
+    }
+
+    get_type_child_from_parent(parent_name:string,parent_key:string,child_type:string): Observable<any>{
+        return this.http.get(this.APIUrl+"get_data_from_child_model/"+parent_name+"/"+parent_key+"/"+child_type).pipe(map(this.extractData));        
+    }
+
+    get_parent_id (model_name:string,model_key:string){
+        console.log(model_name, model_key)
+        return this.http.get(this.APIUrl+"get_parent_id/"+model_name+"/"+model_key).pipe(map(this.extractData));        
     }
     
     

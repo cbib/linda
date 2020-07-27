@@ -139,7 +139,7 @@
                             </div>
                         </div>
                         
-                        <!--not a date format-->
+                        <!--Date format-->
                         <div *ngIf="field['key'].includes('date')">
                             <input mdbInput placeholder="{{model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
                         </div>

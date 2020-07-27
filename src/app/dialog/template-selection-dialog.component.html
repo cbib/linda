@@ -2,10 +2,10 @@
 
 <div *ngIf="get_result().length>0">
     <div mat-dialog-content >
-        <p> Which templates do you plan to use ? </p>
+        <p> Which {{search_type}}s do you plan to use ? </p>
     </div>
     <select name="select_template" size="1" (change)="onSelect($event.target.value)">
-        <option value="" disabled>Select Templates</option>
+        <option value="" disabled>Select {{search_type}}s</option>
         <option *ngFor="let t of get_result()" value={{t._id}}>{{t._id}}</option>
     </select> 
     <div mat-dialog-actions>
@@ -16,7 +16,7 @@
 
 <div *ngIf="get_result().length===0">
     <div mat-dialog-content >
-        <p> There is no template to use... Please create one... </p>
+        <p> There is no {{search_type}} to use... Please create one... </p>
     </div>
     <div mat-dialog-actions>
         <button mat-button (click)="onNoClick()">OK</button>

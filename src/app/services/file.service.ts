@@ -85,7 +85,7 @@ export class FileService {
     public build_path(root_id, models, selected_format) {
         var paths: any = []
         var paths2 = { 'filepath': [], 'data': [], 'parent_id': [] }
-        console.log(models)
+        //console.log(models)
 
         models['models_data'].forEach(
             result => {
@@ -123,8 +123,8 @@ export class FileService {
                                             }
                                             else {
                                                 paths2['parent_id'].push(root_id)
-                                                console.log(path.split('/'))
-                                                console.log(path.split('/').length)
+                                                //console.log(path.split('/'))
+                                                //console.log(path.split('/').length)
 
                                             }
                                         }
@@ -303,8 +303,8 @@ export class FileService {
                                     }
                                     else {
                                         paths2['parent_id'].push(root_id)
-                                        console.log(path.split('/'))
-                                        console.log(path.split('/').length)
+                                        //console.log(path.split('/'))
+                                        //console.log(path.split('/').length)
 
                                     }
                                 }
@@ -318,7 +318,7 @@ export class FileService {
                 }
             }
         );
-        console.log(paths2)
+        //console.log(paths2)
         return paths2
     }
 
@@ -436,82 +436,118 @@ export class FileService {
             }
             else {
                 var mapping_data = this.get_mapping_data_by_key(model, keys[i])
-                var isa_file = mapping_data["ISA-Tab File"]
-                var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
-                var isa_field: string = mapping_data["ISA-Tab Field"]
-                var is_ontology_key = this.is_ontology_key(model, keys[i])
-                if (return_data[isa_file] != {}){
-                    return_data[isa_file]=isa_model
+                var isa_files=[]
+                if (typeof  mapping_data["ISA-Tab File"]==="string"){
+                    isa_files = [mapping_data["ISA-Tab File"]]
                 }
-                // specific model to write in investigation
-                if (isa_file == 'Investigation') {
-                    if (return_data[isa_file][isa_section][isa_field]) {
-                        if (isa_field.includes("Type")) {
-                            data[keys[i]].split("/").forEach(element => {
-                                return_data[isa_file][isa_section][isa_field].push(element)
-                                let tmp_isa_field: string = isa_field + ' Term Accession Number'
-                                return_data[isa_file][isa_section][tmp_isa_field].push(element)
-                                tmp_isa_field = isa_field + ' Term Source REF'
-                                return_data[isa_file][isa_section][tmp_isa_field].push(element.split(":")[0])
-                            });
+                else{
+                    isa_files = mapping_data["ISA-Tab File"]
+                }
+                for (var j = 0; j < isa_files.length; j++) {
+                    console.log("write in ", isa_files[j], "ISA file")
+                    var isa_file = isa_files[j]
+                    var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
+                    console.log("write in section: ", isa_section)
+                    var isa_field: string = mapping_data["ISA-Tab Field"]
+                    console.log("write for isa field: ", isa_field)
+                    var is_ontology_key = this.is_ontology_key(model, keys[i])
+                    console.log("write for miappe model key ", keys[i])
+                    //console.log(return_data)
+                    //console.log(return_data[isa_file])
+                    if (Object.keys(return_data[isa_file]).length === 0){
+                        return_data[isa_file]=isa_model
+                    }
+                    //console.log(return_data[isa_file])
+                    // specific model to write in investigation
+                    if (isa_file == 'Investigation') {
+                        if (return_data[isa_file][isa_section][isa_field]) {
+                            if (isa_field.includes("Type")) {
+                                data[keys[i]].split("/").forEach(element => {
+                                    return_data[isa_file][isa_section][isa_field].push(element)
+                                    let tmp_isa_field: string = isa_field + ' Term Accession Number'
+                                    return_data[isa_file][isa_section][tmp_isa_field].push(element)
+                                    tmp_isa_field = isa_field + ' Term Source REF'
+                                    return_data[isa_file][isa_section][tmp_isa_field].push(element.split(":")[0])
+                                });
+                            }
+                            else {
+                                return_data[isa_file][isa_section][isa_field].push(data[keys[i]])
+                            }
                         }
                         else {
                             return_data[isa_file][isa_section][isa_field] = data[keys[i]]
                         }
+                        //return_data.push({'Investigation':isa_model})
+                        //return_data['isa_model']=isa_model
                     }
-                    else {
-                        return_data[isa_file][isa_section][isa_field] = data[keys[i]]
-                    }
-                    //return_data.push({'Investigation':isa_model})
-                    //return_data['isa_model']=isa_model
-                }
-                else if (isa_file == 'Study') {
+                    else if (isa_file == 'Study') {
 
-                    if (return_data[isa_file][isa_field]) {
-                        //console.log(isa_field, "exists in", isa_model)
-                        if (isa_field.includes("Characteristics")) {
-                            var term_source_ref = ""
-                            var term_accession_number = ""
-                            if (is_ontology_key) {
-                                term_source_ref = data[keys[i]].split(":")[0]
-                                term_accession_number = data[keys[i]]
+                        if (return_data[isa_file][isa_field]) {
+                            //console.log(isa_field, "exists in", isa_model)
+                            if (isa_field.includes("Characteristics")) {
+                                var term_source_ref = ""
+                                var term_accession_number = ""
+                                if (is_ontology_key) {
+                                    term_source_ref = data[keys[i]].split(":")[0]
+                                    term_accession_number = data[keys[i]]
+                                }
+                                var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                return_data[isa_file][isa_field].push(tmp_array)
                             }
-                            var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
-                            return_data[isa_file][isa_field].push(tmp_array)
+                            else {
+                                return_data[isa_file][isa_field].push(data[keys[i]])
+                            }
                         }
                         else {
+                            return_data[isa_file][isa_field] = data[keys[i]]
+                        }
+                        //return_data.push({'Study':isa_model})
+                    }
+                    else if (isa_file == 'Assay') { 
+                        if (return_data[isa_file][isa_field]) {
+                            //console.log(isa_field, "exists in", isa_model)
+                            if (isa_field.includes("Characteristics")) {
+                                var term_source_ref = ""
+                                var term_accession_number = ""
+                                if (is_ontology_key) {
+                                    term_source_ref = data[keys[i]].split(":")[0]
+                                    term_accession_number = data[keys[i]]
+                                }
+                                var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                return_data[isa_file][isa_field].push(tmp_array)
+                            }
+                            else {
+                                return_data[isa_file][isa_field].push(data[keys[i]])
+                            }
+                        }
+                        else {
+                            return_data[isa_file][isa_field] = data[keys[i]]
+                        }
+
+                    }
+                    else if (isa_file == 'Event') {
+                        //Create event file and add reference in Investigation isa
+                    }
+                    else if (isa_file == 'Trait Definition File') {
+                        if (return_data[isa_file][isa_field]) {
                             return_data[isa_file][isa_field].push(data[keys[i]])
                         }
+                        else {
+                            return_data[isa_file][isa_field] = data[keys[i]]
+                        }
                     }
-                    else {
-                        return_data[isa_file][isa_field] = data[keys[i]]
-                    }
-                    //return_data.push({'Study':isa_model})
-                }
-                else if (isa_file == 'Assay') { 
+                    else { 
 
-                }
-                else if (isa_file == 'Event') {
-                    //Create event file and add reference in Investigation isa
-                }
-                else if (isa_file == 'Trait Definition File') {
-                    if (return_data[isa_file][isa_field]) {
-                        return_data[isa_file][isa_field].push(data[keys[i]])
                     }
-                    else {
-                        return_data[isa_file][isa_field] = data[keys[i]]
-                    }
-                }
-                else { 
-
                 }
             }
         }
+        console.log(return_data)
         return return_data
     }
 
     public saveMultipleFiles(model_data, submodels, model_type: string, collection_name = 'data', model_id = "", isa_model, model, selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
-        //console.log(submodels)
+        console.log(submodels)
         var model_key = model_id.split("/")[1];
         var root_model_type = model_type
         //Build path to inject in zip
@@ -523,16 +559,16 @@ export class FileService {
         // write the data for the selected root node
         var formats = Object.keys(selected_format);
         for (var i = 0; i < formats.length; i++) {
-            console.log(selected_format)
-            console.log("format to treat: ", formats[i])
-            console.log(selected_format[formats[i]])
+            //console.log(selected_format)
+            //console.log("format to treat: ", formats[i])
+            //console.log(selected_format[formats[i]])
             if ((selected_format[formats[i]]['selected']) && (formats[i] != "isa_tab (.txt)")) {
                 var dir_root_path = collection_name + '_' + model_key + formats[i]
                 //paths.push({'path':dir_root_path,'data':model_data})
                 paths['filepath'].push(dir_root_path)
                 paths['data'].push(model_data)
                 paths['parent_id'].push('root')
-                console.log(dir_root_path)
+                //console.log(dir_root_path)
                 //zipFile = this.build_zip(dir_root_path, zipFile)
             }
             else if ((selected_format[formats[i]]['selected']) && (formats[i] == "isa_tab (.txt)"))  {
@@ -542,6 +578,7 @@ export class FileService {
                 return_data = this.build_isa_model(model_data, model, isa_model, return_data, model_type)
                 submodels['models_data'].forEach(
                     submodel => {
+                        console.log(submodel)
                         var model_type = submodel["v"]["_id"].split('/')[0]
                         var _id: string = submodel["v"]["_id"]
                         var _from: string = submodel["e"]["_from"]

@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { AlertComponent } from './directives/alert.component';
 import { AuthGuard } from './guards/auth.guards';
 import { JwtInterceptor, ErrorInterceptor } from './helpers';
-import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService, AdService} from './services';
+import { GlobalService, AlertService, AuthenticationService, UserService,InvestigationService,EventService, ObservationUnitService, AdService, SearchService} from './services';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -78,6 +78,8 @@ import { ExportDialogComponent } from './dialog/export-dialog.component';
 import { DonwloadedComponent } from './download/donwloaded.component';
 import { PublicationsComponent } from './documentation/publications.component';
 import { ReleasesComponent } from './documentation/releases.component';
+import { SearchResultDialogComponent } from './dialog/search-result-dialog.component';
+
 
 
 
@@ -117,7 +119,8 @@ import { ReleasesComponent } from './documentation/releases.component';
     ExportDialogComponent,
     DonwloadedComponent,
     PublicationsComponent,
-    ReleasesComponent
+    ReleasesComponent,
+    SearchResultDialogComponent
     
     
 
@@ -182,6 +185,7 @@ import { ReleasesComponent } from './documentation/releases.component';
                    TemplateSelectionDialogComponent, 
                    DelimitorDialogComponent,
                    ExportDialogComponent,
+                   SearchResultDialogComponent,
                    PubAdComponent
                    ],
   providers: [AuthGuard,
@@ -192,6 +196,7 @@ import { ReleasesComponent } from './documentation/releases.component';
               ObservationUnitService,
               UserService,
               GlobalService,
+              SearchService,
               AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

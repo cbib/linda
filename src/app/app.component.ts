@@ -1,7 +1,11 @@
 import { Component,ViewEncapsulation, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import {GlobalService } from './services';
+import {GlobalService, SearchService } from './services';
 import { UserTreeComponent } from './user-tree/user-tree.component';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+import { first } from 'rxjs/operators';
+import { MatDialog} from '@angular/material/dialog';
+import { SearchResultDialogComponent } from './dialog/search-result-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-linda',
@@ -22,11 +26,12 @@ export class AppComponent implements OnInit {
     public stats = {};
     public stats_advanced = {};
     public vertice_data:any=[];
+    public search_string:string=""
   
     // ngAfterViewInit() {
     //     console.log("ngAfterViewInit parent with child = ", this.outlet);
     //   }
-    constructor(private globalService : GlobalService){
+    constructor(private globalService : GlobalService,private searchService : SearchService, public dialog: MatDialog, private router: Router,){
             this.stats_advanced={
                       "investigations":[],
                       "studies":[],
@@ -49,7 +54,45 @@ export class AppComponent implements OnInit {
         */
      
     }
-    
+    onSearch(){
+        this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(
+            data=>{
+                console.log(data)
+                const dialogRef = this.dialog.open(SearchResultDialogComponent, {width: '500px', autoFocus: false, maxHeight: '90vh' , data: {search_type :this.search_string,model_id:"",values:data, parent_id:""}});
+        
+                
+                dialogRef.afterClosed().subscribe(result => {
+                    if (result){
+                        console.log(result)
+                        var parent_id=result['parent_id']
+                        var model_id=result['model_id']
+                        var model_type=result['model_id'].split("/")[0]
+                        var model_key=result['model_id'].split("/")[1]
+                        if (model_type=="metadata_files"){
+                            this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
+                        }
+                        else{
+                            var model_type=model_type.slice(0, -1)
+                            this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit"}});
+
+                        }
+                    }
+
+                
+                });
+
+            } 
+        );
+    }
+    updateData(value: string) {
+        this.searchService.updateData(value);
+    }
+
+    searchStart(event){
+        this.search_string=event.target.value;
+        //console.log(this.search_string)
+        //this.searchService.updateData(this.search_string);
+    }
     set_percent_style(percent: any): Object {
         var percent_css=percent+"%"
         //style="width: 40%"
@@ -101,6 +144,8 @@ export class AppComponent implements OnInit {
             console.log("This is not the UserTreeComponent")
          }
     }
+
+    
     
     get_vertices(){
         this.stats_advanced={
@@ -139,7 +184,8 @@ export class AppComponent implements OnInit {
                     d => {
                         var stat_object={
                             'id':d["e"]["_to"],
-                            'percent_fill':0
+                            'percent_fill':0,
+                            'parent_id':d["e"]["_from"]
                         }
                         //this.stats[d["e"]["_to"].split("/")[0]]+=1
                         
