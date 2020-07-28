@@ -206,7 +206,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (this.modelForm.controls[key]){
                             this.modelForm.controls[key].patchValue(term_id)
                         }
-                    
+
                         if (this.modelForm.controls[var_name]){
                             this.modelForm.controls[var_name].patchValue(term_name)
                         }

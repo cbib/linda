@@ -1,200 +1,83 @@
 <!--{{diagnostic}}-->
 
-    <div>
-        <div class="border-head">
-            <h3>
-                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-                <div class="form-group text-center" style="float: right;">
-
-                    <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
-                        <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> 
+<div>
+    <div class="border-head">
+        <h3>
+            <a href="index.html" class="logo">
+                <b>
+                    P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+                </b>
+            </a>
+            <div class="form-group text-center" style="float: right;">
+                <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1" > 
+                    <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span> 
                         Back
-                    </button><span style="margin-right:10px;"></span>
-                
-                    <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger"> 
-                        <span style="margin-right:10px;"></span> 
+                </button>
+                <span style="margin-right:10px;"></span>
+                <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger"> 
+                    <span style="margin-right:10px;"></span> 
                         Cancel
-                    </button><span style="margin-right:10px;"></span>
-
-                    <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)" > 
+                </button>
+                <span style="margin-right:10px;"></span>
+                <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)" > 
                         Next 
-                        <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                    </button><span style="margin-right:10px;"></span>
-
-
-                    <button  class="btn btn-xs btn-info" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')"> 
+                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+                <span style="margin-right:10px;"></span>
+                <button  class="btn btn-xs btn-info" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')"> 
                         Submit
-                        <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                    </button>
-                
-<!--                <input type="checkbox" name="fancy-checkbox-default" id="fancy-checkbox-default" autocomplete="off" />
-                <div class="[ btn-group ]">
-                    <label for="fancy-checkbox-default" class="[ btn btn-default ]">
-                        <span class="[ glyphicon glyphicon-ok ]"></span>
-                        <span> </span>
-                    </label>
-                    <label for="fancy-checkbox-default" class="[ btn btn-default active ]">
-                        Default Checkbox
-                    </label>
-                </div>-->
-                
-<!--                <div class="btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-primary active">
-                    <mat-checkbox class="example-margin" [checked]="Checked" (click)="notify_checkbox_disabled();" [disabled]="!get_startfilling()" (change)="toggleVisibility($event.checked)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" ></mat-checkbox>
-
-                    <input type="checkbox" checked autocomplete="off"> Save as template
-                    </label>
-                </div>-->
+                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+                </button>
                 Save as template
                 <label class="switch ">
                     <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
                     <span class="slider round"></span>
                 </label>
-                
-                
-<!--                <span style="margin-right:10px;">
-                </span>
-                 <mat-checkbox class="example-margin" [checked]="Checked" (click)="notify_checkbox_disabled();" [disabled]="!get_startfilling()" (change)="toggleVisibility($event.checked)" name="fancy-checkbox-info" id="fancy-checkbox-info" autocomplete="off" ></mat-checkbox>
-                <label for="fancy-checkbox-info" class="[ btn btn-info ]">
-
-                    <span class="[ glyphicon glyphicon-ok ]"></span>
-                    <span> </span>
-                </label>
-                <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
-                        Save as template
-                </label>-->
-<!--                <div class="[ btn-group ]">
-                    <label for="fancy-checkbox-info" class="[ btn btn-info ]">
-                        <span class="[ glyphicon glyphicon-ok ]"></span>
-                        <span> </span>
-                    </label>
-                    <label for="fancy-checkbox-info" class="[ btn btn-default active ]">
-                        Save as template
-                    </label>
-                </div>-->
-
-
-                </div>
-            </h3>    
-        </div>
-        
-        <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
-        <p>{{model.Definition}}</p>
-        <form [formGroup]="modelForm" >
-            <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
-                <div *ngIf="model[field['key']].Level==level">
-                    <label for="{{field['key']}}">{{field['key']}}</label>
-
-                    <!--{{f[field['key']].errors.minLength}}-->
-                    <span style="display:inline-block; margin-left: 10px;"> 
-                        <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
-                    </span>  
-                    <div *ngIf="model[field['key']].Format.includes('Ontology')">
-                        <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
-                        <!-- <mat-select name="ont">
-                            <mat-option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" [value]="ont.value">
-                              {{ont}}
-                            </mat-option>
-                          </mat-select> -->
-                          <!-- onfocus="this.selectedIndex = -1;" -->
-
-                        <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group" >
-                           <button class="btn btn-success btn-xs fa fa-plus" (click)="onOntologyTermSelection(ont,field['key'],model[field['key']].Multiple)" > 
-                                {{ont}}
-                           </button>
-                        </div>  
-                        <!-- <select name="nom" size="1"  (change)="onOntologyTermSelection($event.target.value,field['key'], model[field['key']].Multiple)">
-                            <option value="" disabled>Select Ontology</option>
-                            <option *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" [value]='ont.value'>
-                                    {{ont}}
-                            </option>
-                        </select>  -->
-                        
-                        <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
-
-                            <input style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
-                        </span>
-                            
-                    <!--<input style="color:lightgrey"  mdbInput placeholder="{{model[field].Example}}" type="text" formControlName="{{field}}" class="form-control" (keypress)="onTaskAdd($event)" />--> 
-
-                        <span *ngIf="validated_term[field['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
-                            <!-- <textarea style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" >
-                                <mat-card><div class="boxed">{{validated_term[field['key']].values}}</div></mat-card>
-                            </textarea> -->
-                            <input style="color:black"  mdbInput value="{{validated_term[field['key']].values}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
-                        </span>
-                    </div>
-                    
-                    
-                    <!--not a ontology format =-->
-                    <div *ngIf="!model[field['key']].Format.includes('Ontology')"> 
-                        <!--not a date format-->
-                        <div *ngIf="!field['key'].includes('date')">
-                            <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
-                            <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" ></textarea> 
-                            <div *ngIf="f[field['key']].errors" class="invalid-feedback">
-                                <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is required</div>
-                                <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is required</div>
-                                <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required - already used !! </div>
-                            </div>
-                        </div>
-                        
-                        <!--Date format-->
-                        <div *ngIf="field['key'].includes('date')">
-                            <input mdbInput placeholder="{{model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
-                        </div>
-                    </div>
-                    
-<!--                    <div *ngIf="field['key'].includes('ID')">
-                        {{f[field['key']].errors.create}}
-                            {{f[field['key']].errors}}
-                        <pre>{{ f[field['key']].errors | json }}</pre>
-                        Object.keys(f[field['key']].errors).length === 0
-                         f[field['key']].errors"
-                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
-
-                            <div style="color :yellow" *ngIf="f[field['key']].errors.create">Unique ID is required</div>
-                        </div>
-                    </div>
-                    <div *ngIf="!field['key'].includes('ID')">
-                        {{f[field['key']].errors.create}}
-                            {{f[field['key']].errors}}
-                        <pre>{{ f[field['key']].errors | json }}</pre>
-                        Object.keys(f[field['key']].errors).length === 0
-                         f[field['key']].errors"
-                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
-
-                            <div style="color :red" *ngIf="f[field['key']].errors.minLength">minimum length is required</div>
-                        </div>
-                    </div>-->
-                    <!--to force date format-->
-                    <!--<div *ngIf="submitted && f[field].errors && field.includes('date')" class="invalid-feedback">
-                        <div style="color :red" *ngIf="f[field].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
-                    </div>-->
-                    
-                    <!--<div *ngIf="field.includes('Investigation unique ID')">
-                        <div *ngIf="f[field].errors" class="invalid-feedback">
-                            <pre>{{f[field].errors| json }}</pre>
-                            <div style="color :red" *ngIf="f[field].errors.create ">Study Unique ID is required</div>
-                        </div>
-                    </div>
-                    <pre>{{f[field].errors| json }}</pre>
-                    <div *ngIf="f[field].errors && field.includes('date')" class="invalid-feedback">
-                        <div style="color :red" *ngIf="f[field].errors.ptDate ">Date format ("dd/mm/yyyy") is required</div>
-                        <pre>{{f[field].errors.ptDate| json }}</pre>
-                    </div>-->
-                    
-                 </div>
             </div>
-<!--            <div class="form-group col">
-                    <label>Password</label>
-                    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f.password.errors }" />
-                    <div *ngIf=" f.password.errors" class="invalid-feedback">
-                        <div *ngIf="f.password.errors.required">Password is required</div>
-                        <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
-                    </div>
-                </div>-->
-        </form>
-        
-        <!--<pre>{{ modelForm.value | json }}</pre>-->
+        </h3>    
     </div>
+        
+    <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1> 
+    <p>{{model.Definition}}</p>
+    <form [formGroup]="modelForm" >
+        <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
+            <div *ngIf="model[field['key']].Level==level">
+                <label for="{{field['key']}}">{{field['key']}}</label>
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                </span>  
+                <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                    <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group" >
+                        <button class="btn btn-success btn-xs fa fa-plus" (click)="onOntologyTermSelection(ont,field['key'],model[field['key']].Multiple)" > 
+                            {{ont}}
+                        </button>
+                    </div>                    
+                    <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;"> 
+                        <input style="color:black"  mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                    </span>
+                    <span *ngIf="validated_term[field['key']].selected===true" style="display:inline-block; margin-left: 10px;"> 
+                        <input style="color:black"  mdbInput value="{{validated_term[field['key']].values}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
+                    </span>
+                </div>
+                <!--not a ontology format =-->
+                <div *ngIf="!model[field['key']].Format.includes('Ontology')"> 
+                    <!--not a date format-->
+                    <div *ngIf="!field['key'].includes('date')">
+                        <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors }"/> 
+                        <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': f[field['key']].errors}" ></textarea> 
+                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
+                            <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is required</div>
+                            <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is required</div>
+                            <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required - already used !! </div>
+                        </div>
+                    </div>
+                        
+                    <!--Date format-->
+                    <div *ngIf="field['key'].includes('date')">
+                        <input mdbInput placeholder="{{model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" /> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
