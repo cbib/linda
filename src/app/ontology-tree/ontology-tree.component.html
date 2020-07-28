@@ -4,18 +4,16 @@
         </h3>
     </div>
 <h1 mat-dialog-title>Please select a term in {{data.ontology_type}} Ontology</h1>
+<!-- <mat-spinner mode="determinate" value="{{ontologytree.fill_percentage}}"></mat-spinner> -->
+<mat-spinner *ngIf='!ontology_tree_loading_progress' mode="indeterminate"></mat-spinner>
 <div mat-dialog-content >
 <!--<input type="text" matInput placeholder="search" #filter (keyup)="keyEvent.next($event)" [(ngModel)]="keyword">-->
 <!--<input matInput placeholder="Search" (input)="filterChanged($event.target.value)">-->
 
     <mat-tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()">
-    
     <!-- This is the tree node template for leaf nodes -->
         <mat-tree-node  *matTreeNodeDef="let node" matTreeNodePadding title="{{node.def}}">
             <div [ngStyle]="getStyle()">
-            <!--<span style="display:inline-block; margin-left: 10px;"> 
-            <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}">        </i>
-            </span> -->
             <!-- use a disabled button to provide padding for tree leaf -->
                 <button mat-icon-button disabled>
                     <span style="display:inline-block; margin-left: 10px;"> 
@@ -26,16 +24,13 @@
                 <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox>
-
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
-
                         <mat-expansion-panel-header>
                             <mat-panel-title>
                             {{Description}}
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-
                         <div >
                             <mat-card>
                                 <pre>Term Id: {{ node.id}}</pre>
@@ -50,11 +45,6 @@
 
         <!-- This is the tree node template for expandable nodes -->
         <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
-    <!--        <button mat-icon-button disabled>
-                <span style="display:inline-block"> 
-                    <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}"></i>
-                </span> 
-            </button>-->
             <div [ngStyle]="getStyle(node)">
                 <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
@@ -65,14 +55,11 @@
                 </mat-checkbox>
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
-
                         <mat-expansion-panel-header>
                             <mat-panel-title>
                                 {{Description}}
                              </mat-panel-title>
-
                          </mat-expansion-panel-header>
-
                          <div >
                             <mat-card>
                                 <pre>Term Id: {{ node.id}}</pre>
@@ -88,21 +75,6 @@
     </mat-tree>
     
     <div *ngIf="get_displayed()===true">
-    <!--    <table class="table table-hover table-bordered  table-striped text-center" >
-        <thead>
-        <tr>
-          <th style="font-size:14px;" scope="col">ID</th>
-          <th style="font-size:14px;" scope="col">test</th>
-        </tr>
-        </thead>
-        <tbody>
-         <tr  *ngFor="let term of context_term ; index as j; trackBy: trackInvestigation " >
-          <td contenteditable="true" style="font-size:14px;" scope="row">{{context_term[term].id}}</td>
-          <td contenteditable="true" (keyup)="changeValue(j, key, $event)" (blur)="updateList(j, key, $event)" style="font-size:14px;" scope="row">{{investigation[0][key]}}</td>
-        </tr>
-    </tbody>
-    </table>-->
-
         <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
         <li>
             <!--Name: {{context_term[j].name}}-->
@@ -134,19 +106,12 @@
                 <!--<p *ngFor="let instance of get_term(context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">-->
             <!--<p> enum: {{get_term(context_term[j].enumeration).instances[0]}}</p>-->
             </a>
-
-
-
-
             <a *ngIf="context_term[j].name==='FreeText'">
                 Text:
                 <mat-form-field >
                     <mat-label>Autosize textarea</mat-label>
                     <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
                 </mat-form-field>
-
-
-
     <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
                     symbol: {{context_term[j].instances[l]._symbol}}
                 </p>-->
@@ -154,43 +119,11 @@
 
         </li>
         </ul>
-    <!--    <pre>{{ selected_term | json }}</pre>
-        <pre>{{ selected_term.id f| json }}</pre>-->
     </div>    
     
 </div>
-
-
-<!--<div *ngIf="!displayed" mat-dialog-content class="col-md-12 panel">
-    
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-   This is the tree node template for leaf nodes 
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding (click)="show_info(node)" class="fas fa-info-circle" title="{{node.def}}">
-      <span style="display:inline-block; margin-left: 10px;"> 
-                        <i style="color :lightblue" class="fas fa-info-circle" title="{{node.def}}">        
-                        </i>
-                    </span> 
-     use a disabled button to provide padding for tree leaf 
-    <button mat-icon-button disabled></button>
-    {{node.name}}
-  </mat-tree-node>
-   This is the tree node template for expandable nodes 
-  <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding (click)="show_info(node)">
-    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-      <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-    </button>
-    {{node.name}}
-  </mat-tree-node>
-</mat-tree>
-</div>-->
-
-
 
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
   <button mat-button [mat-dialog-close]="data" (click)="onOkClick()" cdkFocusInitial>Ok</button>
 </div>
-
-<!-- Copyright 2019 Google Inc. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at http://angular.io/license -->

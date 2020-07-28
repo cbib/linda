@@ -64,6 +64,7 @@ export class OntologyTreeComponent {
     private displayed=false;
     private my_tree: FoodNode[]; 
     private ontology_tree: OntologyTerm[];
+    private ontology_tree_loading_progress=false
     private active_node: OntologyTerm;
     private context_term:OntologyTerm [];
     
@@ -272,7 +273,7 @@ export class OntologyTreeComponent {
                 }
             }
         )
-        
+
         var head_term:OntologyTerm []=[]
         this.ontologyTerms.forEach(
             term=>{
@@ -283,12 +284,12 @@ export class OntologyTreeComponent {
                 }   
             }
         )
-
         var t=new OntologyTerm(this.ontology_type,this.ontology_type,[],"")
         this.ontologyNode.push(t);
         for (let t in head_term){
             this.ontologyNode[0].add_children(head_term[t])
         }
+        this.ontology_tree_loading_progress=true;
         return this.ontologyNode;
     }
     
