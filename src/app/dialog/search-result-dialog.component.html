@@ -19,7 +19,7 @@
       <tr  *ngFor="let t of get_result() ; index as j;" >
         <td style="font-size:14px;text-align: center; " scope="row">{{t.id}}</td>
         <td style="font-size:14px;text-align: center; " scope="row">{{t.found_as}}</td>
-        <td style="font-size:14px;text-align: center; " scope="row">{{search_type}}</td>
+        <td style="font-size:14px;text-align: center; " scope="row">{{t['data'][t['found_as']]}}</td>
       </tr>
     </tbody>
   </table>
