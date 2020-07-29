@@ -120,4 +120,6 @@ input:checked + .slider:before {
 .btn-group button {
   cursor: pointer; /* Pointer/hand icon */
   float: left; /* Float the buttons side by side */
+  padding-top: 11.5px;
+  padding-bottom: 11.5px;
 }
