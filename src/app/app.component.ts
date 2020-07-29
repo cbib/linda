@@ -72,7 +72,12 @@ export class AppComponent implements OnInit {
                             this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
                         }
                         else{
-                            var model_type=model_type.slice(0, -1)
+                            if (model_type==='studies'){
+                                model_type='study'
+                            }
+                            else{
+                                model_type=model_type.slice(0, -1)
+                            }    
                             this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit"}});
 
                         }

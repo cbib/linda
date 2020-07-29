@@ -600,6 +600,32 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
             }
             var child_model =db._query(aql`RETURN DOCUMENT(${isa_model})`).toArray();
             child_data["isa_model"]= child_model[0]
+
+
+
+            // var isa_model=[]
+            // if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor'){
+            //     isa_model.push("investigation_isa/investigation_Isa")
+            // }
+            // else if(model_type=="observed_variable"){
+            //     isa_model.push("trait_definition_file_isa/trait_definition_file_Isa")
+            // }
+            // else if(model_type=="biological_material"){
+            //     isa_model.push("study_isa/Study_isa")
+            // }
+            // else if(model_type=="environment"){
+            //     isa_model.push("study_isa/Study_isa")
+            //     isa_model.push("investigation_isa/investigation_Isa")
+            // }
+            // else{
+            //     isa_model.push(isa_model="assay_isa/assay_Isa")
+            // }
+            // child_data["isa_model"]=[]
+            // for (var i = 0; i < isa_model.length; i++) {
+            //     let child_model =db._query(aql`RETURN DOCUMENT(${isa_model[i]})`).toArray();
+            //     child_data["isa_model"].push(child_model[0])
+            // }
+    
             //final_obj["models_data"].push(child_model[0])	
             // childs_model.push(child_model[0]) 
         }

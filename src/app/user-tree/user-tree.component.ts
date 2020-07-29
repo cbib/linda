@@ -258,7 +258,7 @@ export class UserTreeComponent implements OnInit{
                                 // });
 
                                 this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-                                    //console.log(submodel_data)
+                                    console.log(submodel_data)
                                     this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
                                         this.fileService.saveMultipleFiles(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model, selected_format);
                                     });

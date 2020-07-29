@@ -83,113 +83,79 @@ export class FileService {
 
 
     public build_path(root_id, models, selected_format) {
-        var paths: any = []
-        var paths2 = { 'filepath': [], 'data': [], 'parent_id': [] }
-        //console.log(models)
-
+        var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         models['models_data'].forEach(
             result => {
-                var _id: string = result["v"]["_id"]
-                var model_type = result["v"]["_id"].split('/')[0]
                 var _from: string = result["e"]["_from"]
                 var _to: string = result["e"]["_to"]
                 let formats = Object.keys(selected_format);
-
                 let path = ''
-
-
                 if (_from == root_id) {
                     models['models_data'].forEach(
                         result_bis => {
-
                             var _from_bis: string = result_bis["e"]["_from"]
                             var _to_bis: string = result_bis["e"]["_to"]
-
                             if ((_to == _from_bis) && (_to == _to_bis)) {
-
-                                //path = _to.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _to.replace('/', '_') + '/' + _to_bis.replace('/', '_') + formats[i]
-                                        if (!paths2['filepath'].includes(path)) {
-                                            paths2['filepath'].push(path)
-                                            paths2['data'].push(result["v"])
+                                        if (!paths['filepath'].includes(path)) {
+                                            paths['filepath'].push(path)
+                                            paths['data'].push(result["v"])
                                             if (path.split('/').length > 2) {
-                                                paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths2['parent_id'].push(path.split('/')[0])
-
+                                                paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths2['parent_id'].push(root_id)
-                                                //console.log(path.split('/'))
-                                                //console.log(path.split('/').length)
-
+                                                paths['parent_id'].push(root_id)
                                             }
                                         }
-                                        //                                        if (!paths.includes(path + formats[i])){
-                                        //                                            //paths.push(path + formats[i])
-                                        //                                            paths.push({'path':path + formats[i],'data':result["v"]})
-                                        //                                        }
                                     }
                                 }
                             }
                             else {
-                                //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths2['filepath'].includes(path)) {
-                                            paths2['filepath'].push(path)
-                                            paths2['data'].push(result["v"])
+                                        if (!paths['filepath'].includes(path)) {
+                                            paths['filepath'].push(path)
+                                            paths['data'].push(result["v"])
                                             if (path.split('/').length > 2) {
-                                                paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths2['parent_id'].push(path.split('/')[0])
-
+                                                paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths2['parent_id'].push(root_id)
+                                                paths['parent_id'].push(root_id)
                                                 console.log(path.split('/'))
                                                 console.log(path.split('/').length)
-
                                             }
                                         }
-                                        //                                        if (!paths.includes(path + formats[i])){
-                                        //                                            paths.push({'path':path + formats[i],'data':result["v"]})
-                                        //                                        }
                                     }
                                 }
                             }
                         }
                     )
                     if (path == '') {
-                        //path = _to.replace('/','_') +'/'+_to.replace('/','_')
                         for (var i = 0; i < formats.length; i++) {
                             if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                 path = _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                if (!paths2['filepath'].includes(path)) {
-                                    paths2['filepath'].push(path)
-                                    paths2['data'].push(result["v"])
+                                if (!paths['filepath'].includes(path)) {
+                                    paths['filepath'].push(path)
+                                    paths['data'].push(result["v"])
                                     if (path.split('/').length > 2) {
-                                        paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                        paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                     }
                                     else if (path.split('/').length == 2) {
-                                        paths2['parent_id'].push(path.split('/')[0])
-
+                                        paths['parent_id'].push(path.split('/')[0])
                                     }
                                     else {
-                                        paths2['parent_id'].push(root_id)
-                                        console.log(path.split('/'))
-                                        console.log(path.split('/').length)
-
+                                        paths['parent_id'].push(root_id)
                                     }
                                 }
-                                //                                        if (!paths.includes(path + formats[i])){
-                                //                                            paths.push({'path':path + formats[i],'data':result["v"]})
-                                //                                        }
                             }
                         }
                     }
@@ -200,90 +166,65 @@ export class FileService {
                             var _from_bis: string = result_bis["e"]["_from"]
                             var _to_bis: string = result_bis["e"]["_to"]
                             if ((_to == _from_bis) && (_from != root_id)) {
-                                //path = _from.replace('/','_') +'/'+ _to.replace('/','_') +'/'+ _to_bis.replace('/','_') +'/'+ _to_bis.replace('/','_')
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to_bis.replace('/', '_') + '/' + _to_bis.replace('/', '_') + formats[i]
-                                        if (!paths2['filepath'].includes(path)) {
-                                            paths2['filepath'].push(path)
-                                            paths2['data'].push(result["v"])
+                                        if (!paths['filepath'].includes(path)) {
+                                            paths['filepath'].push(path)
+                                            paths['data'].push(result["v"])
                                             if (path.split('/').length > 2) {
-                                                paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths2['parent_id'].push(path.split('/')[0])
-
+                                                paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths2['parent_id'].push(root_id)
-                                                console.log(path.split('/'))
-                                                console.log(path.split('/').length)
-
+                                                paths['parent_id'].push(root_id)
                                             }
                                         }
-                                        //                                        if (!paths.includes(path)){
-                                        //                                            paths.push({'path':path,'data':result["v"]})
-                                        //                                        }
                                     }
                                 }
                             }
                             if ((_from == _to_bis) && (_from_bis != root_id)) {
-                                //path = _from_bis.replace('/','_') + '/' + _from.replace('/','_') + '/' + _to.replace('/','_') +'/'+ _to.replace('/','_')
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from_bis.replace('/', '_') + '/' + _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths2['filepath'].includes(path)) {
-                                            paths2['filepath'].push(path)
-                                            paths2['data'].push(result["v"])
+                                        if (!paths['filepath'].includes(path)) {
+                                            paths['filepath'].push(path)
+                                            paths['data'].push(result["v"])
                                             if (path.split('/').length > 2) {
-                                                paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths2['parent_id'].push(path.split('/')[0])
-
+                                                paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths2['parent_id'].push(root_id)
-                                                console.log(path.split('/'))
-                                                console.log(path.split('/').length)
-
+                                                paths['parent_id'].push(root_id)
                                             }
                                         }
-                                        //                                        if (!paths.includes(path+ formats[i])){
-                                        //                                            paths.push({'path':path + formats[i],'data':result["v"]})
-                                        //                                        }
                                     }
                                 }
                             }
                             if ((_from == _to_bis) && (_from_bis == root_id)) {
-                                //path = _from.replace('/','_') + '/' + _to.replace('/','_') + '/' + _to.replace('/','_')
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths2['filepath'].includes(path)) {
-                                            paths2['filepath'].push(path)
-                                            paths2['data'].push(result["v"])
+                                        if (!paths['filepath'].includes(path)) {
+                                            paths['filepath'].push(path)
+                                            paths['data'].push(result["v"])
                                             if (path.split('/').length > 2) {
-                                                paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths2['parent_id'].push(path.split('/')[0])
-
+                                                paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths2['parent_id'].push(root_id)
-                                                console.log(path.split('/'))
-                                                console.log(path.split('/').length)
-
+                                                paths['parent_id'].push(root_id)
                                             }
                                         }
-                                        //                                        if (!paths.includes(path+ formats[i])){
-                                        //                                            paths.push({'path':path,'data':result["v"]})
-                                        //                                        }
                                     }
                                 }
                             }
-
                         }
                     )
                     if (path == '') {
@@ -291,35 +232,26 @@ export class FileService {
                         for (var i = 0; i < formats.length; i++) {
                             if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                 let path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                if (!paths2['filepath'].includes(path)) {
-                                    paths2['filepath'].push(path)
-                                    paths2['data'].push(result["v"])
+                                if (!paths['filepath'].includes(path)) {
+                                    paths['filepath'].push(path)
+                                    paths['data'].push(result["v"])
                                     if (path.split('/').length > 2) {
-                                        paths2['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                        paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                     }
                                     else if (path.split('/').length == 2) {
-                                        paths2['parent_id'].push(path.split('/')[0])
-
+                                        paths['parent_id'].push(path.split('/')[0])
                                     }
                                     else {
-                                        paths2['parent_id'].push(root_id)
-                                        //console.log(path.split('/'))
-                                        //console.log(path.split('/').length)
-
+                                        paths['parent_id'].push(root_id)
                                     }
                                 }
-                                //                                 if (!paths.includes(path + formats[i])){
-                                //                                     
-                                //                                     paths.push({'path':path + formats[i],'data':result["v"]})
-                                //                                 }
                             }
                         }
                     }
                 }
             }
         );
-        //console.log(paths2)
-        return paths2
+        return paths
     }
 
     public build_zip(paths, zipFile: JSZip) {
@@ -369,9 +301,7 @@ export class FileService {
                 }
             }
             else {
-
                 if ((paths['filepath'][i].includes(".csv"))) {
-
                     let csvData = this.ConvertJsonModelTo(paths['data'][i], ",");
                     let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
                     zipFile.file(paths['filepath'][i], blob);
@@ -406,31 +336,27 @@ export class FileService {
             }
         }
 
-
-        console.log(dict)
         let blob_json = new Blob([JSON.stringify(dict)], { type: 'application/json' });
         zipFile.file('hierarchy.json', blob_json);
-
-
         return zipFile
     }
 
-    public loadMultipleFiles() {
-
-        // read a zip file
-        //        fs.readFile("test.zip", function(err, data) {
-        //        if (err) throw err;
-        //            JSZip.loadAsync(data).then(function (zip) {
-        //            // ...
-        //            });
-        //        });
-    }
+    // public loadMultipleFiles() {
+    //     // read a zip file
+    //     fs.readFile("test.zip", function(err, data) {
+    //         if (err) throw err;
+    //             JSZip.loadAsync(data).then(function (zip) {
+    //             // ...
+    //             });
+    //         });
+    // }
 
 
     public build_isa_model(data, model, isa_model, return_data, model_type) {
         console.log(return_data)
         var keys = Object.keys(data);
         console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
+        var environment_obj={}
         for (var i = 0; i < keys.length; i++) {
             if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                 keys.splice(i, 1);
@@ -446,23 +372,32 @@ export class FileService {
                     isa_files = mapping_data["ISA-Tab File"]
                 }
                 for (var j = 0; j < isa_files.length; j++) {
-                    console.log("write in ", isa_files[j], "ISA file")
+                    // console.log("write in ", isa_files[j], "ISA file")
                     var isa_file = isa_files[j]
                     var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
-                    console.log("write in section: ", isa_section)
+                    // console.log("write in section: ", isa_section)
                     var isa_field: string = mapping_data["ISA-Tab Field"]
-                    console.log("write for isa field: ", isa_field)
+                    //console.log("write for isa field: ", isa_field)
                     var is_ontology_key = this.is_ontology_key(model, keys[i])
-                    console.log("write for miappe model key ", keys[i])
+                    //console.log("write for miappe model key ", keys[i])
                     //console.log(return_data)
                     //console.log(return_data[isa_file])
+
                     if (Object.keys(return_data[isa_file]).length === 0){
+                        console.log ("change isa model for ", isa_file, isa_model)
                         return_data[isa_file]=isa_model
                     }
                     //console.log(return_data[isa_file])
                     // specific model to write in investigation
                     if (isa_file == 'Investigation') {
+
+                        //console.log("Investigation")
                         if (return_data[isa_file][isa_section][isa_field]) {
+                            
+                            if (model_type==="environments"){
+                                //console.log("model type environments")
+                                environment_obj["parameter"]=data[keys[i]]
+                            }
                             if (isa_field.includes("Type")) {
                                 data[keys[i]].split("/").forEach(element => {
                                     return_data[isa_file][isa_section][isa_field].push(element)
@@ -475,6 +410,7 @@ export class FileService {
                             else {
                                 return_data[isa_file][isa_section][isa_field].push(data[keys[i]])
                             }
+                            
                         }
                         else {
                             return_data[isa_file][isa_section][isa_field] = [data[keys[i]]]
@@ -483,25 +419,37 @@ export class FileService {
                         //return_data['isa_model']=isa_model
                     }
                     else if (isa_file == 'Study') {
+                        if (model_type==="environments"){
+                            if (return_data[isa_file][isa_field]["data"]) {
+                                environment_obj["value"]=data[keys[i]]
+          
+                                let tmp_array = [environment_obj, { "Term Source REF":""}, { "Term Accession Number": "" }]
 
-                        if (return_data[isa_file][isa_field]) {
-                            //console.log(isa_field, "exists in", isa_model)
-                            if (isa_field.includes("Characteristics")) {
-                                var term_source_ref = ""
-                                var term_accession_number = ""
-                                if (is_ontology_key) {
-                                    term_source_ref = data[keys[i]].split(":")[0]
-                                    term_accession_number = data[keys[i]]
-                                }
-                                var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
-                                return_data[isa_file][isa_field].push(tmp_array)
-                            }
-                            else {
-                                return_data[isa_file][isa_field].push(data[keys[i]])
+                                return_data[isa_file][isa_field]["data"].push(tmp_array)
                             }
                         }
-                        else {
-                            return_data[isa_file][isa_field] = [data[keys[i]]]
+                        else{
+
+                            if (return_data[isa_file][isa_field]["data"]) {
+                                //console.log(isa_field, "exists in", isa_model)
+                                if (isa_field.includes("Characteristics")) {
+                                    var term_source_ref = ""
+                                    var term_accession_number = ""
+                                    if (is_ontology_key) {
+                                        term_source_ref = data[keys[i]].split(":")[0]
+                                        term_accession_number = data[keys[i]]
+                                    }
+                                    let tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                    return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                }
+                                
+                                else {
+                                    return_data[isa_file][isa_field]["data"].push(data[keys[i]])
+                                }
+                            }
+                            else {
+                                return_data[isa_file][isa_field]["data"] = [data[keys[i]]]
+                            }
                         }
                         //return_data.push({'Study':isa_model})
                     }
@@ -544,16 +492,13 @@ export class FileService {
                 }
             }
         }
-        console.log(return_data)
+        //console.log(return_data)
         return return_data
     }
 
     public saveMultipleFiles(model_data, submodels, model_type: string, collection_name = 'data', model_id = "", isa_model, model, selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
         console.log(submodels)
         var model_key = model_id.split("/")[1];
-        var root_model_type = model_type
-        //Build path to inject in zip
-        //var paths:any=[]
         var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         var root_id = collection_name + '/' + model_key
         paths = this.build_path(root_id, submodels, selected_format)
@@ -561,9 +506,6 @@ export class FileService {
         // write the data for the selected root node
         var formats = Object.keys(selected_format);
         for (var i = 0; i < formats.length; i++) {
-            //console.log(selected_format)
-            //console.log("format to treat: ", formats[i])
-            //console.log(selected_format[formats[i]])
             if ((selected_format[formats[i]]['selected']) && (formats[i] != "isa_tab (.txt)")) {
                 var dir_root_path = collection_name + '_' + model_key + formats[i]
                 //paths.push({'path':dir_root_path,'data':model_data})
@@ -575,16 +517,16 @@ export class FileService {
             }
             else if ((selected_format[formats[i]]['selected']) && (formats[i] == "isa_tab (.txt)"))  {
                 //build isa model root
+                console.log("entering isa conversion")
                 var return_data={"Investigation":{}, "Study":{}, "Trait Definition File":{}, "Event":{}, "Assay":{}}
                 //return_data[model_type]=isa_model
+                console.log(return_data)
                 return_data = this.build_isa_model(model_data, model, isa_model, return_data, model_type)
+                console.log(return_data)
                 submodels['models_data'].forEach(
                     submodel => {
                         console.log(submodel)
                         var model_type = submodel["v"]["_id"].split('/')[0]
-                        var _id: string = submodel["v"]["_id"]
-                        var _from: string = submodel["e"]["_from"]
-                        var _to: string = submodel["e"]["_to"]
                         return_data = this.build_isa_model(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type) 
                     }
                 )
@@ -613,22 +555,21 @@ export class FileService {
             }
             else{}
         }
-
         //build zipfilez with differents paths
         let dir_root_id = collection_name + '_' + model_key
         console.log(paths)
         zipFile = this.build_zip(paths, zipFile)
-        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
-
+        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
     }
+
     public get_mapping_data_by_key(model: {}, key: string) {
         var mapping_data = {}
         if (model[key]["Mapping"]) {
             mapping_data = model[key]["Mapping"]
         }
         return mapping_data
-
     }
+
     public is_ontology_key(model: {}, key: string) {
         if (model[key]["Associated ontologies"]) {
             return true
@@ -638,8 +579,6 @@ export class FileService {
         }
 
     }
-
-    
 
     public saveFile(data, model_id: string, model_type: string, model, isa_model, selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
         console.log(model)
@@ -821,6 +760,7 @@ export class FileService {
         console.log(objArray)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';
+        //Write header in study isa file
         var keys = Object.keys(array);
         for (var i = 0; i < keys.length; i++) {
             var key_data = array[keys[i]]
@@ -829,27 +769,44 @@ export class FileService {
                 i--;
             }
             else {
-                if (key_data[0]){
-                    console.log(typeof key_data[0])
-                    if (typeof key_data[0]!="string"){
-                        console.log(keys[i], "=>", key_data)
-                        str +=keys[i]+ sep;
-                        for (var j = 1; j < key_data[0].length; j++) {
-                            console.log(key_data[0][j])
-                            var extra_keys = Object.keys(key_data[0][j]);
+                key_data["data"].forEach(element => {
+                    if (keys[i]==="Parameter Value[ ]"){
+                        console.log(element[0]["parameter"]+ sep)
+                        console.log(keys[i], "=>", key_data["data"])
+                        str +="Parameter Value["+element[0]["parameter"]+"]"+ sep;
+                        for (var j = 1; j < element.length; j++) {
+                            var extra_keys = Object.keys(element[j]);
                             for (var k = 0; k < extra_keys.length; k++) {
                                 str +=extra_keys[k]+ sep;
                             }
                         }
                     }
                     else{
-                        console.log(keys[i], "=>", key_data)
-                        str +=keys[i]+ sep;
+                        if (element){
+                            console.log(typeof element)
+                            if (typeof element!="string"){
+                                console.log(keys[i], "=>", key_data["data"])
+                                str +=keys[i]+ sep;
+                                for (var j = 1; j < element.length; j++) {
+                                    console.log(element[j])
+                                    var extra_keys = Object.keys(element[j]);
+                                    for (var k = 0; k < extra_keys.length; k++) {
+                                        str +=extra_keys[k]+ sep;
+                                    }
+                                }
+                            }
+                            else{
+                                console.log(keys[i], "=>", key_data)
+                                str +=keys[i]+ sep;
+                            }
+                        }
+                        else{
+                            str +=keys[i]+ sep;
+                        }
                     }
-                }
-                else{
-                    str +=keys[i]+ sep;
-                }
+                    
+                });
+                
             }
         }
         
@@ -864,29 +821,48 @@ export class FileService {
                 i--;
             }
             else {
-                console.log(keys[i], array[keys[i]])
-                if (key_data[0]){
-                    console.log(typeof key_data[0])
-                    if (typeof key_data[0]!="string"){
+                key_data["data"].forEach(element => {
+                    console.log(element)
+                    console.log(keys[i], array[keys[i]])
+                    if (keys[i]==="Parameter Value[ ]"){
                         console.log(keys[i], "=>", key_data)
-                        str +=key_data[0][0]+ sep;
-                        for (var j = 1; j < key_data[0].length; j++) {
-                            console.log(key_data[0][j])
-                            var extra_keys = Object.keys(key_data[0][j]);
+                        str +=element[0]['value']+ sep;
+                        for (var j = 1; j < element.length; j++) {
+                            console.log(element[j])
+                            var extra_keys = Object.keys(element[j]);
                             for (var k = 0; k < extra_keys.length; k++) {
-                                str +=key_data[0][j][extra_keys[k]]+ sep;
+                                console.log(element[j][extra_keys[k]])
+                                str +=element[j][extra_keys[k]]+ sep;
                             }
                         }
                     }
-                    //source name, protocol ref, 
                     else{
-                        console.log(keys[i], "=>", key_data)
-                        str +=key_data[0]+ sep;
+                        if (element){
+                            console.log(typeof element)
+                            //Characteristics descriptors
+                            if (typeof element!="string"){
+                                console.log(keys[i], "=>", key_data)
+                                str +=element[0]+ sep;
+                                for (var j = 1; j < element.length; j++) {
+                                    console.log(element[j])
+                                    var extra_keys = Object.keys(element[j]);
+                                    for (var k = 0; k < extra_keys.length; k++) {
+                                        console.log(element[j][extra_keys[k]])
+                                        str +=element[j][extra_keys[k]]+ sep;
+                                    }
+                                }
+                            }
+                            //source name, protocol ref, 
+                            else{
+                                console.log(keys[i], "=>", key_data)
+                                str +=element+ sep;
+                            }
+                        }
+                        else{
+                            str +=""+ sep;
+                        }
                     }
-                }
-                else{
-                    str +=""+ sep;
-                }
+                });
             }
         }
         console.log(str)
