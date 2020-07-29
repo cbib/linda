@@ -355,82 +355,142 @@ export class FileService {
     public build_isa_model(data, model, isa_model, return_data, model_type) {
         console.log(return_data)
         var keys = Object.keys(data);
+        console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",isa_model)
         console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
         var environment_obj={}
-        for (var i = 0; i < keys.length; i++) {
-            if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-                keys.splice(i, 1);
-                i--;
-            }
-            else {
-                var mapping_data = this.get_mapping_data_by_key(model, keys[i])
-                var isa_files=[]
-                if (typeof  mapping_data["ISA-Tab File"]==="string"){
-                    isa_files = [mapping_data["ISA-Tab File"]]
-                }
-                else{
-                    isa_files = mapping_data["ISA-Tab File"]
-                }
-                for (var j = 0; j < isa_files.length; j++) {
-                    // console.log("write in ", isa_files[j], "ISA file")
-                    var isa_file = isa_files[j]
-                    var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
-                    // console.log("write in section: ", isa_section)
-                    var isa_field: string = mapping_data["ISA-Tab Field"]
-                    //console.log("write for isa field: ", isa_field)
-                    var is_ontology_key = this.is_ontology_key(model, keys[i])
-                    //console.log("write for miappe model key ", keys[i])
-                    //console.log(return_data)
-                    //console.log(return_data[isa_file])
 
-                    if (Object.keys(return_data[isa_file]).length === 0){
-                        console.log ("change isa model for ", isa_file, isa_model)
-                        return_data[isa_file]=isa_model
+        if ((model_type==="biological_material" ) && (data['Biological material ID'] === return_data['Study']['Source Name']["data"][0])){
+            console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
+            console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
+            console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
+            console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
+        }
+        else{
+            for (var i = 0; i < keys.length; i++) {
+                if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                    keys.splice(i, 1);
+                    i--;
+                }
+                else {
+                    var mapping_data = this.get_mapping_data_by_key(model, keys[i])
+                    var isa_files=[]
+                    if (typeof  mapping_data["ISA-Tab File"]==="string"){
+                        isa_files = [mapping_data["ISA-Tab File"]]
                     }
-                    //console.log(return_data[isa_file])
-                    // specific model to write in investigation
-                    if (isa_file == 'Investigation') {
+                    else{
+                        isa_files = mapping_data["ISA-Tab File"]
+                    }
+                    for (var j = 0; j < isa_files.length; j++) {
+                        console.log("write in ", isa_files[j], "ISA file")
+                        var isa_file = isa_files[j]
+                        var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
+                        console.log("write in section: ", isa_section)
+                        var isa_field: string = mapping_data["ISA-Tab Field"]
+                        console.log("write for isa field: ", isa_field)
+                        var is_ontology_key = this.is_ontology_key(model, keys[i])
+                        console.log("write for miappe model key ", keys[i])
+                        console.log(return_data)
+                        //console.log(return_data[isa_file])
 
-                        //console.log("Investigation")
-                        if (return_data[isa_file][isa_section][isa_field]) {
-                            
-                            if (model_type==="environments"){
-                                //console.log("model type environments")
-                                environment_obj["parameter"]=data[keys[i]]
-                            }
-                            if (isa_field.includes("Type")) {
-                                data[keys[i]].split("/").forEach(element => {
-                                    return_data[isa_file][isa_section][isa_field].push(element)
-                                    let tmp_isa_field: string = isa_field + ' Term Accession Number'
-                                    return_data[isa_file][isa_section][tmp_isa_field].push(element)
-                                    tmp_isa_field = isa_field + ' Term Source REF'
-                                    return_data[isa_file][isa_section][tmp_isa_field].push(element.split(":")[0])
-                                });
+                        if (Object.keys(return_data[isa_file]).length === 0){
+                            console.log ("change isa model for ", isa_file, isa_model)
+                            return_data[isa_file]=isa_model
+                        }
+
+                        //console.log(return_data[isa_file])
+                        // specific model to write in investigation
+                        if (isa_file == 'Investigation') {
+
+                            console.log("Investigation")
+                            if (return_data[isa_file][isa_section][isa_field]) {
+                                
+                                if (model_type==="environment"){
+                                    //console.log("model type environments")
+                                    environment_obj["parameter"]=data[keys[i]]
+                                }
+                                else if (model_type==="observation_unit" && isa_field ==="Factor Value[ ]"){
+                                    environment_obj["parameter"]=data[keys[i]]
+                                }
+                                if (isa_field.includes("Type")) {
+                                    data[keys[i]].split("/").forEach(element => {
+                                        return_data[isa_file][isa_section][isa_field].push(element)
+                                        let tmp_isa_field: string = isa_field + ' Term Accession Number'
+                                        return_data[isa_file][isa_section][tmp_isa_field].push(element)
+                                        tmp_isa_field = isa_field + ' Term Source REF'
+                                        return_data[isa_file][isa_section][tmp_isa_field].push(element.split(":")[0])
+                                    });
+                                }
+                                else {
+                                    return_data[isa_file][isa_section][isa_field].push(data[keys[i]])
+                                }
+                                
                             }
                             else {
-                                return_data[isa_file][isa_section][isa_field].push(data[keys[i]])
+                                return_data[isa_file][isa_section][isa_field] = [data[keys[i]]]
                             }
-                            
+                            //return_data.push({'Investigation':isa_model})
+                            //return_data['isa_model']=isa_model
                         }
-                        else {
-                            return_data[isa_file][isa_section][isa_field] = [data[keys[i]]]
-                        }
-                        //return_data.push({'Investigation':isa_model})
-                        //return_data['isa_model']=isa_model
-                    }
-                    else if (isa_file == 'Study') {
-                        if (model_type==="environments"){
-                            if (return_data[isa_file][isa_field]["data"]) {
-                                environment_obj["value"]=data[keys[i]]
-          
-                                let tmp_array = [environment_obj, { "Term Source REF":""}, { "Term Accession Number": "" }]
+                        else if (isa_file == 'Study') {
+                            console.log("Study")
+                            console.log(return_data[isa_file])
+                            if (model_type==="environment"){
+                                console.log("environment model used => write in study isa file")
+                                if (return_data[isa_file][isa_field]["data"]) {
+                                    console.log(return_data[isa_file][isa_field])
+                                    console.log("value => ", data[keys[i]])
+                                    environment_obj["value"]=data[keys[i]]
+            
+                                    let tmp_array = [environment_obj, { "Term Source REF":""}, { "Term Accession Number": "" }]
 
-                                return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                    return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                }
                             }
-                        }
-                        else{
+                            else if (model_type==="observation_unit" && isa_field ==="Factor Value[ ]"){
+                                if (return_data[isa_file][isa_field]["data"]) {
+                                    environment_obj["value"]=data[keys[i]]
+            
+                                    let tmp_array = [environment_obj, { "Term Source REF":""}, { "Term Accession Number": "" }]
 
-                            if (return_data[isa_file][isa_field]["data"]) {
+                                    return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                }
+                            }
+                            else{
+
+                                console.log("search for ", isa_field, " in isa model", isa_file)
+                                if (return_data[isa_file][isa_field]) {
+                                    console.log(isa_field, "exists in", return_data[isa_file][isa_field]["data"])
+                                    if (return_data[isa_file][isa_field]["data"]) {
+                                        
+                                        if (isa_field.includes("Characteristics")) {
+                                            var term_source_ref = ""
+                                            var term_accession_number = ""
+                                            if (is_ontology_key) {
+                                                term_source_ref = data[keys[i]].split(":")[0]
+                                                term_accession_number = data[keys[i]]
+                                            }
+                                            let tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                            return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                        }
+                                        
+                                        else {
+                                            return_data[isa_file][isa_field]["data"].push(data[keys[i]])
+                                        }
+                                    }
+                                    else {
+                                        //console.log(return_data[isa_file][isa_field])
+                                        return_data[isa_file][isa_field]["data"] = [data[keys[i]]]
+                                    }
+                                }
+                                else{
+                                    return_data[isa_file][isa_field]={"data":[data[keys[i]]]}
+
+                                }
+                            }
+                            //return_data.push({'Study':isa_model})
+                        }
+                        else if (isa_file == 'Assay') { 
+                            if (return_data[isa_file][isa_field]) {
                                 //console.log(isa_field, "exists in", isa_model)
                                 if (isa_field.includes("Characteristics")) {
                                     var term_source_ref = ""
@@ -439,55 +499,32 @@ export class FileService {
                                         term_source_ref = data[keys[i]].split(":")[0]
                                         term_accession_number = data[keys[i]]
                                     }
-                                    let tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
-                                    return_data[isa_file][isa_field]["data"].push(tmp_array)
+                                    var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                    return_data[isa_file][isa_field].push(tmp_array)
                                 }
-                                
                                 else {
-                                    return_data[isa_file][isa_field]["data"].push(data[keys[i]])
+                                    return_data[isa_file][isa_field].push(data[keys[i]])
                                 }
                             }
                             else {
-                                return_data[isa_file][isa_field]["data"] = [data[keys[i]]]
+                                return_data[isa_file][isa_field] = [data[keys[i]]]
                             }
+
                         }
-                        //return_data.push({'Study':isa_model})
-                    }
-                    else if (isa_file == 'Assay') { 
-                        if (return_data[isa_file][isa_field]) {
-                            //console.log(isa_field, "exists in", isa_model)
-                            if (isa_field.includes("Characteristics")) {
-                                var term_source_ref = ""
-                                var term_accession_number = ""
-                                if (is_ontology_key) {
-                                    term_source_ref = data[keys[i]].split(":")[0]
-                                    term_accession_number = data[keys[i]]
-                                }
-                                var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
-                                return_data[isa_file][isa_field].push(tmp_array)
-                            }
-                            else {
+                        else if (isa_file == 'Event') {
+                            //Create event file and add reference in Investigation isa
+                        }
+                        else if (isa_file == 'Trait Definition File') {
+                            if (return_data[isa_file][isa_field]) {
                                 return_data[isa_file][isa_field].push(data[keys[i]])
                             }
+                            else {
+                                return_data[isa_file][isa_field] = [data[keys[i]]]
+                            }
                         }
-                        else {
-                            return_data[isa_file][isa_field] = [data[keys[i]]]
-                        }
+                        else { 
 
-                    }
-                    else if (isa_file == 'Event') {
-                        //Create event file and add reference in Investigation isa
-                    }
-                    else if (isa_file == 'Trait Definition File') {
-                        if (return_data[isa_file][isa_field]) {
-                            return_data[isa_file][isa_field].push(data[keys[i]])
                         }
-                        else {
-                            return_data[isa_file][isa_field] = [data[keys[i]]]
-                        }
-                    }
-                    else { 
-
                     }
                 }
             }
@@ -526,7 +563,12 @@ export class FileService {
                 submodels['models_data'].forEach(
                     submodel => {
                         console.log(submodel)
-                        var model_type = submodel["v"]["_id"].split('/')[0]
+                        if (submodel["v"]["_id"].split('/')[0]==="studies"){
+                            model_type="study" 
+                        }
+                        else{
+                            model_type=submodel["v"]["_id"].split('/')[0].slice(0, -1)
+                        }
                         return_data = this.build_isa_model(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type) 
                     }
                 )
@@ -591,7 +633,6 @@ export class FileService {
                 console.log(model_type)
                 if (model_type == "metadata_file") {
                     if (formats[i] == ".csv") {
-
                         let csvData = this.ConvertMetadataJsonTo(data, ",");
                         let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
                         let path = model_id.replace('/', '_') + '/' + model_id.replace('/', '_') + formats[i]
@@ -615,7 +656,6 @@ export class FileService {
                         let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
                         let path = model_id.replace('/', '_') + '/' + model_id.replace('/', '_') + formats[i]
                         zipFile.file(path, blob);
-
                     }
                     else if (formats[i] == ".tsv") {
                         let tsvData = this.ConvertJsonModelTo(data, "\t");
@@ -626,8 +666,6 @@ export class FileService {
                     else if (formats[i] == "isa_tab (.txt)") {
                         return_data[model_type]=isa_model
                         return_data = this.build_isa_model(data, model, isa_model, return_data, model_type)
-
-                        
                         //isa_model = this.build_isa_model(data, model, isa_model)
                         console.log(isa_model)
                         //write isa model
@@ -781,6 +819,17 @@ export class FileService {
                             }
                         }
                     }
+                    else if (keys[i]==="Factor Value[ ]"){
+                        console.log(element[0]["parameter"]+ sep)
+                        console.log(keys[i], "=>", key_data["data"])
+                        str +="Factor Value["+element[0]["parameter"]+"]"+ sep;
+                        for (var j = 1; j < element.length; j++) {
+                            var extra_keys = Object.keys(element[j]);
+                            for (var k = 0; k < extra_keys.length; k++) {
+                                str +=extra_keys[k]+ sep;
+                            }
+                        }
+                    }
                     else{
                         if (element){
                             console.log(typeof element)
@@ -836,18 +885,32 @@ export class FileService {
                             }
                         }
                     }
+                    else if (keys[i]==="Factor Value[ ]"){
+                        console.log(keys[i], "=>", key_data)
+                        str +=element[0]['value']+ sep;
+                        for (var j = 1; j < element.length; j++) {
+                            console.log(element[j])
+                            var extra_keys = Object.keys(element[j]);
+                            for (var k = 0; k < extra_keys.length; k++) {
+                                console.log(element[j][extra_keys[k]])
+                                str +=element[j][extra_keys[k]]+ sep;
+                            }
+                        }
+                    }
                     else{
                         if (element){
                             console.log(typeof element)
                             //Characteristics descriptors
                             if (typeof element!="string"){
+                                //element is an array
                                 console.log(keys[i], "=>", key_data)
+                                //add first value (string value)
                                 str +=element[0]+ sep;
                                 for (var j = 1; j < element.length; j++) {
-                                    console.log(element[j])
+                                    //console.log(element[j])
                                     var extra_keys = Object.keys(element[j]);
                                     for (var k = 0; k < extra_keys.length; k++) {
-                                        console.log(element[j][extra_keys[k]])
+                                        //console.log(element[j][extra_keys[k]])
                                         str +=element[j][extra_keys[k]]+ sep;
                                     }
                                 }

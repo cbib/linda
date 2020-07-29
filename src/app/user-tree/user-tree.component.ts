@@ -204,93 +204,42 @@ export class UserTreeComponent implements OnInit{
    
     onExport(node:MiappeNode){
         console.log(node)
-        var model_key=node.id.split("/")[1];
-        var model_coll=node.id.split("/")[0];
         var model_type=this.globalService.get_model_type(node.id)
-        // if (model_type=='unknown'){
-        //    model_type='metadata_file' 
-        // }
-        //var isa_model=this.globalService.get_model("investigation_isa").toPromise().then(isa => {return isa})
-        // console.log(isa_model)
-        // console.log(model_key)
-        // console.log(model_type)
-//        this.globalService.get_by_key(model_key, model_type).pipe(first()).toPromise().then(
-//            received_data => {
-//                console.log(received_data)
-//            }
-//        )
         this.globalService.get_parent(node.id).toPromise().then(parent_data => {
-        
-            //console.log(parent_data['_from'])
-            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {expandable:node.expandable}});
-
+            console.log(parent_data["_from"].includes("users"))
+            var is_investigation=parent_data["_from"].includes("users")
+            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {expandable:node.expandable, is_investigation:is_investigation}});
             dialogRef.afterClosed().subscribe(result=> {
-                if (result.event=='Confirmed'){
-                    var selected_format=result.selected_format
-                    var recursive_check=result.recursive_check
-                    //console.log(selected_format)
-                    var model_key=node.id.split("/")[1];
-                    var model_id=node.id
-                    var collection_name=node.id.split("/")[0];
-                    //var parent_collection_name=parent_data['_from'].split("/")[0];
-                    //var vertice_list=[]
-                    this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {    
-                        //Parse in a recursive way all submodels
-                        if ((node.expandable) && (recursive_check)){
-                            //var models:any=[]
-                            this.globalService.get_model(model_type).toPromise().then(model => { 
-                                var isa_model=""
-                                if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor' || model_type== 'data_file' || model_type== 'event'){
-                                    isa_model="investigation_isa"
-                                }
-                                else if(model_type=="observed_variable"){
-                                    isa_model="trait_definition_file_isa"
-                                }
-                                else if(model_type=="biological_material"){
-                                    isa_model="study_isa"
-                                }
-                                else{
-                                    isa_model="assay_isa"
-                                }
-                                //console.log(isa_model)
-                                // this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-                                //     console.log(submodel_data)
-                                // });
-
-                                this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-                                    console.log(submodel_data)
-                                    this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
-                                        this.fileService.saveMultipleFiles(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model, selected_format);
+                if (result){
+                    if (result.event=='Confirmed'){
+                        var selected_format=result.selected_format
+                        var recursive_check=result.recursive_check
+                        var model_key=node.id.split("/")[1];
+                        var model_id=node.id
+                        var collection_name=node.id.split("/")[0];
+                        this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {    
+                            //Parse in a recursive way all submodels
+                            var isa_model="investigation_isa"
+                            if ((node.expandable) && (recursive_check)){
+                                this.globalService.get_model(model_type).toPromise().then(model => { 
+                                    this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                                        this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
+                                            this.fileService.saveMultipleFiles(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model, selected_format);
+                                        });
                                     });
                                 });
-                            });
-                        }
-                        else{
-                            this.globalService.get_model(model_type).toPromise().then(model => { 
-                                //console.log(model_type)
-                                var isa_model=""
-                                if (model_type== 'investigation' || model_type== 'study' || model_type== 'experimental_factor'){
-                                    isa_model="investigation_isa"
-                                }
-                                else if(model_type=="observed_variable"){
-                                    isa_model="trait_definition_file_isa"
-                                }
-                                else if(model_type=="biological_material"){
-                                    isa_model="study_isa"
-                                }
-                                else{
-                                    isa_model="assay_isa"
-                                }
-                                //console.log(isa_model)
-
-                                this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
-                                    this.fileService.saveFile(model_data, model_id, model_type, model, isa_model, selected_format);
+                            }
+                            else{
+                                this.globalService.get_model(model_type).toPromise().then(model => { 
+                                    this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
+                                        this.fileService.saveFile(model_data, model_id, model_type, model, isa_model, selected_format);
+                                    });
                                 });
-                            });
-                        }
-                    });
+                            }
+                        });
 
-                }
+                    }
+                } 
 
             })
             // dialogRef.afterClosed().subscribe((confirmed: boolean) => {

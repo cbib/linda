@@ -595,6 +595,9 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
             else if(model_type=="biological_material"){
                 isa_model="study_isa/Study_isa"
             }
+            else if(model_type=="environment"){
+                isa_model="study_isa/Study_isa"
+            }
             else{
                 isa_model="assay_isa/assay_Isa"
             }
