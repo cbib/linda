@@ -1,6 +1,6 @@
 
 import {FlatTreeControl} from '@angular/cdk/tree';
-import {Component,Input,Inject} from '@angular/core';
+import {Component,Input,Inject, ViewChild} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { UserService, GlobalService, OntologiesService, AlertService } from '../services';
 import { OntologyTerm } from '../ontology/ontology-term';
@@ -8,15 +8,15 @@ import { Instance } from '../ontology/instance';
 import { Router,ActivatedRoute } from '@angular/router';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {SelectionModel} from '@angular/cdk/collections';
-
+import { SearchResultDialogComponent } from '../dialog/search-result-dialog.component';
 /**
  * Food data with nested structure.
  * Each node has a name and an optiona list of children.
  */
-interface FoodNode {
-  name: string;
-  children?: FoodNode[];
-}
+// interface FoodNode {
+//   name: string;
+//   children?: FoodNode[];
+// }
 
 interface DialogData {
   ontology_type: string;
@@ -62,11 +62,14 @@ export class OntologyTreeComponent {
     
     
     private displayed=false;
-    private my_tree: FoodNode[]; 
     private ontology_tree: OntologyTerm[];
     private ontology_tree_loading_progress=false
     private active_node: OntologyTerm;
     private context_term:OntologyTerm [];
+    private search_string:string;
+    private active_list:boolean=false;
+    //private result_search=[]
+    private selected_nodes=[]
     
     
     
@@ -82,7 +85,6 @@ export class OntologyTreeComponent {
     {
         
             this.selected_term=this.data.selected_term;
-            console.log(this.data);
             this.ontology_type=this.data.ontology_type;
             this.selected_set=this.data.selected_set;
             this.uncheckable=this.data.uncheckable;
@@ -94,6 +96,7 @@ export class OntologyTreeComponent {
             this.ontologyDatatype=[];
             this.ontologyEnum=[];
             this.ontologyNode=[];
+            this.search_string=""
 
            
     }
@@ -117,13 +120,14 @@ export class OntologyTreeComponent {
     get_ontology(){
         return this.ontologiesService.get_ontology(this.ontology_type).toPromise().then(data => {this.ontology=data;})
     }
-    async load(){
-        await this.get_ontology()
-    }
+    // async load(){
+    //     await this.get_ontology()
+    // }
   
     async ngOnInit() {
         await this.get_ontology()
-        this.ontologyNode=[]        
+        this.ontologyNode=[] 
+        this.search_string=""       
         var ontologies_list=["EnvO","EO","BTO","PO","CO_20","EFO","CO_715", "CO_322"]
         
         if(this.ontology_type==="XEO"){
@@ -139,7 +143,31 @@ export class OntologyTreeComponent {
         this.dataSource.data = this.ontologyNode;  
     }
 
+    onSearch(){
+        var data=this.get_dataSource()
+        this.selected_nodes=[]
+        if (Array.isArray(data['_treeControl']['dataNodes'])){
+            for (var node in data['_treeControl']['dataNodes']){
+                Object.keys(data['_treeControl']['dataNodes'][node]).forEach(key => {
+                    if (['id', 'def', 'name'].includes(key)){
+                        if ((typeof data['_treeControl']['dataNodes'][node][key]==='string') && (data['_treeControl']['dataNodes'][node][key].includes(this.search_string))){
+                            this.selected_nodes.push(data['_treeControl']['dataNodes'][node])
+                        }
+                    }  
+                });
+            }
+        }
+        if (this.selected_nodes.length>0){
+            this.active_list=true
+        }        
+    }
 
+    searchStart(event){
+        this.search_string=event.target.value;
+        if (this.search_string===""){
+            this.active_list=false
+        }        
+    }
  
     onValueAdd(event){
         console.log(event.target.value)
@@ -560,21 +588,27 @@ export class OntologyTreeComponent {
         return term
     }
   
-    get_children(node_id:string,loc_tree: FoodNode[]): FoodNode[]{
-        var chil:FoodNode[];
-        loc_tree[0].children.forEach(
-        stu=>{
-                if (stu.name==node_id){
-                    chil=stu.children;
-                };
-              }
-        )
-       return chil;
+    // get_children(node_id:string,loc_tree: FoodNode[]): FoodNode[]{
+    //     var chil:FoodNode[];
+    //     loc_tree[0].children.forEach(
+    //     stu=>{
+    //             if (stu.name==node_id){
+    //                 chil=stu.children;
+    //             };
+    //           }
+    //     )
+    //    return chil;
       
-    }
+    // }
 
     hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
     getStyle(): Object {
         return {backgroundColor: 'LightSteelBlue',  width: '100%' , 'margin-bottom':'10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px'}
     }
+    getLevel = (node: ExampleFlatNode) => node.level;
+
+    isExpandable = (node: ExampleFlatNode) => node.expandable;
+
+    getChildren = (node: OntologyTerm): OntologyTerm[] => node.children;
+    @ViewChild('tree',{static:false}) tree: { treeControl: { expandAll: () => void; }; };
 }

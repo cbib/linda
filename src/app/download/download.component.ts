@@ -266,7 +266,7 @@ export class DownloadComponent implements OnInit {
         //console.log(this.selectedOntology)
         console.log(values)
         console.log(key)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[]}});
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh', data: {ontology_type: values,selected_term: null,selected_set:[]}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
                 this.ontology_type = result.ontology_type;

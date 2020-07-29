@@ -133,7 +133,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     };
 
     onOntologyTermSelection(values:string, key:string, multiple:boolean=true) {
-        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false, multiple: multiple}});
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: false, multiple: multiple}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
                 this.startfilling=true;

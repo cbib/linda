@@ -1,7 +1,8 @@
 <h1 mat-dialog-title> The term "{{search_type}}" was found in :</h1>
 <div *ngIf="get_result().length>0">
   <div mat-dialog-content >
-    <p> Which model data do you plan to look at ? </p>
+    <p *ngIf="get_result().length==1" > {{get_result().length}} model corresponds to your request. Please select one</p>
+    <p *ngIf="get_result().length>1" > {{get_result().length}} models correspond to your request</p>
   </div>
   <select name="select_template" size="1" (change)="onSelect($event.target.value)">
     <option value="" disabled>Select models</option>
@@ -10,9 +11,9 @@
   <table class="table table-hover table-bordered  table-striped text-center" >
     <thead >
       <tr>
-        <th style="font-size:14px;text-align: center; " scope="row">Model id</th>
-        <th style="font-size:14px;text-align: center; " scope="row">Field</th>
-        <th style="font-size:14px;text-align: center; " scope="row">Expression</th>
+        <th style="font-size:14px;text-align: center; " scope="row">Id</th>
+        <th style="font-size:14px;text-align: center; " scope="row">Key</th>
+        <th style="font-size:14px;text-align: center; " scope="row">search term</th>
       </tr>
     </thead>
     <tbody >

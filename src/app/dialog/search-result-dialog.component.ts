@@ -29,7 +29,7 @@ export class SearchResultDialogComponent implements OnInit {
         this.model_id= this.data.model_id
         this.parent_id= this.data.parent_id
         this.isSelected=false
-        console.log(this.data.values)
+        //console.log(this.data.values)
     }
 
     ngOnInit() {
@@ -43,7 +43,8 @@ export class SearchResultDialogComponent implements OnInit {
           
           if (res['id']===model_id){
             this.data.parent_id=res['parent_id']
-            console.log(res['data'][res['found_as']])
+            //console.log(res['data'][res['found_as']])
+            this.data.values=res
             this.isSelected=true
 
           }

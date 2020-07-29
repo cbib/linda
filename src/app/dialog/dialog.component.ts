@@ -27,7 +27,7 @@ export class DialogComponent {
   constructor(public dialog: MatDialog) {}
 
   onSelect(values:string) {
-    const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', data: {ontology_type: values}});
+    const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh', data: {ontology_type: values}});
     dialogRef.afterClosed().subscribe(result => {console.log('The dialog was closed');this.ontology_type = result;});
   }
 //  openDialog(): void {
