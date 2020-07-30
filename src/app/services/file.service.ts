@@ -359,6 +359,8 @@ export class FileService {
         console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
         var environment_obj={}
 
+        //need to be checked cause it takes always the first element in the return_data['Study']['Source Name']["data"]
+        //And we need to check all elements
         if ((model_type==="biological_material" ) && (data['Biological material ID'] === return_data['Study']['Source Name']["data"][0])){
             console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
             console.log("@@@@@@@@@@@@@@@@@@@@@@#=>",model_type)
@@ -456,7 +458,6 @@ export class FileService {
                                 }
                             }
                             else{
-
                                 console.log("search for ", isa_field, " in isa model", isa_file)
                                 if (return_data[isa_file][isa_field]) {
                                     console.log(isa_field, "exists in", return_data[isa_file][isa_field]["data"])
@@ -484,30 +485,37 @@ export class FileService {
                                 }
                                 else{
                                     return_data[isa_file][isa_field]={"data":[data[keys[i]]]}
-
                                 }
                             }
                             //return_data.push({'Study':isa_model})
                         }
                         else if (isa_file == 'Assay') { 
                             if (return_data[isa_file][isa_field]) {
-                                //console.log(isa_field, "exists in", isa_model)
-                                if (isa_field.includes("Characteristics")) {
-                                    var term_source_ref = ""
-                                    var term_accession_number = ""
-                                    if (is_ontology_key) {
-                                        term_source_ref = data[keys[i]].split(":")[0]
-                                        term_accession_number = data[keys[i]]
+                                console.log(isa_field, "exists in", return_data[isa_file][isa_field]["data"])
+                                if (return_data[isa_file][isa_field]["data"]) {
+                                    
+                                    if (isa_field.includes("Characteristics")) {
+                                        var term_source_ref = ""
+                                        var term_accession_number = ""
+                                        if (is_ontology_key) {
+                                            term_source_ref = data[keys[i]].split(":")[0]
+                                            term_accession_number = data[keys[i]]
+                                        }
+                                        let tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                        return_data[isa_file][isa_field]["data"].push(tmp_array)
                                     }
-                                    var tmp_array = [data[keys[i]], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
-                                    return_data[isa_file][isa_field].push(tmp_array)
+                                    
+                                    else {
+                                        return_data[isa_file][isa_field]["data"].push(data[keys[i]])
+                                    }
                                 }
                                 else {
-                                    return_data[isa_file][isa_field].push(data[keys[i]])
+                                    //console.log(return_data[isa_file][isa_field])
+                                    return_data[isa_file][isa_field]["data"] = [data[keys[i]]]
                                 }
                             }
-                            else {
-                                return_data[isa_file][isa_field] = [data[keys[i]]]
+                            else{
+                                return_data[isa_file][isa_field]={"data":[data[keys[i]]]}
                             }
 
                         }
@@ -587,6 +595,13 @@ export class FileService {
                         let path = 'ISA/' + 's_' + model_id.replace('/', '_') + '.txt'
                         zipFile.file(path, blob_tsv);
                     }
+                    else if (elements[j] == 'Assay') {
+                        let tsvData = this.ConvertStudyModelTo(return_data[elements[j]], "\t");
+                        let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
+                        //Here need to add study identifier
+                        let path = 'ISA/' + 'a_' + model_id.replace('/', '_') + '.txt'
+                        zipFile.file(path, blob_tsv);
+                    }
                     else if (elements[j] == 'Trait Definition File') {
                         let tsvData = this.ConvertTraitModelTo(return_data[elements[j]], "\t");
                         let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
@@ -601,7 +616,7 @@ export class FileService {
         let dir_root_id = collection_name + '_' + model_key
         console.log(paths)
         zipFile = this.build_zip(paths, zipFile)
-        //zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
+        zipFile.generateAsync({type:"blob"}).then(function (blob) {saveAs(blob, dir_root_id +".zip");});    
     }
 
     public get_mapping_data_by_key(model: {}, key: string) {

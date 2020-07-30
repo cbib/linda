@@ -19,6 +19,7 @@ export class OntologyTerm {
         public comment:string;
         public enumeration:string;
         public relationship:string;
+        public relationships=[];
         public datatype:string;
         public is_enumeration:boolean;
         public is_datatype:boolean;
@@ -37,6 +38,17 @@ export class OntologyTerm {
         }
         public set_isa(is_a:string){
             this.is_a=is_a.split(" !")[0];
+        }
+        public set_CO_relationship(relationship:string){
+            //console.log(relationship)
+            this.is_a=relationship;
+            //this.relationship=relationship
+        }
+        public set_relationship(relationship:string){
+            this.relationship=relationship;
+        }
+        public add_relationship(relationship:string){
+            this.relationships.push(relationship);
         }
 //        public set_context(context:OntologyTerm){
 //            this.context=context;
@@ -93,9 +105,7 @@ export class OntologyTerm {
         public set_datatype(datatype:string){
             this.datatype=datatype;
         }
-        public set_relationship(relationship:string){
-            this.relationship=relationship;
-        }
+        
         public get_datatype(datatype:string){
             return this.datatype;
         }
@@ -135,6 +145,7 @@ export class OntologyTerm {
             this.name=name;
             this.datatype="";
             this.relationship="";
+            this.relationships=[];
             this.comment="";
             this.context=[];
             this.is_context=false;

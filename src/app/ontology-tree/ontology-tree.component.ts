@@ -128,14 +128,18 @@ export class OntologyTreeComponent {
         await this.get_ontology()
         this.ontologyNode=[] 
         this.search_string=""       
-        var ontologies_list=["EnvO","EO","BTO","PO","CO_20","EFO","CO_715", "CO_322"]
+        var ontologies_list=["EnvO","EO","BTO","PO","CO_20","EFO","CO_715"]
         
         if(this.ontology_type==="XEO"){
             this.ontologyNode=this.build_xeo_isa_hierarchy(this.ontology);
         }
+        else if(this.ontology_type==="CO_322"){  
+            this.ontologyNode=this.build_C0_hierarchy(this.ontology);
+        } 
         else if(ontologies_list.includes(this.ontology_type )){  
             this.ontologyNode=this.build_eo_isa_hierarchy(this.ontology);
         } 
+        
         else{
             console.log("no ontology defined")  
         }
@@ -173,6 +177,7 @@ export class OntologyTreeComponent {
         console.log(event.target.value)
         this.selected_term["term"].set_value(event.target.value)
     }
+
     onUnitSelect(value:string){
         this.selected_term["term"].set_unit(value)
 
@@ -297,6 +302,158 @@ export class OntologyTreeComponent {
                     var t_parent=this.get_term(term.is_a)
                     if (t_parent!=null){
                         t_parent.add_children(t)
+                    }
+                }
+            }
+        )
+
+        var head_term:OntologyTerm []=[]
+        this.ontologyTerms.forEach(
+            term=>{
+                if (term.is_a===""){
+                    if (!term.get_has_relationship()){
+                        head_term.push(term)
+                    }
+                }   
+            }
+        )
+        var t=new OntologyTerm(this.ontology_type,this.ontology_type,[],"")
+        this.ontologyNode.push(t);
+        for (let t in head_term){
+            this.ontologyNode[0].add_children(head_term[t])
+        }
+        this.ontology_tree_loading_progress=true;
+        return this.ontologyNode;
+    }
+
+    build_C0_hierarchy(ontology:{}):OntologyTerm[]{
+        var cpt=0;
+        var ontology_data:Array<{is_obsolete:boolean;is_a: string; id: string; def: any; comment: any;name: any; relationship: string;}>=ontology["term"]
+        ontology_data.forEach(
+            term=>{
+                if (!term.is_obsolete){
+                    this.ontologyTerms.push(new OntologyTerm(term.id,term.name,[],""))
+                    cpt+=1;
+                }
+            }
+        )
+        //second passage pour créer tous les termes 
+        var cpt=0;    
+        //var ontology_data:Array<{is_obsolete:boolean;is_a: string; id: string; def: any; comment: any;name: any; relationship: string; }>=ontology["term"]
+
+        ontology_data.forEach(
+            term=>{ 
+               
+                if (!term.is_obsolete){
+                    if (term.is_a){ 
+                        if (Array.isArray(term.is_a)){
+                            for (var isa in term.is_a){
+                                this.get_term(term.id).set_isa(term.is_a[isa].split(" ! ")[0])   
+                            }
+                        }
+                        else{
+                            this.get_term(term.id).set_isa(term.is_a.split(" ! ")[0])
+                        }
+                    }
+                    if (term.def){
+                        this.get_term(term.id).set_def(term.def)
+                    }
+                    if (term.comment){
+                        this.get_term(term.id).set_comment(term.comment)
+                    }
+                    if (term.relationship){
+                        if (typeof term.relationship==='string'){
+                            //this.get_term(term.id).add_relationship(term.relationship)
+                            if (term.relationship.includes("part_of")){
+                                // this.get_term(term.id).set_isa(term.relationship.split("part_of ")[1].split(" ! ")[0])
+                                this.get_term(term.id).add_relationship(term.relationship.split("part_of ")[1].split(" ! ")[0])
+                            }
+                            if (term.relationship.includes("scale_of")){
+                               // console.log(term.relationship.split("scale_of ")[1])
+                                // this.get_term(term.id).set_CO_relationship(term.relationship.split("scale_of ")[1])
+                                this.get_term(term.id).add_relationship(term.relationship.split("scale_of ")[1])
+                            }
+                            if (term.relationship.includes("method_of")){
+                                //console.log(term.relationship.split("method_of ")[1])
+                                // this.get_term(term.id).set_CO_relationship(term.relationship.split("method_of ")[1])
+                                this.get_term(term.id).add_relationship(term.relationship.split("method_of ")[1])
+                            }
+                            if (term.relationship.includes("variable_of")){
+                               // console.log(term.relationship.split("variable_of ")[1])
+                                // this.get_term(term.id).set_CO_relationship(term.relationship.split("variable_of ")[1])
+                                this.get_term(term.id).add_relationship(term.relationship.split("variable_of ")[1])
+                            }
+    
+                            this.get_term(term.id).set_has_relationship(true)
+                        }
+                        else{
+                            var arr=Array.from(term.relationship)
+                            for( var i = 0; i < arr.length; i++){ 
+                                var elem= arr[i]    
+                                //console.log(typeof arr[i])
+                                if (typeof elem==='string'){
+                                    if (elem.includes("part_of")){
+                                        // this.get_term(term.id).set_isa(elem.split("part_of ")[1].split(" ! ")[0])
+                                        this.get_term(term.id).add_relationship(elem.split("part_of ")[1].split(" ! ")[0])
+                                    }
+                                    if (elem.includes("scale_of")){
+                                        //console.log(elem.split("scale_of ")[1])
+                                        // this.get_term(term.id).set_CO_relationship(elem.split("scale_of ")[1])
+                                        this.get_term(term.id).add_relationship(elem.split("scale_of ")[1])
+                                    }
+                                    if (elem.includes("method_of")){
+                                        //console.log(elem.split("method_of ")[1])
+                                        // this.get_term(term.id).set_CO_relationship(elem.split("method_of ")[1])
+                                        this.get_term(term.id).add_relationship(elem.split("method_of ")[1])
+                                    }
+                                    if (elem.includes("variable_of")){
+                                        //console.log(elem.split("variable_of ")[1])
+                                        // this.get_term(term.id).set_CO_relationship(elem.split("variable_of ")[1])
+                                        this.get_term(term.id).add_relationship(elem.split("variable_of ")[1])
+                                    }
+                                }
+                                this.get_term(term.id).set_has_relationship(true)
+                            }        
+                        }  
+                    }
+                    cpt+=1;
+                }
+            }
+        )
+
+        var cpt=0
+        this.ontologyTerms.forEach(
+            term=>{
+                if (term.is_a!=""){
+                    var t=this.get_term(term.id)
+                    var t_parent=this.get_term(term.is_a)
+                    if (t_parent!=null){
+                        t_parent.add_children(t)
+                    }
+                }
+                if (term.relationships.length>0){
+                    var t=this.get_term(term.id)
+                    for (var rs_term in term.relationships){
+                        //console.log(term.relationships[rs_term])
+                        var t_parent=this.get_term(term.relationships[rs_term])
+                        if (t_parent!=null){
+                            if (t_parent.get_children().length>0){
+                                //console.log(term.id, t_parent.get_children())
+                                var found =false
+                                for( var i = 0; i < t_parent.get_children().length; i++){ 
+                                    if (t_parent.get_children()[i].id===t.id){
+                                        found=true
+                                    }
+                                }  
+                                if ((!found )){
+                                    t_parent.add_children(t)
+                                }                            
+                            }
+                            else{
+                                t_parent.add_children(t)
+                            }
+                        }
+                        
                     }
                 }
             }
