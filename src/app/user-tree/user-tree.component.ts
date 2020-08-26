@@ -107,34 +107,34 @@ export class UserTreeComponent implements OnInit{
           //this.treeControl.expand()
           //this.tree.treeControl.expandAll();
           
-          console.log(this.treeControl.dataNodes[4])
-          console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
-          console.log(this.treeControl.dataNodes)
+          //console.log(this.treeControl.dataNodes[4])
+          //console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
+          //console.log(this.treeControl.dataNodes)
           //this.treeControl.expandDescendants(this.treeControl.dataNodes[4])
           var descendants=  this.treeControl.getDescendants(this.treeControl.dataNodes[0])
           //this.treeControl.expandDescendants(this.treeControl.dataNodes[0])
           this.treeControl.expand(this.treeControl.dataNodes[0])
-          console.log("searching for ", this.treeControl.dataNodes[12].name)
-          for (var d in descendants){
-              console.log(this.treeControl.getLevel(descendants[d]))
+          //console.log("searching for ", this.treeControl.dataNodes[12].name)
+        //   for (var d in descendants){
+        //       //console.log(this.treeControl.getLevel(descendants[d]))
 
-             if (descendants[d].name===this.treeControl.dataNodes[12].name){
-                console.log(descendants[d].name)
-             }
+        //      if (descendants[d].name===this.treeControl.dataNodes[12].name){
+        //         //console.log(descendants[d].name)
+        //      }
 
-              if (this.treeControl.getLevel(descendants[d])===1){
-                console.log(descendants[d].name)
-                this.treeControl.expand(descendants[d])
-                //this.treeControl.expandDescendants(descendants[d])
-              }
-              if (this.treeControl.getLevel(descendants[d])===2){
-                console.log(descendants[d]['term']['children'])
-                descendants[d]['term']['children'].sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]));
-                //console.log(test)
-              }
+        //       if (this.treeControl.getLevel(descendants[d])===1){
+        //         //console.log(descendants[d].name)
+        //         this.treeControl.expand(descendants[d])
+        //         //this.treeControl.expandDescendants(descendants[d])
+        //       }
+        //       if (this.treeControl.getLevel(descendants[d])===2){
+        //         //console.log(descendants[d]['term']['children'])
+        //         descendants[d]['term']['children'].sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]));
+        //         //console.log(test)
+        //       }
               
 
-          }
+        //   }
           //this.treeControl.expand(this.treeControl.dataNodes[0]);
 
           this.searchService.getData().subscribe(data => {
