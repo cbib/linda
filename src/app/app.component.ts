@@ -168,6 +168,7 @@ export class AppComponent implements OnInit {
         console.log(user)
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
+                console.log(data)
                 this.vertice_data=data;
 //                this.stats={
 //                      "investigations":0,
