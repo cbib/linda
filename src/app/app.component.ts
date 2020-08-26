@@ -165,6 +165,7 @@ export class AppComponent implements OnInit {
             "observed_variables":[]
       }
         let user=JSON.parse(localStorage.getItem('currentUser'));
+        console.log(user)
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 this.vertice_data=data;
