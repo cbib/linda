@@ -196,6 +196,7 @@ export class AppComponent implements OnInit {
                         //this.stats[d["e"]["_to"].split("/")[0]]+=1
                         
                         var vertices:[]=d["s"]["vertices"]
+                        console.log(vertices)
                         vertices.forEach(
                             vertice => {
                                 console.log(vertice)
