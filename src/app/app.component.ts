@@ -170,6 +170,7 @@ export class AppComponent implements OnInit {
             data => {
                 console.log(data)
                 this.vertice_data=data;
+                console.log(data)
 //                this.stats={
 //                      "investigations":0,
 //                      "studies":0,
@@ -184,7 +185,7 @@ export class AppComponent implements OnInit {
 //                      "observed_variables":0 
 //                }
                 
-                //console.log(this.vertice_data)
+                console.log(this.vertice_data)
                 this.vertice_data.forEach(
                     d => {
                         var stat_object={
@@ -197,6 +198,7 @@ export class AppComponent implements OnInit {
                         var vertices:[]=d["s"]["vertices"]
                         vertices.forEach(
                             vertice => {
+                                console.log(vertice)
                                 var vertice_keys=Object.keys(vertice)
                                 var vertice_id=vertice["_id"]
                                 var total=0;
