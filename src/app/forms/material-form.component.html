@@ -1,0 +1,340 @@
+<div>
+  <div class="border-head">
+    <h3>
+      <a href="index.html" class="logo">
+        <b>
+          P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+        </b>
+      </a>
+      <div class="form-group text-center" style="float: right;">
+        <button (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
+          <span style="margin-right:10px;"></span>
+          Cancel
+        </button>
+        <span style="margin-right:10px;"></span>        
+        <button class="btn btn-xs btn-info" type="submit" (click)="submitForm();"
+          [disabled]="materialTable.invalid || (get_startfilling()===false && mode==='create')">
+          Submit
+          <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+        </button>
+        Save as template
+        <label class="switch ">
+          <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </h3>
+  </div>
+
+  <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}} </h1>
+  <p>{{model.Definition}}</p>
+  <div>
+    <form [formGroup]="materialTable">
+      <!-- <h3>General Material information</h3> -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>General Material information</mat-card-title>
+
+          <!-- <mat-card-title><a href="#" class="logo">General Material information</a></mat-card-title> -->
+        </mat-card-header>    
+          <mat-card-content>
+            <ng-container formArrayName="generalRows" *ngFor="let group of getGeneralFormControls.controls ; let l=index">
+              <div [formGroupName]="l" class="form-group">
+                <ng-container *ngFor="let field of cleaned_model ; let j=index">
+                  <div *ngIf="model[field['key']].Level==1">
+                    <label for="{{field['key']}}">{{field['key']}}</label>
+                    <span style="display:inline-block; margin-left: 10px;">
+                      <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                    </span>
+                    <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                      <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group">
+                        <button class="btn btn-success btn-xs fa fa-plus"
+                          (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
+                          {{ont}}
+                        </button>
+      
+                      </div>
+                      <span *ngIf="validated_term[field['key']].selected!==true"
+                        style="display:inline-block; margin-left: 10px;">
+                        <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                      </span>
+                      <span *ngIf="validated_term[field['key']].selected===true"
+                        style="display:inline-block; margin-left: 10px;">
+                        <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
+                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
+                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                      </span>
+                    </div>
+                    <div *ngIf="!model[field['key']].Format.includes('Ontology')">
+                      <div *ngIf="!field['key'].includes('date')">
+                        <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput
+                          placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                          class="form-control" (keypress)="onTaskAdd($event)"
+                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                        <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
+                          placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                          class="form-control" (keypress)="onTaskAdd($event)"
+                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
+                        <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.required">{{field['key']}} is
+                            required</div>
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum length is
+                            required</div>
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is required -
+                            already used !! </div>
+                        </div>
+                      </div>
+                      <div *ngIf="field['key'].includes('date')">
+                        <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
+                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </mat-card-content> 
+      </mat-card>
+      
+      <br>
+      <h3>Material Source description</h3>
+      <mat-card>
+        <mat-card-header>
+            <mat-card-title><a href="#" class="logo">Material Source description</a></mat-card-title>
+        </mat-card-header>    
+          <mat-card-content>
+      <div class="action-container">
+
+        <button class="btn btn-primary" mat-raised-button type="submit" (click)="addMaterialRow()">Add material</button>
+      </div>
+      <span style="display:inline-block; margin-left: 10px;"></span>
+
+      <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
+        [ngClass]="{'table-dark': mode_table}">
+        <!-- <thead class="text-nowrap">   -->
+        <thead>
+          <ng-container *ngFor="let field of cleaned_model ; let i=index">
+            <th class="text-center align-middle" *ngIf="model[field['key']].Level==2">
+              <div>
+                <label for="{{field['key']}}">{{field['key']}}</label>
+                <span style="display:inline-block; margin-left: 10px;">
+                  <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                </span>
+              </div>
+            </th>
+          </ng-container>
+          <th></th>
+        </thead>
+        <tbody>
+          <ng-container formArrayName="materialRows"
+            *ngFor="let group of getMaterialFormControls.controls ; let i=index">
+            <tr (click)="RowSelected(i)" [formGroupName]="i">
+              <ng-container *ngFor="let field of cleaned_model ; let j=index">
+                <td class="text-center align-middle" *ngIf="model[field['key']].Level==2">
+                  <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                    <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as o;"
+                      class="btn-group">
+                      <button class="btn btn-success btn-xs fa fa-plus"
+                        (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
+                        {{ont}}
+                      </button>
+
+                    </div>
+                    <span *ngIf="validated_term[field['key']].selected!==true"
+                      style="display:inline-block; margin-left: 10px;">
+                      <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                    </span>
+                    <span *ngIf="validated_term[field['key']].selected===true"
+                      style="display:inline-block; margin-left: 10px;">
+                      <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                    </span>
+                  </div>
+                  <div *ngIf="!model[field['key']].Format.includes('Ontology')">
+                    <div *ngIf="!field['key'].includes('date')">
+                      <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
+                        mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
+                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+
+                      <mat-slider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
+                        [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
+                      </mat-slider>
+                      <mat-slider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')"
+                        [displayWith]="formatLongitudeLabel" step="0.01" thumbLabel min="-180" max="+180"
+                        tickInterval="0.01">
+                      </mat-slider>
+                      <mat-slider vertical #myMaterialLatitudeSlider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')"
+                        [displayWith]="formatLatitudeLabel" step="0.01" thumbLabel min="-90" max="+90"
+                        tickInterval="0.01" (slideend)="onLatitudeChange(myMaterialLatitudeSlider.value)">
+                      </mat-slider>
+                      <mat-slider vertical formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
+                        [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000" tickInterval="0.1">
+                      </mat-slider>
+
+                      <textarea
+                        *ngIf="model[field['key']].Format.includes('Free text') || model[field['key']].Format.includes('DOI')"
+                        mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                        formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
+                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
+                      <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                          {{field['key']}} is required</div>
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                          length is required</div>
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                          required - already used !! </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="field['key'].includes('date')">
+                      <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
+                        formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+              <td class="text-center align-middle">
+                <mat-icon class="delete" (click)="deleteMaterialRow(i)">delete_forever</mat-icon>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      </mat-card-content>
+      </mat-card>
+
+      <br>
+      <h3>Biological material description</h3>
+      <mat-card>
+        <mat-card-header>
+            <mat-card-title><a href="#" class="logo">Material Source description</a></mat-card-title>
+        </mat-card-header>    
+          <mat-card-content>
+      <div class="action-container">
+        <button class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterialRow()">Add
+          biological material</button>
+      </div>
+      <span style="display:inline-block; margin-left: 10px;"></span>
+      <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
+        [ngClass]="{'table-dark': mode_table}">
+        <!-- <thead class="text-nowrap">   -->
+        <thead>
+
+          <ng-container *ngFor="let field of cleaned_model ; let k=index">
+            <th class="text-center align-middle"
+              *ngIf="model[field['key']].Level==3 && field['key']!=='Biological material preprocessing'">
+              <div>
+                <label for="{{field['key']}}">{{field['key']}}</label>
+                <span style="display:inline-block; margin-left: 10px;">
+                  <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                </span>
+              </div>
+            </th>
+            <th class="text-center" style="width: 400px;"
+              *ngIf="model[field['key']].Level==3 && field['key']==='Biological material preprocessing'">
+              <div>
+                <label for="{{field['key']}}">{{field['key']}}</label>
+                <span style="display:inline-block; margin-left: 10px;">
+                  <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                </span>
+              </div>
+            </th>
+          </ng-container>
+          <th></th>
+        </thead>
+        <tbody>
+          <ng-container formArrayName="biologicalMaterialRows"
+            *ngFor="let group of getBiologicalMaterialFormControls.controls ; let l=index">
+            <tr *ngIf="group.value['mat-id']===material_id" [formGroupName]="l">
+              <ng-container *ngFor="let field of cleaned_model ; let f=index">
+                <td class="text-center align-middle" *ngIf="model[field['key']].Level==3">
+                  <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                    <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as o;"
+                      class="btn-group">
+                      <button class="btn btn-success btn-xs fa fa-plus"
+                        (click)="onOntologyTermSelection(ont, field['key'],l,model[field['key']].Multiple)">
+                        {{ont}}
+                      </button>
+
+                    </div>
+                    <span *ngIf="validated_term[field['key']].selected!==true"
+                      style="display:inline-block; margin-left: 10px;">
+                      <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                    </span>
+                    <span *ngIf="validated_term[field['key']].selected===true"
+                      style="display:inline-block; margin-left: 10px;">
+                      <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                    </span>
+                  </div>
+                  <div *ngIf="!model[field['key']].Format.includes('Ontology')">
+                    <div *ngIf="!field['key'].includes('date')">
+                      <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
+                        mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                        formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
+                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                      <mat-slider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
+                        [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
+                      </mat-slider>
+                      <mat-slider #myLongitudeSlider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')"
+                        [displayWith]="formatLongitudeLabel" step="0.01" thumbLabel min="-180" max="+180"
+                        tickInterval="0.01" (slideend)="onLongitudeChange(myLongitudeSlider.value)">
+                      </mat-slider>
+                      <mat-slider vertical #myLatitudeSlider formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')"
+                        [displayWith]="formatLatitudeLabel" step="0.01" thumbLabel min="-90" max="+90"
+                        tickInterval="0.01" (slideend)="onLatitudeChange(myLatitudeSlider.value)">
+                      </mat-slider>
+                      <mat-slider vertical formControlName="{{field['key']}}"
+                        *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
+                        [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000" tickInterval="0.1">
+                      </mat-slider>
+
+                      <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
+                        placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                        (keyup)="onTaskAdd($event)"
+                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
+                      <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                          {{field['key']}} is required</div>
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                          length is required</div>
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                          required - already used !! </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="field['key'].includes('date')">
+                      <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
+                        formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+              <td class="text-center align-middle">
+                <mat-icon class="delete" (click)="deleteBiologicalMaterialRow(l)">delete_forever</mat-icon>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      </mat-card-content>
+      </mat-card>
+
+    </form>
+  </div>
+  <div class="output">
+    <p>Form Data: {{materialTable.value | json}}</p>
+    <p>Is Valid: {{materialTable.valid}}</p>
+  </div>
+</div>

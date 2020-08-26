@@ -40,14 +40,14 @@ export class UniqueIDValidatorComponent{
     return (control: FormControl) => {
 
         //return this.get_investigation_service_response(control.value);
-        //console.log(field)
+        //console.log(control.value)
 //        if (control.value ===""){
 //            return { 'create': true };
 //        }
         return globalService.is_exist(field, control.value, model_type).pipe(first()).toPromise().then(
             data => {
 //                    setTimeout(() => {control.updateValueAndValidity();}, 10);
-                    console.log(control.value)
+                    //console.log(control.value)
                     if (control.value ===""){
                         return { 'create': true };
                     }

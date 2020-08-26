@@ -103,6 +103,7 @@
                                 {{node.name}}
                                  
                                  <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                 <button style="float: right;"  *ngIf="node.id.includes('investigations')"  (click)="onExportIsa(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                  <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
@@ -218,7 +219,9 @@
                                 <i style='padding-left: 15px' *ngIf="!node.id.includes('Investigations tree')">{{node.name}}</i>
                                 
                                 <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
-                                 <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                <button style="float: right;"  *ngIf="node.id.includes('investigations')"  (click)="onExportIsa(node)" class="btn btn-light btn-xs fa" ><i class="icon-play"></i></button>
+ 
+                                <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
 
                                 <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
                                 <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
@@ -362,6 +365,7 @@
             <button mat-menu-item [matMenuTriggerFor]="eventMenu2">Event</button>
             <button mat-menu-item [matMenuTriggerFor]="biological_materialMenu2">Biological material</button>
             <button mat-menu-item [matMenuTriggerFor]="experimental_factorMenu2">Experimental factor</button>
+            <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu2">Observed variable</button>
             <button mat-menu-item [matMenuTriggerFor]="sampleMenu">Sample</button>
             <!--<button mat-menu-item (click)="add('sample','original')">Sample</button>-->
             <!--<button mat-menu-item (click)="add('sample','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
@@ -380,14 +384,19 @@
         </mat-menu>
         <mat-menu #biological_materialMenu2="matMenu">
             <!-- <button mat-menu-item (click)="add('biological_material','original')">From original model template</button> -->
-            <button mat-menu-item (click)="add('biological_material','parent')">Select from biological materials</button>
+            <button mat-menu-item (click)="add('biological_material','parent')">Select from  study's biological materials</button>
             <!-- <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
             <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
+        <mat-menu #observed_variableMenu2="matMenu">
+            <button mat-menu-item (click)="add('observed_variable','parent')">Select from  study's observed variables</button>
+        </mat-menu>
         <mat-menu #experimental_factorMenu2="matMenu">
-            <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
+            <button mat-menu-item (click)="add('experimental_factor','parent')">Select from study's experimental factors</button>
+
+            <!-- <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
             <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #sampleMenu="matMenu">
             <button mat-menu-item (click)="add('sample','original')">From original model template</button>

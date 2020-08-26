@@ -7,10 +7,14 @@
 <input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)">
 <button type="submit" (click)="onSearch()">Search</button>
 <!-- <mat-spinner mode="determinate" value="{{ontologytree.fill_percentage}}"></mat-spinner> -->
-<mat-spinner *ngIf='!ontology_tree_loading_progress' mode="indeterminate"></mat-spinner>
+<!-- <mat-progress-spinner *ngIf='show_spinner' mode="indeterminate"></mat-progress-spinner> -->
+<!-- <mat-progress-spinner class="progressSpinner" *ngIf='show_spinner' [value]="ontology_tree_loading_progress_value"></mat-progress-spinner> -->
+<mat-progress-bar mode="determinate" [value]="ontology_tree_loading_progress_value">{{ontology_tree_loading_progress_value}}</mat-progress-bar>
 <div mat-dialog-content >
 <!--<input type="text" matInput placeholder="search" #filter (keyup)="keyEvent.next($event)" [(ngModel)]="keyword">-->
 <!--<input matInput placeholder="Search" (input)="filterChanged($event.target.value)">-->
+
+    <!-- if search mode is active -->
     <ul *ngIf='active_list'>
         <li *ngFor="let node of selected_nodes">
 
@@ -23,7 +27,19 @@
                         </span> 
                     </button>
                     <!-- {{node.name}} -->
-                    <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                    <mat-checkbox *ngIf="!uncheckable && node.namespace!='' && node.namespace.includes('Trait')" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                        {{node.name}} TRAIT
+                    </mat-checkbox>
+                    <mat-checkbox *ngIf="!uncheckable && node.namespace!='' && node.namespace.includes('Variable')" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                        {{node.name}} VARIABLE
+                    </mat-checkbox>
+                    <mat-checkbox *ngIf="!uncheckable && node.namespace!='' && node.namespace.includes('Method')" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                        {{node.name}} METHOD
+                    </mat-checkbox>
+                    <mat-checkbox *ngIf="!uncheckable && node.namespace!='' && node.namespace.includes('Scale')" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                        {{node.name}} SCALE
+                    </mat-checkbox>
+                    <mat-checkbox *ngIf="!uncheckable && node.namespace===''" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                         {{node.name}}
                     </mat-checkbox>
                     <mat-accordion>
@@ -37,7 +53,7 @@
                                 <mat-card>
                                     <pre>Term Id: {{ node.id}}</pre>
                                     <pre>Term name: {{ node.name}}</pre>
-                                    <pre>Term definition: {{ node.def }}</pre>                
+                                    <pre>Term definition: {{ node.def }}</pre>
                                 </mat-card>
                             </div>
                         </mat-expansion-panel>
@@ -57,9 +73,14 @@
                     </span> 
                 </button>
                 <!-- {{node.name}} -->
+            
                 <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">TRAIT</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Variable')">VARIABLE</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Method')">METHOD</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Scale')">SCALE</p>
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
                         <mat-expansion-panel-header>
@@ -68,11 +89,32 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <div >
+                            <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
+                                <li>
+                                    <!--Name: {{context_term[j].name}}-->
+                                    <!--Id: {{context_term[j].id}}-->
+                                    <!--datatype: {{get_term(context_term[j].datatype).name}}-->
+                                    <a *ngIf="context_term[j].instances.length > 0">
+                                        Value: <input (keyup)="onValueAdd($event, node)">
+                                        Units:
+                        
+                                        <select (change)="onUnitSelect($event.target.value, node)">
+                                            <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
+                                            <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances " value="{{context_term[j].instances[l]._symbol}}">{{context_term[j].instances[l]._symbol}}</option>
+                                        </select>
+                            <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
+                                            symbol: {{context_term[j].instances[l]._symbol}}
+                                        </p>-->
+                                    </a>
+                                </li>
+
+                            </ul>
                             <mat-card>
                                 <pre>Term Id: {{ node.id}}</pre>
                                 <pre>Term name: {{ node.name}}</pre>
-                                <pre>Term definition: {{ node.def }}</pre>                
+                                <pre>Term definition: {{ node.def }}</pre> 
                             </mat-card>
+                            
                         </div>
                     </mat-expansion-panel>
                 </mat-accordion>
@@ -86,9 +128,19 @@
                     <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
                 </button>
                 <!-- {{node.name}} -->
-                <mat-checkbox *ngIf="!uncheckable"  class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                <!-- <mat-checkbox *ngIf="!uncheckable"  class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                    {{node.name}}
+                </mat-checkbox> -->
+
+                <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">TRAIT</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Variable')">VARIABLE</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Method')">METHOD</p>
+                <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Scale')">SCALE</p>
+                
+
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
                         <mat-expansion-panel-header>
@@ -97,12 +149,35 @@
                              </mat-panel-title>
                          </mat-expansion-panel-header>
                          <div >
+                            <div *ngIf="get_displayed()===true">
+                                <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
+                                    <li>
+                                        <!--Name: {{context_term[j].name}}-->
+                                        <!--Id: {{context_term[j].id}}-->
+                                        <!--datatype: {{get_term(context_term[j].datatype).name}}-->
+                                        <a *ngIf="context_term[j].instances.length > 0">
+                                            Value: <input (keypress)="onValueAdd($event, node)">
+                                            Units:
+                            
+                                            <select (change)="onUnitSelect($event.target.value, node)">
+                                                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
+                                                <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
+                                            </select>
+                                <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
+                                                symbol: {{context_term[j].instances[l]._symbol}}
+                                            </p>-->
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
                             <mat-card>
                                 <pre>Term Id: {{ node.id}}</pre>
                                 <pre>Term name: {{ node.name}}</pre>
                                 <pre>Term definition: {{ node.def }}</pre>                
                             </mat-card>
-                         </div>
+                            
+                        </div>
                      </mat-expansion-panel>
 
                 </mat-accordion>
@@ -116,18 +191,17 @@
             <!--Name: {{context_term[j].name}}-->
             <!--Id: {{context_term[j].id}}-->
             <!--datatype: {{get_term(context_term[j].datatype).name}}-->
-            <a *ngIf="context_term[j].instances.length > 0">
+            
+            <!-- <a *ngIf="context_term[j].instances.length > 0">
                 Value: <input (keypress)="onValueAdd($event)">
                 Units:
+                <select (change)="onUnitSelect($event.target.value)"> -->
 
-                <select (change)="onUnitSelect($event.target.value)">
                     <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
-                    <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
+                    
+                    <!-- <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
                 </select>
-    <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
-                    symbol: {{context_term[j].instances[l]._symbol}}
-                </p>-->
-            </a>
+            </a> -->
 
             <a *ngIf="context_term[j].enumeration!=='' && searchTerm(ontologyEnum,context_term[j].enumeration).instances.length > 0  "> 
                 Response Range

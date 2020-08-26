@@ -1,11 +1,11 @@
-export class Investigation {
+export interface Investigation {
 
     Definition:string;
 
 };
 
 
-export class InvestigationFull{
+export interface InvestigationFull{
     _key:string;
     Definition:string;
     Investigation_unique_ID:{
@@ -50,7 +50,7 @@ export class InvestigationFull{
     };  
 };
 
-export class InvestigationFull2{
+export interface InvestigationFull2{
     _key:string;
     Definition:string;
     Investigation_unique_ID:Trio[];
@@ -64,7 +64,7 @@ export class InvestigationFull2{
 };
 
 
-export class Trio{
+export interface Trio{
     Definition:string;
     Example:string;
     Format:string;

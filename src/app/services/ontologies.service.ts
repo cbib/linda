@@ -31,7 +31,7 @@ export class OntologiesService {
   }
   private extractData(res: Response) {
         let body = res;
-        //console.log(body);
+        console.log(body);
         return body || { };
     }
   get_ontology(ontology_id:string){

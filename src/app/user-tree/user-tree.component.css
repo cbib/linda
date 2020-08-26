@@ -29,3 +29,11 @@
   color: #D8000C;
   background-color: #FFBABA;
 }
+
+.icon-play{
+  background-image : url(../../assets/images/images.jpg);
+  background-size: cover;
+  display: inline-block;
+  height: 12px;
+  width: 15px;
+}

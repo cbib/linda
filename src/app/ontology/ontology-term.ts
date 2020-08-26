@@ -20,7 +20,9 @@ export class OntologyTerm {
         public enumeration:string;
         public relationship:string;
         public relationships=[];
+        public relationshipstype=[];
         public datatype:string;
+        public namespace:string
         public is_enumeration:boolean;
         public is_datatype:boolean;
         public has_relationship:boolean;
@@ -49,6 +51,9 @@ export class OntologyTerm {
         }
         public add_relationship(relationship:string){
             this.relationships.push(relationship);
+        }
+        public add_relationship_type(relationshiptype:string){
+            this.relationshipstype.push(relationshiptype);
         }
 //        public set_context(context:OntologyTerm){
 //            this.context=context;
@@ -82,6 +87,12 @@ export class OntologyTerm {
         }
         public get_value(){
             return this.value;
+        }
+        public set_namespace(_namespace:string){
+            this.namespace=_namespace;
+        }
+        public get_namespace(){
+            return this.namespace;
         }
         
         public set_def(def:string){
@@ -138,14 +149,16 @@ export class OntologyTerm {
             this.is_environment=is_environment;
         }
         
-        constructor(id:string, name:string, context:OntologyTerm [], is_a:string="") {
+        constructor(id:string, name:string, context:OntologyTerm [], is_a:string="", namespace:string="") {
             this.id=id;
             this.def="";
             this.enumeration="";
             this.name=name;
             this.datatype="";
+            this.namespace=namespace;
             this.relationship="";
             this.relationships=[];
+            this.relationshipstype=[];
             this.comment="";
             this.context=[];
             this.is_context=false;

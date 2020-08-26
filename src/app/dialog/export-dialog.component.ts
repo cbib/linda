@@ -17,7 +17,7 @@ export class ExportDialogComponent implements OnInit {
 //    public files: Set<File> = new Set()
     public file_format = []
     private is_investigation:boolean;
-    public selected_format = {'isa_tab (.txt)': {'selected':false, separator:'\t',type: 'text/csv;charset=utf-8;'}, '.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
+    public selected_format = {'.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
     private recursive_check:boolean =false
     private is_checked:boolean=false
     private is_expandable_node:boolean=false;
@@ -29,15 +29,9 @@ export class ExportDialogComponent implements OnInit {
 
          this.is_expandable_node=this.data.expandable
          this.is_investigation=this.data.is_investigation
-         console.log(this.data.is_investigation)
-         if (this.data.is_investigation){
-            this.file_format =['.csv', '.tsv', '.json', 'isa_tab (.txt)']
-
-         }
-         else{
-            this.file_format = ['.csv', '.tsv', '.json']
-
-         }
+         //console.log(this.data.is_investigation)
+         this.file_format = ['.csv', '.tsv', '.json']
+        
          
     }
 

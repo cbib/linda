@@ -46,7 +46,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
                 }
             );
         }
-        if (this.search_type=="Biological material"){
+        if (this.search_type=="biological_material"){
             //need to get parent study id
             var parent_name=this.data.parent_id.split("/")[0]
             var parent_key=this.data.parent_id.split("/")[1]
@@ -61,6 +61,38 @@ export class TemplateSelectionDialogComponent implements OnInit {
                     }
                 );
         }
+        else if (this.search_type=="observed_variable"){
+            //need to get parent study id
+            var parent_name=this.data.parent_id.split("/")[0]
+            var parent_key=this.data.parent_id.split("/")[1]
+
+
+            var child_type="observed_variables"
+            this.globalService.get_type_child_from_parent(parent_name,parent_key,child_type)
+            .toPromise().then(
+                    data => {
+                        this.result=data;
+                        console.log(data)
+                    }
+                );
+        }
+        else{
+            //need to get parent study id
+            var parent_name=this.data.parent_id.split("/")[0]
+            var parent_key=this.data.parent_id.split("/")[1]
+
+
+            var child_type="experimental_factors"
+            this.globalService.get_type_child_from_parent(parent_name,parent_key,child_type)
+            .toPromise().then(
+                    data => {
+                        this.result=data;
+                        console.log(data)
+                    }
+                );
+
+        }
+
     }
 
     onSelect(values:string){

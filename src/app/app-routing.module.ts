@@ -17,6 +17,8 @@ import { OntologyDescriptionComponent } from './documentation/ontology-descripti
 import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
 import { DonwloadedComponent } from './download/donwloaded.component';
 import { ReleasesComponent } from './documentation/releases.component';
+import { MaterialFormComponent } from './forms/material-form.component';
+import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
 
 
 
@@ -31,6 +33,8 @@ const routes: Routes = [
   { path: 'home',component: HomeComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
+  { path: 'generic2',component: MaterialFormComponent},
+  { path: 'generic3',component: ObservationUnitFormComponent},
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},

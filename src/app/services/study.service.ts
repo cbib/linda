@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Investigation } from '../models/investigation';
-import { User } from '../models/user';
 import { throwError, Observable } from 'rxjs';
 import { map, catchError, tap  } from 'rxjs/operators';
 import {Constants} from "../constants";

@@ -79,6 +79,11 @@ import { DonwloadedComponent } from './download/donwloaded.component';
 import { PublicationsComponent } from './documentation/publications.component';
 import { ReleasesComponent } from './documentation/releases.component';
 import { SearchResultDialogComponent } from './dialog/search-result-dialog.component';
+import { MaterialDialogComponent } from './dialog/material-dialog.component';
+import { MaterialFormComponent } from './forms/material-form.component';
+import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
+import { SelectionDialogComponent } from './dialog/selection-dialog.component';
+import { SampleSelectionComponent } from './dialog/sample-selection.component';
 
 
 
@@ -120,7 +125,12 @@ import { SearchResultDialogComponent } from './dialog/search-result-dialog.compo
     DonwloadedComponent,
     PublicationsComponent,
     ReleasesComponent,
-    SearchResultDialogComponent
+    SearchResultDialogComponent,
+    MaterialDialogComponent,
+    MaterialFormComponent,
+    ObservationUnitFormComponent,
+    SelectionDialogComponent,
+    SampleSelectionComponent
     
     
 
@@ -186,7 +196,9 @@ import { SearchResultDialogComponent } from './dialog/search-result-dialog.compo
                    DelimitorDialogComponent,
                    ExportDialogComponent,
                    SearchResultDialogComponent,
-                   PubAdComponent
+                   PubAdComponent,
+                   SelectionDialogComponent,
+                   SampleSelectionComponent
                    ],
   providers: [AuthGuard,
               AlertService,

@@ -99,10 +99,42 @@ export class UserTreeComponent implements OnInit{
           this.nodes=[]
           this.nodes=this.build_hierarchy(this.vertices)
           console.log(this.nodes)
-          this.dataSource.data = this.nodes;
+        
+
+          //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
+          this.sort_nodes(this.nodes[0])
+          this.dataSource.data = this.nodes
           //this.treeControl.expand()
-          this.tree.treeControl.expandAll();
+          //this.tree.treeControl.expandAll();
+          
+          console.log(this.treeControl.dataNodes[4])
+          console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
           console.log(this.treeControl.dataNodes)
+          //this.treeControl.expandDescendants(this.treeControl.dataNodes[4])
+          var descendants=  this.treeControl.getDescendants(this.treeControl.dataNodes[0])
+          //this.treeControl.expandDescendants(this.treeControl.dataNodes[0])
+          this.treeControl.expand(this.treeControl.dataNodes[0])
+          console.log("searching for ", this.treeControl.dataNodes[12].name)
+          for (var d in descendants){
+              console.log(this.treeControl.getLevel(descendants[d]))
+
+             if (descendants[d].name===this.treeControl.dataNodes[12].name){
+                console.log(descendants[d].name)
+             }
+
+              if (this.treeControl.getLevel(descendants[d])===1){
+                console.log(descendants[d].name)
+                this.treeControl.expand(descendants[d])
+                //this.treeControl.expandDescendants(descendants[d])
+              }
+              if (this.treeControl.getLevel(descendants[d])===2){
+                console.log(descendants[d]['term']['children'])
+                descendants[d]['term']['children'].sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]));
+                //console.log(test)
+              }
+              
+
+          }
           //this.treeControl.expand(this.treeControl.dataNodes[0]);
 
           this.searchService.getData().subscribe(data => {
@@ -111,7 +143,18 @@ export class UserTreeComponent implements OnInit{
           })      
     }
 
-
+    sort_nodes(node:MiappeNode){
+        if (node.has_child){
+            node.get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
+            node.get_children().forEach(node=>{
+                if (node.has_child){
+                    this.sort_nodes(node)
+                    //node.get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
+                }
+            })
+        }
+        
+    }
 
   build_hierarchy(edges:[]):MiappeNode[]{
       //console.log(edges)
@@ -203,104 +246,51 @@ export class UserTreeComponent implements OnInit{
     }
    
     onExport(node:MiappeNode){
-        console.log(node)
         var model_type=this.globalService.get_model_type(node.id)
         this.globalService.get_parent(node.id).toPromise().then(parent_data => {
-            console.log(parent_data["_from"].includes("users"))
             var is_investigation=parent_data["_from"].includes("users")
             const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {expandable:node.expandable, is_investigation:is_investigation}});
             dialogRef.afterClosed().subscribe(result=> {
                 if (result){
                     if (result.event=='Confirmed'){
-                        var selected_format=result.selected_format
-                        var recursive_check=result.recursive_check
-                        var model_key=node.id.split("/")[1];
-                        var model_id=node.id
+                        //var selected_format=result.selected_format
+                        //var recursive_check=result.recursive_check
+                        //var model_id=node.id
                         var collection_name=node.id.split("/")[0];
-                        this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {    
+                        var model_key=node.id.split("/")[1];
+                        this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {   
                             //Parse in a recursive way all submodels
-                            var isa_model="investigation_isa"
-                            if ((node.expandable) && (recursive_check)){
-                                this.globalService.get_model(model_type).toPromise().then(model => { 
-                                    this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-                                        this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
-                                            this.fileService.saveMultipleFiles(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model, selected_format);
-                                        });
-                                    });
+                            if ((node.expandable) && (result.recursive_check)){
+                                this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                                    this.fileService.saveFiles(model_data, submodel_data, collection_name, node.id, result.selected_format);
                                 });
                             }
                             else{
-                                this.globalService.get_model(model_type).toPromise().then(model => { 
-                                    this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
-                                        this.fileService.saveFile(model_data, model_id, model_type, model, isa_model, selected_format);
-                                    });
-                                });
+                                this.fileService.saveFile(model_data, node.id, model_type, result.selected_format);
                             }
                         });
-
                     }
                 } 
+            })  
+        });        
+    }
 
-            })
-            // dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-
-            //         if(confirmed){
-            //             console.log("file saved")
-            //             // console.log(this.selected_format)
-            //             // var model_key=node.id.split("/")[1];
-            //             // var collection_name=node.id.split("/")[0];
-            //             // var parent_collection_name=parent_data['_from'].split("/")[0];
-            //             // var vertice_list=[]
-            //             // var model_data=this.globalService.get_by_key(model_key,this.data.model_type).toPromise().then(model_data => {    
-
-            //             //     //Parse in a recursive way all submodels
-            //             //     if ((this.is_expandable_node) && (this.recursive_check)){
-                                
-            //             //         var models:any=[]
-            //             //         var submodel_data=this.globalService.get_all_vertices_by_model(collection_name, model_key).toPromise().then(submodel_data => {
-            //             //             var formats=Object.keys(this.selected_format);
-            //             //             this.fileService.saveMultipleFiles(model_data, submodel_data,this.data.model_type,collection_name, this.data.model_id, this.selected_format);
-            //             //         });
-            //             //     }
-            //             //     else{
-            //             //         this.globalService.get_model(this.data.model_type).toPromise().then(model => {  
-            //             //             this.fileService.saveFile(model_data,this.data.model_id, this.data.model_type, model, this.selected_format);
-            //             //         });
-            //             //     }
-            //             // }); 
-
-
-            //             this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-            //             this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
-            //         }
-
-
-            //     });
-                
+    onExportIsa(node:MiappeNode){
+        var model_type=this.globalService.get_model_type(node.id)
+        var model_key=node.id.split("/")[1];
+        var model_id=node.id
+        var collection_name=node.id.split("/")[0];
+        this.globalService.get_by_key(model_key,model_type).toPromise().then(model_data => {   
+            //Parse in a recursive way all submodels
+            var isa_model="investigation_isa"
+            this.globalService.get_model(model_type).toPromise().then(model => { 
+                this.globalService.get_all_childs_by_model(collection_name, model_key).toPromise().then(submodel_data => {
+                    this.globalService.get_model(isa_model).toPromise().then(isa_model => { 
+                        this.fileService.saveISA(model_data, submodel_data, model_type, collection_name, model_id, isa_model, model);
+                    });
+                });
+            });           
         });
-        
-        
-//        var model_data=this.globalService.get_by_key(model_key,model_type).toPromise().then(data => {
-//            console.log(data)
-//            //open a dialog and ask user if save in recursive way or only the selected model
-//            const dialogRef = this.dialog.open(ExportDialogComponent, {width: '500px', data: {model_data: data, model_type:model_type, expandable:node.expandable}});
-//        
-//                
-//            dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-//                
-//                if(confirmed){
-//                    console.log("file saved")
-//                    
-//                    this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-//                    this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
-//                }
-//                
-//
-//            });
-//        });
-        
-        
-        
     }
     
     
@@ -318,8 +308,13 @@ export class UserTreeComponent implements OnInit{
                             this.router.navigate(['/download'],{ queryParams: {parent_id: data._from, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
                         }
                         else{
-                            this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
+                            if (model_type==="biological_material"){
+                                this.router.navigate(['/generic2'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
+                            }
+                            else{
+                                this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
 
+                            }
                         }
 
                     }
@@ -583,11 +578,22 @@ export class UserTreeComponent implements OnInit{
             console.log('add zip file');
             var model_name=this.active_node.id.split("/")[0]
             var model_key=this.active_node.id.split("/")[1]
+            var search_type=""
             this.globalService.get_parent_id(model_name, model_key).toPromise().then(
                 data => {
                     var parent_id=data[0]["v_id"]
                     console.log(parent_id)
-                    const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, {width: '500px', data: {search_type :"Biological material" ,model_id: "", parent_id:parent_id, user_key:user._key, model_type:model_type, values:{}} });
+                    // if (model_type==='observed_variable'){
+                    //     search_type="Observed variable"
+                    // }
+                    // else if (model_type==='experimental_factor'){
+                    //     search_type="Experimental factor"
+                    // }
+                    // else{
+                    //     search_type="Biological material"
+                    // }
+                    
+                    const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, {width: '500px', data: {search_type :model_type ,model_id: "", parent_id:parent_id, user_key:user._key, model_type:model_type, values:{}} });
                     dialogRef.afterClosed().subscribe(result => {
                         if (result){
                             console.log(result.values)
@@ -602,7 +608,7 @@ export class UserTreeComponent implements OnInit{
                             }
                             var new_values={}
                             keys.forEach(attr => {new_values[attr]=result.values[attr]})
-                            this.globalService.add(new_values,"biological_material", this.active_node.id).pipe(first()).toPromise().then(
+                            this.globalService.add(new_values,model_type, this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]){
                                         //console.log(data["message"])
@@ -638,6 +644,12 @@ export class UserTreeComponent implements OnInit{
             }
             if (model_type==="metadata_file"){
                  this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:parent_key,model_type:model_type,mode:"create"}});
+            }
+            else if (model_type==="biological_material"){
+                this.router.navigate(['/generic2'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});
+            }
+            else if (model_type==="observation_unit"){
+                this.router.navigate(['/generic3'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});
             }
             else{
                  this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});

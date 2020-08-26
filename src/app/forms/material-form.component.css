@@ -1,0 +1,14 @@
+.w-75{
+    width: 10px;
+}
+
+.table tr.active td {  
+    background-color:#48da24 !important;  
+    color: white;  
+  } 
+.mat-slider-vertical{
+    min-height: 60px;
+}
+#bmpreprocess{
+    width: 150px; 
+}
