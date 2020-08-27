@@ -17,8 +17,8 @@ export class HomeComponent implements OnInit {
     }
     
     ngOnInit() {
-        var image_path=window.location.href+'assets/images/cbib.jpg'
-        console.log(image_path)
+        // var image_path=window.location.href+'assets/images/cbib.jpg'
+        // console.log(image_path)
         this.ads = this.adService.getAds();
 
     }

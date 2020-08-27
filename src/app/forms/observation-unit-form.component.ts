@@ -450,6 +450,8 @@ export class ObservationUnitFormComponent implements OnInit {
       if (result){
         console.log(result)
         for (var i =0;i<result.length;i++){
+          result[i]['sampleUUID'] = uuid.v4()
+          //console.log(result[i])
           this.sample_data.push(result[i])
         
         }
@@ -462,6 +464,91 @@ export class ObservationUnitFormComponent implements OnInit {
 
   }
 
+
+  
+
+
+
+
+  get_startfilling() {
+    return this.startfilling;
+  };
+
+  notify_checkbox_disabled() {
+    if (!this.startfilling) {
+      this.alertService.error('need to fill the form first');
+
+    }
+
+  }
+
+  toggleVisibility(e) {
+    this.marked = e.target.checked;
+  };
+  cancel() {
+    this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+
+  };
+
+
+  submitForm() {
+    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    this.observationUnitTouchedRows = observationUnitControl.controls.filter(row => row.touched).map(row => row.value);
+
+    var return_data = {}
+    var obs_unit:{}
+    //first loop for each obs unit
+    for (var i=0; i<observationUnitControl.controls.length;i++ ){
+      obs_unit=observationUnitControl.controls[i].value
+      console.log("looking for observation unit :", obs_unit['Observation unit ID'], "with uuid: ",  obs_unit['obs-id'])
+      //for each bm, check if same observation id, then 
+      var bm_list=[]
+      var bm:{}
+      for (var j=0; j<this.bm_data.length;j++ ){
+        bm=this.bm_data[j]
+        if (bm['obsUUID']===obs_unit['obs-id']){
+          console.log("---------looking for biological material :", bm['biologicalMaterialId'], "with uuid: ",  bm['bmUUID'])
+          bm_list.push(bm)
+          var sample_list=[]
+          var sample:{}
+          for (var k=0; k<this.sample_data.length;k++ ){
+            sample=this.sample_data[k]
+            if ((sample['obsUUID']===obs_unit['obs-id'])  && (sample['bmUUID']===bm['bmUUID'])){
+              console.log("-------------------------looking for sample :", sample['Sample ID'], "with uuid: ",  sample['sampleUUID'])
+              sample_list.push(sample)
+              
+            }
+          } 
+          console.log("found sample :", sample_list)
+
+
+
+        }
+
+      }
+      console.log("found bm :", bm_list)
+      var ef_list=[]
+      for (var j=0; j<this.ef_data.length;j++ ){
+        if (this.ef_data[j]['obsUUID']===obs_unit['obs-id']){
+          ef_list.push(this.ef_data[j])
+        }
+      }
+    }
+    
+
+
+    // if (Object.getOwnPropertyNames(return_data).length == 0) {
+    //   this.save(return_data)
+    // }
+    // else{
+    //   this.alertService.error("nothing to load !!!!")
+    // }
+    
+    //this.save(return_data)
+    console.log(return_data)
+
+    
+  }
 
   save(form: any): boolean {
 
@@ -522,45 +609,6 @@ export class ObservationUnitFormComponent implements OnInit {
     }
     return true;
   };
-
-
-
-
-  get_startfilling() {
-    return this.startfilling;
-  };
-
-  notify_checkbox_disabled() {
-    if (!this.startfilling) {
-      this.alertService.error('need to fill the form first');
-
-    }
-
-  }
-
-  toggleVisibility(e) {
-    this.marked = e.target.checked;
-  };
-  cancel() {
-    this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-
-  };
-
-
-  submitForm() {
-    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    this.observationUnitTouchedRows = observationUnitControl.controls.filter(row => row.touched).map(row => row.value);
-    var return_data = {}
-
-    if (Object.getOwnPropertyNames(return_data).length == 0) {
-      this.save(return_data)
-    }
-    else{
-      this.alertService.error("nothing to load !!!!")
-    }
-    
-    console.log(return_data)
-  }
 
   toggleTheme() {
     this.mode_table = !this.mode_table;

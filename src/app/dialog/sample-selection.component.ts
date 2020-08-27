@@ -237,12 +237,12 @@ export class SampleSelectionComponent implements OnInit {
         else {
           attributeFilters[attr["key"]] = [value];
         }
-        attributeFilters['sampleUUID'] = uuid.v4()
+        //attributeFilters['sampleUUID'] = uuid.v4()
 
         attributeFilters['bmUUID'] = bm_id
         attributeFilters['obsUUID'] = this.observation_id
 
-        this.sample_id = attributeFilters['sampleUUID']
+        //this.sample_id = attributeFilters['sampleUUID']
       }
 
 

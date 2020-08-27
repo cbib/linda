@@ -7,7 +7,6 @@ import { Location } from "@angular/common";
 export class AdService {
   getAds() {
     
-    console.log(window.location.href )
     var image_path_cbib= window.location.href + '/../assets/images/Logo_CBiB_2020_lowcase_highres.jpg'
     var image_path_inra= window.location.href + '/../assets/images/inrae.png'
     return [
