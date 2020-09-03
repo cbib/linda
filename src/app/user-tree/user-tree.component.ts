@@ -44,7 +44,7 @@ export class UserTreeComponent implements OnInit{
     private displayed=false;
     public vertices:any=[]
     private active_node: MiappeNode;
-    private current_data=[]
+    private current_data_keys=[]
     private current_data_array=[]
     private multiple_selection:boolean=false;
     private parent_key:string;
@@ -52,7 +52,12 @@ export class UserTreeComponent implements OnInit{
     private model_key:string;
     private model_selected:string
     nodekey:any;
-    
+    private biological_materials=[]
+    private experimental_factors=[]
+    private samples=[]
+    private obs_unit_data=[]
+    private observation_id=""
+    private biological_material_id=""
 
     constructor(
         private globalService : GlobalService, 
@@ -71,7 +76,6 @@ export class UserTreeComponent implements OnInit{
                 this.parent_key=params['key'];
             }
         );   
-        console.log(this.search_string)   
     }
     private ont_transformer = (node: MiappeNode, level: number) => {
         return {
@@ -98,7 +102,6 @@ export class UserTreeComponent implements OnInit{
           await this.get_vertices()
           this.nodes=[]
           this.nodes=this.build_hierarchy(this.vertices)
-          console.log(this.nodes)
         
 
           //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
@@ -118,9 +121,6 @@ export class UserTreeComponent implements OnInit{
           for (var d in descendants){
               //console.log(this.treeControl.getLevel(descendants[d]))
 
-             if (descendants[d].name===this.treeControl.dataNodes[12].name){
-                //console.log(descendants[d].name)
-             }
 
               if (this.treeControl.getLevel(descendants[d])===1){
                 //console.log(descendants[d].name)
@@ -312,6 +312,9 @@ export class UserTreeComponent implements OnInit{
                             if (model_type==="biological_material"){
                                 this.router.navigate(['/generic2'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
                             }
+                            else if (model_type==="observation_unit"){
+                                this.router.navigate(['/generic3'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
+                            }
                             else{
                                 this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
 
@@ -383,7 +386,9 @@ export class UserTreeComponent implements OnInit{
         }); 
         console.log(to_be_remove)
         for (var i = 0; i < to_be_remove.length; i++) {
-           this.globalService.remove(to_be_remove[i]).pipe(first()).toPromise().then(
+            console.log(to_be_remove[i].split("/")[0])
+            if (to_be_remove[i].split("/")[0]==="observation_units"){
+                this.globalService.remove_observation_unit(to_be_remove[i]).pipe(first()).toPromise().then(
                     data => {
                     if (data["success"]){
                         console.log(data["message"])
@@ -392,7 +397,20 @@ export class UserTreeComponent implements OnInit{
                         this.alertService.error("this form contains errors! " + data["message"]);
                     }
                 }
-            ); 
+            );
+            }
+            else{
+                this.globalService.remove(to_be_remove[i]).pipe(first()).toPromise().then(
+                        data => {
+                        if (data["success"]){
+                            console.log(data["message"])
+                        }
+                        else{
+                            this.alertService.error("this form contains errors! " + data["message"]);
+                        }
+                    }
+                ); 
+            }
         }
         this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
         //this.router.navigate([this.router.url]);
@@ -409,20 +427,42 @@ export class UserTreeComponent implements OnInit{
         dialogRef.afterClosed().subscribe((confirmed: boolean) => {
                 
                 if(confirmed){
-                    this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
-                        data => {
-                            if (data["success"]){
-                                console.log(data["message"])
-                                var message =  this.active_node.id + " has been removed from your history !!"
 
-                                this.alertService.success(message)
+                    console.log(this.active_node.id.split("/")[0])
+                    if (this.active_node.id.split("/")[0]==="observation_units"){
 
+                        this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
+                            data => {
+                                if (data["success"]){
+                                    console.log(data["message"])
+                                    var message =  this.active_node.id + " has been removed from your history !!"
+
+                                    this.alertService.success(message)
+
+                                }
+                                else{
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
                             }
-                            else{
-                                this.alertService.error("this form contains errors! " + data["message"]);
+                        );
+                    }
+                    else{
+                        this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
+                            data => {
+                                if (data["success"]){
+                                    console.log(data["message"])
+                                    var message =  this.active_node.id + " has been removed from your history !!"
+
+                                    this.alertService.success(message)
+
+                                }
+                                else{
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
                             }
-                        }
-                    );
+                        );
+                    }
+
                     this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
                     this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
                 }
@@ -502,7 +542,7 @@ export class UserTreeComponent implements OnInit{
             console.log(model_type)
             
             
-            const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, {width: '500px', data: {search_type :"Template" ,model_id: "", user_key:user._key, model_type:model_type, values:{}} });
+            const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, {width: '500px', data: {search_type :"Template" ,model_id: "", user_key:user._key, model_type:model_type, values:{}, parent_id:this.active_node.id} });
         
                 
             dialogRef.afterClosed().subscribe(result => {
@@ -710,15 +750,58 @@ export class UserTreeComponent implements OnInit{
 //        this.model_selected=this.globalService.get_model_type(this.active_node.id)
 //        console.log(this.model_selected)
 //    }
-    
-    
-    
-    
+
+    ObservationTableRowSelected(i:number) {
+        this.observation_id = this.obs_unit_data[i]['obsUUID']
+        console.log(this.observation_id)
+
+    }
+    MaterialTableRowSelected(i) {
+        this.biological_material_id=this.biological_materials[i]['bmUUID']
+        console.log(this.biological_material_id)
+      }
+    get get_bm_field(){
+        return Object.keys(this.biological_materials[0]);
+    }
+    // get get_bm_data(){
+    //     return this.biological_materials
+    // }
+    get get_ef_field(){
+      return Object.keys(this.experimental_factors[0]);
+    }
+
+    get get_sample_field(){
+        return Object.keys(this.samples[0]);
+    }
+    get get_ou_field(){
+        return Object.keys(this.obs_unit_data[0]);
+    }
+    get_ou_data(node:MiappeNode){ 
+        console.log(node["term"].get_current_observation_unit_data()['observation_units'])
+        return node["term"].get_current_observation_unit_data()['observation_units']
+
+    }
+    get_bm_data(node:MiappeNode):[]{ 
+        console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
+        return node["term"].get_current_observation_unit_data()['biological_materials']
+
+    }
+    get_ef_data(node:MiappeNode){ 
+        
+        return node["term"].get_current_observation_unit_data()['experimental_factors']
+
+    }
+    get_sample_data(node:MiappeNode){ 
+        
+        return node["term"].get_current_observation_unit_data()['samples']
+
+    }
+
     show_info(node:MiappeNode){
-        this.current_data=[]
+        
+        this.current_data_keys=[]
         this.current_data_array=[]
         this.active_node=node
-        console.log(node)
         this.notify.emit("hello");
         this.displayed=true;
         if ((node["id"]==="Investigations tree") ){            
@@ -731,7 +814,134 @@ export class UserTreeComponent implements OnInit{
             this.globalService.get_parent(node.id).toPromise().then(
                 data => {
                     this.parent_id=data._from;
+                }
+            );
+        }
+        else if((node["id"].includes("observation_units"))){
+            this.model_selected=node["id"].split("/")[0]
+            var key=node.id.split("/")[1]
+            this.model_key=node.id.split("/")[1]
+            var collection=node.id.split("/")[0]
+            // //get value for a given node
+            var return_data = {"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }
+            this.globalService.get_elem(collection,key).toPromise().then(
+                data => {
                     //console.log(data)
+                    var obs_linda_id=data['_id']
+                    
+
+                    var obs_keys = Object.keys(data);
+                    this.obs_unit_data=[]
+                    for (var i=0; i<data["Observation unit ID"].length;i++ ){
+                        var obs_unit={}
+                        obs_keys.forEach(key => {
+                            if (!key.startsWith("_") && !key.startsWith("Definition")) {
+                                obs_unit[key]=data[key][i]
+                            }
+                        });
+                        this.obs_unit_data.push(obs_unit)
+                    }
+                    this.observation_id=data["obsUUID"][0]
+                    //console.log(obs_linda_id)
+                    //console.log(this.obs_unit_data)
+                    this.biological_materials=[]
+                    this.experimental_factors=[]
+                    this.samples=[]
+                    this.globalService.get_all_observation_unit_childs(obs_linda_id.split("/")[1]).toPromise().then(
+                        observation_unit_childs_data => {
+                            //console.log(observation_unit_childs_data)
+                            //get all biological materials
+                            
+                            for (var i=0; i<observation_unit_childs_data.length;i++ ){
+                                var child_id:string=observation_unit_childs_data[i]['e']['_to']
+                                //console.log(observation_unit_childs_data[i])
+                                
+                                if (child_id.includes("biological_materials")){
+                                    //console.log(child_id)
+                                    //console.log(observation_unit_childs_data[i]['e']['biological_materials'])
+                                    var tmp_bm:[]=observation_unit_childs_data[i]['e']['biological_materials']
+                                    this.biological_materials=this.biological_materials.concat(tmp_bm)
+                                    
+                                }
+                                else if (child_id.includes("experimental_factors")){
+                                    //console.log(child_id)
+                                    //console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
+                                    var tmp_ef:[]=observation_unit_childs_data[i]['e']['experimental_factors']
+                                    this.experimental_factors=this.experimental_factors.concat(tmp_ef)
+                                }
+                                //type sample childs
+                                else{
+                                    //console.log(child_id)
+                                    
+                                    var sample_data=observation_unit_childs_data[i]['s']['vertices'][1]
+                                    //console.log(sample_data)
+                                    var sample_keys = Object.keys(sample_data);
+                                    var sample={}
+                                    sample_keys.forEach(key => {
+                                        if (!key.startsWith("_") && !key.startsWith("Definition")) {
+                                            sample[key]=sample_data[key]
+                                        }
+                                    });
+                                    this.samples.push(sample)
+                                    // var tmp_samples:[]=observation_unit_childs_data[i]['e']['samples']
+                                    // samples=samples.concat(tmp_samples)
+
+                                }
+                            }
+                            return_data["biological_materials"]=this.biological_materials
+                            return_data["samples"]=this.samples
+                            return_data["experimental_factors"]=this.experimental_factors
+                            //console.log(this.obs_unit_data)
+                            //console.log(this.biological_materials)
+                            //console.log(this.experimental_factors)
+                            //console.log(this.samples)
+                            
+                            
+                        }
+                    );
+                    return_data["observation_units"]=this.obs_unit_data
+
+
+
+                    // this.current_data_keys=Object.keys(data);
+                    // this.current_data_array.push(data);
+                    node["term"].set_current_observation_unit_data(return_data)
+                    //node["term"].set_current_data_array(this.current_data_array)
+                    node["term"].set_model_key(node.id.split("/")[1])
+
+                    // for( var i = 0; i < this.current_data_keys.length; i++){ 
+                    //     if ( this.current_data_keys[i].startsWith("_")) {
+                    //         this.current_data_keys.splice(i, 1);
+                    //         i--;
+                    //     }
+                    // }
+                    // //console.log(this.current_data)
+                    // node["term"].set_current_data(this.current_data_keys)
+                    // node["term"].set_model_key(node.id.split("/")[1])
+                }
+            );
+        }
+        else if((node["id"].includes("biological_materials"))){
+            this.model_selected=node["id"].split("/")[0]
+            var key=node.id.split("/")[1]
+            this.model_key=node.id.split("/")[1]
+            var collection=node.id.split("/")[0]
+            //get value for a given node
+            this.globalService.get_elem(collection,key).toPromise().then(
+                data => {
+                    this.current_data_keys=Object.keys(data);
+                    this.current_data_array.push(data);
+                    node["term"].set_current_data_array(this.current_data_array)
+
+                    for( var i = 0; i < this.current_data_keys.length; i++){ 
+                        if ( this.current_data_keys[i].startsWith("_")) {
+                            this.current_data_keys.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    //console.log(this.current_data)
+                    node["term"].set_current_data(this.current_data_keys)
+                    node["term"].set_model_key(node.id.split("/")[1])
                 }
             );
         }
@@ -740,27 +950,24 @@ export class UserTreeComponent implements OnInit{
             var key=node.id.split("/")[1]
             this.model_key=node.id.split("/")[1]
             var collection=node.id.split("/")[0]
-            
             //get value for a given node
             this.globalService.get_elem(collection,key).toPromise().then(
                 data => {
-                    this.current_data=Object.keys(data);
+                    this.current_data_keys=Object.keys(data);
                     this.current_data_array.push(data);
                     node["term"].set_current_data_array(this.current_data_array)
 
-                    for( var i = 0; i < this.current_data.length; i++){ 
-                        if ( this.current_data[i].startsWith("_")) {
-                            this.current_data.splice(i, 1);
+                    for( var i = 0; i < this.current_data_keys.length; i++){ 
+                        if ( this.current_data_keys[i].startsWith("_")) {
+                            this.current_data_keys.splice(i, 1);
                             i--;
                         }
                     }
                     //console.log(this.current_data)
-                    node["term"].set_current_data(this.current_data)
+                    node["term"].set_current_data(this.current_data_keys)
                     node["term"].set_model_key(node.id.split("/")[1])
-                
                 }
             );
-            
         }
     }
     get_current_data(node:MiappeNode){

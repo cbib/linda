@@ -61,7 +61,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
                     }
                 );
         }
-        else if (this.search_type=="observed_variable"){
+        if (this.search_type=="observed_variable"){
             //need to get parent study id
             var parent_name=this.data.parent_id.split("/")[0]
             var parent_key=this.data.parent_id.split("/")[1]
@@ -76,7 +76,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
                     }
                 );
         }
-        else{
+        if (this.search_type=="experimental_factor"){
             //need to get parent study id
             var parent_name=this.data.parent_id.split("/")[0]
             var parent_key=this.data.parent_id.split("/")[1]

@@ -165,12 +165,9 @@ export class AppComponent implements OnInit {
             "observed_variables":[]
       }
         let user=JSON.parse(localStorage.getItem('currentUser'));
-        console.log(user)
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
-                console.log(data)
                 this.vertice_data=data;
-                console.log(data)
 //                this.stats={
 //                      "investigations":0,
 //                      "studies":0,
@@ -185,7 +182,6 @@ export class AppComponent implements OnInit {
 //                      "observed_variables":0 
 //                }
                 
-                console.log(this.vertice_data)
                 this.vertice_data.forEach(
                     d => {
                         var stat_object={

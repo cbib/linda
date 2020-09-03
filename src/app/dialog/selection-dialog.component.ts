@@ -12,8 +12,8 @@ interface DialogData {
   parent_id: string;
   model_type: string;
   values: [];
-  already_there:string[];
-  observation_id:string;
+  already_there: string[];
+  observation_id: string;
 }
 export interface BiologicalMaterial {
   biologicalMaterialId: string;
@@ -21,8 +21,8 @@ export interface BiologicalMaterial {
   genus: string;
   species: string;
   lindaID: string;
-  bmUUID:string;
-  obsUUID:string;
+  bmUUID: string;
+  obsUUID: string;
 }
 
 export interface ExperimentalFactor {
@@ -31,7 +31,8 @@ export interface ExperimentalFactor {
   experimentalFactorValues: [];
   experimentalFactorAccessionNumber: string;
   lindaID: string;
-  obsUUID:string;
+  efUUID: string;
+  obsUUID: string;
 }
 const BM_ELEMENT_DATA: BiologicalMaterial[] = []
 const EF_ELEMENT_DATA: ExperimentalFactor[] = []
@@ -47,9 +48,9 @@ export class SelectionDialogComponent implements OnInit {
   private result: []
   private model_type: string;
   private parent_id: string;
-  observation_id:string=""
+  observation_id: string = ""
   ready_to_show: boolean = false
-  private already_there:string[]
+  private already_there: string[]
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
   displayedFactorColumns: string[] = ['experimentalFactorType', 'experimentalFactorDescription', 'experimentalFactorValues', 'experimentalFactorAccessionNumber', 'lindaID', 'select'];
   pretty_displayedMaterialColumns: string[] = ['biological Material Id', 'Material id', 'Genus', 'Species', 'database id', 'Select'];
@@ -64,11 +65,13 @@ export class SelectionDialogComponent implements OnInit {
   //private return_data: {} = { "biological_material": { material_ids: [], biological_material_ids: [], data: [] }, "experimental_factor": { data: [] } }
 
 
-  private return_data: {} = { "biological_material": {data: []}, "experimental_factor": { data: [] } }
+  private return_data: {} = { "biological_material": { data: [] }, "experimental_factor": { data: [] } }
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  private initialSelection = []
-  private selection = new SelectionModel<BiologicalMaterial>(true, this.initialSelection /* multiple */);
+  private initialefSelection = []
+  private initialbmSelection = []
+  private bmselection = new SelectionModel<BiologicalMaterial>(true, this.initialbmSelection /* multiple */);
+  private efselection = new SelectionModel<ExperimentalFactor>(true, this.initialefSelection /* multiple */);
 
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<SelectionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
@@ -76,8 +79,8 @@ export class SelectionDialogComponent implements OnInit {
     this.model_type = this.data.model_type
     this.parent_id = this.data.parent_id
     this.result = []
-    this.already_there=this.data.already_there
-    this.observation_id=this.data.observation_id
+    this.already_there = this.data.already_there
+    this.observation_id = this.data.observation_id
   }
 
   ngOnInit() {
@@ -105,24 +108,46 @@ export class SelectionDialogComponent implements OnInit {
       );
   }
   /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
+  isAllBmSelected() {
+    const numSelected = this.bmselection.selected.length;
     const numRows = this.sources[this.model_type].data.length;
-    const numRowsMinusExcluded = this.materialdataSource.data.filter(row => !this.already_there.includes(row.materialId+'_'+row.biologicalMaterialId)).length;
-    
+    const numRowsMinusExcluded = this.materialdataSource.data.filter(row => !this.already_there.includes(row.materialId + '_' + row.biologicalMaterialId)).length;
+
     return numSelected == numRowsMinusExcluded;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
+  masterBmToggle() {
+    this.isAllBmSelected() ?
+      this.bmselection.clear() :
       this.sources[this.model_type].data.forEach(row => {
 
-        if (!this.already_there.includes(row.materialId+'_'+row.biologicalMaterialId)){
-          this.selection.select(row)
+        if (!this.already_there.includes(row.materialId + '_' + row.biologicalMaterialId)) {
+          this.bmselection.select(row)
         }
-        
+
+      });
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllEfSelected() {
+    const numSelected = this.efselection.selected.length;
+    const numRows = this.sources[this.model_type].data.length;
+    const numRowsMinusExcluded = this.sources[this.model_type].data.filter(row => !this.already_there.includes(row.experimentalFactorType)).length;
+
+    return numSelected == numRowsMinusExcluded;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterEfToggle() {
+    this.isAllBmSelected() ?
+      this.efselection.clear() :
+      this.sources[this.model_type].data.forEach(row => {
+
+        if (!this.already_there.includes(row.experimentalFactorType)) {
+          this.efselection.select(row)
+        }
+
       });
   }
 
@@ -159,15 +184,20 @@ export class SelectionDialogComponent implements OnInit {
   }
   load_factor(attr: {}): ExperimentalFactor[] {
     var data = []
-    data.push({
+    console.log(attr)
+    console.log(attr["_id"])
+    var obj={}
+    obj={
       experimentalFactorType: attr['Experimental Factor type'],
       experimentalFactorDescription: attr['Experimental Factor description'],
       experimentalFactorValues: attr['Experimental Factor values'],
       experimentalFactorAccessionNumber: attr['Experimental Factor accession number'],
       lindaID: attr["_id"],
-      observation_id:this.observation_id
-
-    })
+      obsUUID: this.observation_id
+    }
+    console.log(obj)
+    data.push(obj)
+    console.log(data)
     return data
 
   }
@@ -195,7 +225,7 @@ export class SelectionDialogComponent implements OnInit {
   onSelect(model_id: string) {
     this.ready_to_show = false
     this.data.model_id = model_id
-    console.log(this.selection.selected)
+
     //this.sources[this.model_type].data=[]
 
 
@@ -215,26 +245,44 @@ export class SelectionDialogComponent implements OnInit {
             //this.sources[this.model_type].data=[];
             //this.load_material(attr)
             this.materialdataSource.data = this.load_material(attr)
+            console.log(this.sources[this.model_type].data)
+            console.log(this.ready_to_show)
+            this.sources[this.model_type].data.forEach(row => {
+              console.log('check row: ', row)
+              this.bmselection.selected.forEach(selected_row => {
+                console.log('compare to row: ', selected_row)
+                if (this.shallowEqual(row, selected_row)) {
+                  this.bmselection.select(row)
+                  console.log(row, ' equal to row: ', selected_row)
+                }
+                else {
+                  console.log(row, ' not equal to row: ', selected_row)
+                }
+              });
+            });
           }
           else if (this.model_type === "experimental_factor") {
             this.factordataSource.data = this.load_factor(attr)
+            console.log(this.sources[this.model_type].data)
+            console.log(this.ready_to_show)
+
+            //When there are multiple element in select list, keep trace of selected element
+            this.sources[this.model_type].data.forEach(row => {
+              console.log('check row: ', row)
+              this.efselection.selected.forEach(selected_row => {
+                console.log('compare to row: ', selected_row)
+                if (this.shallowEqual(row, selected_row)) {
+                  this.efselection.select(row)
+                  console.log(row, ' equal to row: ', selected_row)
+                }
+                else {
+                  console.log(row, ' not equal to row: ', selected_row)
+                }
+              });
+            });
 
           }
-          console.log(this.sources[this.model_type].data)
-          console.log(this.ready_to_show)
-          this.sources[this.model_type].data.forEach(row => {
-            console.log('check row: ', row)
-            this.selection.selected.forEach(selected_row => {
-              console.log('compare to row: ', selected_row)
-              if (this.shallowEqual(row, selected_row)) {
-                this.selection.select(row)
-                console.log(row, ' equal to row: ', selected_row)
-              }
-              else {
-                console.log(row, ' not equal to row: ', selected_row)
-              }
-            });
-          });
+
           this.ready_to_show = true
         }
       }
@@ -247,10 +295,12 @@ export class SelectionDialogComponent implements OnInit {
 
   onOkClick(): void {
     //var return_data = { material_ids: [], biological_material_ids: [], data: this.data.values }
+    console.log(this.factordataSource.data)
     console.log(this.data.values)
-    console.log(this.selection)
+    console.log(this.bmselection)
+    console.log(this.efselection)
     if (this.model_type === "biological_material") {
-      this.return_data[this.model_type].data = this.selection.selected
+      this.return_data[this.model_type].data = this.bmselection.selected
       // this.return_data[this.model_type].data = this.data.values
       // this.selection.selected.forEach(element => {
       //   console.log(element.materialId)
@@ -260,8 +310,13 @@ export class SelectionDialogComponent implements OnInit {
       // console.log(this.data.values)
     }
     else if (this.model_type === "experimental_factor") {
-      this.selection.selected.forEach(element => {
-        this.return_data[this.model_type].data = this.data.values
+      this.efselection.selected.forEach(element => {
+        console.log(this.efselection)
+        console.log(this.data.values)
+        //this.return_data[this.model_type].data = this.data.values
+        //it is better to use this.selection.selected than this.data.values to remove _id, _key attributes
+        this.return_data[this.model_type].data = this.efselection.selected
+
       })
     }
 

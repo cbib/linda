@@ -115,9 +115,9 @@
         padding: 0 10px;
         text-align: left;
     }
-    #sidebar > ul > li > a i{
+    /* #sidebar > ul > li > a i{
         /*display: none !important;*/
-    }
+    } */
 
     .mail-info, .mail-info:hover {
         display: none !important;
@@ -138,9 +138,9 @@
     #sidebar > ul > li > ul.sub > li > a {
         background: transparent !important ;
     }
-    #sidebar > ul > li > ul.sub > li > a:hover {
+    /* #sidebar > ul > li > ul.sub > li > a:hover {
         
-    }
+    } */
 
 
     /* sidebar */
@@ -187,7 +187,7 @@
     }
 
     /* full calendar fix */
-    .fc-header-right {
+    /* .fc-header-right {
         left:25px;
         position: absolute;
     }
@@ -269,7 +269,7 @@
 
     .fc-header {
         margin-bottom:0px !important;
-    }
+    } */
 
     /*--*/
 

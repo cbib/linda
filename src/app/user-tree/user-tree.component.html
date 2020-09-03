@@ -147,12 +147,12 @@
                                             <mat-panel-title>
                                                  <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
 
-                                                 <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                                 <!-- <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox> -->
                                              </mat-panel-title>
 
                                          </mat-expansion-panel-header>
                                         
-                                         <table  class="table table-hover table-bordered  table-striped text-center" >
+                                         <table *ngIf="!node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
                                              <tbody >
                                                  <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
                                                  <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
@@ -162,6 +162,116 @@
                                                  </tr>
                                              </tbody>
                                          </table>
+
+
+                                         
+                                         <ng-container *ngIf="node.id.includes('observation_units')">
+
+
+                                              <!-- Here put Biological Material Table -->
+                                              <table *ngIf="obs_unit_data.length>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
+                                                class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
+                                                <!-- <thead class="text-nowrap">   -->
+                                                <thead>
+                                                  <ng-container *ngFor="let field of get_ou_field ; let i=index">
+                                                    <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
+                                                      <div>
+                                                        <label for="{{field}}">{{field}}</label>
+                                                      </div>
+                                                    </th>
+                                                  </ng-container>
+                                                </thead>
+                                                <tbody>
+                                                  <ng-container *ngFor="let group of get_ou_data(node) ; let i=index">
+                                                    <tr (click)="ObservationTableRowSelected(i)" >
+                                                      <ng-container *ngFor="let field of get_ou_field ; let j=index">
+                                                        <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
+                                                          {{group[field]}}
+                                                        </td>
+                                                      </ng-container>
+                                                    </tr>
+                                                  </ng-container>
+                                                </tbody>
+                                              </table>
+
+                                              <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
+                                                class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
+                                                <!-- <thead class="text-nowrap">   -->
+                                                <thead>
+                                                  <ng-container *ngFor="let field of get_bm_field ; let i=index">
+                                                    <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
+                                                      <div>
+                                                        <label for="{{field}}">{{field}}</label>
+                                                      </div>
+                                                    </th>
+                                                  </ng-container>
+                                                </thead>
+                                                <tbody>
+                                                  <ng-container *ngFor="let group of get_bm_data(node) ; let i=index">
+                                                    <tr (click)="MaterialTableRowSelected(i)" *ngIf="group['obsUUID']===observation_id">
+                                                      <ng-container *ngFor="let field of get_bm_field ; let j=index">
+                                                        <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
+                                                          {{group[field]}}
+                                                        </td>
+                                                      </ng-container>
+                                                    </tr>
+                                                  </ng-container>
+                                                </tbody>
+                                              </table>
+                                    
+                                             </ng-container>
+                                          <!-- <mat-card *ngIf="node.id.includes('observation_units')">
+                                            <mat-card-header>
+                                              <mat-card-title>Biological Materials</mat-card-title>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                              <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
+                                                class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
+                                                <thead>
+                                                  <ng-container *ngFor="let field of get_bm_field ; let i=index">
+                                                    <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
+                                                      <div>
+                                                        <label for="{{field}}">{{field}}</label>
+                                                      </div>
+                                                    </th>
+                                                  </ng-container>
+                                                </thead>
+                                                <tbody>
+                                                  <ng-container *ngFor="let group of get_bm_data ; let i=index">
+                                                    <tr (click)="MaterialTableRowSelected(i)" *ngIf="group['obsUUID']===observation_id">
+                                                      <ng-container *ngFor="let field of get_bm_field ; let j=index">
+                                                        <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
+                                                          {{group[field]}}
+                                                        </td>
+                                                      </ng-container>
+                                                    </tr>
+                                                  </ng-container>
+                                                </tbody>
+                                              </table>
+                                    
+                                            </mat-card-content>
+                                          </mat-card> -->
+
+                                         <!-- <table *ngIf="node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
+                                            <tbody >
+                                                <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
+                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
+                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a></td>
+                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[0][key]}}</td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table> -->
+                                        <!-- <table *ngIf="node.id.includes('experimental_factors')"  class="table table-hover table-bordered  table-striped text-center" >
+                                            <tbody >
+                                                <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
+                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
+                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a></td>
+                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[0][key]}}</td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table> -->
                                          
                                     
                                      </mat-expansion-panel>
@@ -233,9 +343,9 @@
                                 <a style="float: right;" *ngIf="node.id.includes('investigations')" > 
                                     <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                 </a>
-                                <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
+                                <!-- <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
-                                </a>
+                                </a> -->
                                 <mat-accordion *ngIf="!node.id.includes('Investigations tree')">
                                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false" [expanded]="isFirst">
                                     
@@ -243,7 +353,7 @@
                                             <mat-panel-title>
 
                                                 <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
-                                                <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox>
+                                                <!-- <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox> -->
                                             </mat-panel-title>
 
                                          </mat-expansion-panel-header>
@@ -256,6 +366,7 @@
                                                  </tr>
                                              </tbody>
                                          </table>
+                                         
 
                                     
                                     </mat-expansion-panel>
@@ -328,8 +439,8 @@
         </mat-menu>
         <mat-menu #observation_unitMenu="matMenu">
             <button mat-menu-item (click)="add('observation_unit','original')">From original model template</button>
-            <button mat-menu-item (click)="add('observation_unit','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('observation_unit','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('observation_unit','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('observation_unit','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #experimental_factorMenu="matMenu">
             <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
@@ -363,10 +474,10 @@
         </mat-menu>
         <mat-menu #OUMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="eventMenu2">Event</button>
-            <button mat-menu-item [matMenuTriggerFor]="biological_materialMenu2">Biological material</button>
+            <!-- <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu2">Observed variable</button> -->
+            <!-- <button mat-menu-item [matMenuTriggerFor]="biological_materialMenu2">Biological material</button>
             <button mat-menu-item [matMenuTriggerFor]="experimental_factorMenu2">Experimental factor</button>
-            <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu2">Observed variable</button>
-            <button mat-menu-item [matMenuTriggerFor]="sampleMenu">Sample</button>
+            <button mat-menu-item [matMenuTriggerFor]="sampleMenu">Sample</button> -->
             <!--<button mat-menu-item (click)="add('sample','original')">Sample</button>-->
             <!--<button mat-menu-item (click)="add('sample','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
             <!--<button mat-menu-item (click)="add('event','original')">Event</button>-->
@@ -382,26 +493,28 @@
             <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
             <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
-        <mat-menu #biological_materialMenu2="matMenu">
-            <!-- <button mat-menu-item (click)="add('biological_material','original')">From original model template</button> -->
-            <button mat-menu-item (click)="add('biological_material','parent')">Select from  study's biological materials</button>
-            <!-- <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
-        </mat-menu>
-        <mat-menu #observed_variableMenu2="matMenu">
+        <!-- <mat-menu #observed_variableMenu2="matMenu">
             <button mat-menu-item (click)="add('observed_variable','parent')">Select from  study's observed variables</button>
+        </mat-menu> -->
+
+
+
+        <!-- <mat-menu #biological_materialMenu2="matMenu">
+            <button mat-menu-item (click)="add('biological_material','original')">From original model template</button> 
+            <button mat-menu-item (click)="add('biological_material','parent')">Select from  study's biological materials</button>
+            <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
+            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
+        
         <mat-menu #experimental_factorMenu2="matMenu">
             <button mat-menu-item (click)="add('experimental_factor','parent')">Select from study's experimental factors</button>
-
-            <!-- <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
             <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button> -->
+            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #sampleMenu="matMenu">
             <button mat-menu-item (click)="add('sample','original')">From original model template</button>
             <button mat-menu-item (click)="add('sample','saved')">From saved templates</button>
             <button mat-menu-item (click)="add('sample','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
-        </mat-menu>
+        </mat-menu> -->
     </div>
 </div>

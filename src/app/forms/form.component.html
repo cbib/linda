@@ -90,6 +90,24 @@
                             placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                             class="form-control" (keypress)="onTaskAdd($event)"
                             [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                            <mat-slider formControlName="{{field['key']}}"
+                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
+                            [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
+                          </mat-slider>
+                          <mat-slider formControlName="{{field['key']}}"
+                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')"
+                            [displayWith]="formatLongitudeLabel" step="0.01" thumbLabel min="-180" max="+180"
+                            tickInterval="0.01">
+                          </mat-slider>
+                          <mat-slider vertical #myMaterialLatitudeSlider formControlName="{{field['key']}}"
+                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')"
+                            [displayWith]="formatLatitudeLabel" step="0.01" thumbLabel min="-90" max="+90"
+                            tickInterval="0.01">
+                          </mat-slider>
+                          <mat-slider vertical formControlName="{{field['key']}}"
+                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
+                            [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000" tickInterval="0.1">
+                          </mat-slider>
                         <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                             placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                             class="form-control" (keypress)="onTaskAdd($event)"

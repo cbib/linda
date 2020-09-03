@@ -6,6 +6,7 @@ export class MiappeNode {
         private element_type:string
         public current_data=[]
         public current_data_array=[]
+        public current_observation_unit_data:{"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }={"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }
         public id:string;
         public expandable:boolean;
         public def:string
@@ -22,6 +23,14 @@ export class MiappeNode {
         public get_parent_id(){
             return this.parent_id;
         }
+
+        public set_current_observation_unit_data(current_observation_unit_data:{"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }){
+            return this.current_observation_unit_data=current_observation_unit_data
+        }
+        public get_current_observation_unit_data(){
+            return this.current_observation_unit_data
+        }
+
         public set_current_data_array(current_data_array:[]){
             return this.current_data_array=current_data_array
         }
@@ -78,6 +87,7 @@ export class MiappeNode {
             this.fill_percentage=fill_percentage
             this.current_data=[]
             this.current_data_array=[]
+            this.current_observation_unit_data={"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }
             this.model_key=this.id.split("/")[1]
             
         }

@@ -180,6 +180,46 @@ export class FormComponent implements OnInit//, AfterViewInit
         });
     };
 
+    formatLatitudeLabel(value: number) {
+        //north hemisphera
+        if (value > 0) {
+          var decimals = value - Math.floor(value);
+          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′N"
+        }
+        //south hemisphera
+        if (value < 0) {
+          var decimals = value - Math.floor(value);
+          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
+        }
+    
+        else {
+          return value;
+        }
+    
+    
+      }
+      formatLabel(value: number) {
+    
+        return value + 'm';
+      }
+      formatLongitudeLabel(value: number) {
+        //console.log(value)
+        //east hemisphera
+        if (value > 0) {
+          var decimals = value - Math.floor(value);
+          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′E"
+        }
+        //west hemisphera
+        if (value < 0) {
+          var decimals = value - Math.floor(value);
+          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
+        }
+    
+        else {
+          return value;
+        }
+      }
+
     onOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
         //this.show_spinner = true;
         const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
