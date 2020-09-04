@@ -713,6 +713,7 @@ export class UserTreeComponent implements OnInit{
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 this.vertices=data;
+                console.log(data)
                 this.statistics={
                     "investigations":0,
                     "studies":0,

@@ -1951,7 +1951,7 @@ function update_unused_sample_from_obsUUID(db, observation_unit_edge, observatio
     //Removed unused sample doc and sample edge doc in observation unit edge collection after observation was removed
     var sample_with_obsuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsuuid_toremoved} RETURN {id:doc._id}`).toArray();
     for (var j = 0; j < sample_with_obsuuids.length; j++) {
-        var doc=sample_with_obsuuids[j]
+        var doc = sample_with_obsuuids[j]
         db._query(`REMOVE "${doc.id}" IN ${sample_coll}`);
         var key = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to==${doc.id} RETURN doc._key`).toArray();
         db._query(`REMOVE "${key[0]}" IN ${observation_unit_edge_coll}`);
@@ -1977,7 +1977,7 @@ function update_unused_ef_from_efUUID(db, observation_unit_edge, observation_uni
         db._query(aql` FOR entry IN ${observation_unit_edge} FILTER entry._from == ${observation_unit_id}  && entry._to == ${doc._to}  UPDATE entry WITH ${ef_obj} IN ${observation_unit_edge} RETURN { before: OLD, after: NEW }`).toArray();
     }
 }
-function update_unused_bm_from_bmUUID(db, observation_unit_edge,observation_unit_edge_coll, observation_unit_id,  bmuuid_to_removed, regex) {
+function update_unused_bm_from_bmUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, bmuuid_to_removed, regex) {
     var doc_with_uuids = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to LIKE ${regex} && ${bmuuid_to_removed} IN doc.biological_materials[*].bmUUID  RETURN doc`).toArray();
     let doc = doc_with_uuids[0]
     let bm_obj = {
@@ -2000,25 +2000,48 @@ function update_unused_bm_from_bmUUID(db, observation_unit_edge,observation_unit
 function update_unused_sample_from_bmUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, bmuuid_to_removed) {
     var sample_with_bmuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.bmUUID == ${bmuuid_to_removed} RETURN {id:doc._id}`).toArray();
     for (var j = 0; j < sample_with_bmuuids.length; j++) {
-        var doc=sample_with_bmuuids[j]
+        var doc = sample_with_bmuuids[j]
         db._query(`REMOVE "${doc.id}" IN ${sample_coll}`);
         var key = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to==${doc.id} RETURN doc._key`).toArray();
         db._query(`REMOVE "${key[0]}" IN ${observation_unit_edge_coll}`);
     }
 }
-function update_unused_sample_from_sampleUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, sampleuuid_to_removed){
-//Removed unused sample doc and sample edge doc in observation unit edge collection after observation was removed
-    var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.sampleUUID == ${sampleuuid_to_removed} RETURN {id:doc._id}`).toArray();
-    for (var j = 0; j < sample_with_sampleuuids.length; j++) {
-        var doc=sample_with_sampleuuids[j]
-        db._query(`REMOVE "${doc.id}" IN ${sample_coll}`);
-        var key = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to==${doc.id} RETURN doc._key`).toArray();
+function update_unused_sample_from_sampleUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, sample_coll_name, sampleuuid_to_removed, info_message) {
+    //Removed unused sample doc and sample edge doc in observation unit edge collection after observation was removed
+    var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.sampleUUID == ${sampleuuid_to_removed} RETURN {key:doc._key, id:doc._id}`).toArray();
+    var doc = sample_with_sampleuuids[0]
+    //info_message.push("4- errors: " + doc.key)
+    var samplekey = doc.key
+    var sampleid = doc.id
+    try {
+        db._query(`REMOVE "${samplekey}" IN ${sample_coll_name}`);
+        var key = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to==${sampleid} RETURN doc._key`).toArray();
         db._query(`REMOVE "${key[0]}" IN ${observation_unit_edge_coll}`);
+
     }
+    catch (e) {
+        info_message.push("4- errors: " + e)
+
+    }
+    // for (var j = 0; j < sample_with_sampleuuids.length; j++) {
+    //     var doc=sample_with_sampleuuids[j]
+    //     info_message.push("4- sample with sampleuuids: " + doc.id + " 4- sample_with_sampleuuids length: " +sample_with_sampleuuids.length)
+    //     // var sampleid=doc.id
+    //     // try {
+    //     //     db._query(`REMOVE "${sampleid}" IN ${sample_coll}`);
+
+    //     // }
+    //     // catch(e){
+    //     //     info_message.push("4- errors: " + e)
+
+    //     // }
+    // //     var key = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to==${doc.id} RETURN doc._key`).toArray();
+    // //     db._query(`REMOVE "${key[0]}" IN ${observation_unit_edge_coll}`);
+    // }
 }
-function add_ef_data(db,all_ef,observation_unit_edge, observation_unit_id,info_message){
+function add_ef_data(db, all_ef, observation_unit_edge, observation_unit_id, info_message) {
     var unique_lindaIDs = [...new Set(all_ef.map(item => item.lindaID))];
-    info_message.push("4- linda ids: " + unique_lindaIDs)
+    //info_message.push("4- linda ids: " + unique_lindaIDs)
 
     for (var j = 0; j < unique_lindaIDs.length; j++) {
         let ef_obj = {
@@ -2041,7 +2064,7 @@ function add_ef_data(db,all_ef,observation_unit_edge, observation_unit_id,info_m
         }
     }
 }
-function add_bm_data(db,all_bm,observation_unit_edge, observation_unit_id) {
+function add_bm_data(db, all_bm, observation_unit_edge, observation_unit_id) {
     var unique_lindaIDs = [...new Set(all_bm.map(item => item.lindaID))];
     for (var j = 0; j < unique_lindaIDs.length; j++) {
         let bm_obj = {
@@ -2072,7 +2095,72 @@ function add_bm_data(db,all_bm,observation_unit_edge, observation_unit_id) {
         // update = db._query(aql` FOR entry IN ${observation_unit_edge} FILTER entry._from == ${observation_unit_id}  && entry._to == ${bm_db_id}  UPDATE entry WITH ${bm_obj} IN ${observation_unit_edge} RETURN { before: OLD, after: NEW }`).toArray();
     }
 }
-function add_sample_data(db,all_sample,observation_unit_edge, observation_unit_id, sample_coll, info_message){
+function add_sample_data(db, all_sample, observation_units_data, observation_unit_edge, observation_unit_id, sample_coll, sample_coll_name, info_message) {
+    //var unique_UUIDs = [...new Set(all_sample.map(item => item.bmUUID))];
+    //var sample_data_bm = sample_data[j]
+    var previous_sampleuuids = []
+    for (var i = 0; i < observation_units_data.length; i++) {
+        var obsuuid = observation_units_data[i]['obsUUID']
+        //var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsuuid} RETURN doc.sampleUUID`).toArray();
+        var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsuuid} RETURN {sampleuuid:doc.sampleUUID}`).toArray();
+        for (var j = 0; j < sample_with_sampleuuids.length; j++) {
+            previous_sampleuuids.push(sample_with_sampleuuids[j])
+        }
+        //info_message.push("3- good: " + JSON.stringify(sample_with_sampleuuids))
+        //previous_sampleuuids.concat(sample_with_sampleuuids)
+    }
+    for (var k = 0; k < all_sample.length; k++) {
+        var sample_by_bm = all_sample[k]
+        for (var l = 0; l < sample_by_bm.length; l++) {
+            var found = false
+            for (var i = 0; i < previous_sampleuuids.length; i++) {
+                //info_message.push("3- sampleuuids: " + JSON.stringify(previous_sampleuuids[i]))
+                var doc = previous_sampleuuids[i]
+                if (doc.sampleuuid === sample_by_bm[l]['sampleUUID']) {
+                    found = true
+                }
+            }
+            if (!found) {
+                try {
+                    var sample = sample_by_bm[l]
+                    var data_sample = []
+                    info_message.push("7- sample to add to obs unit id: " + observation_unit_id)
+                    info_message.push("7.2- sample to add : " + JSON.stringify(sample))
+                    info_message.push("7.5- sample to add : " + sample_coll)
+                    data_sample = db._query(aql`INSERT ${sample} IN ${sample_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                    info_message.push("7.8- sample to add to obs unit id: " + JSON.stringify(data_sample))
+
+                    if (data_sample[0].new === null) {
+                        info_message.push("8- sample exist: " + JSON.stringify(sample))
+                        //res.send({ success: false, message: ' sample collection already have document with this title ', _id: 'none' });
+                    }
+                    //Document exists add edges in edge collection
+                    else {
+                        info_message.push("8- sample to add : " + observation_unit_id)
+                        var sample_obj = {
+                            "_from": observation_unit_id,
+                            "_to": data_sample[0].id
+                        }
+                        try {
+
+                            db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                        }
+                        catch (e) {
+                            info_message.push("9- ccannot replace sample: " + JSON.stringify(sample_obj) + e)
+                        }
+
+                    }
+                }
+                catch (e) {
+                    info_message.push("6- ccannot insert sample: " + e)
+
+                }
+            }
+
+
+        }
+    }
+
 
 }
 
@@ -2159,7 +2247,6 @@ router.post('/update_observation_units', function (req, res) {
         var previous_obsuuids = db._query(aql`FOR doc IN ${observation_unit_coll} FILTER doc._id==${observation_unit_id} RETURN doc.obsUUID `).toArray();
         // info_message.push("1- users exists \n" +  previous_obsuuids[0])
         data = db._query(aql` FOR entry IN ${observation_unit_coll} FILTER entry._id == ${observation_unit_id} UPDATE entry WITH ${observation_unit_doc} IN ${observation_unit_coll} RETURN { before: OLD, after: NEW }`).toArray();
-
         //check if all previous obsuuid are 
         for (var i = 0; i < previous_obsuuids.length; i++) {
             if (!data[0].after['obsUUID'].includes(previous_obsuuids[i])) {
@@ -2169,7 +2256,6 @@ router.post('/update_observation_units', function (req, res) {
                 update_unused_sample_from_obsUUID(db, observation_unit_edge, observation_unit_id, sample_coll, obsuuid_toremoved)
             }
         }
-
         if (data[0].after === null) {
             //res.send({ success: false, message: model_type + ' collection already have document with this title ' });
             error_message.push(model_type + ' collection already have document with this title ')
@@ -2177,14 +2263,12 @@ router.post('/update_observation_units', function (req, res) {
         //Document exists update edges in edge collection
         else {
             info_message.push("2- observation unit has been updated and child data has been cleaned \n" + data[0].after['obsUUID'])
-
-
-
-            // loop for each observation and get all bms, all efs
+            // loop for each observation and get all bms, all efs, all samples
             var all_bm = []
             var all_ef = []
             var all_sample = []
             for (var i = 0; i < observation_units_data.length; i++) {
+
                 var biological_material_data = values['biological_materials'][i];
                 var experimental_factor_data = values['experimental_factors'][i];
                 var sample_data = values['samples'][i];
@@ -2201,13 +2285,11 @@ router.post('/update_observation_units', function (req, res) {
                     all_sample.push(sample_data[j])
                 }
             }
-            info_message.push("3- good: " + JSON.stringify(all_ef))
-
+            //info_message.push("3- good: " + JSON.stringify(all_ef))
             //first update 
             //Remove bmuuid if they are not present anymore after removal from biological material table
             var regex = "biological_materials%"
             var previous_bmuuids = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to LIKE ${regex} RETURN {bm_linda_id:doc._to,doc_bm_uuids:doc.biological_materials[*].bmUUID} `).toArray();
-
             for (var i = 0; i < previous_bmuuids.length; i++) {
                 var doc_bm_uuids = previous_bmuuids[i]['doc_bm_uuids']
                 for (var j = 0; j < doc_bm_uuids.length; j++) {
@@ -2241,40 +2323,51 @@ router.post('/update_observation_units', function (req, res) {
                     }
                 }
             }
-            // var regex = "samples%"
-            // var previous_sampleuuids = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to LIKE ${regex} RETURN {ef_linda_id:doc._to, sampleuuid:doc.sampleUUID`).toArray();
-            // for (var i = 0; i < previous_sampleuuids.length; i++) {
-            //     var doc=previous_sampleuuids[i]
-            //     var sample_id= doc.ef_linda_id
-            //     var sampleuuid=doc.sampleuuid
-            //     var found = false
-            //     for (var k = 0; k < all_sample.length; k++) {
-            //         if (all_sample[k]['sampleUUID'] == sampleuuid) {
-            //             found = true
-            //         }
-            //     }
-            //     if (!found) {
-            //         var sampleuuid_to_removed = sampleuuid
-            //         update_unused_sample_from_sampleUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, sampleuuid_to_removed)
-            //     }
-    
-            // }
-
+            var regex = "samples%"
+            var previous_sampleuuids = []
+            for (var i = 0; i < observation_units_data.length; i++) {
+                var obsuuid = observation_units_data[i]['obsUUID']
+                //var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsuuid} RETURN doc.sampleUUID`).toArray();
+                var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsuuid} RETURN {sampleuuid:doc.sampleUUID}`).toArray();
+                for (var j = 0; j < sample_with_sampleuuids.length; j++) {
+                    previous_sampleuuids.push(sample_with_sampleuuids[j])
+                }
+                //info_message.push("3- good: " + JSON.stringify(sample_with_sampleuuids))
+                //previous_sampleuuids.concat(sample_with_sampleuuids)
+            }
+            //var sample_with_sampleuuids = db._query(aql`FOR doc IN ${sample_coll} FILTER doc.obsUUID == ${obsUUID} RETURN {id:doc.sampleUUID}`).toArray();
+            //var previous_sampleuuids = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to LIKE ${regex} RETURN {sampleuuid:doc.sampleUUID`).toArray();
+            //info_message.push("4- all sample data: " + JSON.stringify(all_sample))
+            for (var i = 0; i < previous_sampleuuids.length; i++) {
+                //info_message.push("3- sampleuuids: " + JSON.stringify(previous_sampleuuids[i]))
+                var doc = previous_sampleuuids[i]
+                var sampleuuid = doc.sampleuuid
+                var found = false
+                //info_message.push("4- all sample data: " + JSON.stringify(all_sample))
+                for (var k = 0; k < all_sample.length; k++) {
+                    var bm_associated_sample = all_sample[k]
+                    for (var l = 0; l < bm_associated_sample.length; l++) {
+                        //info_message.push("4- all sample data uUID: " + all_sample[k][l]['sampleUUID'] + " sample uUID: " + sampleuuid)
+                        if (all_sample[k][l]['sampleUUID'] == sampleuuid) {
+                            found = true
+                            //info_message.push("5- found: " + sampleuuid)
+                        }
+                    }
+                }
+                if (!found) {
+                    //info_message.push("6- not found: " + sampleuuid)
+                    var sampleuuid_to_removed = sampleuuid
+                    //info_message.push("3- not found: " + sampleuuid_to_removed)
+                    update_unused_sample_from_sampleUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, sample_coll_name, sampleuuid_to_removed, info_message)
+                }
+            }
             //Add new bm biological material list in edge document or create document if they are not present
-            add_bm_data(db,all_bm,observation_unit_edge, observation_unit_id)
-            info_message.push("3- good: " + JSON.stringify(all_ef))
+            add_bm_data(db, all_bm, observation_unit_edge, observation_unit_id)
+            //info_message.push("3- good: " + JSON.stringify(all_ef))
+            add_ef_data(db, all_ef, observation_unit_edge, observation_unit_id, info_message)
+            add_sample_data(db, all_sample, observation_units_data, observation_unit_edge, observation_unit_id, sample_coll, sample_coll_name, info_message)
 
-            add_ef_data(db,all_ef,observation_unit_edge, observation_unit_id, info_message)
-            //add_sample_data(db,all_sample,observation_unit_edge, observation_unit_id, sample_coll, info_message)
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
             // var unique_lindaIDs = [...new Set(all_bm.map(item => item.lindaID))];
             // for (var j = 0; j < unique_lindaIDs.length; j++) {
             //     let bm_obj = {

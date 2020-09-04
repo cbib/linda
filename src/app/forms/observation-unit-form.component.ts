@@ -649,7 +649,9 @@ get_biological_material_list() {
           }
 
           console.log("found sample :", sample_list)
-          global_sample_list.push(sample_list)
+          if (sample_list.length>0){
+            global_sample_list.push(sample_list)
+          }
 
 
 
