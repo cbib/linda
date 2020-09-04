@@ -73,10 +73,15 @@
                     </span> 
                 </button>
                 <!-- {{node.name}} -->
-            
-                <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                <ng-container *ngIf="uncheckable">
+                    {{node.name}}
+                </ng-container>
+                <ng-container *ngIf="!uncheckable">
+                <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox>
+                </ng-container>
+                
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">TRAIT</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Variable')">VARIABLE</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Method')">METHOD</p>
@@ -131,10 +136,14 @@
                 <!-- <mat-checkbox *ngIf="!uncheckable"  class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox> -->
-
-                <mat-checkbox *ngIf="!uncheckable" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
+                <ng-container *ngIf="uncheckable">
+                    {{node.name}}
+                </ng-container>
+                <ng-container *ngIf="!uncheckable">
+                <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}
                 </mat-checkbox>
+            </ng-container>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">TRAIT</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Variable')">VARIABLE</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Method')">METHOD</p>

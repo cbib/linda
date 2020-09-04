@@ -14,8 +14,10 @@ export class OntologyDescriptionComponent implements OnInit {
 
   ngOnInit() {
   }
+
   onSelect(values:string) {
-        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh', data: {ontology_type: values,selected_term: null,selected_set:[], uncheckable: true}});
+        console.log(values)
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh', data: {ontology_id: values,selected_term: null,selected_set:[], uncheckable: true, multiple:false}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
                 console.log(result)

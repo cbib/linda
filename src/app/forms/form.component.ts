@@ -42,6 +42,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     levels = []
     cleaned_model: any = [];
     keys: any = [];
+    disabled_id_keys = []
 
     constructor(
         public globalService: GlobalService,
@@ -70,6 +71,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     ngOnInit() {
         this.get_max_level();
         this.get_model();
+
     };
 
     // addSellingPoint() {
@@ -101,7 +103,7 @@ export class FormComponent implements OnInit//, AfterViewInit
 
         return this.formBuilder.group(attributeFilters);
     }
-    
+
     get_model() {
         this.modelForm = new FormGroup({});
         this.model = [];
@@ -109,7 +111,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
         this.globalService.get_model(this.model_type).toPromise().then(data => {
             this.model = data;
-            console.log(this.model)
+            //console.log(this.model)
             this.keys = Object.keys(this.model);
             this.cleaned_model = []
             for (var i = 0; i < this.keys.length; i++) {
@@ -122,13 +124,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                     dict["key"] = this.keys[i]
                     dict["pos"] = this.model[this.keys[i]]["Position"]
                     dict["level"] = this.model[this.keys[i]]["Level"]
+                    dict["format"] = this.model[this.keys[i]]["Format"]
                     dict["Associated_ontologies"] = this.model[this.keys[i]]["Associated_ontologies"]
                     this.cleaned_model.push(dict)
                 }
             }
             this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
 
-            console.log(this.cleaned_model)
+            //console.log(this.cleaned_model)
 
             if (this.mode === "create") {
                 console.log(this.model_type)
@@ -163,8 +166,12 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.cleaned_model.forEach(attr => {
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
                         this.validated_term[attr["key"]] = { selected: false, values: "" }
-                        if (attr["key"].includes("ID")) {
+                        //if (attr["key"].includes("ID")) {
+                        if (attr["format"] === "Unique identifier") {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
+
+                            this.disabled_id_keys.push(attr["key"])
+
                         }
                         else if (attr["key"].includes("Short title")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
@@ -176,6 +183,27 @@ export class FormComponent implements OnInit//, AfterViewInit
                 });
                 this.modelForm = this.formBuilder.group(attributeFilters);
 
+                for (let i = 0; i < this.disabled_id_keys.length; i++) {
+                    let attr = this.disabled_id_keys[i]
+                    console.log(this.disabled_id_keys[i])
+                    console.log(this.modelForm.value)
+                    console.log(this.modelForm.get(this.disabled_id_keys[i]))
+                    console.log(this.modelForm.value[this.disabled_id_keys[i]])
+                    if (this.disabled_id_keys[i].includes("ID")){
+                        this.modelForm.get(this.disabled_id_keys[i]).disable();
+                    }
+                    else{
+                        if (this.modelForm.value[this.disabled_id_keys[i]]){
+                            this.modelForm.get(this.disabled_id_keys[i]).disable();
+                        }
+                    }
+                    
+                    
+                }
+
+
+
+
             }
         });
     };
@@ -183,42 +211,42 @@ export class FormComponent implements OnInit//, AfterViewInit
     formatLatitudeLabel(value: number) {
         //north hemisphera
         if (value > 0) {
-          var decimals = value - Math.floor(value);
-          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′N"
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′N"
         }
         //south hemisphera
         if (value < 0) {
-          var decimals = value - Math.floor(value);
-          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
         }
-    
+
         else {
-          return value;
+            return value;
         }
-    
-    
-      }
-      formatLabel(value: number) {
-    
+
+
+    }
+    formatLabel(value: number) {
+
         return value + 'm';
-      }
-      formatLongitudeLabel(value: number) {
+    }
+    formatLongitudeLabel(value: number) {
         //console.log(value)
         //east hemisphera
         if (value > 0) {
-          var decimals = value - Math.floor(value);
-          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′E"
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′E"
         }
         //west hemisphera
         if (value < 0) {
-          var decimals = value - Math.floor(value);
-          return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
         }
-    
+
         else {
-          return value;
+            return value;
         }
-      }
+    }
 
     onOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
         //this.show_spinner = true;
