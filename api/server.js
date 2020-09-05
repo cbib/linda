@@ -1502,6 +1502,10 @@ router.post('/check', function (req, res) {
         else if (model_type === 'event') {
             check = db._query(aql` FOR entry IN ${events} FILTER entry.${field} == ${value} RETURN entry`).toArray()
         }
+        // else if (model_type === 'biological_material') {
+        //     var new_field="Material source ID (Holding institute/stock centre, accession)"
+        //     check = db._query(aql` FOR entry IN ${biological_materials} FILTER ${value} IN entry.${field} RETURN entry`).toArray()
+        // }
         else {
             check = db._query(aql` FOR entry IN ${observation_units} FILTER entry.${field} == ${value} RETURN entry`).toArray()
 

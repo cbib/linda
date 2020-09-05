@@ -103,6 +103,7 @@ export class GlobalService {
             'value': value,
             'model_type': model_type
         };
+        console.log('field: ', field,' value: ', value)
         return this.http.post(`${this.APIUrl + "check"}`, obj2send).pipe(map(this.extractData));
     }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators,ValidatorFn, AbstractControl } from '@angular/forms';
 import { GlobalService, AlertService, OntologiesService } from '../services';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -48,6 +48,7 @@ export class MaterialFormComponent implements OnInit {
   levels = []
   cleaned_model: any = [];
   keys: any = [];
+  used_mat_ids=[]
 
 
   constructor(private fb: FormBuilder, public globalService: GlobalService,
@@ -81,6 +82,7 @@ export class MaterialFormComponent implements OnInit {
     this.generalTouchedRows = [];
     this.index_row = 0
     this.material_id = ""
+    this.used_mat_ids=[]
     this.materialTable = this.fb.group({
       materialRows: this.fb.array([]),
       biologicalMaterialRows: this.fb.array([]),
@@ -197,7 +199,41 @@ export class MaterialFormComponent implements OnInit {
       //this.modelForm.patchValue(this.model_to_edit);
     });
   }
+ 
+  isMaterialIDDuplicate(): ValidatorFn {
+    return (c: AbstractControl): { [key: string]: boolean } | null => {
+      // const userNames = this..get("credentials").value;
+      // console.log(userNames);
+      // const names = userNames.map(item=> item.username.trim());
+      const materialControl = this.materialTable.get('materialRows') as FormArray;
+      const names = materialControl.controls.map(item=> item.value['Material source ID (Holding institute/stock centre, accession)']);
+      //test if this material id is in the material ids list
+      console.log(names)
+      console.log(c.value)
+      //var hasDuplicate =false
+      // if (this.used_mat_ids.includes(c.value)){
+      //   hasDuplicate = true
+      // }
+      // else{
 
+      //   this.used_mat_ids.push(c.value)
+      // }
+      
+      
+      for (var j = 0; j < materialControl.controls.length; j++) {
+        console.log(materialControl.controls[j].get('Material source ID (Holding institute/stock centre, accession)').value)
+      
+      }
+      const hasDuplicate = names.some((name, index) => names.indexOf(name, index + 1) != -1);
+      
+      if (hasDuplicate) {
+        console.log(hasDuplicate);
+        return { duplicate: true };
+      }
+
+      return null;
+    }
+  } 
   initiateMaterialForm(mode:string="create", index:number=0): FormGroup {
     // console.log(this.cleaned_model)
     
@@ -216,6 +252,9 @@ export class MaterialFormComponent implements OnInit {
             //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
             //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
             attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+            //attributeFilters[attr["key"]] = [value,{validators: [Validators.required, Validators.minLength(4), this.isMaterialIDDuplicate()],asyncValidators: [UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])],updateOn: 'blur'}];
+            //attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4), this.isMaterialIDDuplicate()], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+
           }
           else if (attr["key"].includes("Short title")) {
             attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
@@ -230,7 +269,7 @@ export class MaterialFormComponent implements OnInit {
       }
     });
 
-    return this.fb.group(attributeFilters);
+    return this.fb.group(attributeFilters,{ updateOn: "blur" });
   }
 
   initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0,): FormGroup {

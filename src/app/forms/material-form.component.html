@@ -83,6 +83,7 @@
                             required</div>
                           <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is required -
                             already used !! </div>
+
                         </div>
                       </div>
                       <div *ngIf="field['key'].includes('date')">
@@ -190,6 +191,8 @@
                           length is required</div>
                         <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
                           required - already used !! </div>
+                        <div style="color :red" *ngIf="group.controls[field['key']].errors.duplicate">duplicate ID in table unique ID is required -
+                            already used !! </div>
                       </div>
                     </div>
 
