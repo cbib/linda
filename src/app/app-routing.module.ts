@@ -19,6 +19,8 @@ import { DonwloadedComponent } from './download/donwloaded.component';
 import { ReleasesComponent } from './documentation/releases.component';
 import { MaterialFormComponent } from './forms/material-form.component';
 import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
+import { MaterialForm2Component } from './forms/material-form2.component';
+import { MaterialForm3Component } from './forms/material-form3.component';
 
 
 
@@ -34,6 +36,8 @@ const routes: Routes = [
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},
+  { path: 'generic4',component: MaterialForm2Component},
+  { path: 'generic5',component: MaterialForm3Component},
   { path: 'generic3',component: ObservationUnitFormComponent},
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},

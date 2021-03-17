@@ -32,12 +32,13 @@ export class MaterialFormComponent implements OnInit {
 
 
   private startfilling: boolean = false;
-  ontology_type: string;
   show_spinner: boolean = false;
   index_row = 0
   material_id = ""
   selected_term: OntologyTerm
   selected_set: []
+    ontology_type: string;
+
   validated_term = {}
   marked = false;
   ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']

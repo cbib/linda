@@ -84,6 +84,8 @@ import { MaterialFormComponent } from './forms/material-form.component';
 import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
 import { SelectionDialogComponent } from './dialog/selection-dialog.component';
 import { SampleSelectionComponent } from './dialog/sample-selection.component';
+import { MaterialForm2Component } from './forms/material-form2.component';
+import { MaterialForm3Component } from './forms/material-form3.component';
 
 
 
@@ -130,7 +132,9 @@ import { SampleSelectionComponent } from './dialog/sample-selection.component';
     MaterialFormComponent,
     ObservationUnitFormComponent,
     SelectionDialogComponent,
-    SampleSelectionComponent
+    SampleSelectionComponent,
+    MaterialForm2Component,
+    MaterialForm3Component
     
     
 

@@ -128,8 +128,7 @@
           <th></th>
         </thead>
         <tbody>
-          <ng-container formArrayName="materialRows"
-            *ngFor="let group of getMaterialFormControls.controls ; let i=index">
+          <ng-container formArrayName="materialRows" *ngFor="let group of getMaterialFormControls.controls ; let i=index">
             <tr (click)="RowSelected(i)" [formGroupName]="i">
               <ng-container *ngFor="let field of cleaned_model ; let j=index">
                 <td class="text-center align-middle" *ngIf="model[field['key']].Level==2">

@@ -5,8 +5,7 @@
                 P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
                 </a>  
             <!--  notification start -->
-            <div class="nav notify-row" id="top_menu">
-               
+            <div class="nav notify-row" id="top_menu">               
                 <ul class="nav top-menu">
                   <!-- settings start -->
                   <li class="dropdown">
@@ -54,31 +53,24 @@
 
                 </ul>
                 <!--  notification end -->
-  
             </div>
 
             <!--  search start -->
             <div class="nav notify-row2">
-               
-                
                 <ul class="nav top-menu">
                     <li>
                         <!--<input type="search" placeholder="Search" aria-label="Search">-->
-                        
                         <input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)">
                         <button  type="submit" (click)="onSearch()">Search</button>
 <!--                        <input #box (keyup)="0">
                         <p>{{box.value}}</p>-->
-                    
                     </li>
                 </ul>
                 <!-- search end -->
-  
             </div>  
             
             <!--  login/logout start -->
             <div class="nav notify-row3" >
-               
                 <!--  login/logout start -->
                 <ul class="nav pull-right top-menu">
                         <li *ngIf="!currentUser" class="nav-item">
@@ -88,21 +80,17 @@
                                 <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
                             </li>
                     </ul>
-                <!-- login/logout end -->
-  
-            </div> 
-           
-<!--            <div class="top-menu">
-                    
-            </div>-->
-        <!--</snav>-->
+                <!-- login/logout end -->  
+            </div>      
+            <!--<div class="top-menu"></div>-->
+            <!--</snav>-->
     </header>
     
     <!--<div class="page-content d-flex align-items-stretch">--> 
       <aside>
       <div id="sidebar" class="nav-collapse ">
         <!--<nav class="side-navbar">-->
-<!--    <aside>
+      <!--<aside>
       <div id="sidebar" class="nav-collapse ">-->
             <!-- Sidebar Header-->
             <!-- Sidebar Navidation Menus-->
@@ -168,7 +156,6 @@
                           pLant experImeNtal metaDatA 
                       </i>
                         </h2>-->
-
             <section class="wrapper">
                 <div>
                     <alert></alert>
@@ -176,7 +163,16 @@
                       <!--<router-outlet></router-outlet>-->
                      <!-- <router-outlet (notify)="onNotify($event)"></router-outlet> -->
                      <router-outlet (activate)="onActivate($event)" #outlet></router-outlet>
+                     <!-- footer -->
+                    <footer class="footer">
+                      <div class="container">
+                      <div class="content has-text-centered">
+                        <p>
+                          Made with <3 by <a href="https://twitter.com/chrisoncode">Chris from Scotch</a>
+                        </p>
+                      </div>
+                      </div>
+                    </footer>
             </section>
-            
         </section>
   </section>

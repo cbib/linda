@@ -310,7 +310,7 @@ export class UserTreeComponent implements OnInit{
                         }
                         else{
                             if (model_type==="biological_material"){
-                                this.router.navigate(['/generic2'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
+                                this.router.navigate(['/generic5'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
                             }
                             else if (model_type==="observation_unit"){
                                 this.router.navigate(['/generic3'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
@@ -687,7 +687,7 @@ export class UserTreeComponent implements OnInit{
                  this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:parent_key,model_type:model_type,mode:"create"}});
             }
             else if (model_type==="biological_material"){
-                this.router.navigate(['/generic2'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});
+                this.router.navigate(['/generic5'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});
             }
             else if (model_type==="observation_unit"){
                 this.router.navigate(['/generic3'],{ queryParams: {level:"1", parent_id: parent_id, model_key:"",model_type:model_type,mode:"create"}});
