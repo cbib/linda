@@ -17,6 +17,7 @@ export class AdminComponent implements OnInit {
   constructor(private ngZone: NgZone) { }
 
   ngOnInit() {}
+  
   initializeVoiceRecognitionCallback(): void {
 		annyang.addCallback('error', (err) => {
       if(err.error === 'network'){
@@ -62,8 +63,9 @@ export class AdminComponent implements OnInit {
 
 		if (annyang) {
 			let commands = {
-				'demo-annyang': () => { }
-			};
+				'demo-annyang': () => { },
+        'hello-world' : () => { console.log("hello world")}
+			}
 
 			annyang.addCommands(commands);
 
