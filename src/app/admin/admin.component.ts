@@ -17,7 +17,7 @@ export class AdminComponent implements OnInit {
   constructor(private ngZone: NgZone) { }
 
   ngOnInit() {}
-  
+
   initializeVoiceRecognitionCallback(): void {
 		annyang.addCallback('error', (err) => {
       if(err.error === 'network'){
@@ -43,13 +43,13 @@ export class AdminComponent implements OnInit {
 
 		annyang.addCallback('result', (userSaid) => {
 			this.ngZone.run(() => this.voiceActiveSectionError = false);
-
+      console.log(userSaid[0])
 			let queryText: any = userSaid[0];
 
 			annyang.abort();
 
       this.voiceText = queryText;
-
+      console.log(queryText)
 			this.ngZone.run(() => this.voiceActiveSectionListening = false);
       this.ngZone.run(() => this.voiceActiveSectionSuccess = true);
 		});
@@ -62,16 +62,20 @@ export class AdminComponent implements OnInit {
     this.voiceText = undefined;
 
 		if (annyang) {
-			let commands = {
-				'demo-annyang': () => { },
-        'hello-world' : () => { console.log("hello world")}
-			}
+      console.log(this.voiceText)
+//			let commands = {
+//				'demo-annyang': () => { },
+//        'hello-world' : () => { console.log("hello world")}
+//			}
 
+      const commands = {
+        'hello': () => { alert('Hello world!'); }
+      };
 			annyang.addCommands(commands);
 
       this.initializeVoiceRecognitionCallback();
 
-			annyang.start({ autoRestart: false });
+			annyang.start({ autoRestart: false});
 		}
 	}
 
@@ -80,6 +84,7 @@ export class AdminComponent implements OnInit {
 		this.voiceActiveSectionError = false;
 		this.voiceActiveSectionSuccess = false;
 		this.voiceActiveSectionListening = false;
+    
 		this.voiceText = undefined;
 
 		if(annyang){
