@@ -26,7 +26,7 @@
     "angular-datatables": "^8.1.0",
     "bootstrap": "^3.4.1",
     "core-js": "^3.6.5",
-    "datatables.net": "^1.10.21",
+    "datatables.net": "^1.10.22",
     "datatables.net-dt": "^1.10.21",
     "file-saver": "^2.0.2",
     "flex-layout": "^1.0.1",
