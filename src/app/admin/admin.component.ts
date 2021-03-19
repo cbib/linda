@@ -43,7 +43,7 @@ export class AdminComponent implements OnInit {
 
 		annyang.addCallback('result', (userSaid) => {
 			this.ngZone.run(() => this.voiceActiveSectionError = false);
-      console.log(userSaid[0])
+      alert("I think the user said: " + userSaid[0] + "<br> But then again, it could be any of the following: " + userSaid);
 			let queryText: any = userSaid[0];
 
 			annyang.abort();
@@ -70,12 +70,13 @@ export class AdminComponent implements OnInit {
 
       const commands = {
         'hello': () => { alert('Hello world!'); }
+
       };
 			annyang.addCommands(commands);
 
       this.initializeVoiceRecognitionCallback();
 
-			annyang.start({ autoRestart: false});
+			annyang.start({ autoRestart: false, continuous: false });
 		}
 	}
 

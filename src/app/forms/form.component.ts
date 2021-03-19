@@ -28,7 +28,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     private startfilling: boolean = false;
     ontology_type: string;
     show_spinner: boolean = false;
-
+    Checked = false
     selected_term: OntologyTerm
     selected_set: []
     validated_term = {}

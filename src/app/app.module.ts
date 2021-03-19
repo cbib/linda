@@ -86,6 +86,7 @@ import { SelectionDialogComponent } from './dialog/selection-dialog.component';
 import { SampleSelectionComponent } from './dialog/sample-selection.component';
 import { MaterialForm2Component } from './forms/material-form2.component';
 import { MaterialForm3Component } from './forms/material-form3.component';
+import { DataExplorationComponent } from './documentation/data-exploration.component';
 
 
 
@@ -134,7 +135,8 @@ import { MaterialForm3Component } from './forms/material-form3.component';
     SelectionDialogComponent,
     SampleSelectionComponent,
     MaterialForm2Component,
-    MaterialForm3Component
+    MaterialForm3Component,
+    DataExplorationComponent
     
     
 

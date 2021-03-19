@@ -21,6 +21,7 @@ import { MaterialFormComponent } from './forms/material-form.component';
 import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
 import { MaterialForm2Component } from './forms/material-form2.component';
 import { MaterialForm3Component } from './forms/material-form3.component';
+import { DataExplorationComponent } from './documentation/data-exploration.component';
 
 
 
@@ -42,6 +43,7 @@ const routes: Routes = [
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
+  { path: 'data_exploration',component: DataExplorationComponent, canActivate: [AuthGuard]},
   { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
   //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
   { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}

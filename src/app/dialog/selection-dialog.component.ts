@@ -46,7 +46,7 @@ export class SelectionDialogComponent implements OnInit {
 
   private model_id: string;
   private result: []
-  private model_type: string;
+  model_type: string;
   private parent_id: string;
   observation_id: string = ""
   ready_to_show: boolean = false

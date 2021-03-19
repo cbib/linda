@@ -8,7 +8,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 
 @Component({templateUrl: 'home.component.html'})
 export class HomeComponent implements OnInit {
-    private ads: AdItem[];
+    ads: AdItem[];
 
     currentUser: User;
 
@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
     }
     
     start_linda(){
+        
          this.router.navigate(['/tree']);
 
     }

@@ -24,7 +24,7 @@ export class TemplateSelectionDialogComponent implements OnInit {
     private result:[]
     private model_type: string;
     private parent_id: string;
-    private search_type:string
+    search_type:string
 
     constructor(private globalService : GlobalService,public dialogRef: MatDialogRef<TemplateSelectionDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData) 

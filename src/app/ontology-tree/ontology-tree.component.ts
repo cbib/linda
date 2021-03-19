@@ -69,7 +69,7 @@ export class OntologyTreeComponent {
     private active_node: OntologyTerm;
     private context_term: OntologyTerm[];
     private search_string: string;
-    private active_list: boolean = false;
+    active_list: boolean = false;
     matSpinner: MatProgressSpinner;
     ontology_tree_loading_progress_value = 0;
 

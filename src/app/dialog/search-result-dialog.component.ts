@@ -18,8 +18,8 @@ export class SearchResultDialogComponent implements OnInit {
 
     private model_id: string;
     private parent_id: string;
-    private result:[]
-    private search_type:string
+    private result:[];
+    search_type:string;
     private isSelected:boolean
 
     constructor(public dialogRef: MatDialogRef<SearchResultDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) 

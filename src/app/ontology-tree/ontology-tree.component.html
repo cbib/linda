@@ -3,7 +3,7 @@
             <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
         </h3>
     </div>
-<h1 mat-dialog-title>Please select a term in {{data.ontology_type}} Ontology</h1>
+<h1 mat-dialog-title>Please select a term in {{data['ontology_type']}} Ontology</h1>
 <input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)">
 <button type="submit" (click)="onSearch()">Search</button>
 <!-- <mat-spinner mode="determinate" value="{{ontologytree.fill_percentage}}"></mat-spinner> -->

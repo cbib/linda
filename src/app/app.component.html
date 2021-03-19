@@ -127,7 +127,9 @@
                     <li class="nav-item">
                        <a class="nav-link"  [routerLink]="['/miappe']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>MIAPPE description</a>
                     </li>
-                    <li class="nav-item"><a>Data exploration</a></li>
+                    <li class="nav-item">
+                      <a class="nav-link"  [routerLink]="['/data_exploration']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Data exploration</a>
+                    </li>
                     <li class="nav-item"><a>Differential expression analysis</a></li>
                   </ul>
                 </li>
@@ -164,15 +166,16 @@
                      <!-- <router-outlet (notify)="onNotify($event)"></router-outlet> -->
                      <router-outlet (activate)="onActivate($event)" #outlet></router-outlet>
                      <!-- footer -->
-                    <footer class="footer">
-                      <div class="container">
-                      <div class="content has-text-centered">
-                        <p>
-                          Made with by <a href="https://www.cbib.u-bordeaux.fr/en">CBiB</a>
-                        </p>
-                      </div>
-                      </div>
-                    </footer>
+                    
             </section>
+            <footer class="footer">
+              <div class="container">
+              <div class="content has-text-centered">
+                <p>
+                  Made with by <a href="https://www.cbib.u-bordeaux.fr/en">CBiB</a>
+                </p>
+              </div>
+              </div>
+            </footer>
         </section>
   </section>

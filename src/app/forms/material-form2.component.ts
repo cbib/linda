@@ -47,7 +47,7 @@ export class MaterialForm2Component implements OnInit {
   @Input() model_key: string;
   @Input() model_type: string;
   @Input() mode: string;
-
+  Checked =false
   materialTable2: FormGroup;
   MaterialDataSource: MatTableDataSource<Material>;
   //MaterialSourceDataSource: MatTableDataSource<MaterialSource2>;

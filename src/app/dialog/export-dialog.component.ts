@@ -16,11 +16,11 @@ export class ExportDialogComponent implements OnInit {
 //    @ViewChild('file') file
 //    public files: Set<File> = new Set()
     public file_format = []
-    private is_investigation:boolean;
+    is_investigation:boolean;
     public selected_format = {'.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
     private recursive_check:boolean =false
     private is_checked:boolean=false
-    private is_expandable_node:boolean=false;
+    is_expandable_node:boolean=false;
     constructor(private fileService: FileService,
                 private globalService: GlobalService,
                 private alertService: AlertService,

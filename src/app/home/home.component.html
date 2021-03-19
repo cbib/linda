@@ -5,25 +5,61 @@
             </h3>
     </div>
     
-    <mat-grid-list cols="1" rowHeight="250px" colspan="2">
+    <mat-grid-list cols="1" rowHeight="600px" colspan="1">
         <mat-grid-tile>
-            <mat-card style="height: 200px">
-            <mat-card-header>
-                <mat-card-title><a href="index.html" class="logo">Project description</a></mat-card-title>
-            </mat-card-header>    
-              <mat-card-content>                  
-            In order to allow biologists to store and store the environmental metadata associated with plant phenotyping experiments and to facilitate a standardized exchange of information, the LINDA Web interface allows the user to insert his metadata according to the MIAPPE model and related ontologies (Plant ontology, XEO, ENVo, etc.).
-                Exporting to the ISA-tab format will allow subsequent interconnection with the FAIRDOM suite so that all metadata can be linked to existing experiments.
-                The ontologies present in the MIAPPE model are integrated in order to describe the metadata associated with the experiment.
+            <mat-card style="height: 600px">
+                <mat-card-header>
+                    <mat-card-title>
+                        <a href="index.html" class="logo">Project description</a>
+                    </mat-card-title>
+                </mat-card-header>    
+                <mat-card-content xi18n="home first paragraph|An introduction header for Linda">                  
+                    <p>In order to allow biologists to capture and store the environmental metadata associated with plant phenotyping experiments and to facilitate a standardized exchange of information, the LINDA Web interface allows the user to insert his metadata according to the MIAPPE model and related ontologies (Plant ontology, XEO, ENVo, etc.).
+                    Exporting to the ISA-tab format will allow subsequent interconnection with the FAIRDOM suite so that all metadata can be linked to existing experiments.
+                    The ontologies present in the MIAPPE model are integrated in order to describe the metadata associated with the experiment.</p>
+                    <ul>
+                        <li>
+                            Preserve and store environmental metadata associated with phenotyping experiments on plants
+                        </li>
+                        <li>
+                            Facilitate a standardized exchange of information
+                        </li>
+                        <li>
+                            Insert in a guided way its metadata respecting the MIAPPE model (https://www.miappe.org/) and the associated ontologies (Plantontology, XEO, ENVo, etc.).
+                        </li>   
+                    </ul>
+                    <h4>1 - DESIGN YOUR EXPERIMENT IN A VERY SIMPLE WAY</h4>
+                    <ul style="list-style-type:square;">
+                        <li>Duration, start and end date</li>
+                        <li>Biological Material and material source</li>
+                        <li>Experimental factor and observed variable</li>
+                        <li>Describes observation unit and climatic events</li>
+                        <li>And many more …</li>
+                    </ul>
+                <h4>1 - INTEGRATE METADATA</h4>
+                    <ul style="list-style-type:square;">
+                        <li>Duration, start and end date</li>
+                        <li>Biological Material and material source</li>
+                        <li>Experimental factor and observed variable</li>
+                        <li>Describes observation unit and climatic events</li>
+                        <li>And many more …</li>
+                    </ul>
+                    <h4>1 - SAVE YOUR WHOLE INVESTIGATION IN LINDA Database</h4>
+                    <ul style="list-style-type:square;">
+                        <li>Duration, start and end date</li>
+                        <li>Biological Material and material source</li>
+                        <li>Experimental factor and observed variable</li>
+                        <li>Describes observation unit and climatic events</li>
+                        <li>And many more …</li>
+                    </ul>
+                    
                 </mat-card-content>          
             </mat-card>
         </mat-grid-tile>
-        
     </mat-grid-list>
     <mat-grid-list cols="2" rowHeight="250px" colspan="2">
         <mat-grid-tile>
             <mat-card style="height: 200px">
-        
                 <mat-card-header>
                 <!--<div mat-card-avatar class="example-header-image"></div>-->
                 <mat-card-title><a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a></mat-card-title>
@@ -70,10 +106,12 @@
         <mat-grid-tile >
             <mat-card style="height: 200px">
                 <mat-card-header>
-                    <mat-card-title><a href="index.html" class="logo">Start experiment Linda</a></mat-card-title>
+                    <mat-card-title><a href="index.html" class="logo">LINDA FUTURES IMPROVEMENTS</a></mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                First you need to describe an investigation using formular at your disposition. Only Id field are mandatory when you first register your investigation
+                The final objective of LINDA is to correlate together data and metadata from upstream and downstream analyses. PLATO service designed to 
+                capture and store experimental data from metabolite, enzyme profiling. By aggregating data from downstream metabolomics assays with 
+                upstream experimental/environmental data/metadata will significantly improve phenotypes and metabolism mechanisms more easily 
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-button class="btn-info" (click)="start_linda()">START</button>

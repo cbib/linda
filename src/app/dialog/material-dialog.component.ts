@@ -13,6 +13,8 @@ interface DialogData {
 })
 export class MaterialDialogComponent implements OnInit {
   private material_data:[];
+  file_format;
+  is_expandable_node
   constructor(private alertService: AlertService,
     public dialogRef: MatDialogRef<MaterialDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) { 

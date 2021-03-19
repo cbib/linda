@@ -90,11 +90,11 @@ export class SampleSelectionComponent implements OnInit {
   //displayedMaterialColumns: string[] = ['Biological material ID', 'Material source ID (Holding institute/stock centre, accession)', 'Genus', 'Species', 'Database id', 'select'];
   displayedSampleColumns: string[] = ['sampleID', 'plantAnatomicalEntity', 'plantStructureDevelopmentStage', 'sampleDescription', 'externalID', 'collectionDate'];
   private sampledataSource = new MatTableDataSource(SAMPLE_ELEMENT_DATA);
-  private materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
+  materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatTable, { static: false }) table: MatTable<BiologicalMaterial>
   private initialSelection = []
-  private selection = new SelectionModel<BiologicalMaterial>(true, this.initialSelection /* multiple */);
+  selection = new SelectionModel<BiologicalMaterial>(true, this.initialSelection /* multiple */);
 
   constructor(
     private fb: FormBuilder,

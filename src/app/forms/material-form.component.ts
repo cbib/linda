@@ -30,7 +30,7 @@ export class MaterialFormComponent implements OnInit {
   biologicalMaterialTouchedRows: any;
   generalTouchedRows: any;
 
-
+  Checked= false
   private startfilling: boolean = false;
   show_spinner: boolean = false;
   index_row = 0
