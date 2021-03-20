@@ -87,6 +87,7 @@ import { SampleSelectionComponent } from './dialog/sample-selection.component';
 import { MaterialForm2Component } from './forms/material-form2.component';
 import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
+import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 
 
 
@@ -136,7 +137,8 @@ import { DataExplorationComponent } from './documentation/data-exploration.compo
     SampleSelectionComponent,
     MaterialForm2Component,
     MaterialForm3Component,
-    DataExplorationComponent
+    DataExplorationComponent,
+    InvestigationComponent
     
     
 

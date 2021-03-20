@@ -1,91 +1,83 @@
-<section id="container">
-    <header class="header black-bg">
-               <a class="logo"  href="#">
-                <b style="color:#4ECDC4">{{ title }} </b>
-                P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
-                </a>  
-            <!--  notification start -->
-            <div class="nav notify-row" id="top_menu">               
-                <ul class="nav top-menu">
-                  <!-- settings start -->
-                  <li class="dropdown">
-                    <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
-                      <i class="fa fa-tasks"></i>
-                      <span class="badge bg-theme">{{stats_advanced['investigations'].length+stats_advanced['studies'].length}}</span>
-                      </a>
-                    <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
-                      <div class="notify-arrow notify-arrow-green"></div>
-                      <li>
-                        <p class="green">You have {{stats_advanced['investigations'].length}} pending investigations tasks</p>
-                      </li>
-                      
-                      <li *ngFor="let obj of stats_advanced['investigations'] ; index as j;" >
-                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
-                          <div class="task-info">
-                            <div class="desc">{{obj['id']}}</div>
-                            <div class="percent">{{obj['percent_fill']}}%</div>
-                          </div>
-                          <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
-                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                      <li>
-                        <p class="green">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
-                      </li>
-                      <li *ngFor="let obj of stats_advanced['studies'] ; index as j;" >
-                        <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
-                          <div class="task-info">
-                            <div class="desc">{{obj['id']}}</div>
-                            <div class="percent">{{obj['percent_fill']}}%</div>
-                          </div>
-                          <div class="progress progress-striped">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
-                              <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
-                            </div>
-                          </div>
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
 
-                </ul>
-                <!--  notification end -->
-            </div>
+  <!--<header class="header black-bg"> -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      
+      <a class="logo navbar-brand"  href="#">
+        <b style="color:#4ECDC4">{{ title }} </b>
+        P<span><b>L</b></span>ant exper<span><b>I</b></span>me<span><b>N</b></span>tal meta<span><b>D</b></span>at<span><b>A</b></span>
+        </a>  
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <!--  search start -->
-            <div class="nav notify-row2">
-                <ul class="nav top-menu">
-                    <li>
-                        <!--<input type="search" placeholder="Search" aria-label="Search">-->
-                        <input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)">
-                        <button  type="submit" (click)="onSearch()">Search</button>
-<!--                        <input #box (keyup)="0">
-                        <p>{{box.value}}</p>-->
-                    </li>
-                </ul>
-                <!-- search end -->
-            </div>  
-            
-            <!--  login/logout start -->
-            <div class="nav notify-row3" >
-                <!--  login/logout start -->
-                <ul class="nav pull-right top-menu">
-                        <li *ngIf="!currentUser" class="nav-item">
-                                <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login</a>
-                            </li>
-                            <li *ngIf="currentUser" class="nav-item">
-                                <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                            </li>
-                    </ul>
-                <!-- login/logout end -->  
-            </div>      
-            <!--<div class="top-menu"></div>-->
-            <!--</snav>-->
-    </header>
-    
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <!--<li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">PLATO</a>
+          </li>-->
+          <li *ngIf="!currentUser" class="nav-item">
+            <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login<span class="sr-only">(current)</span></a>
+          </li>
+          <li *ngIf="currentUser" class="nav-item">
+            <a class="nav-link" [routerLink]="['/login']"><i class="fas fa-sign-out-alt"></i> Logout<span class="sr-only">(current)</span></a>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a data-toggle="dropdown" class="nav-link dropdown-toggle" href="index.html#">
+
+              <!--<i class="fa fa-tasks"></i>-->
+              Tasks
+              <span class="badge bg-theme">{{stats_advanced['investigations'].length+stats_advanced['studies'].length}}</span>
+              </a>
+            <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green">You have {{stats_advanced['investigations'].length}} pending investigations tasks</p>
+              </li>
+              
+              <li *ngFor="let obj of stats_advanced['investigations'] ; index as j;" >
+                <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
+                  <div class="task-info">
+                    <div class="desc">{{obj['id']}}</div>
+                    <div class="percent">{{obj['percent_fill']}}%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                      <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <p class="green">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
+              </li>
+              <li *ngFor="let obj of stats_advanced['studies'] ; index as j;" >
+                <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">
+                  <div class="task-info">
+                    <div class="desc">{{obj['id']}}</div>
+                    <div class="percent">{{obj['percent_fill']}}%</div>
+                  </div>
+                  <div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="obj['percent_fill']" aria-valuemin="0" aria-valuemax="100" [ngStyle]="set_percent_style(obj['percent_fill'])" >
+                      <span class="sr-only">{{obj['percent_fill']}}% Complete (success)</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" (keyup)="searchStart($event)" >
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="onSearch()">Search</button>
+        </form>
+      </div>
+    </nav>
+    <!--</header>-->
+
     <!--<div class="page-content d-flex align-items-stretch">--> 
       <aside>
       <div id="sidebar" class="nav-collapse ">
@@ -97,47 +89,75 @@
             <span class="heading">Main</span>
             <ul class="sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                       <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
+                  <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
                 </li>
 
+                <li class="nav-item">
+                  <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
+                </li>
+
+                <!--<li class="nav-item">
+                  <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
+                </li>-->
                 
-
-                <li class="nav-item">
-                        <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
-                    </li>
                 <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
-                        <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
-                    </li>          
-                <li><a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
+                  <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
+                </li>          
+               <!--<li>
+                  <a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
                   <ul id="AnalysisdropdownDropdown" class="collapse list-unstyled ">
-                    
-                    <li class="nav-item"><a>Data exploration</a></li>
-   
+                    <li class="nav-item">
+                      <a>Data exploration</a>
+                    </li>
                   </ul>
-                </li>
+                </li>-->
                 
-                <li><a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Documentation </a>
-                  <ul id="documentationdropdownDropdown" class="collapse list-unstyled ">
+                <li>
+                  <a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Documentation </a>
+                  <ul id="documentationdropdownDropdown" class="collapse show list-unstyled ">
+                    <li>
+                      <a href="#documentationdropdownDropdown2" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-leaf"></i>MIAPPE components</a>
+                      <ul id="documentationdropdownDropdown2" class="collapse list-unstyled ">
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link">Investigation</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Study</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Observations</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Biological Material</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Event</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Observed variable</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link">Factor</a>
+                        </li>
+                      </ul>
+                    </li>
                     <li class="nav-item">
                        <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Ontologies description</a>
                     </li>
                     <li class="nav-item">
-                       <a class="nav-link"  [routerLink]="['/miappe']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>MIAPPE description</a>
-                    </li>
-                    <li class="nav-item">
                       <a class="nav-link"  [routerLink]="['/data_exploration']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Data exploration</a>
                     </li>
-                    <li class="nav-item"><a>Differential expression analysis</a></li>
+                    <!--<li class="nav-item">
+                      <a>Differential expression analysis</a>
+                    </li>-->
                   </ul>
                 </li>
-             </ul><span class="heading">Extras</span>
+             </ul>
+             <span class="heading">Extras</span>
              <ul class="sidebar-menu">
-                <li> 
+                <!--<li> 
                   <a class="nav-link" [routerLink]="['/publications']" routerLinkActive="active-link"><i class="icon-picture"></i>Publications</a>
-                </li>
+                </li>-->
                 <li> 
                     <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i>FAQ</a>
                 </li>
@@ -148,10 +168,9 @@
                 <a class="nav-link" [routerLink]="['/releases']" routerLinkActive="active-link"><i class="icon-picture"></i>Releases</a>
               </li>
              </ul>
-        </div>
-        
+        </div>       
     </aside>
-        <section id="main-content">
+    <section id="main-content">
 <!--            <h2  style="font-size: 20pt; background-color: white; color: #006666" href="#">
                       LINDA
                       <i style="font-size: 20pt"> 
@@ -168,14 +187,65 @@
                      <!-- footer -->
                     
             </section>
-            <footer class="footer">
-              <div class="container">
-              <div class="content has-text-centered">
-                <p>
-                  Made with by <a href="https://www.cbib.u-bordeaux.fr/en">CBiB</a>
-                </p>
+        <!--<footer class="footer">
+              <p>
+                Made with by <a href="https://www.cbib.u-bordeaux.fr/en">CBiB</a>
+              </p>
+          </footer>  -->
+          <section id="footer">
+            <div class="container">
+              <div class="row text-center text-xs-center text-sm-left text-md-left">
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                  <h5>Quick links</h5>
+                  <ul class="list-unstyled quick-links">
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Home</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>About</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Videos</a></li>
+                  </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                  <h5>Partners</h5>
+                  <ul class="list-unstyled quick-links">
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>CBib University of bordeaux</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>INNRAE BFP</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Videos</a></li>
+                  </ul>
+                </div>
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                  <h5>Quick links</h5>
+                  <ul class="list-unstyled quick-links">
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Home</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>About</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
+                    <li><a href="https://wwwe.sunlimetech.com" title="Design and developed by"><i class="fa fa-angle-double-right"></i>Imprint</a></li>
+                  </ul>
+                </div>
               </div>
-              </div>
-            </footer>
-        </section>
-  </section>
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
+                  <ul class="list-unstyled list-inline social text-center">
+                    <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-facebook"></i></a></li>
+                    <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-twitter"></i></a></li>
+                    <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-instagram"></i></a></li>
+                    <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-google-plus"></i></a></li>
+                    <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02" target="_blank"><i class="fa fa-envelope"></i></a></li>
+                  </ul>
+                </div>
+                <hr>
+              </div>	
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
+                  <p><u><a href="https://www.nationaltransaction.com/">National Transaction Corporation</a></u> is a Registered MSP/ISO of Elavon, Inc. Georgia [a wholly owned subsidiary of U.S. Bancorp, Minneapolis, MN]</p>
+                  <p class="h6">© All right Reversed.<a class="text-green ml-2" href="https://www.sunlimetech.com" target="_blank">Sunlimetech</a></p>
+                </div>
+                <hr>
+              </div>	
+            </div>
+          </section>  
+    </section>
+    

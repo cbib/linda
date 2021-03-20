@@ -4,33 +4,48 @@
                 <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>dat<span>A</span></b></a>
             </h3>
     </div>
-<p>
-  Linda uses the MIAPPE model to structure the information. The figure below represents the MIAPPE diagram with each of the elements composing it.
-  <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
-  
-  
-  Each component of the MIAPPE model contains several fields helping to describe your whole investigation
+    <p>
+      Linda uses the MIAPPE model to structure the information. The figure below represents the MIAPPE diagram with each of the elements composing it. Each component of the MIAPPE model contains several fields helping to describe your whole investigation
+    </p>
+    <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
 
-  <h2>Investigation</h2>
+    <h2>Investigation</h2>
   <p>Investigations are research programmes with defined aims.They can exist at various scales (for example, they could encompass a grant-funded programme of work, the various components comprising a peer-reviewed publication, or a single experiment).			1 per MIAPPE submission</p>
 
-
-Investigation unique ID	
-  Identifier comprising the unique name of the institution/database hosting the submission of the investigation data, and the accession number of the investigation in that institution.	EBI:12345678	Unique identifier	0-1
-Investigation title	
+  <mat-card>
+  <h3>Investigation unique ID	</h3>
+  Identifier comprising the unique name of the institution/database hosting the submission of the investigation data, and the accession number of the investigation in that institution.	
+    <ul>
+      <li>ex: EBI:12345678</li>
+      <li>type: Unique identifier	</li>
+      <li>cardinality: 0-1</li>
+    </ul>
+  </mat-card>
+  <mat-card>
+  <h3>Investigation title	</h3>
   Human-readable string summarising the investigation.	Adaptation of Maize to Temperate Climates: Mid-Density Genome-Wide Association Genetics and Diversity Patterns Reveal Key Genomic Regions, with a Major Contribution of the Vgt2 (ZCN8) Locus.	Free text (short)	1
-Investigation description	
+</mat-card>
+<mat-card>
+  <h3>Investigation description	</h3>
   Human-readable text describing the investigation in more detail.	The migration of maize from tropical to temperate climates was accompanied by a dramatic evolution in flowering time. To gain insight into the genetic architecture of this adaptive trait, we conducted a 50K SNP-based genome-wide association and diversity investigation on a panel of tropical and temperate American and European representatives.	Free text	0-1
-Submission date	
+</mat-card>
+<mat-card>
+  <h3>Submission date	</h3>
   Date of submission of the dataset presently being described to a host repository.	2012-12-17	Date/Time (ISO 8601, optional time zone)	0-1
-Public release date	
+</mat-card>
+<mat-card>
+  <h3>Public release date	</h3>
   Date of first public release of the dataset presently being described.	2013-02-25	Date/Time (ISO 8601, optional time zone)	0-1
-License	
+</mat-card>
+  <h3>License	</h3>
   License for the reuse of the data associated with this investigation. The Creative Commons licenses cover most use cases and are recommended.	CC BY-SA 4.0, Unreported	Unique identifier	0-1
-MIAPPE version	
+  <mat-card>
+  <h3>MIAPPE version	</h3>
   The version of MIAPPE used.	1.1	Version number	1
-Associated publication	
+</mat-card>
+<mat-card>
+  <h3>Associated publication	</h3>
   An identifier for a literature publication where the investigation is described. Use of DOIs is recommended.	doi:10.1371/journal.pone.0071377	DOI	0
-
+</mat-card>
 
 </div>

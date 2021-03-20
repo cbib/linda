@@ -22,6 +22,7 @@ import { ObservationUnitFormComponent } from './forms/observation-unit-form.comp
 import { MaterialForm2Component } from './forms/material-form2.component';
 import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
+import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 
 
 
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
   { path: 'downloaded',component: DonwloadedComponent,canActivate: [AuthGuard]},
   { path: 'home',component: HomeComponent},
+  { path: 'investigation',component: InvestigationComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},
