@@ -124,7 +124,7 @@ export class OntologyTreeComponent {
             this.ontology = data;
             this.ontologyNode = []
             this.search_string = ""
-            var ontologies_list = ["EnvO", "EO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "CO_322 (Maize)", "CO_325", "CO_331", "Solanacae"]
+            var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "CO_322 (Maize)", "CO_325", "CO_331", "Solanacae"]
             console.log(this.ontology_id)
             console.log(this.ontology)
             if (this.ontology_id === "XEO") {
