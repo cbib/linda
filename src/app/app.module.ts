@@ -90,6 +90,7 @@ import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
 import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 import { ProjectExampleComponent } from './documentation/project-example.component';
+import { StudyComponent } from './documentation/miappe_components/study.component';
 
 
 
@@ -141,8 +142,8 @@ import { ProjectExampleComponent } from './documentation/project-example.compone
     MaterialForm3Component,
     DataExplorationComponent,
     InvestigationComponent,
-    ProjectExampleComponent
-    
+    ProjectExampleComponent,
+    StudyComponent    
     
 
     

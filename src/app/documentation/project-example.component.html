@@ -17,10 +17,33 @@
             Dans un second temps, nous décrirons les métadonnées associées à l'expérience et la saisied de ces métadonnées. 
             La culture se déroulera du  15 Mars au 15 aout 2021. Au total, 5 points d'observation seront établis, un par mois (15 Avril, 15 Mai, 15 Juin, 15 juillet et 15 août). 
             
-            Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). 
+            Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. 
+            
+            Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). 
         </p>
-    <h4>Experimental design</h4>
-        <img src="assets/images/experimental_design.png" class="img-responsive" style="width:75%" alt="Image">
+        <h4>Matériel biologique</h4>
+        <p> 
+            Au total, 72 plantes seront cultivées, 9 par condition (parcelle). la taille du terrain est 10 m sur 5 m. Chaque parcelle mesure 1,80 m sur 1,80 m.
+        </p>
+        <h4>Design expérimental</h4>
+            <img src="assets/images/experimental_design.png" class="img-responsive" style="width:75%" alt="Image">
+
+            <img src="assets/images/parcelle.png" class="img-responsive" style="width:75%" alt="Image">
+        <h4>Protocole de croissance</h4>
+        <p>
+            Les plantes sont traités avec différents taux d'azote. un taux faible (2%) et un taux élevé (10%)
+        </p>
+
+        <h4>Facteurs expérimentaux</h4>
+        <p>
+            Les plantes sont cultivés sous différentes conditions et traitement. 
+            Ces facteurs expérimentaux seront décrits à l'aide du formulaire correspondant. <a class="nav-link"  [routerLink]="['/investigation']">factor</a>
+            
+            
+        </p>
+    
+    
+    
     <h4>Add investigation</h4> 
     <p>
         Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions
@@ -67,7 +90,9 @@
     <h4>Add STUDY</h4> 
     <p>
         L'investigation est le niveau le plus haut de la hiérarchie MIAPPE et peut contenir différentes études en son sein. 
-        Dans notre cas, nous allons créer une seule étude. Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Invvestigation</a>. 
+        Dans notre cas, nous allons créer une seule étude que nous nommerons tomato1_study1. 
+        
+        Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/investigation']">Invvestigation</a>. 
         Certains champs sont obligatoires comme l'identifiant de l'étude qui se doit d'être unique. 
     </p>
 </mat-card>
