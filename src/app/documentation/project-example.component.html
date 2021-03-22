@@ -7,49 +7,63 @@
     </nav>
 </div>
 <mat-card>
-    <h3>Project example ?</h3>
+    <h3>Project example </h3>
         <p>
-            dans ce projet nous allons étudier une espèce de tomate L’Ida Gold cultivé en plein air dans des pârcelles situé sur le site de L'INRA BFP. 
-            Dans un premier temps nous allons décrire l'ensemble du  design expérimental puis nous décirrions les métadonnées associés à l'expèrience. 
-            La culture se déroulera du  15 Mars au 15 aout 2021. 5 points d'observation sont établis, un par mois (15 Avril, 15 Mai, 15 Juin 15 juillet et 15 aout). 
-            Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. Plusiers facxcteurs expérimentaux seront pris en compte, le taux d'humidité des sols, la présence d'engrais dans le mileiu  de ciulture, lm'ensolleilemrnt  sur la parcelle (éclairé/ à l'ombre)
-            les mesurer. 
+            Dans ce projet, nous allons étudier une espèce de tomate (Ida Gold) cultivé en plein air dans des parcelles situé sur le site de L'INRA BFP. 
+            Dans un premier temps nous allons décrire l'ensemble du  design expérimental, puis nous décrirons les métadonnées associés à l'expérience. 
+            La culture se déroulera du  15 Mars au 15 aout 2021. 5 points d'observation sont établis, un par mois (15 Avril, 15 Mai, 15 Juin 15 juillet et 15 août). 
+            Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). 
         </p>
-    <h4>At the very beginning.... </h4> 
-        <p>
-            Lorsque vous vous connectez pour la première fois sur Linda, aucune investigation n'apparait dans l'arbre des investigations (lien vers projects tab)
-        </p>
-    <a><img src="assets/images/empty_tree.png" style="width:1200px;height:100px;" ></a>
+        <img src="assets/images/experimental_design.png" class="img-responsive" style="width:75%" alt="Image">
+    <h4>Add investigation</h4> 
     
-    
-    <h4>Create your first investigation </h4> 
-    <p>Pour créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions</p>
+    <p>Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions</p>
     <a><img src="assets/images/select_investigation.png" style="width:1200px;" ></a>
 
     <p>Trois choix  s'offrent à l'utilisateur </p>
     <ul>
         <li>
-    <h4>Add investigation from original model template</h4>
+            Add investigation from original model template
+            <p>
+                Le formulaire modèle MIAPPE pour une investigation . 
+                La description des champs pour chaque structure du modèle MIAPPE peut être trouvé <a href="#">ici</a> 
+            </p>
+        </li>
+        <li>
+            Add investigation from saved template
+            <p>
+                L'utilisateur peut sauvegarder un modèle pré-rempli en cochant l'option save template au moment de valider le formulaire.
+                Ces modèles préremplis peuvent ensuite être réutilisés autant dde fois que besoin. Il est cependnt rare de ccréer deux fois la même investigation 
+                mais cela peut s'avérer utile pour rejouer des études types/ modèles dans dautres investigations
+            </p>
+        </li>
+        <li>
+            Add investigation from zip files
+            <p>
+                L'utilisateur peut sauvegarder l'ensemble d'une investigation avec tous les éléments la composant sous forme de dossieer compressé au fromat zip.
+                Par  conséquent l'utilisateur peut également charger l'ensemble d'une investigation sous forme de fichiers .zip.
+            </p>
+        </li>
+    </ul>
     <p>
-        Le formulaire modèle MIAPPE pour une investigation . 
-        La description des champs pour chaque structure du modèle MIAPPE peut être trouvé <a href="#">ici</a> 
+        À ce stade, nous choisissons de démarrer à partir du template vide car nous avons enregistré aucun modèle.
+        il y a 8 champ à remplir pour décrire son investigation. Les deux premier sont obligatoires et doivent être uniques.
     </p>
-    </li>
-    <li>
-    <h4>Add investigation from saved template</h4>
+    <a><img src="assets/images/investigation_type.png" style="width:1200px;" ></a>
     <p>
-        L'utilisateur peut sauvegarder un modèle pré-rempli en cochant l'option save template au moment de valider le formulaire.
-        Ces modèles préremplis peuvent ensuite être réutilisés autant dde fois que besoin. Il est cependnt rare de ccréer deux fois la même investigation 
-        mais cela peut s'avérer utile pour rejouer des études types/ modèles dans dautres investigations
+        Une fois le formuliare rempli, vous pouvez choisr de le sauvegrader sous forme de template afin de réutiliser directement la mêrme procédure en activant l'option save as tempalte en haut à droite. 
+        Ensuite cliquez sur submit pour ajouter votre investigation à l'arbre des investigations. 
     </p>
-   </li>
-   <li>
-    <h4>Add investigation from zip files</h4>
+    <a><img src="assets/images/investigation_tree.png" style="width:1200px;" ></a>
+
+    <h4>Add STUDY</h4> 
     <p>
-        L'utilisateur peut sauvegarder l'ensembble d'une investigation avec tous les éléments la composant sous forme de dossieer compressé au fromat zip.
-        Par  conséquent l'utilisateur peut également charger l'ensemble d'une investigation sous forme de fichiers .zip.
+        L'investigation est le niveau le plus haut de la hiérarchie MIAPPE et peut contenir différentes études en son sein. 
+        Dans notre cas, nous allons créer une seule étude. Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Invvestigation</a>. 
+        Certains champs sont obligatoires comme l'identifiant de l'étude qui se doit d'être unique. 
+
     </p>
-    </li>
-</ul>
+
+
 
 </mat-card>
