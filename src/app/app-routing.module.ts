@@ -23,6 +23,7 @@ import { MaterialForm2Component } from './forms/material-form2.component';
 import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
 import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
+import { ProjectExampleComponent } from './documentation/project-example.component';
 
 
 
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
   { path: 'data_exploration',component: DataExplorationComponent, canActivate: [AuthGuard]},
+  { path: 'project_example',component: ProjectExampleComponent, canActivate: [AuthGuard]},
   { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
   //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
   { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
