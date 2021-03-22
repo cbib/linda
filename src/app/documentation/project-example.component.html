@@ -7,20 +7,28 @@
     </nav>
 </div>
 <mat-card>
-    <h3>Project example </h3>
+    <h3>Projet modèle </h3>
         <p>
-            Dans ce projet, nous allons étudier une espèce de tomate (Ida Gold) cultivé en plein air dans des parcelles situé sur le site de L'INRA BFP. 
-            Dans un premier temps nous allons décrire l'ensemble du  design expérimental, puis nous décrirons les métadonnées associés à l'expérience. 
-            La culture se déroulera du  15 Mars au 15 aout 2021. 5 points d'observation sont établis, un par mois (15 Avril, 15 Mai, 15 Juin 15 juillet et 15 août). 
+            Dans cet exemple, nous allons étudier une variété de tomates (Ida Gold) cultivées en plein air dans des parcelles situé sur le site de L'INRA BFP. 
+        </p>   
+        <p> 
+            Dans un premier temps, nous allons décrire l'ensemble du  design expérimental à l'ide des formulaires MIAPPE à votre disposition. 
+            
+            Dans un second temps, nous décrirons les métadonnées associées à l'expérience et la saisied de ces métadonnées. 
+            La culture se déroulera du  15 Mars au 15 aout 2021. Au total, 5 points d'observation seront établis, un par mois (15 Avril, 15 Mai, 15 Juin, 15 juillet et 15 août). 
+            
             Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). 
         </p>
+    <h4>Experimental design</h4>
         <img src="assets/images/experimental_design.png" class="img-responsive" style="width:75%" alt="Image">
     <h4>Add investigation</h4> 
-    
-    <p>Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions</p>
+    <p>
+        Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions
+    </p>
     <a><img src="assets/images/select_investigation.png" style="width:1200px;" ></a>
-
-    <p>Trois choix  s'offrent à l'utilisateur </p>
+    <p>
+        Trois choix  s'offrent à l'utilisateur 
+    </p>
     <ul>
         <li>
             Add investigation from original model template
@@ -51,8 +59,8 @@
     </p>
     <a><img src="assets/images/investigation_type.png" style="width:1200px;" ></a>
     <p>
-        Une fois le formuliare rempli, vous pouvez choisr de le sauvegrader sous forme de template afin de réutiliser directement la mêrme procédure en activant l'option save as tempalte en haut à droite. 
-        Ensuite cliquez sur submit pour ajouter votre investigation à l'arbre des investigations. 
+        Une fois le formulaire rempli, vous pouvez choisr de le sauvegarder sous forme de template, afin de pouvoir le réutiliser ultérieurement comme modèle, en activant l'option save as template en haut à droite. 
+        Ensuite, cliquez sur le bouton Submit pour ajouter votre investigation à l'arbre des investigations. 
     </p>
     <a><img src="assets/images/investigation_tree.png" style="width:1200px;" ></a>
 
@@ -61,9 +69,5 @@
         L'investigation est le niveau le plus haut de la hiérarchie MIAPPE et peut contenir différentes études en son sein. 
         Dans notre cas, nous allons créer une seule étude. Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Invvestigation</a>. 
         Certains champs sont obligatoires comme l'identifiant de l'étude qui se doit d'être unique. 
-
     </p>
-
-
-
 </mat-card>
