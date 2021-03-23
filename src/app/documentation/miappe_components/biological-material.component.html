@@ -8,11 +8,14 @@
   </p>
   <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
 
-<h2>Study</h2>
-  <p>A study (or experiment) comprises a series of assays (or measurements) of one or more types, undertaken to answer a particular biological question. (1+ per investigation)</p>
+<h2>Biological material</h2>
+  <p>The biological material being studied (e.g. plants grown from a certain bag or seed, or plants grown in a particular field). The original source of that material (e.g., the seeds or the original plant cloned) is called the material source, which, when held by a material repository, should have its stock identified.</p>
+  <p>
+      Cardinality: 1+ per study and 0+ per observation unit
+  </p>
 <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
 [ngClass]="{'table-dark': mode_table}">
-    <caption style="font-weight: bold">Study MIAPPE components</caption>  
+    <caption style="font-weight: bold">Biological material MIAPPE components</caption>  
     <thead>
         <th>MIAPPE Check list</th><th>Definition</th><th>Example</th><th>Format</th><th>Cardinality</thead>
     <tbody>
