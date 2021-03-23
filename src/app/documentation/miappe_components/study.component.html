@@ -1,1 +1,43 @@
-<p>study works!</p>
+<div class="border-head">
+    <h3>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div>
+<p>
+    Linda uses the MIAPPE model to structure the information. The figure below represents the MIAPPE diagram with each of the elements composing it. Each component of the MIAPPE model contains several fields helping to describe your whole investigation
+  </p>
+  <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
+
+<h2>Study</h2>
+  <p>A study (or experiment) comprises a series of assays (or measurements) of one or more types, undertaken to answer a particular biological question. (1+ per investigation)</p>
+<table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
+[ngClass]="{'table-dark': mode_table}">
+    <caption style="font-weight: bold">Study MIAPPE components</caption>  
+    <thead>
+        <th>MIAPPE Check list</th><th>Definition</th><th>Example</th><th>Format</th><th>Cardinality</thead>
+    <tbody>
+        <tr><td>Study unique ID</td><td>Unique identifier comprising the name or identifier for the institution/database hosting the submission of the study data, and the identifier of the study in that institution.</td><td>	"EBI:12345678
+http://phenome-fppn.fr/maugio/2013/t2351"</td><td>	Unique identifier</td><td>	0-1</td></tr>  
+        <tr><td>Study title</td><td>Human-readable text summarising the study</td><td>2002 evaluation of flowering time for a panel of 375 maize lines at the experimental station of Maugio (France).</td><td>Free text (short)</td><td>1</td></tr>  
+<tr><td>Study description</td><td>Human-readable text describing the study</td><td>2002 evaluation of male and female flowering time for a panel of 375 maize lines representing the worldwide genetic diversity at the experimental station of Maugio, France.</td><td>Free text</td><td>0-1</td></tr>  
+<tr><td>Start date of study</td><td>Date and, if relevant, time when the experiment started</td><td>"2002-04-04
+2006-09-27T10:23:21+00:00"</td><td>Date/Time (ISO 8601, optional time zone)</td><td>1</td></tr>  
+<tr><td>End date of study</td><td>Date and, if relevant, time when the experiment ended</td><td>2002-11-27</td><td>Date/Time (ISO 8601, optional time zone)</td><td>0-1</td></tr>  
+<tr><td>Contact institution</td><td>Name and address of the institution responsible for the study.</td><td>UMR de Génétique Végétale, INRA - Université Paris-Sud - CNRS, Gif-sur-Yvette, France</td><td>Free text (short)</td><td>1</td></tr>  
+<tr><td>Geographic location (country)</td><td>The country where the experiment took place, either as a full name or preferably as a 2-letter code.</td><td>FR</td><td>Country name or 2-letter code (ISO 3166)</td><td>1</td></tr>  
+<tr><td>Experimental site name</td><td>The name of the natural site, experimental field, greenhouse, phenotyping facility, etc. where the experiment took place.</td><td>INRA, UE Diascope - Chemin de Mezouls - Domaine expérimental de Melgueil - 34130 Mauguio - France</td><td>Free text (short)</td><td>1</td></tr>  
+<tr><td>Geographic location (latitude)</td><td>Latitude of the experimental site in degrees, in decimal format.</td><td>+43.619264</td><td>Degrees in the decimal format (ISO 6709)</td><td>0-1 (1 if longitude is provided)</td></tr>  
+<tr><td>Geographic location (longitude)</td><td>Longitude of the experimental site in degrees, in decimal format.</td><td>+3.967454</td><td>Degrees in the decimal format (ISO 6709)</td><td>0-1 (1 if latitude is provided)</td></tr>  
+<tr><td>Geographic location (altitude)</td><td>Altitude of the experimental site, provided in metres (m).</td><td>100 m</td><td>Numeric + unit abbreviation</td><td>0-1</td></tr>  
+<tr><td>Description of the experimental design</td><td>Short description of the experimental design, possibly including statistical design. In specific cases, e.g. legacy datasets or data computed from several studies, the experimental design can be "unknown"/"NA", "aggregated/reduced data", or simply 'none'.</td><td>Lines were repeated twice at each location using a complete block design. In order to limit competition effects, each block was organized into four sub-blocks corresponding to earliness groups based on a priori information. </td><td>Free text</td><td>1</td></tr>  
+<tr><td>Type of experimental design</td><td>Type of experimental  design of the study, in the form of an accession number from the Crop Ontology.</td><td>CO_715:0000145</td><td>Crop Ontology term (subclass of "CO_715:0000003")</td><td>0-1</td></tr>  
+<tr><td>Observation unit level hierarchy</td><td>Hierarchy of the different levels of repetitions between each others</td><td>block>rep>plot</td><td>Formatted text (level>level)</td><td>0-1</td></tr>  
+<tr><td>Observation unit description</td><td>General description of the observation units in the study.</td><td>"Observation units consisted in individual plots themselves consisting of a row of 15 plants at a density of approximately six plants per square meter.
+NA"</td><td>Free text</td><td>1</td></tr>  
+<tr><td>Description of growth facility</td><td>Short description of the facility in which the study was carried out.</td><td>"field environment condition
+NA"</td><td>Free text (short)</td><td>1</td></tr>  
+<tr><td>Type of growth facility</td><td>Type of growth facility in which the study was carried out, in the form of an accession number from the Crop Ontology.</td><td>CO_715:0000162</td><td>Crop Ontology term (subclass of "CO_715:0000005")</td><td>0-1</td></tr>  
+<tr><td>Cultural practices</td><td>General description of the cultural practices of the study.</td><td>Irrigation was applied according needs during summer to prevent water stress.</td><td>Free text</td><td>0-1</td></tr>  
+<tr><td>Map of experimental design</td><td>Representation of the experimental design.</td><td>https://urgi.versailles.inra.fr/files/ephesis/181000503/181000503_plan.xls</td><td>URL or File name (of gis or tabular file like csv or tsv)</td><td>0</td></tr>  
+    </tbody>
+</table>

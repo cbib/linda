@@ -91,6 +91,11 @@ import { DataExplorationComponent } from './documentation/data-exploration.compo
 import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 import { ProjectExampleComponent } from './documentation/project-example.component';
 import { StudyComponent } from './documentation/miappe_components/study.component';
+import { EventComponent } from './documentation/miappe_components/event.component';
+import { BiologicalMaterialComponent } from './documentation/miappe_components/biological-material.component';
+import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
+import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
+import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 
 
 
@@ -143,7 +148,12 @@ import { StudyComponent } from './documentation/miappe_components/study.componen
     DataExplorationComponent,
     InvestigationComponent,
     ProjectExampleComponent,
-    StudyComponent    
+    StudyComponent,
+    EventComponent,
+    BiologicalMaterialComponent,
+    ObservationUnitComponent,
+    ObservedVariableComponent,
+    ExperimentalFactorComponent    
     
 
     

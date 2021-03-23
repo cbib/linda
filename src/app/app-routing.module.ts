@@ -24,7 +24,12 @@ import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
 import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 import { ProjectExampleComponent } from './documentation/project-example.component';
-
+import { StudyComponent } from './documentation/miappe_components/study.component';
+import { EventComponent } from './documentation/miappe_components/event.component';
+import { BiologicalMaterialComponent } from './documentation/miappe_components/biological-material.component';
+import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
+import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
+import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 
 
 const routes: Routes = [
@@ -37,6 +42,12 @@ const routes: Routes = [
   { path: 'downloaded',component: DonwloadedComponent,canActivate: [AuthGuard]},
   { path: 'home',component: HomeComponent},
   { path: 'investigation',component: InvestigationComponent},
+  { path: 'study',component: StudyComponent},
+  { path: 'event',component: EventComponent},
+  { path: 'observation_unit',component: ObservationUnitComponent},
+  { path: 'biological_material',component: BiologicalMaterialComponent},
+  { path: 'observed_variable',component: ObservedVariableComponent},
+  { path: 'experimental_factor',component: ExperimentalFactorComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},
