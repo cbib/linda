@@ -6,6 +6,7 @@ import { first } from 'rxjs/operators';
 import { MatDialog} from '@angular/material/dialog';
 import { SearchResultDialogComponent } from './dialog/search-result-dialog.component';
 import { Router } from '@angular/router';
+import {JoyrideService} from 'ngx-joyride';
 
 @Component({
   selector: 'app-linda',
@@ -31,7 +32,11 @@ export class AppComponent implements OnInit {
     // ngAfterViewInit() {
     //     console.log("ngAfterViewInit parent with child = ", this.outlet);
     //   }
-    constructor(private globalService : GlobalService,private searchService : SearchService, public dialog: MatDialog, private router: Router,){
+    constructor(private globalService : GlobalService,
+                private searchService : SearchService, 
+                public dialog: MatDialog, 
+                private router: Router, 
+                private readonly joyrideService: JoyrideService){
             this.stats_advanced={
                       "investigations":[],
                       "studies":[],
@@ -53,6 +58,11 @@ export class AppComponent implements OnInit {
             * // TODO: here need to get same parameter as for edit fucntion in user tree
         */
      
+    }
+    onClick() {
+        this.joyrideService.startTour(
+            { steps: ['firstStep', 'secondStep'] } // Your steps order
+        );
     }
     onSearch(){
         this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(

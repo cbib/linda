@@ -1738,8 +1738,15 @@ label {
 	border-radius: 3px;
 	-webkit-border-radius: 3px;
 }
-ul li {
+/*ul li {
 	list-style: none;
+}*/
+
+li::before {
+    content: "•"; 
+    color: blue;
+    display: inline-block; width: 1em;
+    margin-left: -1em
 }
 .dataTables_paginate.paging_bootstrap.pagination li a {
 	color: #797979;
