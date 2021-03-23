@@ -7,93 +7,146 @@
     </nav>
 </div>
 <mat-card>
-    <h3>Projet modèle </h3>
+    <h3>Model project</h3>
         <p>
             Dans cet exemple, nous allons étudier une variété de tomates (Ida Gold) cultivées en plein air dans des parcelles situé sur le site de L'INRA BFP. 
+            <!--In this example, we are going to study a variety of tomatoes (Ida Gold) grown outdoors in plots located on the INRA BFP site.-->
         </p>   
         <p> 
-            Dans un premier temps, nous allons décrire l'ensemble du  design expérimental à l'ide des formulaires MIAPPE à votre disposition. 
-            
+            <!--Dans un premier temps, nous allons décrire l'ensemble du  design expérimental à l'ide des formulaires MIAPPE à votre disposition. 
             Dans un second temps, nous décrirons les métadonnées associées à l'expérience et la saisied de ces métadonnées. 
             La culture se déroulera du  15 Mars au 15 aout 2021. Au total, 5 points d'observation seront établis, un par mois (15 Avril, 15 Mai, 15 Juin, 15 juillet et 15 août). 
-            
             Lors de ce point d'observation, nous préléverons 5 échantillons de feuilles qui seront mesurées. 
-            
-            Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). 
+            Plusiers facteurs expérimentaux seront pris en compte, le taux d'humidité des sols, le taux d'azote dans le milieu  de ciulture, l'ensoleillement sur la parcelle (éclairé/ à l'ombre). -->
+
+            First, we will describe the entire experimental design using the MIAPPE forms available to you.
+            In a second step, we will describe the metadata associated with the experience and the entry of this metadata.
+            The culture will take place from March 15 to August 15, 2021. In total, 5 observation points will be established, one per month (April 15, May 15, June 15, July 15 and August 15).
+            At this observation point, we will take 5 leaf samples which will be measured.
+            Several experimental factors will be taken into account, the soil moisture rate, the nitrogen rate in the growing medium, the sunshine on the plot (lit / in the shade).
+
         </p>
-        <h4>Matériel biologique</h4>
+        <h4>Biological Material</h4>
         <p> 
-            Au total, 72 plantes seront cultivées, 9 par condition (parcelle). la taille du terrain est 10 m sur 5 m. Chaque parcelle mesure 1,80 m sur 1,80 m.
+            <!--Au total, 72 plantes seront cultivées, 9 par condition (parcelle). la taille du terrain est 10 m sur 5 m. Chaque parcelle mesure 1,80 m sur 1,80 m.-->
+            A total of 72 plants will be cultivated, 9 per condition (plot). the size of the land is 10 m by 5 m. Each plot measures 1.80 m by 1.80 m.
         </p>
-        <h4>Design expérimental</h4>
+        <h4>Experimental Design</h4>
             <img src="assets/images/experimental_design.png" class="img-responsive" style="width:75%" alt="Image">
 
             <img src="assets/images/parcelle.png" class="img-responsive" style="width:75%" alt="Image">
-        <h4>Protocole de croissance</h4>
+        <h4>Growth protocol</h4>
         <p>
-            Les plantes sont traités avec différents taux d'azote. un taux faible (2%) et un taux élevé (10%)
+            <!--Les plantes sont traités avec différents taux d'azote. un taux faible (2%) et un taux élevé (10%)-->
+            The plants are treated with different rates of nitrogen. a low rate (2%) and a high rate (10%)
         </p>
 
         <h4>Facteurs expérimentaux</h4>
         <p>
-            Les plantes sont cultivés sous différentes conditions et traitement. 
-            Ces facteurs expérimentaux seront décrits à l'aide du formulaire correspondant. <a class="nav-link"  [routerLink]="['/investigation']">factor</a>
+           <!-- Les plantes sont cultivés sous différentes conditions et traitement. 
+            Ces facteurs expérimentaux seront décrits à l'aide du formulaire correspondant. <a class="nav-link"  [routerLink]="['/investigation']">factor</a>-->
             
-            
+            The plants are grown under different conditions and treatment.
+            These experimental factors will be described using the corresponding form. <a class="nav-link"  [routerLink]="['/investigation']"> factor </a>
         </p>
     
     
     
     <h4>Add investigation</h4> 
     <p>
-        Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propostions
+        <!--Tout d'abord, il vous faut créer une investigation, il suffit de cliquer sur le <button class="btn btn-success btn-xs fa fa-plus"></button> associé et un menu apparaitra dans lequel vous pourrez choisir entre trois propositions-->
+        First of all, you need to create an investigation, just click on the associated <button class = "btn btn-success btn-xs fa fa-plus"></button> and a menu will appear from which you can choose between three proposals
     </p>
     <a><img src="assets/images/select_investigation.png" style="width:1200px;" ></a>
     <p>
-        Trois choix  s'offrent à l'utilisateur 
+        <!--Trois choix  s'offrent à l'utilisateur -->
+        Three choices are available to the user
     </p>
     <ul>
         <li>
             Add investigation from original model template
             <p>
-                Le formulaire modèle MIAPPE pour une investigation . 
-                La description des champs pour chaque structure du modèle MIAPPE peut-être trouvée <a href="#">ici</a> 
+                <!--Le formulaire modèle MIAPPE pour une investigation . 
+                La description des champs pour chaque structure du modèle MIAPPE peut-être trouvée <a href="#">ici</a> -->
+                The MIAPPE model form for an investigation.
+                The description of the fields for each structure of the MIAPPE model can be found <a href="#"> here </a>
             </p>
         </li>
         <li>
             Add investigation from saved template
             <p>
-                L'utilisateur peut sauvegarder un modèle pré-rempli en cochant l'option save template au moment de valider le formulaire.
+
+                <!--L'utilisateur peut sauvegarder un modèle pré-rempli en cochant l'option save template au moment de valider le formulaire.
                 Ces modèles préremplis peuvent ensuite être réutilisés autant dde fois que besoin. Il est cependant rare de créer deux fois la même investigation 
-                mais cela peut s'avérer utile pour rejouer des études types/modèles dans d'autres investigations
+                mais cela peut s'avérer utile pour rejouer des études types/modèles dans d'autres investigations-->
+                The user can save a pre-filled template by checking the save template option when validating the form.
+                These pre-filled templates can then be reused as many times as needed. However, it is rare to create the same investigation twice
+                but it can be useful to replay type / model studies in other investigations
             </p>
         </li>
         <li>
             Add investigation from zip files
             <p>
-                L'utilisateur peut sauvegarder l'ensemble d'une investigation avec tous les éléments la composant sous forme de dossieer compressé au format .zip.
-                Par  conséquent l'utilisateur peut également charger l'ensemble d'une investigation sous forme de fichiers .zip.
+               <!-- L'utilisateur peut sauvegarder l'ensemble d'une investigation avec tous les éléments la composant sous forme de dossieer compressé au format .zip.
+                Par  conséquent, l'utilisateur peut également charger l'ensemble d'une investigation sous forme de fichiers .zip.-->
+                The user can save the whole of an investigation with all the elements composing it as a compressed folder in .zip format.
+                Therefore, the user can also upload an entire investigation as .zip files.
             </p>
         </li>
     </ul>
     <p>
-        À ce stade, nous choisissons de démarrer à partir du template vide car nous n'avons enregistré aucun modèle.
-        il y a 8 champs à remplir pour décrire son investigation. Les deux premiers sont obligatoires et doivent être uniques.
+        <!--À ce stade, nous choisissons de démarrer à partir du template vide car nous n'avons enregistré aucun modèle.
+        il y a 8 champs à remplir pour décrire son investigation. Les deux premiers sont obligatoires et doivent être uniques.-->
+        At this point, we choose to start from the empty template because we haven't saved any templates.
+        there are 8 fields to fill in to describe your investigation. The first two are mandatory and must be unique.
     </p>
     <a><img src="assets/images/investigation_type.png" style="width:1200px;" ></a>
     <p>
-        Une fois le formulaire rempli, vous pouvez choisr de le sauvegarder sous forme de template, 
+        <!--Une fois le formulaire rempli, vous pouvez choisr de le sauvegarder sous forme de template, 
         afin de pouvoir le réutiliser ultérieurement comme modèle, en activant l'option save as template en haut à droite. 
-        Ensuite, cliquez sur le bouton Submit pour ajouter votre investigation à l'arbre des investigations. 
+        Ensuite, cliquez sur le bouton Submit pour ajouter votre investigation à l'arbre des investigations. -->
+
+        Once the form is completed, you can choose to save it as a template,
+        in order to be able to reuse it later as a template in other projects, by activating the option save as template at the top right.
+        Then, click on the Submit button to add your investigation to the investigation tree.
     </p>
     <a><img src="assets/images/investigation_tree.png" style="width:1200px;" ></a>
 
-    <h4>Add STUDY</h4> 
-    <p>
-        L'investigation est le niveau le plus haut de la hiérarchie MIAPPE et peut contenir différentes études en son sein. 
-        Dans notre cas, nous allons créer une seule étude que nous nommerons tomato1_study1. 
+    
         
-        Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/study']">Study</a>. 
-        Certains champs sont obligatoires comme l'identifiant de l'étude qui se doit d'être unique. 
+
+    <h4>Describe your Study</h4> 
+    <p>
+        <!--L'investigation est le niveau le plus haut de la hiérarchie MIAPPE et peut contenir différentes études en son sein. 
+        Dans notre cas, nous allons créer une seule étude que nous nommerons tomato1_study1. -->
+        The investigation is the highest level of the MIAPPE hierarchy and may contain different studies within it.
+        In our case, we are going to create a single study that we will name "tomato1_study1".
+        
+       <!--Le formulaire pour décrire une étude contient 20 champs à remplir <a class="nav-link"  [routerLink]="['/study']">Study</a>. 
+        Certains champs sont obligatoires comme l'identifiant de l'étude qui se doit d'être unique. --> 
+        The form for describing a study contains 20 fields to fill in <a class="nav-link"  [routerLink]="['/study']"> Study </a>.
+        Some fields are mandatory, such as the study identifier, which must be unique.
     </p>
+
+    <h4>Describe your material</h4>
+        <h5>Germplasm informations</h5>
+            <p>
+                <!--Pour décrire un matériel biologique, la norme MiAPPE requiert de décrire au minimum l'organisme étudié, le genre, l'espèce et le nom des sous taxa si ils existent.-->
+                To describe a biological material, the MiAPPE standard requires to describe at least the studied organism, the genus, the species and the name of the sub-taxa if they exist.
+            </p>
+        
+        <h5>Describe your material source </h5>
+        <p>
+        <!--La source originale de ce matériel (par exemple, les graines ou la plante originale clonée) est appelée la source matérielle, qui, lorsqu'elle est détenue par un dépôt de matériaux, doit avoir son stock identifié.
+        La source matérielle doit être identifié avec un identifiant unique. D'autres informations permettent de décrire divers caractéristiques diu matériel-->
+        
+        
+        The original source of that material (e.g., the seeds or the original plant cloned) is called the material source, which, when held by a material repository, should have its stock identified
+        The material source must be identified with a unique identifier. Other information is used to describe various characteristics of the material.
+        </p>
+
+        <h5>Describe your Biological material</h5>
+        <p>
+
+        </p>
 </mat-card>
