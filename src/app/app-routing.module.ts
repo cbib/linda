@@ -30,6 +30,8 @@ import { BiologicalMaterialComponent } from './documentation/miappe_components/b
 import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
 import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
+import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
+import { SampleComponent } from './documentation/miappe_components/sample.component';
 
 
 const routes: Routes = [
@@ -48,6 +50,8 @@ const routes: Routes = [
   { path: 'biological_material',component: BiologicalMaterialComponent},
   { path: 'observed_variable',component: ObservedVariableComponent},
   { path: 'experimental_factor',component: ExperimentalFactorComponent},
+  { path: 'environmental_parameter',component: EnvironmentalParameterComponent},
+  { path: 'sample',component: SampleComponent},
   { path: 'navbars',component: NavbarComponent},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},

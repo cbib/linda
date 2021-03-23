@@ -96,6 +96,8 @@ import { BiologicalMaterialComponent } from './documentation/miappe_components/b
 import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
 import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
+import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
+import { SampleComponent } from './documentation/miappe_components/sample.component';
 
 
 
@@ -153,7 +155,9 @@ import { ExperimentalFactorComponent } from './documentation/miappe_components/e
     BiologicalMaterialComponent,
     ObservationUnitComponent,
     ObservedVariableComponent,
-    ExperimentalFactorComponent    
+    ExperimentalFactorComponent,
+    EnvironmentalParameterComponent,
+    SampleComponent    
     
 
     
