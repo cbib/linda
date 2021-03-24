@@ -128,10 +128,6 @@ body {
     font-size:13px;
 }
 
-ul li {
-    list-style: none;
-}
-
 a, a:hover, a:focus {
     text-decoration: none;
     outline: none;
@@ -1741,13 +1737,22 @@ label {
 /*ul li {
 	list-style: none;
 }*/
-
+/* 
+#home_li li::before {
+    content: "•"; 
+    color: blue;
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em
+} */
+/*
 li::before {
     content: "•"; 
     color: blue;
     display: inline-block; width: 1em;
     margin-left: -1em
 }
+*/
 .dataTables_paginate.paging_bootstrap.pagination li a {
 	color: #797979;
 	padding: 5px 10px;

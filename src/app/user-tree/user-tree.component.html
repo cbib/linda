@@ -73,7 +73,7 @@
                           <app-download [parent_id]="get_parent_id(node)" [model_key]="get_model_key(node)" [model_type]="get_model_type(node)" mode="edit" ></app-download>
                       </div>
                 </mat-drawer>-->
-                <div  class="example-sidenav-content"  >
+                <div joyrideStep="step6" title="Here is the main page for project overview" text="part 1"  class="example-sidenav-content"  >
                     <mat-tree  #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"  class="col-md-12 panel" >      
                         
                         <!--#############@######################################-->
@@ -81,7 +81,7 @@
                         <!--#############@######################################-->
 
                         <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding  title="{{node.def}}" >   
-                             <div [ngStyle]="getStyle(node)">
+                             <div joyrideStep="step7" title="Click here to add new investigation" text="part 1" [ngStyle]="getStyle(node)">
                                  
                                  <!-- use a disabled button to provide padding for tree leaf -->
 <!--                                 <button mat-icon-button style="margin-right:  200px" [attr.aria-label]="node.name">
@@ -108,8 +108,8 @@
                                  <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
                                  <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
 
-                                 <a  style="float: right;" *ngIf="node.id.includes('Investigations tree')"  > 
-                                     <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                 <a style="float: right;" *ngIf="node.id.includes('Investigations tree')"  > 
+                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                  </a>
                                  <a  style="float: right;" *ngIf="node.id.includes('studies')"> 
                                     <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>

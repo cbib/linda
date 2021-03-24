@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
     }
     onClick() {
         this.joyrideService.startTour(
-            { steps: ['firstStep', 'secondStep', 'thirdStep', 'fourthStep'] } // Your steps order
+            { steps: ['firstStep', 'secondStep', 'thirdStep', 'fourthStep', 'step6@tree', 'step7@tree'] } // Your steps order
         );
     }
     

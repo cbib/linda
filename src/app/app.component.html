@@ -88,11 +88,11 @@
             <!-- Sidebar Navidation Menus-->
             <span class="heading">Main</span>
             <ul class="sidebar-menu">
-                <li class="nav-item">
+                <li class="nav-item" style="list-style: none">
                   <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="fa fa-home"></i> Home</a>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item" style="list-style: none">
                   <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
                 </li>
 
@@ -100,7 +100,7 @@
                   <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
                 </li>-->
                 
-                <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item">
+                <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
                   <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
                 </li>          
                <!--<li>
@@ -112,7 +112,7 @@
                   </ul>
                 </li>-->
                 
-                <li>
+                <li style="list-style: none">
                   <a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book-reader"></i>Documentation </a>
                   <ul id="documentationdropdownDropdown" class="collapse show list-unstyled ">
                     <li>

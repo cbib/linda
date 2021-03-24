@@ -14,7 +14,7 @@ import { ExportDialogComponent } from '../dialog/export-dialog.component';
 import * as JSZip from 'jszip';
 import { MediaObserver} from "@angular/flex-layout";
 import { FormControl} from '@angular/forms';
-
+import { JoyrideModule } from 'ngx-joyride';
 
 
 /** Flat node with expandable and level information */
