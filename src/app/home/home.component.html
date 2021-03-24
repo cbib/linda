@@ -1,4 +1,3 @@
-
     <div class="border-head">
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
@@ -24,7 +23,7 @@
           <span class="sr-only">Next</span>
         </a>
     </div>
-      
+
     <div class="container text-center">    
       <h3>What Linda does ?</h3>
       <hr>
@@ -40,72 +39,84 @@
       <hr>
       <br>      
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-4" text="part 1">
           <img src="assets/images/miappe.png" class="img-responsive" style="width:100%" alt="Image">
           <br> 
           <br>
+          <div joyrideStep="firstStep" title="Design your experiment in a simple way" text="part 1">
           <h4> 1 - Design your experiment in a simple way</h4>
           <ul style="list-style-type:square; text-align: justify;">
-            <li>- Duration, start and end date</li>
-            <li>- Biological Material and material source</li>
-            <li>- Experimental factor and observed variable</li>
-            <li>- Describes observation unit and climatic events</li>
-            <li>- And many more …</li>
+            <li>Duration, start and end date</li>
+            <li>Biological Material and material source</li>
+            <li>Experimental factor and observed variable</li>
+            <li>Describes observation unit and climatic events</li>
+            <li>And many more …</li>
           </ul>
+          </div>
           <br>
           <img src="assets/images/bioportal.png" class="img-responsive" style="width:100%" alt="Image">
           <br> 
           <br> 
+          <div joyrideStep="secondStep" title="Design your experiment in a simple way" text="part 1">
           <h4> 2 - Use collections on ontologies ready to used</h4>
               <ul style="list-style-type:square; text-align: justify;">
-              <li>- CROP ontology</li>   
-              <li>- Plant ontology</li>
-              <li>- XEO ontology </li>
-              <li>- ENVo ontology</li>
-              <li>- PECO ontology</li>
-              <li>- and various other ontologies</li>
-            </ul> 
+              <li>CROP ontology</li>   
+              <li>Plant ontology</li>
+              <li>XEO ontology </li>
+              <li>ENVo ontology</li>
+              <li>PECO ontology</li>
+              <li>and various other ontologies</li>
+            </ul>
+          </div> 
             <br>
-            <h4>Start experiment Linda</h4> 
-            <p>                
-                <button mat-button class="btn-info" (click)="start_linda()">START DEMO</button>
-            </p> 
         </div>
         <div class="col-sm-4"> 
           <img src="assets/images/crops_conditions.png" class="img-responsive" style="width:100%" alt="Image">
           <br> 
           <br> 
-          <h4> 3 - Preserve and store environmental metadata associated with phenotyping experiments on plants</h4>
+          <div joyrideStep="thirdStep" title="Design your experiment in a simple way" text="part 1">
+          <h4> 3 - Preserve and store environmental metadata</h4>
             <ul style="list-style-type:square; text-align: justify;">
-            <li>- Insert in a guided way its metadata respecting the MIAPPE model (https://www.miappe.org/) and used the associated ontologies (Plantontology, XEO, ENVo, etc.).</li>   
-            <li>- Data from sensors files can be import as tabular and json files</li>
-            <li>- Export projects in various formats:  csv, tsv, excel, json, isa-tab </li>
-            <li>- Correlate your metadata measurement with experimental design and growth protocol</li>
-            <li>- Assign ontology term to your measurment</li>
-            <li>- Describes observation unit and climatic events using ontology</li>
-          </ul>    
+            <li>Insert in a guided way its metadata respecting the MIAPPE model (https://www.miappe.org/) and used the associated ontologies (Plantontology, XEO, ENVo, etc.).</li>   
+            <li>Data from sensors files can be import as tabular and json files</li>
+            <li>Export projects in various formats:  csv, tsv, excel, json, isa-tab </li>
+            <li>Correlate your metadata measurement with experimental design and growth protocol</li>
+            <li>Assign ontology term to your measurment</li>
+            <li>Describes observation unit and climatic events using ontology</li>
+          </ul>  
+        </div>  
         </div>
         <div class="col-sm-4">
             <img src="assets/images/arangodb.png" class="img-responsive" style="width:50%" alt="Image">
+            <div joyrideStep="fourthStep" title="Design your experiment in a simple way" text="part 1">
             <h4> 4 - Save your work in linda Database</h4>
             <ul style="list-style-type:square; text-align: justify;">
-                <li>- Export import whole investigation in json, tsv, zip format</li>
-                <li>- Export investigation in iSA tab format</li>
-                <li>- Experimental design informaton and environemental metadata save in Linda DB</li>
-                <li>- Facilitate a standardized exchange of information</li>
-                <li>- And many more …</li>
+                <li>Export import whole investigation in json, tsv, zip format</li>
+                <li>Export investigation in iSA tab format</li>
+                <li>Experimental design informaton and environemental metadata save in Linda DB</li>
+                <li>Facilitate a standardized exchange of information</li>
+                <li>And many more …</li>
             </ul>
+          </div>
             <br>
             <img src="assets/images/miappe.png" class="img-responsive" style="width:50%" alt="Image">
+            <br> 
+            <br> 
             <h4> 5 - Integrate experimental downstream data from external database (PLATO)</h4>
             <br>
             <ul style="list-style-type:square; text-align: justify;">
-                <li>- Import whole PLATO analysis (PLATO is designed to capture and store experimental data from metabolite, enzyme profiling)</li>.
-                <li>- Build aggregated tables</li>
-                <li>- Experimental design informaton and environemental metadata save in Linda DB</li>
-                <li>- And many more …</li>
+                <li>Import whole PLATO analysis (PLATO is designed to capture and store experimental data from metabolite, enzyme profiling)</li>.
+                <li>Build aggregated tables</li>
+                <li>Experimental design informaton and environemental metadata save in Linda DB</li>
+                <li>And many more …</li>
             </ul>
         </div>
+        <h4>Start experiment Linda</h4> 
+        <p>                
+              <!--<button mat-button class="btn-info" (click)="start_linda()">START DEMO</button>-->
+              <button mat-button class="btn-info" (click)="onClick()">START DEMO</button>
+
+        </p> 
       </div>
     </div>
 <br>

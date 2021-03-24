@@ -38,6 +38,7 @@
     "mkdirp": "^1.0.4",
     "moment": "^2.27.0",
     "ng-bootstrap": "^1.6.3",
+    "ngx-joyride": "^2.3.1",
     "ngx-json-viewer": "^2.4.0",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.2",

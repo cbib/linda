@@ -98,7 +98,8 @@ import { ObservedVariableComponent } from './documentation/miappe_components/obs
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
 import { SampleComponent } from './documentation/miappe_components/sample.component';
-
+import { JoyrideModule } from 'ngx-joyride';
+import {JoyrideService} from 'ngx-joyride';
 
 
 
@@ -212,7 +213,8 @@ import { SampleComponent } from './documentation/miappe_components/sample.compon
     NgxJsonViewerModule,
     ScrollingModule,
     DataTablesModule,
-    DragDropModule
+    DragDropModule,
+    JoyrideModule.forRoot()
   ],
   entryComponents:[DialogComponent,
                    OntologyTreeComponent,
@@ -235,6 +237,7 @@ import { SampleComponent } from './documentation/miappe_components/sample.compon
               UserService,
               GlobalService,
               SearchService,
+              JoyrideService,
               AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
