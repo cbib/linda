@@ -7,6 +7,8 @@ import { UniqueIDValidatorComponent } from '../validators';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
+import {JoyrideService} from 'ngx-joyride';
+
 // import { isBuffer } from 'util';
 // import { ConsoleReporter } from 'jasmine';
 
@@ -24,7 +26,12 @@ export class FormComponent implements OnInit//, AfterViewInit
     @Input() model_key: string;
     @Input() model_type: string;
     @Input() mode: string;
-
+    
+    public guided_tour_messages: any = {
+        level1: { heading: 'Level 1', message: 'At stage 1, you will see ontology form field for two important Study features' },
+        level2: { heading: 'Level 2', message: 'At stage 2, you will see ontology form field for two important Study features' },
+        level3: { heading: 'Level 3', message: 'At this stage you will see ontology form field for two important Study features <img src="assets/images/ontology_widget_form.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">' }
+      }
     private startfilling: boolean = false;
     ontology_type: string;
     show_spinner: boolean = false;
@@ -50,6 +57,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         private formBuilder: FormBuilder,
         private router: Router,
         private alertService: AlertService,
+        private readonly joyrideService: JoyrideService,
         private route: ActivatedRoute,
         public dialog: MatDialog) {
 
@@ -73,6 +81,12 @@ export class FormComponent implements OnInit//, AfterViewInit
         this.get_model();
 
     };
+    onClickTour() {
+        console.log('start tour part 2')
+        this.joyrideService.startTour(
+            { steps: ['Step1_1', 'Step1_2'] } // Your steps order
+        );
+    }
 
     // addSellingPoint() {
     //     this.sellingPoints.push(this.fb.group({point:''}));
@@ -99,9 +113,26 @@ export class FormComponent implements OnInit//, AfterViewInit
                     attributeFilters[attr["key"]] = [''];
                 }
             }
+            /*  this.onClickTour()*/
         });
 
         return this.formBuilder.group(attributeFilters);
+    }
+
+    get_message_guided_tour(){
+        if (this.model_type==="Study"){
+            if (this.level<2){
+                return this.guided_tour_messages.level1.message
+            }
+            else if(this.level==2){
+                return this.guided_tour_messages.level2.message
+            }
+            else{
+                return this.guided_tour_messages.level3.message
+            }
+
+        }
+        
     }
 
     get_model() {
@@ -365,6 +396,9 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.modelForm.patchValue(this.model_to_edit);
         });
     };
+    get_form_model_type(){
+        return  this.model_type
+    }
 
     isStartFilling(): boolean {
         this.keys.forEach(attr => {
@@ -509,6 +543,9 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.save(form)
         }
     };
+    onNext() {
+        // Do something
+    }
     goToNext(form: any, level) {
         this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
 

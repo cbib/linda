@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { ReactiveFormsModule,FormsModule }    from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AlertComponent } from './directives/alert.component';
@@ -98,11 +97,12 @@ import { ObservedVariableComponent } from './documentation/miappe_components/obs
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
 import { SampleComponent } from './documentation/miappe_components/sample.component';
-import { JoyrideModule } from 'ngx-joyride';
-import {JoyrideService} from 'ngx-joyride';
-
-
-
+import { JoyrideModule, JoyrideService } from 'ngx-joyride';
+import { NgGanttEditorModule } from 'ng-gantt';
+import { GanttComponent } from './test_component/gantt.component'
+import {GuidedTourModule, GuidedTourService} from 'ngx-guided-tour';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { PublicDataComponent } from './documentation/public-data.component';
 
 
 @NgModule({
@@ -158,7 +158,9 @@ import {JoyrideService} from 'ngx-joyride';
     ObservedVariableComponent,
     ExperimentalFactorComponent,
     EnvironmentalParameterComponent,
-    SampleComponent    
+    SampleComponent,
+    GanttComponent,
+    PublicDataComponent    
     
 
     
@@ -214,7 +216,10 @@ import {JoyrideService} from 'ngx-joyride';
     ScrollingModule,
     DataTablesModule,
     DragDropModule,
-    JoyrideModule.forRoot()
+    JoyrideModule.forRoot(),
+    NgGanttEditorModule,
+    GuidedTourModule,
+    NgxChartsModule
   ],
   entryComponents:[DialogComponent,
                    OntologyTreeComponent,
@@ -238,6 +243,7 @@ import {JoyrideService} from 'ngx-joyride';
               GlobalService,
               SearchService,
               JoyrideService,
+              GuidedTourService,
               AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

@@ -25,6 +25,7 @@ interface DialogData {
     selected_set: OntologyTerm[];
     uncheckable: boolean;
     multiple: boolean;
+    observed:boolean;
 
 }
 
@@ -58,6 +59,7 @@ export class OntologyTreeComponent {
     private ontologyContext: OntologyTerm[];
     private ontologyNode: OntologyTerm[];
     private uncheckable: boolean = false
+    private observed: boolean = false
     private multiple: boolean
     //model ontology    
     private ontology: any = {};
@@ -89,6 +91,9 @@ export class OntologyTreeComponent {
         this.selected_set = this.data.selected_set;
         this.uncheckable = this.data.uncheckable;
         this.multiple = this.data.multiple;
+        if (this.data.observed){
+            this.observed=this.data.observed;
+        }
         console.log("multiple choice is activated: ", this.multiple)
         this.ontology_tree = [];
         this.ontologyTerms = [];
@@ -120,6 +125,7 @@ export class OntologyTreeComponent {
     private checklistSelection = new SelectionModel<ExampleFlatNode>(this.data.multiple, this.initialSelection /* multiple */);
 
     get_ontology() {
+        console.log(this.ontology_id)
         return this.ontologiesService.get_ontology(this.ontology_id).toPromise().then(data => {
             this.ontology = data;
             this.ontologyNode = []

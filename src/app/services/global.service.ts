@@ -34,7 +34,6 @@ export class GlobalService {
     }
 
     get_model_type(model_id: string) {
-        console.log(model_id)
         var model_type = ""
         if (model_id.split("/")[0] === "studies") {
             model_type = "study"
@@ -142,6 +141,17 @@ export class GlobalService {
             'id': id
         };
         return this.http.post(`${this.APIUrl + "remove"}`, obj2send);
+    }
+    
+    remove_childs(id) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'id': id
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "remove_childs"}`, obj2send);
     }
     add(values: {}, model_type: string, parent_id: string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));

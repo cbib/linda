@@ -90,10 +90,10 @@
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
                         <mat-expansion-panel-header>
                             <mat-panel-title>
-                            {{Description}}
+                            <pre>Identifier: {{ node.id}}</pre>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <div >
+                        <div *ngIf="!observed">
                             <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
                                 <li>
                                     <!--Name: {{context_term[j].name}}-->
@@ -114,12 +114,10 @@
                                 </li>
 
                             </ul>
-                            <mat-card>
-                                <pre>Term Id: {{ node.id}}</pre>
-                                <pre>Term name: {{ node.name}}</pre>
-                                <pre>Term definition: {{ node.def }}</pre> 
-                            </mat-card>
-                            
+                            <pre>Definition: {{ node.def }}</pre>
+                        </div>
+                        <div *ngIf="observed">
+                                <pre>Definition: {{ node.def }}</pre> 
                         </div>
                     </mat-expansion-panel>
                 </mat-accordion>
@@ -154,10 +152,10 @@
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
                         <mat-expansion-panel-header>
                             <mat-panel-title>
-                                {{Description}}
+                                <pre>Identifier: {{ node.id}}</pre>
                              </mat-panel-title>
                          </mat-expansion-panel-header>
-                         <div >
+                         <div *ngIf="!observed">
                             <div *ngIf="get_displayed()===true">
                                 <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
                                     <li>
@@ -176,70 +174,43 @@
                                                 symbol: {{context_term[j].instances[l]._symbol}}
                                             </p>-->
                                         </a>
-                                    </li>
+                                        <a *ngIf="context_term[j].enumeration!=='' && searchTerm(ontologyEnum,context_term[j].enumeration).instances.length > 0  "> 
+                                            Response Range
+                                            <select (change)="onResponseRangeSelect($event.target.value)">
+                                                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
+                                                <option *ngFor="let instance of searchTerm(ontologyEnum,context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">{{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}</option>
+                                            </select>
 
+                                        <!--{{ context_term[j].enumeration}}-->
+                                            <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).name}}-->
+                                            <!--{{searchTerm(ontologyEnum,context_term[j].enumeration)}}-->
+                                            <!--<p *ngFor="let instance of get_term(context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">-->
+                                        <!--<p> enum: {{get_term(context_term[j].enumeration).instances[0]}}</p>-->
+                                        </a>
+                                        <a *ngIf="context_term[j].name==='FreeText'">
+                                            Text:
+                                            <mat-form-field >
+                                                <mat-label>Autosize textarea</mat-label>
+                                                <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+                                            </mat-form-field>
+                                <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
+                                                symbol: {{context_term[j].instances[l]._symbol}}
+                                            </p>-->
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
-                            <mat-card>
-                                <pre>Term Id: {{ node.id}}</pre>
-                                <pre>Term name: {{ node.name}}</pre>
-                                <pre>Term definition: {{ node.def }}</pre>                
-                            </mat-card>
-                            
+                            <pre>Definition: {{ node.def }}</pre>                
+                        </div>
+                        <div *ngIf="observed ">
+                            <pre>Definition: {{ node.def }}</pre> 
                         </div>
                      </mat-expansion-panel>
 
                 </mat-accordion>
             </div>
         </mat-tree-node>
-    </mat-tree>
-    
-    <div *ngIf="get_displayed()===true">
-        <ul *ngFor="let term of context_term ; index as j; trackBy: trackContextTerm ">
-        <li>
-            <!--Name: {{context_term[j].name}}-->
-            <!--Id: {{context_term[j].id}}-->
-            <!--datatype: {{get_term(context_term[j].datatype).name}}-->
-            
-            <!-- <a *ngIf="context_term[j].instances.length > 0">
-                Value: <input (keypress)="onValueAdd($event)">
-                Units:
-                <select (change)="onUnitSelect($event.target.value)"> -->
-
-                    <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
-                    
-                    <!-- <option *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">{{context_term[j].instances[l]._symbol}}</option>
-                </select>
-            </a> -->
-
-            <a *ngIf="context_term[j].enumeration!=='' && searchTerm(ontologyEnum,context_term[j].enumeration).instances.length > 0  "> 
-                Response Range
-                <select (change)="onResponseRangeSelect($event.target.value)">
-                    <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}-->
-                    <option *ngFor="let instance of searchTerm(ontologyEnum,context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">{{searchTerm(ontologyEnum,context_term[j].enumeration).instances[l].name}}</option>
-                </select>
-
-               <!--{{ context_term[j].enumeration}}-->
-                <!--enum: {{searchTerm(ontologyEnum,context_term[j].enumeration).name}}-->
-                <!--{{searchTerm(ontologyEnum,context_term[j].enumeration)}}-->
-                <!--<p *ngFor="let instance of get_term(context_term[j].enumeration).instances ; index as l; trackBy: trackInstances ">-->
-            <!--<p> enum: {{get_term(context_term[j].enumeration).instances[0]}}</p>-->
-            </a>
-            <a *ngIf="context_term[j].name==='FreeText'">
-                Text:
-                <mat-form-field >
-                    <mat-label>Autosize textarea</mat-label>
-                    <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
-                </mat-form-field>
-    <!--            <p *ngFor="let instance of context_term[j].instances ; index as l; trackBy: trackInstances ">
-                    symbol: {{context_term[j].instances[l]._symbol}}
-                </p>-->
-            </a>
-
-        </li>
-        </ul>
-    </div>    
-    
+    </mat-tree>   
 </div>
 
 <div mat-dialog-actions>

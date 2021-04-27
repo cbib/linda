@@ -95,14 +95,17 @@
                 <li class="nav-item" style="list-style: none">
                   <a class="nav-link"  [routerLink]="['/tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
                 </li>
-
+                <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
+                  <a class="nav-link"  [routerLink]="['/gantt']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Gantt</a>
+                </li>
                 <!--<li class="nav-item">
                   <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
                 </li>-->
                 
                 <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
                   <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
-                </li>          
+                </li>  
+                        
                <!--<li>
                   <a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
                   <ul id="AnalysisdropdownDropdown" class="collapse list-unstyled ">
@@ -157,6 +160,9 @@
                     <li class="nav-item">
                       <a class="nav-link"  [routerLink]="['/project_example']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Project example</a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link"  [routerLink]="['/public_data']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Public data</a>
+                    </li>
                     <!--<li class="nav-item">
                       <a>Differential expression analysis</a>
                     </li>-->
@@ -180,7 +186,7 @@
              </ul>-->
         </div>       
     </aside>
-    <section id="main-content">
+    <section id="main-content"  style="overflow: auto">
 <!--            <h2  style="font-size: 20pt; background-color: white; color: #006666" href="#">
                       LINDA
                       <i style="font-size: 20pt"> 
@@ -218,9 +224,10 @@
                 <div class="col-xs-12 col-sm-4 col-md-4">
                   <h5>Partners</h5>
                   <ul class="list-unstyled quick-links">
-                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>CBib University of bordeaux</a></li>
-                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>INNRAE BFP</a></li>
-                    <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                    <li><a href="https://www.u-bordeaux.fr/"><i class="fa fa-angle-double-right"></i>University of bordeaux</a></li>
+                    <li><a href="https://www.cbib.u-bordeaux.fr/en"><i class="fa fa-angle-double-right"></i>CBiB</a></li>
+                    <li><a href="https://www6.bordeaux-aquitaine.inrae.fr/bfp"><i class="fa fa-angle-double-right"></i>INRAE BFP</a></li>
+                    <li style="list-style: none"><a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
                     <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
                     <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Videos</a></li>
                   </ul>
@@ -251,7 +258,7 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
                   <p><u><a href="https://www.nationaltransaction.com/">National Transaction Corporation</a></u> is a Registered MSP/ISO of Elavon, Inc. Georgia [a wholly owned subsidiary of U.S. Bancorp, Minneapolis, MN]</p>
-                  <p class="h6">© All right Reversed.<a class="text-green ml-2" href="https://www.sunlimetech.com" target="_blank">Sunlimetech</a></p>
+                  <p class="h6">© All right Reversed.<a class="text-green ml-2" href="https://www.sunlimetech.com" target="_blank">CBiB</a></p>
                 </div>
                 <hr>
               </div>	

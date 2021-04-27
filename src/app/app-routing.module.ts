@@ -32,6 +32,9 @@ import { ObservedVariableComponent } from './documentation/miappe_components/obs
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
 import { SampleComponent } from './documentation/miappe_components/sample.component';
+import { GanttComponent } from './test_component/gantt.component'
+import { PublicDataComponent } from './documentation/public-data.component';
+
 
 
 const routes: Routes = [
@@ -61,16 +64,20 @@ const routes: Routes = [
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
   { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
+  { path: 'public_data',component: PublicDataComponent, canActivate: [AuthGuard]},
   { path: 'data_exploration',component: DataExplorationComponent, canActivate: [AuthGuard]},
   { path: 'project_example',component: ProjectExampleComponent, canActivate: [AuthGuard]},
   { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
   //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
-  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
+  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]},
+  { path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]}
+  
   ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    onSameUrlNavigation: 'reload'
+    onSameUrlNavigation: 'reload',
+    scrollPositionRestoration: 'enabled'
   })],
   exports: [RouterModule]
 })

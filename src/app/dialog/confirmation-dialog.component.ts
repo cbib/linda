@@ -5,6 +5,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 
 interface DialogData {
   validated: boolean;
+  only_childs: boolean;
 
 }
 
@@ -15,6 +16,7 @@ interface DialogData {
 })
 export class ConfirmationDialogComponent implements OnInit {
     private validated:boolean;
+    private only_childs:boolean =false
     constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData) { 
         
@@ -30,10 +32,9 @@ export class ConfirmationDialogComponent implements OnInit {
     
     onOkClick(): void {
         console.log(this.data)
-        this.validated=true
-        this.data.validated=true
-        console.log(this.data)
-        this.dialogRef.close(true);
+        this.dialogRef.close({event:"Confirmed",validated:this.validated, only_childs:this.only_childs});
     }
-
+    set_check_only_childs(completed: boolean) {
+      this.only_childs=completed
+    }
 }

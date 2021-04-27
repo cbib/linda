@@ -224,10 +224,6 @@ export class AppComponent implements OnInit {
 
                     }
                 );
-                console.log(this.stats_advanced)
-
-
-
             }
         )
     }

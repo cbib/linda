@@ -55,10 +55,10 @@ const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
 const queue1 = queues.create("my-queue");
 
-queue1.push(
-    { mount: "/xeml", name: "send-mail" },
-    { to: "bdartigues@gmail.com", body: "Hello world" }
-);
+// queue1.push(
+//     { mount: "/xeml", name: "send-mail" },
+//     { to: "bdartigues@gmail.com", body: "Hello world" }
+// );
 
 
 //const writeFile = require('write-file')
@@ -276,7 +276,7 @@ router.get('/users/:username', function (req, res) {
  ******************************************************************************************/
 
 router.post('/authenticate', function (req, res) {
-    const values = req.body.values;
+    //const values = req.body.values;
     var username = req.body.username;
     var password = req.body.password;
     const keys = db._query(aql`
@@ -933,15 +933,7 @@ router.post('/upload', function (req, res) {
     var password = req.body.password;
     var parent_id = req.body.parent_id;
     var values = req.body.obj;
-
-    //    var data=req.body.data;
-    //    var headers=req.body.headers;
-    //    var associated_headers=req.body.associated_headers;
-    //    var filename=req.body.filename;
-    //var result="";
     const edge = db._collection("studies_edge");
-
-
     var coll = db._collection("metadata_files");
     //    //first check if user exist
     /////////////////////////////
@@ -955,15 +947,10 @@ router.post('/upload', function (req, res) {
         res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
     }
     else {
-
         var data = [];
         data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
-
-        //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-
         if (data[0].new === null) {
             res.send({ success: false, message: model_type + ' collection already have file with this name ', _id: 'none' });
-
         }
         //Document exists
         else {
@@ -974,68 +961,9 @@ router.post('/upload', function (req, res) {
             const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
             res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
         }
-
     }
     res.send(data);
-
-    //    var password=req.body.password;
-    //    var _key=req.body._key;
-    //    var field=req.body.field;
-    //    var value=req.body.value;
-    //    var model_type=req.body.model_type;
-    //    /////////////////////////////
-    //    //first check if user exist
-    //    /////////////////////////////
-    //    const user = db._query(aql`
-    //        FOR entry IN ${users}
-    //        FILTER entry.username == ${username}
-    //        FILTER entry.password == ${password}
-    //        RETURN entry
-    //    `);
-    //    if (user.next() === null){
-    //        res.send({success:false,message:'username '+ username + 'doesn\'t exists'});
-    //    }
-    //    else{
-    //        /////////////////////////////
-    //        //now check if investigation exists else modify field
-    //        /////////////////////////////
-    //        var update=[];
-    //        var _id='';
-    //        if (model_type==='investigation'){
-    //            _id='investigations/'+_key;
-    //            update=db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray();
-    //        }
-    //        else if (model_type==='study'){
-    //            _id='studies/'+_key;
-    //            update=db._query(aql` FOR entry IN ${studies} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${studies} RETURN NEW.${field}`).toArray();
-    //        }
-    //        else if (model_type==='event'){
-    //            _id='events/'+_key;
-    //            update=db._query(aql` FOR entry IN ${events} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${events} RETURN NEW.${field}`).toArray();
-    //        }
-    //        else {
-    //            _id='observation_units/'+_key;
-    //            update=db._query(aql` FOR entry IN ${observation_units} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${observation_units} RETURN NEW.${field}`).toArray();
-    //
-    //        }
-    //        
-    //        
-    //        
-    //        
-    //        //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
-    //        //Document has been updated
-    //        if (update[0] === value){
-    //            res.send({success:true,message:'document has been updated '});
-    //        }
-    //        //No changes
-    //        else{
-    //            res.send({success:false,message: 'document cannot be updated'});
-    //        }
-    //    };
-
 })
-    //headers: joi.array().items.required(),
-    //associated_headers: joi.object().required()
     .body(joi.object({
         username: joi.string().required(),
         password: joi.string().required(),
@@ -1045,17 +973,14 @@ router.post('/upload', function (req, res) {
             headers: joi.array().items().required(),
             associated_headers: joi.object().required(),
             filename: joi.string().required()
-        }).required()
-
-    }).required(), 'Values to check.')
+        }).required()}).required(), 'Values to check.')
     .response(joi.object({
         success: true,
         message: joi.string().required(),
         inv_key: joi.string().required()
-    }).required(), 'response.')
-    //.response(joi.array().items(joi.array().items().required()).required(),'response.')
+        }).required(), 'response.')
     .summary('List entry keys')
-    .description('check if user exist and update specific field in MIAPPE model.');
+    .description('check if user exist and add metadata file in MIAPPE model.');
 
 
 router.post('/update', function (req, res) {
@@ -1218,6 +1143,98 @@ router.post('/update_field', function (req, res) {
     .description('check if user exist and update specific field in MIAPPE model.');
 
 
+router.post('/remove_childs', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var id = req.body.id;
+    
+        const user = db._query(aql`
+                FOR entry IN ${users}
+                FILTER entry.username == ${username}
+                FILTER entry.password == ${password}
+                RETURN entry
+              `).toArray();
+        if (user[0] === null) {
+            res.send({ success: false, message: ['Username ' + username + ' doesn\'t exists'] });
+        }
+        else {
+            var errors = [];
+    
+            // //Remove relation for parent of selected node parent in edge collection
+            // var parent = db._query(aql`FOR v, e IN 1..1 INBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+            // var parent_edge_coll = parent[0].e_id.split("/")[0];
+            // var parent_key = parent[0].e_key;
+            // try {
+            //     db._query(`REMOVE "${parent_key}" IN ${parent_edge_coll}`);
+            // }
+            // catch (e) {
+            //     errors.push(e + " " + parent[0].e_id);
+            // }
+    
+            //get all childs and remove in collection document and edges
+            var childs = db._query(aql`FOR v, e IN 1..4 OUTBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+    
+    
+            //Remove all childs for selected node
+            for (var i = 0; i < childs.length; i++) {
+    
+                //Delete child vertice in collection
+                if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
+                    var child_coll = childs[i].v_id.split("/")[0];
+                    var child_vkey = childs[i].v_key;
+                    try {
+                        db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+                    }
+                    catch (e) {
+                        errors.push(e + " " + childs[i].v_id);
+                    }
+                }
+                if ((childs[i].e_id !== null) || (childs[i].e_key !== null)) {
+                    var edge_coll = childs[i].e_id.split("/")[0];
+                    var child_ekey = childs[i].e_key;
+                    try {
+                        db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+                    }
+                    catch (e) {
+                        errors.push(e + " " + childs[i].e_id);
+                    }
+                }
+    
+                //Delete child edge in edge collection
+    
+            }
+            //Remove selected node
+            // var key = id.split('/')[1];
+            // var coll = id.split('/')[0];
+            // try {
+            //     db._query(`REMOVE "${key}" IN ${coll}`);
+            // }
+            // catch (e) {
+            //     errors.push(e + " " + id);
+            // }
+            //Delete selected document and the egde in the parent collection edge
+    
+            if (errors.length === 0) {
+                res.send({ success: true, message: ["No errors detected"] });
+            }
+            else {
+                res.send({ success: false, message: errors });
+            }
+        }
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            id: joi.string().required(),
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.array().items(joi.string().required()).required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('add MIAPPE description for given model.');
+    
+
 router.post('/remove', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -1275,8 +1292,6 @@ router.post('/remove', function (req, res) {
                 }
             }
 
-            //Delete child edge in edge collection
-
         }
         //Remove selected node
         var key = id.split('/')[1];
@@ -1287,7 +1302,6 @@ router.post('/remove', function (req, res) {
         catch (e) {
             errors.push(e + " " + id);
         }
-        //Delete selected document and the egde in the parent collection edge
 
         if (errors.length === 0) {
             res.send({ success: true, message: ["No errors detected"] });

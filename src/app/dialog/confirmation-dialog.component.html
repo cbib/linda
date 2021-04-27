@@ -1,7 +1,12 @@
 
 
 <h1 mat-dialog-title>Confirm remove</h1>
+
 <div mat-dialog-content >
+    <section class="format-section">
+      <p > Delete only childs component ? </p>
+      <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_only_childs($event.checked)" >Only childs</mat-checkbox>
+  </section>
     <p> Are you sure to delete ? </p>
 </div>
 <div mat-dialog-actions>

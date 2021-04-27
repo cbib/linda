@@ -55,6 +55,9 @@ export class MiappeNode {
         public get_model_type(){
             return this.model_type
         }
+        public get_model_def(){
+            return this.def
+        }
         public get_name(){
             return this.name;
         }

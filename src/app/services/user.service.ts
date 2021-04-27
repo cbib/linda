@@ -16,6 +16,10 @@ export class UserService {
 //    register {
 //        return this.http.get<User[]>(this.apiUrl);
 //    }
+    
+    /* getUserInfo() {
+        return this.http.get<User>(`${this.APIUrl}/users` + user._id);
+    } */
     getAll() {
         return this.http.get<User[]>(`${this.APIUrl}/users`);
     }

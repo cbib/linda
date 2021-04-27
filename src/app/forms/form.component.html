@@ -10,7 +10,7 @@
 <!-- <div class="loaded-content" [class.blurred]="showSpinner"></div> 
 </div> -->
 
-<div>
+<div style="overflow: auto">
     <div class="border-head">
         <h3>
             <a href="index.html" class="logo">
@@ -18,42 +18,72 @@
                     P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
                 </b>
             </a>
-            <div class="form-group text-center" style="float: right;">
-                <button *ngIf="max_level!==1" class="btn btn-xs btn-info" (click)="back(modelForm,level)"
-                    [disabled]="level<=1">
-                    <span style="margin-right:10px;" class="glyphicon glyphicon-arrow-left"></span>
-                    Back
-                </button>
-                <span style="margin-right:10px;"></span>
-                <button (click)="cancel(modelForm)" class="btn btn-xs btn-danger">
-                    <span style="margin-right:10px;"></span>
-                    Cancel
-                </button>
-                <span style="margin-right:10px;"></span>
-                <button *ngIf="level<max_level" class="btn btn-xs btn-info" (click)="goToNext(modelForm,level)">
-                    Next
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button>
-                <span style="margin-right:10px;"></span>
-                <button class="btn btn-xs btn-info" type="submit" (click)="submit(modelForm);"
-                    [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')">
-                    Submit
-                    <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-                </button>
-                Save as template
-                <label class="switch ">
-                    <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
-                    <span class="slider round"></span>
-                </label>
-            </div>
+            
         </h3>
     </div>
+    <div 
+        class="btn-group"
+        style="width: 100%;float: right;"
+        joyrideStep="Step1_1"
+        title="Here is a {{model_type}} Form !! "
+        [stepContent]="menucontent"
+        [stepContentParams]="{'model_n':model_type, model_len:cleaned_model.length}"
+    >
+     <!-- joyrideStep="Step1_1" 
+        title="Start help tour for form" 
+        text="This menu allows you to navigate to previous or next form page if exists.
+                click on submit when you have completed the form or cancel if you want to go back in analysis
+                The Save as template  checkbox if activated will save your form as a template form available for furthers projest or studies"  -->
+        <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button>
+        <button *ngIf="level<max_level" style="float: right;" class="btn btn-info" (click)="goToNext(modelForm,level)">Next</button>
+        <!-- <span style="margin-right:10px;"></span>-->
+        <button class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')">Submit</button>
+        <!-- <span style="margin-right:10px;"></span> -->
+        <button (click)="cancel(modelForm)" style="float: right;" class="btn btn-danger">Cancel</button>
+        <!-- <span style="margin-right:10px;"></span> -->
+        <button *ngIf="level>1" style="float: right;" class="btn btn-xs btn-info" (click)="back(modelForm,level)" [disabled]="level<=1">Back</button>
+        <!-- <span style="margin-right:10px;"></span> -->
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Save as template</label>
+        </div>
+                    
+        <!-- <label class="switch ">
+            <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
+            <span class="slider round"></span>
+        </label> -->
+    </div>
+    <ng-template #menucontent let-nod="model_n" let-modellen="model_len">
+        <div>
+          <nav class="navbar navbar-expand-sm navbar-dark">
+              <h3>
+                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+              </h3>
+          </nav>
+        </div>
+        This menu allows you to navigate to previous or next form page if exists.
+                click on submit when you have completed the form or cancel if you want to go back in analysis
+                The Save as template  checkbox if activated will save your form as a template form available for furthers projest or studies   
+      </ng-template>
 
+    <div 
+    
+        >
+        <!-- joyrideStep="Step1_2" 
+        title="Here is the form to complete" 
+        text="Form can be one or more page. " -->
     <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1>
     <p>{{model.Definition}}</p>
     <!-- <div *ngIf="model_type!=='biological_material'"> -->
     <form [formGroup]="modelForm">
-        <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
+        <div 
+        joyrideStep="Step1_2"
+        title="Here is a {{model_type}} form stage {{level}} !! "
+        [stepContent]="formcontent"
+        [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+        >
+        <div
+        class="form-group" *ngFor="let field of cleaned_model ; index as i;">
             <div *ngIf="model[field['key']].Level==level">
                 <label for="{{field['key']}}">{{field['key']}}</label>
                 <span style="display:inline-block; margin-left: 10px;">
@@ -136,7 +166,59 @@
                 </div>
             </div>
         </div>
+        </div>
+        <!-- <ng-container *ngIf="level<2">
+            <ng-container *ngTemplateOutlet="formcontent.studylevelone; context: guided_tour_messages.level1"></ng-container>
+          </ng-container> -->
+        <ng-template #formcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+            <div>
+              <nav class="navbar navbar-expand-sm navbar-dark">
+                  <h3>
+                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                  </h3>
+              </nav>
+            </div>
+
+            The {{nod}} form contains informations and details about the related component. <br>
+            For each field, you have to described either manually or automatically using differents 
+            kind of widgets thats help you to capture your data. {{nod}} form contains {{modellen}} fields to fill.<br> 
+            Some are mandatory like {{nod}} unique identifier while others are optional and can be filled later.<br>
+            There are three main types of fields:<br>
+                - Field for free text or identifier<br>
+                - Field for ontology term selection<br>
+                - Field for date or time range<br>
+            Others fields using slider to select latitude longitude exist also;  
+            <div>
+                <p>{{modelmessage}}</p>
+            </div>
+            <!-- <ng-template #studylevelone let-heading="heading" let-message="message">
+                <div class="guided_tour_messages">
+                    <h4>{{ get_message_guided_tour.heading }}</h4>
+                    <p>{{ get_message_guided_tour.message }}</p>
+                </div>
+            </ng-template> -->
+
+            <!-- <div *ngIf="get_form_model_type()===Study">
+                Study model
+            </div> -->
+            <!-- <ng-template #primaryBlock>Primary text to show</ng-template>
+            <ng-template let-mod="nod" [ngIf]="Study">
+                you are in study form
+                <div *ngIf="level===1">
+                    At stage 1, you will see ontology form field for two important Study features
+                </div>
+                <div *ngIf="level===2">
+                    At stage 2, you will see ontology form field for two important Study features
+                </div>
+                <div *ngIf="level===3">
+                    At this stage you will see ontology form field for two important Study features
+                    <img src="assets/images/ontology_widget_form.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+                </div>
+            </ng-template> -->
+          </ng-template>
     </form>
+    </div>
+    
     <!-- </div> -->
     <!-- <div *ngIf="model_type==='biological_material'">
         <form [formGroup]="modelForm">

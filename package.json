@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^8.2.14",
     "@angular/router": "^8.2.14",
     "@popperjs/core": "^2.4.4",
+    "@swimlane/ngx-charts": "^13.0.4",
     "angular-datatables": "^8.1.0",
     "angular-ui-tour": "^0.9.4",
     "bootstrap": "^3.4.1",
@@ -33,11 +34,15 @@
     "flex-layout": "^1.0.1",
     "intro.js": "^3.3.1",
     "jquery": "^3.5.1",
+    "jsgantt-improved": "^2.8.1",
     "jszip": "^3.5.0",
     "material-design-icons": "^3.0.1",
+    "mdb-ui-kit": "^3.4.0",
     "mkdirp": "^1.0.4",
     "moment": "^2.27.0",
     "ng-bootstrap": "^1.6.3",
+    "ng-gantt": "^2.5.0",
+    "ngx-guided-tour": "^1.1.11",
     "ngx-joyride": "^2.3.1",
     "ngx-json-viewer": "^2.4.0",
     "popper.js": "^1.16.1",
@@ -73,7 +78,7 @@
     "terser-webpack-plugin": "^2.3.8",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.4.3",
+    "typescript": "^3.5.1",
     "webpack": "^4.44.1"
   }
 }

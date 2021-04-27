@@ -6,7 +6,32 @@
             </h3>
     </div>
     
+<div *ngIf= "mode==='extract'" >
+        <h1>Extract Study details from file!</h1>
 
+        <p>First assign the column to the right component; For example if ones want to add tabular 
+        file with one column containing name of the study(ies), then it has to select the 'Extract study label from column option' 
+        in the corresponding header line to assign this column to the study label. 
+        
+        Once user has finished to assign MIAPPE components, check the boxes for each componet you want to be incorporated in your investigation and click on process button </p>
+        for each study created the correspondign  part of yoru data file will be extracted and  linkedd to the correspondign study as a data file
+        <!--<app-upload-file ></app-upload-file>-->
+        <div *ngIf="error">
+          {{ error.message }}
+        </div>
+        <div *ngIf="uploadResponse.status === 'error'">
+          {{ uploadResponse.message }}
+        </div>
+        <div *ngIf="uploadResponse.status === 'progress'">
+          <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+            {{uploadResponse.message}}%
+          </div>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+            <button class="btn btn-default btn-info" type="submit">Upload</button>
+        </form>
+      </div>
 <div *ngIf= "mode==='create'" >
   <h1>Upload your Data files!</h1>
   <!--<app-upload-file ></app-upload-file>-->
@@ -24,45 +49,48 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
       <button class="btn btn-default btn-info" type="submit">Upload</button>
-
-      <!--<label class="btn btn-default btn-file">Upload <button type="submit"></button></label>--> 
-
-    <!--<input type="file" name="file" (change)="onFileChange($event)"/>-->
-<!--    <div *ngIf="fileUploadProgress">
-         Upload progress: {{ fileUploadProgress }}
-    </div>-->
-    <!--<button class="btn btn-outline-rounded btn-info" type="submit">Upload</button>-->
-    <!--<button class="btn btn-outline-rounded btn-info" (click)="cancel(form)">Cancel</button>-->
-    <!--<button class="btn btn-outline-rounded btn-info">Save</button>-->
   </form>
-        
-
 </div>
  <div *ngIf= "mode==='edit'" >
      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
-    <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
-    
+     <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
   </form>
-     <br>
-</div>     
+<br>
+</div>
+<ngx-charts-line-chart *ngIf= "mode==='edit'" #chart
+  [view]="view"
+  [scheme]="colorScheme"
+  [legend]="legend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxis]="xAxis"
+  [yAxis]="yAxis"
+  [xAxisLabel]="xAxisLabel"
+  [maxXAxisTickLength]=2
+  [yAxisLabel]="yAxisLabel"
+  [timeline]="timeline"
+  [results]="multi"
+  (select)="onSelectChart($event)"
+  (activate)="onActivate($event)"
+  (deactivate)="onDeactivate($event)"
+  >
+</ngx-charts-line-chart>
 <!--<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">-->
 
-
-
-    
-
-
-<table cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
+<table *ngIf= "mode!='extract'" cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
     <thead>
         <tr>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <th scope="col" >
+            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="todoLeafItemSelectionToggle(key)"></mat-checkbox>
+            </th>
             <th scope="col" >{{key}}</th>
             <th scope="col" cdkDrag>
                 <span *ngIf="get_headers_select()[i]==='others'" style="display:inline-block; margin-left: 10px;"> 
@@ -70,7 +98,8 @@
                         <!--<option value="" disabled>Assign Ontology term</option>-->
                         <option [value]="undefined" selected>Assign Ontology term</option>
                         <option value='XEO' (change)="onSelect($event.target.value,key)">XEO</option>
-                        <option value='EO'>EO</option>
+                        <option value='group_label' (change)="onSelect($event.target.value,key)">Define as group labels</option>v
+                        <option value='PECO'>PECO</option>
                         <option value='EnvO'>EnvO</option>
                         <option value='PO_Structure'>PO Structure</option>
                         <option value='PO_Development'>PO Development</option>
@@ -104,6 +133,72 @@
         </tr>
     </tbody>
 </table>
+
+
+<table  *ngIf= "mode==='extract'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable">
+    <thead>
+        <tr>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE component</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected components</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extraction</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <th scope="col" >
+            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="todoLeafItemSelectionToggle(key)"></mat-checkbox>
+            </th>
+            <th scope="col" >{{key}}</th>
+            <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onExtract($event.target.value,get_headers()[i])" >
+                        <!--<option value="" disabled>Assign Ontology term</option>-->
+                        <option [value]="undefined" selected>Extract MIAPPE component </option>
+                        <option value='study'>Extract Study label from column</option>
+                        <option value='site'>Extract Study site from column</option>
+                        <option value='experimental_factor'>Extract Experimental Factor</option>
+                        <option value='material_source'>Extract Material Source</option>
+                        <option value='observation_unit'>Extract Observation Units</option>
+                    </select> 
+                </span>
+
+                <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
+                    <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
+                        <option value="" disabled>Select time format</option>
+                        <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
+                        <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
+                        <option value='yyyy/MM/ddThh:mm:ss'>yyyy/MM/ddThh:mm:ss</option>
+                        <option value='custom_date_format'>build custom date format</option>
+                    </select> 
+                </span> -->
+
+            </th>
+            <th scope="col">
+
+                <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{associated_headers[key].associated_term_id}} 
+                </span>
+
+                <span *ngIf="i==0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{associated_headers[key].associated_term_id}}
+                </span>
+            </th>
+            <th scope="col">
+
+                <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                     
+                </span>
+
+                <span *ngIf="i==0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                    
+                </span>
+            </th>
+        </tr>
+    </tbody>
+</table>
+
 
 
 <!--<div>

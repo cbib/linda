@@ -1,6 +1,6 @@
+import { Component, OnInit, ViewChild, Output, Input, EventEmitter} from '@angular/core';
 import { FlatTreeControl} from '@angular/cdk/tree';
 import {SelectionModel} from '@angular/cdk/collections';
-import { Component, OnInit, ViewChild, Output, Input, EventEmitter} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import { GlobalService, OntologiesService, AlertService, FileService, SearchService } from '../services';
 import { MiappeNode } from '../models';
@@ -15,7 +15,7 @@ import * as JSZip from 'jszip';
 import { MediaObserver} from "@angular/flex-layout";
 import { FormControl} from '@angular/forms';
 import { JoyrideModule } from 'ngx-joyride';
-
+import {JoyrideService} from 'ngx-joyride';
 
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
@@ -66,6 +66,7 @@ export class UserTreeComponent implements OnInit{
         private searchService : SearchService,
         private router: Router,
         private alertService: AlertService,
+        private readonly joyrideService: JoyrideService,
         private route: ActivatedRoute,
         public media: MediaObserver,
         public dialog: MatDialog
@@ -99,14 +100,16 @@ export class UserTreeComponent implements OnInit{
     // }
 
     async ngOnInit() {
-          await this.get_vertices()
-          this.nodes=[]
-          this.nodes=this.build_hierarchy(this.vertices)
+        await this.get_vertices()
+        
+        this.nodes=[]
+        this.nodes=this.build_hierarchy(this.vertices)
         
 
           //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
           this.sort_nodes(this.nodes[0])
           this.dataSource.data = this.nodes
+          //console.log(this.dataSource.data)
           //this.treeControl.expand()
           //this.tree.treeControl.expandAll();
           
@@ -421,50 +424,63 @@ export class UserTreeComponent implements OnInit{
  
     onRemove(node: MiappeNode) {
         this.active_node=node
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '500px', data: {validated: false}});
-        
-                
-        dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-                
-                if(confirmed){
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {width: '500px', data: {validated: false, only_childs: false}});
+        dialogRef.afterClosed().subscribe((result) => {
+                if(result){
+                    if (result.event=='Confirmed'){
 
-                    console.log(this.active_node.id.split("/")[0])
-                    if (this.active_node.id.split("/")[0]==="observation_units"){
+                        console.log(this.active_node.id.split("/")[0])
+                        if (this.active_node.id.split("/")[0]==="observation_units"){
 
-                        this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]){
-                                    console.log(data["message"])
-                                    var message =  this.active_node.id + " has been removed from your history !!"
-
-                                    this.alertService.success(message)
-
+                            this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
+                                data => {
+                                    if (data["success"]){
+                                        console.log(data["message"])
+                                        var message =  this.active_node.id + " has been removed from your history !!"
+                                        this.alertService.success(message)
+                                    }
+                                    else{
+                                        this.alertService.error("this form contains errors! " + data["message"]);
+                                    }
                                 }
-                                else{
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
+                            );
+                        }
+                        else{
+                            if (result.only_childs){
+                                this.globalService.remove_childs(this.active_node.id).pipe(first()).toPromise().then(
+                                    data => {
+                                        if (data["success"]){
+                                            console.log(data["message"])
+                                            var message =  "child nodes of " + this.active_node.id + " have been removed from your history !!"
+                                            this.alertService.success(message)
+                                        }
+                                        else{
+                                            this.alertService.error("this form contains errors! " + data["message"]);
+                                        }
+                                    }
+                                );
                             }
-                        );
-                    }
-                    else{
-                        this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]){
-                                    console.log(data["message"])
-                                    var message =  this.active_node.id + " has been removed from your history !!"
-
-                                    this.alertService.success(message)
-
-                                }
-                                else{
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
+                            else{
+                                this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
+                                    data => {
+                                        if (data["success"]){
+                                            console.log(data["message"])
+                                            var message =  this.active_node.id + " has been removed from your history !!"
+                                            this.alertService.success(message)
+                                        }
+                                        else{
+                                            this.alertService.error("this form contains errors! " + data["message"]);
+                                        }
+                                    }
+                                );
                             }
-                        );
-                    }
 
-                    this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
-                    this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+                            
+                        }
+
+                        this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false; 
+                        this.router.navigate(['/tree'],{ queryParams: { key:  this.parent_key} });        
+                    }
                 }
                 
 
@@ -528,7 +544,16 @@ export class UserTreeComponent implements OnInit{
         }
     }
     
-    
+    add_from_file(model_type:string,template:string){
+        var parent_key=this.active_node.id.split("/")[1]
+        var parent_id=""
+        if (this.active_node.id!='Investigations tree'){
+            parent_id= this.active_node.id
+            this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:parent_key,model_type:model_type,mode:"extract"}});
+
+        }
+    }
+
     add(model_type:string,template:string) {
 
         var parent_key=this.active_node.id.split("/")[1]
@@ -609,9 +634,7 @@ export class UserTreeComponent implements OnInit{
             
         }
         else if (template=='zip'){
-            console.log('add zip file');
-            
-            
+            console.log('add zip file'); 
         }
         else if (template=='parent'){
             //Here it is a special case for observation unit when you want to add
@@ -713,7 +736,7 @@ export class UserTreeComponent implements OnInit{
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 this.vertices=data;
-                console.log(data)
+                //console.log(data)
                 this.statistics={
                     "investigations":0,
                     "studies":0,
@@ -1197,7 +1220,7 @@ export class UserTreeComponent implements OnInit{
         
     
     }
-  
+    
   
 
     hasChild = (_: number, node: ExampleFlatNode) => node.expandable;

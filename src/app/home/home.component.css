@@ -1,0 +1,18 @@
+.joyride-step__container{
+    border-radius: 10px;
+}
+
+::ng-deep .mat-stepper-horizontal {
+    margin-top: 8px;
+    
+    position: inherit;
+}
+  
+.mat-form-field {
+    margin-top: 16px;
+}
+  
+::ng-deep .mat-horizontal-stepper-header-container {
+      position: inherit;
+    }
+  

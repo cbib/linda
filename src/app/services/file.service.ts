@@ -21,7 +21,9 @@ export class FileService {
     }
 
     private extractData(res: Response) {
+        
         let body = res;
+        console.log(body)
         return body || {};
     }
 
@@ -39,11 +41,11 @@ export class FileService {
             }
 
         };
+        console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload"}`, obj2send).pipe(map(this.extractData));
     }
 
     public upload(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
-        let uploadURL = `${this.APIUrl}upload`;
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
             'username': user.username,
@@ -57,12 +59,8 @@ export class FileService {
             }
 
         };
-
-
         return this.httpClient.post<any>(`${this.APIUrl + "upload"}`, obj2send, { reportProgress: true, observe: 'events' }).pipe(map((event) => {
-
             switch (event.type) {
-
                 case HttpEventType.UploadProgress:
                     const progress = Math.round(100 * event.loaded / event.total);
                     console.log(progress);
