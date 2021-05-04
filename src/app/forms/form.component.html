@@ -37,7 +37,7 @@
         <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button>
         <button *ngIf="level<max_level" style="float: right;" class="btn btn-info" (click)="goToNext(modelForm,level)">Next</button>
         <!-- <span style="margin-right:10px;"></span>-->
-        <button class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || (get_startfilling()===false && mode==='create')">Submit</button>
+        <button class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || ((get_startfilling()===false && mode==='create'))">Submit</button>
         <!-- <span style="margin-right:10px;"></span> -->
         <button (click)="cancel(modelForm)" style="float: right;" class="btn btn-danger">Cancel</button>
         <!-- <span style="margin-right:10px;"></span> -->

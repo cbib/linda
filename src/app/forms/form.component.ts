@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GlobalService, AlertService, OntologiesService } from '../services';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
 import {JoyrideService} from 'ngx-joyride';
+import {InvestigationForm} from '../models/investigation'
 
 // import { isBuffer } from 'util';
 // import { ConsoleReporter } from 'jasmine';
@@ -26,7 +27,8 @@ export class FormComponent implements OnInit//, AfterViewInit
     @Input() model_key: string;
     @Input() model_type: string;
     @Input() mode: string;
-    
+    @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+
     public guided_tour_messages: any = {
         level1: { heading: 'Level 1', message: 'At stage 1, you will see ontology form field for two important Study features' },
         level2: { heading: 'Level 2', message: 'At stage 2, you will see ontology form field for two important Study features' },
@@ -166,31 +168,8 @@ export class FormComponent implements OnInit//, AfterViewInit
 
             if (this.mode === "create") {
                 console.log(this.model_type)
-
-
-
                 this.modelForm = this.initiateForm()
                 console.log(this.modelForm.value)
-
-                // let attributeFilters = {};
-                // this.cleaned_model.forEach(attr => {
-                //     this.validated_term[attr["key"]]={selected:false, values:""}
-                //     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")){
-                //         if  (attr["key"].includes("ID")){
-                //             //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-                //             //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                //             attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr["key"])];
-                //         }
-                //         else if(attr["key"].includes("Short title")){
-                //             attributeFilters[attr["key"]] = ['',[Validators.required, Validators.minLength(4)]];
-                //         }
-                //         else{
-                //             attributeFilters[attr["key"]] = [''];
-                //         }
-                //     }
-                // });
-                // this.modelForm= this.formBuilder.group(attributeFilters);
-
             }
             else {
                 let attributeFilters = [];
@@ -227,14 +206,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (this.modelForm.value[this.disabled_id_keys[i]]){
                             this.modelForm.get(this.disabled_id_keys[i]).disable();
                         }
-                    }
-                    
-                    
+                    }            
+    
                 }
-
-
-
-
             }
         });
     };
@@ -525,29 +499,59 @@ export class FormComponent implements OnInit//, AfterViewInit
     };
 
     cancel(form: any) {
-        this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+        if (this.mode==="preprocess"){
+            this.notify.emit('cancel the form');
+        }
+        else{
+            this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+        }
 
     };
 
     back(modelForm, level) {
-        this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) - 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
-
+        if (this.mode==="preprocess"){
+            this.level-=1
+        }
+        else{
+            this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) - 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
+        }
 
     };
     submit(form: any) {
+        console.log("start to submit")
         if (!this.startfilling && this.mode != "edit") {
             this.alertService.error('need to fill the form first');
 
         }
         else {
-            this.save(form)
+            if (this.mode==="preprocess"){
+                console.log("start to subbmit")
+                if (!form.valid) {
+                    console.log("invalid  form")
+                    let message = "this form contains errors! "
+                    this.alertService.error(message);
+                    return false;
+                }
+                else {
+                    this.notify.emit(this.modelForm.value);
+                }
+            }
+            else{
+                this.save(form)
+            }
+            
         }
     };
     onNext() {
         // Do something
     }
     goToNext(form: any, level) {
-        this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
+        if (this.mode==="preprocess"){
+            this.level+=1
+        }
+        else{
+            this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
+        }
 
     };
 }

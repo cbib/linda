@@ -1,39 +1,39 @@
-<alert></alert>
- 
 <div class="border-head">
-            <h3>
-                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-            </h3>
-    </div>
-    
+    <h3>
+        <a href="index.html" class="logo">
+            <b>
+            P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+            </b>
+        </a>
+    </h3>
+</div>    
 <div *ngIf= "mode==='extract'" >
-        <h1>Extract Study details from file!</h1>
-
-        <p>First assign the column to the right component; For example if ones want to add tabular 
-        file with one column containing name of the study(ies), then it has to select the 'Extract study label from column option' 
-        in the corresponding header line to assign this column to the study label. 
-        
-        Once user has finished to assign MIAPPE components, check the boxes for each componet you want to be incorporated in your investigation and click on process button </p>
-        for each study created the correspondign  part of yoru data file will be extracted and  linkedd to the correspondign study as a data file
-        <!--<app-upload-file ></app-upload-file>-->
-        <div *ngIf="error">
-          {{ error.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'error'">
-          {{ uploadResponse.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'progress'">
-          <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+    <h4>Extract Investigation design from tabular file!</h4>
+    <p> Using a external tabular file, Users can easily export whole investigation structure into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
+    <!--<app-upload-file ></app-upload-file>-->
+    <div *ngIf="error">
+        {{ error.message }}
+    </div>
+    <div *ngIf="uploadResponse.status === 'error'">
+        {{ uploadResponse.message }}
+    </div>
+    <div *ngIf="uploadResponse.status === 'progress'">
+        <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
             {{uploadResponse.message}}%
-          </div>
         </div>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
-            <button class="btn btn-default btn-info" type="submit">Upload</button>
-        </form>
-      </div>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+        <button class="btn btn-default btn-info" type="submit">Upload Studies</button>
+        <mat-radio-group [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">
+            <mat-radio-button class="radio-margin" value="only_studies">Only Studies</mat-radio-button>
+            <mat-radio-button class="radio-margin" value="all">Studies + associated data</mat-radio-button>
+            <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button>
+        </mat-radio-group>
+    </form>
+</div>
 <div *ngIf= "mode==='create'" >
-  <h1>Upload your Data files!</h1>
+  <h1>CSV Data Loader</h1>
   <!--<app-upload-file ></app-upload-file>-->
   <div *ngIf="error">
     {{ error.message }}
@@ -51,13 +51,14 @@
       <button class="btn btn-default btn-info" type="submit">Upload</button>
   </form>
 </div>
- <div *ngIf= "mode==='edit'" >
+ <div *ngIf= "mode.includes('edit')" >
      <form [formGroup]="form" (ngSubmit)="onSubmit()">
      <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
   </form>
-<br>
 </div>
-<ngx-charts-line-chart *ngIf= "mode==='edit'" #chart
+<br>
+<!-- [xAxisTickFormatting]='formatTime' -->
+<ngx-charts-line-chart *ngIf= "time_set" #chart
   [view]="view"
   [scheme]="colorScheme"
   [legend]="legend"
@@ -66,24 +67,25 @@
   [xAxis]="xAxis"
   [yAxis]="yAxis"
   [xAxisLabel]="xAxisLabel"
-  [maxXAxisTickLength]=2
+  [maxXAxisTickLength]=10
   [yAxisLabel]="yAxisLabel"
   [timeline]="timeline"
+  [rotateXAxisTicks]="rotateXAxisTicks"
+  [autoScale]="autoScale"
   [results]="multi"
   (select)="onSelectChart($event)"
   (activate)="onActivate($event)"
   (deactivate)="onDeactivate($event)"
   >
 </ngx-charts-line-chart>
-<!--<cdk-virtual-scroll-viewport itemSize="24"  style="height: 500px; min-width: 100%; " class="cdk-virtual-scroll-viewport cdk-virtual-scroll-orientation-vertical cdk-virtual-scroll-orientation-horizontal">-->
-
-<table *ngIf= "mode!='extract'" cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
+<table *ngIf= "model_type==='metadata_file'" cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
     <thead>
         <tr>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
         </tr>
     </thead>
     <tbody>
@@ -91,43 +93,65 @@
             <th scope="col" >
             <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="todoLeafItemSelectionToggle(key)"></mat-checkbox>
             </th>
-            <th scope="col" >{{key}}</th>
-            <th scope="col" cdkDrag>
-                <span *ngIf="get_headers_select()[i]==='others'" style="display:inline-block; margin-left: 10px;"> 
-                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelect($event.target.value,get_headers()[i])" >
-                        <!--<option value="" disabled>Assign Ontology term</option>-->
-                        <option [value]="undefined" selected>Assign Ontology term</option>
-                        <option value='XEO' (change)="onSelect($event.target.value,key)">XEO</option>
-                        <option value='group_label' (change)="onSelect($event.target.value,key)">Define as group labels</option>v
-                        <option value='PECO'>PECO</option>
-                        <option value='EnvO'>EnvO</option>
-                        <option value='PO_Structure'>PO Structure</option>
-                        <option value='PO_Development'>PO Development</option>
-                        <option value='CO_322'>Crop Ontology 322</option>
-                        <option value='CO_20'>Crop Ontology 20 </option>
-                        <option value='CO_715'>Crop Ontology 715 </option>
+            <th scope="col" >{{key}}
+            </th>
+            <!-- <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [ngModel]="selectedTerm" name="select_term" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                        <option *ngFor="let extract_option of extract_options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
                 </span>
+            </th> -->
 
+            <th scope="col" cdkDrag>
+                <span *ngIf="get_headers_select()[i]==='others'" style="display:inline-block; margin-left: 10px;"> 
+                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                        <!--<option value="" disabled>Assign Ontology term</option>-->
+                        <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
+                        <option value="XEO">XEO</option>
+                        <option value="group_label">Define as group labels</option>
+                        <option value="PECO">PECO</option>
+                        <option value="EnvO">EnvO</option>
+                        <option value="PO_Structure">PO Structure</option>
+                        <option value="PO_Development">PO Development</option>
+                        <option value="CO_322">Crop Ontology 322</option>
+                        <option value="CO_20">Crop Ontology 20 </option>
+                        <option value="CO_715">Crop Ontology 715 </option>
+                    </select> 
+                </span>
+               
+            
+                
                 <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
                     <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
                         <option value="" disabled>Select time format</option>
-                        <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
-                        <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
-                        <option value='yyyy/MM/ddThh:mm:ss'>yyyy/MM/ddThh:mm:ss</option>
-                        <option value='custom_date_format'>build custom date format</option>
+                        <option value="dd/mm/yyyy">dd/mm/yyyy</option>
+                        <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
+                        <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
+                        <option value="custom_date_format">build custom date format</option>
                     </select> 
                 </span>
 
             </th>
             <th scope="col">
-
-                <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="i>0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
                     {{associated_headers[key].associated_term_id}} 
                 </span>
-
-                <span *ngIf="i==0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="i==0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
                     {{associated_headers[key].associated_term_id}}
+                </span>
+            </th>
+
+            <th scope="col">
+                <span *ngIf="i>0 && get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
+                        title="{{key}}">Show Data
+                    </button>
+                </span>
+                <span *ngIf="i==0 && get_associated_header(key).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs"
+                        title="{{key}}">Show Data
+                    </button>
                 </span>
             </th>
         </tr>
@@ -135,14 +159,14 @@
 </table>
 
 
-<table  *ngIf= "mode==='extract'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable">
+<table  *ngIf= "model_type==='data_file' || model_type==='study'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable">
     <thead>
         <tr>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE component</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected components</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extraction</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
         </tr>
     </thead>
     <tbody>
@@ -153,62 +177,31 @@
             <th scope="col" >{{key}}</th>
             <th scope="col">
                 <span style="display:inline-block; margin-left: 10px;"> 
-                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onExtract($event.target.value,get_headers()[i])" >
-                        <!--<option value="" disabled>Assign Ontology term</option>-->
-                        <option [value]="undefined" selected>Extract MIAPPE component </option>
-                        <option value='study'>Extract Study label from column</option>
-                        <option value='site'>Extract Study site from column</option>
-                        <option value='experimental_factor'>Extract Experimental Factor</option>
-                        <option value='material_source'>Extract Material Source</option>
-                        <option value='observation_unit'>Extract Observation Units</option>
+                    <select [ngModel]="selectedStudy" name="select_study" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" >
+                        <option *ngFor="let extract_option of extract_options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
-                </span>
-
-                <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
-                    <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
-                        <option value="" disabled>Select time format</option>
-                        <option value='dd/mm/yyyy'>dd/mm/yyyy</option>
-                        <option value='yyyy-MM-DDThh:mm:ss.sTZD'>yyyy-MM-DDThh:mm:ss.sTZD</option>
-                        <option value='yyyy/MM/ddThh:mm:ss'>yyyy/MM/ddThh:mm:ss</option>
-                        <option value='custom_date_format'>build custom date format</option>
-                    </select> 
-                </span> -->
-
-            </th>
-            <th scope="col">
-
-                <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{associated_headers[key].associated_term_id}} 
-                </span>
-
-                <span *ngIf="i==0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{associated_headers[key].associated_term_id}}
                 </span>
             </th>
             <th scope="col">
-
-                <span *ngIf="i>0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
-                     
+                <span *ngIf="i>0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header(key).associated_component}} 
                 </span>
-
-                <span *ngIf="i==0 && associated_headers[key].selected" style="display:inline-block; margin-left: 10px;"> 
-                    
+                <span *ngIf="i==0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header(key).associated_component}}
+                </span>
+            </th>
+            <th scope="col">
+                <span *ngIf="i>0 && get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
+                        title="{{key}}">Show Data
+                    </button>
+                </span>
+                <span *ngIf="i==0 && get_associated_header(key).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs"
+                        title="{{key}}">Show Data
+                    </button>
                 </span>
             </th>
         </tr>
     </tbody>
 </table>
-
-
-
-<!--<div>
-   <p>Today is {{today | date}}</p>
-   <p>Or if you prefer, {{today | date:'fullDate'}}</p>
-    <p>Or if you prefer, {{today | date:'HH:mm:ss'}}</p>
-     <p>Or if you prefer, {{today | date:'yyyy-MM-ddThh:mm:ss.sTZD'}}</p>
-      <p>Or if you prefer, {{today | date:'yyyy/MM/ddThh:mm:ss'}}, semaine {{today | date:'w'}}</p>
-       <p>Or if you prefer, {{today | date:'fullDate'}}</p>
-        <p>Or if you prefer, {{today | date:'fullDate'}}</p>
-   <p>The time is {{today | date:'h:mm a z'}}</p>
- </div>-->
-<!--</cdk-virtual-scroll-viewport>-->

@@ -3,11 +3,13 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { User } from '../models/user';
 import { throwError, Observable } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
+import {ResDataModal} from '../models/datatable_model';
 import { Constants } from "../constants";
 @Injectable({
     providedIn: 'root'
 })
 
+    
 export class GlobalService {
 
     private APIUrl: string;
@@ -93,6 +95,11 @@ export class GlobalService {
         return this.http.get(this.APIUrl + "get_max_level/" + model_type).pipe(map(this.extractData));
     }
 
+    get_all_data_files(model_key:string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_all_data_files/" + model_key).pipe(map(this.extractData));
+    }
+
+
     is_exist(field: string, value: string, model_type: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -106,6 +113,31 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "check"}`, obj2send).pipe(map(this.extractData));
     }
 
+
+    update_associated_headers(id: string, values: {}, collection:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_id': id,
+            'values': values,
+            'collection': collection
+        };
+        return this.http.post(`${this.APIUrl + "update_associated_headers"}`, obj2send);
+    }
+    update_associated_headers_linda_id(id: string, value: string, header:string, collection:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_id': id,
+            'header': header,
+            'value': value,
+            'collection': collection
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
+    }
     update_field(value: string, key: string, field: string, model_type: string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -153,6 +185,18 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs"}`, obj2send);
     }
+
+    remove_childs_by_type(id:string, model_type:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'id': id,
+            'model_type':model_type
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "remove_childs_by_type"}`, obj2send);
+    }
     add(values: {}, model_type: string, parent_id: string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -163,6 +207,31 @@ export class GlobalService {
             'model_type': model_type
         };
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
+    }
+    add_parent_and_childs(parent_model: {}, child_values: {}, model_type_parent: string, parent_id: string, model_type_child: string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'values': parent_model,
+            'child_values':child_values,
+            'model_type': model_type_parent,
+            'child_model_type': model_type_child,
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_parent_and_child"}`, obj2send);
+    }
+    add_multi(values: [], model_type: string, parent_id: string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'values': values,
+            'model_type': model_type
+        };
+        return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
     remove_observation_unit(id) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -346,6 +415,10 @@ export class GlobalService {
 
     get_elem(collection: string, key: string) {
         return this.http.get(this.APIUrl + '/get_elem/' + collection + '/' + key).pipe(map(this.extractData));
+    }
+
+    get_data_file(key: string): Observable<ResDataModal>{
+        return this.http.get<ResDataModal>(this.APIUrl + '/get_data_file/' + key);
     }
 
     //get all investigations for a given user

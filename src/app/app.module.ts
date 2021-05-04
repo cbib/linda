@@ -103,7 +103,10 @@ import { GanttComponent } from './test_component/gantt.component'
 import {GuidedTourModule, GuidedTourService} from 'ngx-guided-tour';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PublicDataComponent } from './documentation/public-data.component';
-
+import { DatatableDialogComponent } from './dialog/datatable-dialog.component';
+import { HelpLoaderDialogComponent } from './dialog/help-loader-dialog.component';
+import { ExtractComponentComponent } from './extract/extract-component.component';
+import { FormDialogComponent } from './dialog/form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -160,7 +163,12 @@ import { PublicDataComponent } from './documentation/public-data.component';
     EnvironmentalParameterComponent,
     SampleComponent,
     GanttComponent,
-    PublicDataComponent    
+    PublicDataComponent,
+    DatatableDialogComponent,
+    HelpLoaderDialogComponent,
+    ExtractComponentComponent,
+    FormDialogComponent
+        
     
 
     
@@ -219,7 +227,7 @@ import { PublicDataComponent } from './documentation/public-data.component';
     JoyrideModule.forRoot(),
     NgGanttEditorModule,
     GuidedTourModule,
-    NgxChartsModule
+    NgxChartsModule  
   ],
   entryComponents:[DialogComponent,
                    OntologyTreeComponent,
@@ -231,7 +239,10 @@ import { PublicDataComponent } from './documentation/public-data.component';
                    SearchResultDialogComponent,
                    PubAdComponent,
                    SelectionDialogComponent,
-                   SampleSelectionComponent
+                   SampleSelectionComponent,
+                   DatatableDialogComponent,
+                   HelpLoaderDialogComponent,
+                   FormDialogComponent
                    ],
   providers: [AuthGuard,
               AlertService,

@@ -53,7 +53,7 @@ const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
-const queue1 = queues.create("my-queue");
+//const queue1 = queues.create("my-queue");
 
 // queue1.push(
 //     { mount: "/xeml", name: "send-mail" },
@@ -762,6 +762,37 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 //  res.sendFile(filePath);
 //});
 
+router.get('/get_data_file/:key', function (req, res) {
+    try {
+        var collection = req.pathParams.collection;
+        var key = req.pathParams.key;
+        var data = [];
+        const coll = db._collection("data_files");
+        if (!coll) {
+            db._createDocumentCollection("data_files");
+        }
+        data = coll.firstExample('_key', key);
+        var obj_to_send = {
+            'page': 1,
+            'per_page': 100,
+            'total': data['Data'].lenght,
+            'total_pages': data['Data'].lenght/100,
+            'data': data['Data']
+        } 
+        res.send(obj_to_send);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+
+})
+    .pathParam('key', joi.string().required(), 'unique key.')
+    .response(joi.object().required(), 'Entry stored in the collection.')
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
 router.get('/get_elem/:collection/:key', function (req, res) {
@@ -838,6 +869,49 @@ router.get('/get_by_key/:model_type/:key', function (req, res) {
     .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
+
+router.get('/get_all_data_files/:investigation_key/', function (req, res) {
+    try{
+        var investigation_key = req.pathParams.investigation_key;
+        var investigation_id= 'investigations/'+investigation_key
+        var childs = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${investigation_id} GRAPH 'global' FILTER CONTAINS(e._from, "studies") AND CONTAINS(e._to, "data_files") RETURN {efrom:e._from,eto:e._to, filename:v['Data file link'], associated_headers:v['associated_headers']}`).toArray();
+        var results=[]
+        if (childs[0].efrom != null) {
+            results.push(childs)
+            //res.send(childs);
+        }
+        else{
+            res.throw(404, 'The entry does not exist', e);
+        }
+
+        var study_ids = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${investigation_id} GRAPH 'global' FILTER CONTAINS(e._to, "studies") RETURN {study_id:e._to, study_label:v['Study unique ID']}`).toArray(); 
+        if (study_ids[0].study_id != null) {
+            results.push(study_ids) 
+            res.send(results);
+        }
+        else{
+            res.throw(404, 'The entry does not exist', e);
+        }
+    }
+    
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+    
+
+}).pathParam('investigation_key', joi.string().required(), 'investigation key requested.')
+.response(joi.array().items(joi.array().items(joi.object().required()).required()).required(), 'Entry stored in the collection.')
+.summary('Retrieve an entry')
+.description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
+
+
 
 router.get('/get_data_from_child_model/:parent_name/:parent_key/:child_type/', function (req, res) {
     try {
@@ -928,6 +1002,63 @@ router.get('/get_by_parent_key/:model_type/:parent_key', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
+
+router.post('/upload_data', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var parent_id = req.body.parent_id;
+        var values = req.body.obj;
+        const edge = db._collection("studies_edge");
+        var coll = db._collection("metadata_files");
+        //    //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+                FOR entry IN ${users}
+                FILTER entry.username == ${username}
+                FILTER entry.password == ${password}
+                RETURN entry
+            `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            var data = [];
+            data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+            if (data[0].new === null) {
+                res.send({ success: false, message: model_type + ' collection already have file with this name ', _id: 'none' });
+            }
+            //Document exists
+            else {
+                var obj = {
+                    "_from": parent_id,
+                    "_to": data[0].id
+                };
+                const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
+                res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+            }
+        }
+        res.send(data);
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            parent_id: joi.string().required(),
+            obj: joi.object({
+                data: joi.array().items(joi.object().required()).required(),
+                headers: joi.array().items().required(),
+                associated_headers: joi.object().required(),
+                filename: joi.string().required()
+            }).required()}).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required(),
+            inv_key: joi.string().required()
+            }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and add metadata file in MIAPPE model.');
+    
+
+
 router.post('/upload', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -983,10 +1114,167 @@ router.post('/upload', function (req, res) {
     .description('check if user exist and add metadata file in MIAPPE model.');
 
 
+router.post('/update_associated_headers_linda_id', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _id = req.body._id;
+        var header = req.body.header;
+        var value = req.body.value;
+        var collection = req.body.collection;
+        
+        const coll = db._collection(collection);
+        if (!coll) {
+            db._createDocumentCollection(collection);
+        }
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+        `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+
+            /*
+            get all data file and change associated_linda_id in associated headers for datafile_id
+            */
+
+            // var update = db._query(aql`
+            // FOR document in ${coll}
+            //   FILTER document._id == ${_id}
+            //   LET alteredList = (
+            //     FOR element IN document.associated_headers
+            //        LET newItem = (! element.header == ${header} ?
+            //                       element :
+            //                       MERGE(element, { associated_linda_id: ${value} }))
+            //        RETURN newItem)
+            //   UPDATE document WITH { associated_headers:  alteredList } IN ${coll}
+            //   RETURN { before: OLD, after: NEW }`).toArray();
+
+              var update = db._query(aql`
+                FOR document in ${coll}
+                FILTER document._id == ${_id}
+                LET alteredList = (
+                    FOR element IN document.associated_headers
+                    LET newItem = (element.header == ${header} ? MERGE(element, { associated_linda_id: ${value} }) : element)
+                    RETURN newItem)
+                UPDATE document WITH { associated_headers:  alteredList } IN ${coll}
+                RETURN { before: OLD, after: NEW }`).toArray();
+            /*
+            get all data file and change whole associated headers for datafile_id
+            */
+            //var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${_id} UPDATE entry WITH {associated_headers: ${values}} IN ${coll} RETURN { before: OLD, after: NEW }`).toArray();            
+            //Document has been updated
+            if (update[0].before !== update[0].after) {
+                res.send({ success: true, message: 'document has been updated ' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+        };
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            _id: joi.string().required(),
+            header: joi.string().required(),
+            value: joi.string().required(),
+            collection: joi.string().required()
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and update specific field in MIAPPE model.');
+    
+router.post('/update_associated_headers', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _id = req.body._id;
+        var values = req.body.values;
+        var collection = req.body.collection;
+        
+        const coll = db._collection(collection);
+        if (!coll) {
+            db._createDocumentCollection(collection);
+        }
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+        `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            // var update = [];
+            var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${_id} UPDATE entry WITH {associated_headers: ${values}} IN ${coll} RETURN { before: OLD, after: NEW }`).toArray();
+            //update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${coll} RETURN { before: OLD, after: NEW }`).toArray();
+    
+            //        if (model_type==='investigation'){
+            //            _id='investigations/'+_key;
+            //           // update=db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${investigations} RETURN UNSET(NEW, "_key", "_id", "_rev")`).toArray();
+            //            update=db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${investigations} RETURN { before: OLD, after: NEW }`).toArray();
+            //        
+            //        }
+            //        else if (model_type==='study'){
+            //            _id='studies/'+_key;
+            //            update=db._query(aql` FOR entry IN ${studies} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${studies} RETURN { before: OLD, after: NEW }`).toArray();
+            //        }
+            //        else if (model_type==='event'){
+            //            _id='events/'+_key;
+            //            update=db._query(aql` FOR entry IN ${events} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${events} RETURN { before: OLD, after: NEW }`).toArray();
+            //        }
+            //        else {
+            //            _id='observation_units/'+_key;
+            //            update=db._query(aql` FOR entry IN ${observation_units} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${observation_units} RETURN { before: OLD, after: NEW }`).toArray();
+            //
+            //        }
+    
+    
+    
+    
+            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+            //Document has been updated
+            if (update[0].before !== update[0].after) {
+                res.send({ success: true, message: 'document has been updated ' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+        };
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            _id: joi.string().required(),
+            values: joi.object().required(),
+            collection: joi.string().required()
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and update specific field in MIAPPE model.');
+
 router.post('/update', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var _key = req.body._key;
+
     var values = req.body.values;
     var model_type = req.body.model_type;
     var datatype = "";
@@ -1019,11 +1307,7 @@ router.post('/update', function (req, res) {
         /////////////////////////////
         var update = [];
 
-
         update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${coll} RETURN { before: OLD, after: NEW }`).toArray();
-
-
-
 
         //        if (model_type==='investigation'){
         //            _id='investigations/'+_key;
@@ -1110,6 +1394,10 @@ router.post('/update_field', function (req, res) {
         else if (model_type === 'event') {
             _id = 'events/' + _key;
             update = db._query(aql` FOR entry IN ${events} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${events} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'data_file') {
+            _id = 'data_files/' + _key;
+            update = db._query(aql` FOR entry IN ${data_files} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${data_files} RETURN NEW.${field}`).toArray();
         }
         else {
             _id = 'observation_units/' + _key;
@@ -1233,7 +1521,124 @@ router.post('/remove_childs', function (req, res) {
         }).required(), 'response.')
         .summary('List entry keys')
         .description('add MIAPPE description for given model.');
-    
+
+        
+router.post('/remove_childs_by_type', function (req, res) {
+            var username = req.body.username;
+            var password = req.body.password;
+            var id = req.body.id;
+            var model_type = req.body.model_type;
+            var datatype = "";
+            if (model_type === "study") {
+                datatype = "studies";
+            }
+            else {
+                datatype = model_type + "s";
+            }
+            // if (!coll) {
+            //     db._createDocumentCollection(datatype);
+            // }
+
+            const user = db._query(aql`
+                    FOR entry IN ${users}
+                    FILTER entry.username == ${username}
+                    FILTER entry.password == ${password}
+                    RETURN entry
+                  `).toArray();
+            if (user[0] === null) {
+                res.send({ success: false, message: ['Username ' + username + ' doesn\'t exists'] });
+            }
+            else {
+                var errors = [];
+        
+                // //Remove relation for parent of selected node parent in edge collection
+                // var parent = db._query(aql`FOR v, e IN 1..1 INBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+                // var parent_edge_coll = parent[0].e_id.split("/")[0];
+                // var parent_key = parent[0].e_key;
+                // try {
+                //     db._query(`REMOVE "${parent_key}" IN ${parent_edge_coll}`);
+                // }
+                // catch (e) {
+                //     errors.push(e + " " + parent[0].e_id);
+                // }
+        
+                //get all childs and remove in collection document and edges
+                var childs = db._query(aql`FOR v, e IN 1..4 OUTBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
+        
+        
+                //Remove all childs for selected node
+                var datafile_ids=[]
+                for (var i = 0; i < childs.length; i++) {
+                    if (childs[i].v_id !== null && childs[i].v_id.split("/")[0]==='data_files'){
+                        datafile_ids.push(childs[i].v_id)   
+                    }
+                    if (childs[i].v_id !== null && childs[i].v_id.split("/")[0]===datatype){
+        
+                        // If observed variable, reset all associated_linda_id
+
+                        
+                        //Delete child vertice in collection
+                        if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
+                            
+                            var child_coll = childs[i].v_id.split("/")[0];
+                                var child_vkey = childs[i].v_key;
+                                try {
+                                    db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+                                }
+                                catch (e) {
+                                    errors.push(e + " " + childs[i].v_id);
+                            }
+                            
+                        }
+                        if ((childs[i].e_id !== null) || (childs[i].e_key !== null)) {
+                            
+                            var edge_coll = childs[i].e_id.split("/")[0];
+                            var child_ekey = childs[i].e_key;
+                            try {
+                                db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+                            }
+                            catch (e) {
+                                errors.push(e + " " + childs[i].e_id);
+                            }
+                        }
+                    }
+        
+                    //Delete child edge in edge collection
+        
+                }
+                //Remove selected node
+                // var key = id.split('/')[1];
+                // var coll = id.split('/')[0];
+                // try {
+                //     db._query(`REMOVE "${key}" IN ${coll}`);
+                // }
+                // catch (e) {
+                //     errors.push(e + " " + id);
+                // }
+                //Delete selected document and the egde in the parent collection edge
+        
+                if (errors.length === 0) {
+                    res.send({ success: true, message: ["No errors detected"], datafile_ids:datafile_ids});
+                }
+                else {
+                    res.send({ success: false, message: errors, datafile_ids:[] });
+                }
+            }
+        })
+            .body(joi.object({
+                username: joi.string().required(),
+                password: joi.string().required(),
+                id: joi.string().required(),
+                model_type: joi.string().required(),
+            }).required(), 'Values to check.')
+            .response(joi.object({
+                success: true,
+                message: joi.array().items(joi.string().required()).required(),
+                datafile_ids: joi.array().items(joi.string().required()).required()
+            }).required(), 'response.')
+            .summary('List entry keys')
+            .description('add MIAPPE description for given model.');
+        
 
 router.post('/remove', function (req, res) {
     var username = req.body.username;
@@ -1323,6 +1728,7 @@ router.post('/remove', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
+
 //Post new data
 router.post('/add', function (req, res) {
     //posted variables
@@ -1331,7 +1737,6 @@ router.post('/add', function (req, res) {
     var parent_id = req.body.parent_id;
     var values = req.body.values;
     var model_type = req.body.model_type;
-
     var datatype = "";
     if (model_type === "study") {
         datatype = "studies";
@@ -1339,21 +1744,19 @@ router.post('/add', function (req, res) {
     else {
         datatype = model_type + "s";
     }
-
+    var coll = db._collection(datatype);
+    if (!coll) {
+        db._createDocumentCollection(datatype);
+    }
 
     var parent_type = parent_id.split("/")[0];
-
     var edge_coll = parent_type + '_edge'
     if (!db._collection(edge_coll)) {
         db._createEdgeCollection(edge_coll);
     }
     const edge = db._collection(edge_coll);
-
-    var coll = db._collection(datatype);
-
-    if (!coll) {
-        db._createDocumentCollection(datatype);
-    }
+    
+    
     /////////////////////////////
     //first check if user exist
     /////////////////////////////
@@ -1394,71 +1797,6 @@ router.post('/add', function (req, res) {
                 res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
             }
         }
-
-
-
-
-
-
-
-        //    if (model_type==='investigation'){
-        //        data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${investigations} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-        //        if (data[0].before === null){
-        //            var obj={
-        //            "_from":parent_id,
-        //            "_to":data[0].id
-        //            };
-        //            const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${users_edge} RETURN NEW `); 
-        //            res.send({success:true, message:'Everything is good ', _id:data[0].id});
-        //        }
-        //        //Document exists
-        //        else{
-        //            res.send({success:false,message: 'Already have document with this title ', _id:'none'});
-        //        }
-        //    }
-        //    
-        //    else if (model_type==='study'){
-        //        data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${studies} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray();
-        //        if (data[0].before === null){
-        //            var obj={
-        //                "_from":parent_id,
-        //                "_to":data[0].id
-        //            };
-        //            const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${investigations_edge} RETURN NEW `); 
-        //            res.send({success:true,message:'everything is good ', _id:data[0].id});
-        //        }
-        //        else{
-        //            res.send({success:false,message: 'Investigation Already have study with this title ', _id:'none'});
-        //        }
-        //    }
-        //    else if (model_type==='event'){
-        //        data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${events} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-        //        if (data[0].before === null){
-        //            var obj={
-        //                "_from":parent_id,
-        //                "_to":data[0].id
-        //            };
-        //            const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${studies_edge} RETURN NEW `); 
-        //            res.send({success:true,message:'everything is good ', _id:data[0].id});
-        //        }
-        //        else{
-        //            res.send({success:false,message: 'Investigation Already have study with this title ', _id:'none'});
-        //        }
-        //    }
-        //    else {
-        //        data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${observation_units} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray();
-        //        if (data[0].before === null){
-        //            var obj={
-        //                "_from":parent_id,
-        //                "_to":data[0].id
-        //            };
-        //            const edges=db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${studies_edge} RETURN NEW `); 
-        //            res.send({success:true,message:'everything is good ', _id:data[0].id});
-        //        }
-        //        else{
-        //            res.send({success:false,message: 'Investigation Already have study with this title ', _id:'none'});
-        //        }
-        //    }  
     };
 })
     .body(joi.object({
@@ -1476,6 +1814,278 @@ router.post('/add', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
+
+//Post new data
+router.post('/add_parent_and_child', function (req, res) {
+    //posted variables
+    var username = req.body.username;
+    var password = req.body.password;
+    var parent_id = req.body.parent_id;
+    var values = req.body.values;
+    var child_values = req.body.child_values;
+    var model_type = req.body.model_type;
+    var child_model_type = req.body.child_model_type;
+    
+    
+    
+    var datatype = "";
+    var child_datatype = "";
+    if (model_type === "study") {
+        datatype = "studies";
+        child_datatype = child_model_type + "s";
+    }
+    else {
+        datatype = model_type + "s";
+        if (model_type === "investigation") {
+            child_datatype = "studies";
+        }
+    }
+
+    var coll = db._collection(datatype);
+    if (!coll) {
+        db._createDocumentCollection(datatype);
+    }
+    var child_coll = db._collection(child_datatype);
+    if (!child_coll) {
+        db._createDocumentCollection(child_datatype);
+    }
+
+    var parent_type = parent_id.split("/")[0];
+
+    var edge_coll = parent_type + '_edge'
+    if (!db._collection(edge_coll)) {
+        db._createEdgeCollection(edge_coll);
+    }
+    const edge = db._collection(edge_coll);
+    
+    var child_edge_coll = datatype + '_edge'
+    if (!db._collection(child_edge_coll)) {
+        db._createEdgeCollection(child_edge_coll);
+    }
+    const child_edge = db._collection(child_edge_coll);
+    
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+    `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' });
+    }
+    else {
+        /////////////////////////////
+        //now check if investigation exists else add to database
+        /////////////////////////////
+
+        if (model_type === 'study') {
+            var check =[];
+            var ID = values['Study unique ID']
+            check = db._query(aql` FOR entry IN ${coll} FILTER entry['Study unique ID'] == ${ID} RETURN entry`).toArray()
+            if (check.length===0){
+                var data = [];
+                data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                if (data[0].new === null) {
+                    res.send({ success: false, message: model_type + ' collection already have document with this title ', _id: 'none' });
+                }
+                //Document exists add edges in edge collection
+                else {
+                    //parent has been inserted
+                    var obj = {
+                        "_from": parent_id,
+                        "_to": data[0].id,
+                    };
+    
+                    const parent_edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
+    
+                    var child_data = [];
+                    Object.keys(child_values['associated_headers']).forEach(key=>{
+                        if (child_values['associated_headers'][key]['associated_component']==='study'){
+                            child_values['associated_headers'][key]['associated_linda_id']=data[0].id
+                        }
+                    }
+
+                    )
+                    child_data = db._query(aql`INSERT ${child_values} IN ${child_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                    
+                    if (child_data[0].new === null) {
+                        res.send({ success: false, message: child_model_type + ' collection already have document with this title ', _id: 'none' });
+                    }
+                    else{
+                        //parent has been inserted
+                        var child_obj = {"_from": data[0].id,"_to": child_data[0].id,};
+                        const child_edges = db._query(aql`UPSERT ${child_obj} INSERT ${child_obj} UPDATE {}  IN ${child_edge} RETURN NEW `);
+                        res.send({ success: true, message: 'Everything is good ', _id: child_data[0].id });
+    
+                    }
+                }
+            }
+            else{
+                var child_data = [];
+                child_data = db._query(aql`INSERT ${child_values} IN ${child_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                
+                if (child_data[0].new === null) {
+                    res.send({ success: false, message: child_model_type + ' collection already have document with this title ', _id: 'none' });
+                }
+                else{
+                    //parent has been inserted
+                    var child_obj = {"_from": check[0]['_id'],"_to": child_data[0].id,};
+                    const child_edges = db._query(aql`UPSERT ${child_obj} INSERT ${child_obj} UPDATE {}  IN ${child_edge} RETURN NEW `);
+                    res.send({ success: true, message: 'Everything is good ', _id: child_data[0].id });
+
+                }
+
+            }
+            // var data = [];
+            // data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+
+            //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
+
+
+            // if (data[0].new === null) {
+            //     res.send({ success: false, message: model_type + ' collection already have document with this title ', _id: 'none' });
+            // }
+            // //Document exists add edges in edge collection
+            // else {
+            //     //parent has been inserted
+            //     var obj = {
+            //         "_from": parent_id,
+            //         "_to": data[0].id,
+            //     };
+
+            //     const parent_edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
+
+            //     var child_data = [];
+            //     child_data = db._query(aql`INSERT ${child_values} IN ${child_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                
+            //     if (child_data[0].new === null) {
+            //         res.send({ success: false, message: child_model_type + ' collection already have document with this title ', _id: 'none' });
+            //     }
+            //     else{
+            //         //parent has been inserted
+            //         var child_obj = {"_from": data[0].id,"_to": child_data[0].id,};
+            //         const child_edges = db._query(aql`UPSERT ${child_obj} INSERT ${child_obj} UPDATE {}  IN ${child_edge} RETURN NEW `);
+            //         res.send({ success: true, message: 'Everything is good ', _id: child_data[0].id });
+
+            //     }
+            // }
+        }
+    };
+}) .body(joi.object({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        parent_id: joi.string().required(),
+        values: joi.object().required(),
+        child_values:joi.object().required(),
+        model_type: joi.string().required(),
+        child_model_type: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required(),
+        _id: joi.string().required()
+    }).required(), 'response to send.')
+    .summary('List entry keys')
+    .description('add MIAPPE description for given model.');
+
+
+router.post('/add_multi', function (req, res) {
+    //posted variables
+    var username = req.body.username;
+    var password = req.body.password;
+    var parent_id = req.body.parent_id;
+    var values = req.body.values;
+    var model_type = req.body.model_type;
+    var datatype = "";
+    if (model_type === "study") {
+        datatype = "studies";
+    }
+    else {
+        datatype = model_type + "s";
+    }
+    var coll = db._collection(datatype);
+    if (!coll) {
+        db._createDocumentCollection(datatype);
+    }
+    
+    var parent_type = parent_id.split("/")[0];
+    var edge_coll = parent_type + '_edge'
+    if (!db._collection(edge_coll)) {
+        db._createEdgeCollection(edge_coll);
+    }
+    const edge = db._collection(edge_coll);
+        
+        
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+    `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' });
+    }
+    else {
+            /////////////////////////////
+            //now check if investigation exists else add to database
+            /////////////////////////////
+            var errors=[]
+            var success=[]
+            for (var value in values) {
+                var data = [];
+                data = db._query(aql`INSERT ${value} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+        
+                if (model_type !== 'observation_unit') {
+                    // var data = [];
+                    // data = db._query(aql`INSERT ${value} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+        
+                    //data =db._query(aql`UPSERT ${value} INSERT ${value} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
+        
+                    if (data[0].new === null) {
+                        errors.push({ success: false, message: model_type + ' collection already have document with this title ', _id: 'none' })        
+                    }
+                    //Document exists add edges in edge collection
+                    else {
+                        success.push({success: true, message: 'Everything is good ', _id: data[0].id })
+                        var obj = {
+                            "_from": parent_id,
+                            "_to": data[0].id,
+                        };
+        
+                        const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
+                        //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+                    }
+                }
+            }
+            if (errors.length===0){
+                res.send({ success: true, message: 'Everything is good ', res_obj: success });
+            }
+            else{
+                res.send({ success: false, message: model_type + ' collection already have document with this title ', res_obj: errors });
+            }
+        };
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            parent_id: joi.string().required(),
+            values: joi.array().items(joi.object().required()).required(),
+            model_type: joi.string().required()
+        }).required(), 'Values to check.')
+        .response(joi.array().items(joi.object({
+            success: true,
+            message: joi.string().required(),
+            res_obj: joi.string().required()
+        }).required()).required(), 'response to send.')
+        .summary('List entry keys')
+        .description('add MIAPPE description for given model.');
+    
 
 
 router.post('/check', function (req, res) {
@@ -1499,7 +2109,7 @@ router.post('/check', function (req, res) {
         RETURN entry
     `);
     if (user.next() === null) {
-        res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        res.send({ success: false, message: 'username ' + username + 'doesn\'t exists', _id:""});
     }
     else {
         /////////////////////////////
@@ -1527,13 +2137,15 @@ router.post('/check', function (req, res) {
         if (check.length === 0) {
             res.send({
                 success: true,
-                message: 'data doesn\'t exists'
+                message: 'data doesn\'t exists',
+                _id:""
             });
         }
         else {
             res.send({
                 success: false,
-                message: 'data already exist, cannot use this \" model unique ID\" '
+                message: 'data already exist, cannot use this \" model unique ID\" ',
+                _id:check[0]['_id']
             });
         }
     };
@@ -1547,16 +2159,11 @@ router.post('/check', function (req, res) {
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
-        message: joi.string().required()
+        message: joi.string().required(),
+        _id:""
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist.');
-
-
-
-
-
-
 
 
 /*****************************************************************************************
@@ -1585,9 +2192,6 @@ router.post('/check', function (req, res) {
  ******************************************************************************************
  ******************************************************************************************
  ******************************************************************************************/
-
-
-
 //Get EVENTS
 router.get('/event', function (req, res) {
     const keys = db._query(aql`
@@ -1600,12 +2204,6 @@ router.get('/event', function (req, res) {
     .response(joi.object().required(), 'List of entry keys.')
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
-
-
-
-
-
-
 
 /*****************************************************************************************
  ******************************************************************************************

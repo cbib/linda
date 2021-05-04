@@ -1,58 +1,58 @@
 <!--<alert></alert>-->
 
-<div id="user-tree"> 
+<div id="user-tree">
     <div class="border-head">
         <h3>
-            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                meta<span>D</span>at<span>A</span></b></a>
         </h3>
     </div>
-    <div>  
+    <div>
         <!--<mat-card>
             <p>Below is the general tree of all your projects in LINDA database. You will find it under the Investigations tree node. </p>
         </mat-card>-->
         <mat-card>
-            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database. 
+            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
                 Once you first logged, you will see nothing except the add investigation button.
 
-                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
-                You can remove more than one node at the time if you use the right click button on Investigations tree node and choose remove selected option. 
+                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID
+                are mandatory to register your investigation in the database.
+                You can remove more than one node at the time if you use the right click button on Investigations tree
+                node and choose remove selected option.
             </p>
-        <!--<div class="warning-msg"><i class="fa fa-warning"></i>You need to first select and check histories you want to suppress.</div>-->
+            <!--<div class="warning-msg"><i class="fa fa-warning"></i>You need to first select and check histories you want to suppress.</div>-->
         </mat-card>
-    </div> 
-    <div style="overflow: auto"> 
+    </div>
+    <div style="overflow: auto">
         <mat-card>
-            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database. 
+            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
                 Once you first logged, you will see nothing except the add investigation button.
 
-                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID are mandatory to register your investigation in the database. 
-                You can remove more than one node at the time if you use the right click button on Investigations tree node and choose remove selected option. 
+                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID
+                are mandatory to register your investigation in the database.
+                You can remove more than one node at the time if you use the right click button on Investigations tree
+                node and choose remove selected option.
             </p>
-            <mat-drawer-container  class="example-container" >
-                <div 
-                    joyrideStep="step6" 
-                    title="Project overview"
-                    text="Here is the main page for project overview. 
+            <mat-drawer-container class="example-container">
+                <div joyrideStep="step6" title="Project overview"
+                     text="Here is the main page for project overview.
                     All your projects and studies will be stored in this investigation tree. 
-                    Tree nodes are expandables if they had child(s) component(s) (e.g an investigation could contain one or more studies)"  
-                    class="example-sidenav-content"  
-                >
-                    <mat-tree  #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"  class="col-md-12 panel" >      
-                        
+                    Tree nodes are expandables if they had child(s) component(s) (e.g an investigation could contain one or more studies)"
+                     class="example-sidenav-content">
+                    <mat-tree #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"
+                              class="col-md-12 panel">
+
                         <!--#############@######################################-->
                         <!-- This is the tree node template for leaf nodes -->
                         <!--#############@######################################-->
 
-                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding  title="{{node.def}}" >  
-                            <div
-                                joyrideStep="step8"
-                                title="Here is a {{get_model_type(node)}} Node !! "
-                                [stepContent]="genericleafcontent"
-                                [stepContentParams]="{'model_n':get_model_type(node)}"
-                                [ngStyle]="getStyle(node)"
-                            >
-                                 <!-- use a disabled button to provide padding for tree leaf -->
-<!--                                 <button mat-icon-button style="margin-right:  200px" [attr.aria-label]="node.name">
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding
+                                       title="{{node.def}}">
+                            <div joyrideStep="step8" title="Here is a {{get_model_type(node)}} Node !! "
+                                 [stepContent]="genericleafcontent"
+                                 [stepContentParams]="{'model_n':get_model_type(node)}" [ngStyle]="getStyle(node)">
+                                <!-- use a disabled button to provide padding for tree leaf -->
+                                <!--                                 <button mat-icon-button style="margin-right:  200px" [attr.aria-label]="node.name">
                                      <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
                                      <mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>
                                      <mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>
@@ -60,144 +60,176 @@
                                      <i style="margin-right:  50px; margin-left:  15px" class="material-icons mat-icon-rtl-mirror">{{'arrow_right'}}{{node.name}}</i>
                                      <i style="margin-right:  50px; margin-left:  15px" *ngIf="multiple_selection===false">{{node.name}}</i>
                                  </button>-->
-                                 
-<!--                                 <button style="width:300px;padding-right: 200px" mat-icon-button [attr.aria-label]="node.name">
+
+                                <!--                                 <button style="width:300px;padding-right: 200px" mat-icon-button [attr.aria-label]="node.name">
                                     <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
                                     {{node.name}}
                                 </button>-->
-                                <button  mat-icon-button [attr.aria-label]="node.name">
+                                <button mat-icon-button [attr.aria-label]="node.name">
                                     <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
                                 </button>
                                 {{node.name}}
-                                
-                                <div
-                                    class="btn-group"
-                                    style="float: right;"
-                                    joyrideStep="step8_1"
-                                    title="Here is the button panel for Study or other leaf node!! "
-                                    [stepContent]="LeafButtonContent"
-                                    [stepContentParams]="{'model_n':get_model_type(node)}"
-                                >
+
+                                <div class="btn-group" style="float: right;" joyrideStep="step8_1"
+                                     title="Here is the button panel for Study or other leaf node!! "
+                                     [stepContent]="LeafButtonContent"
+                                     [stepContentParams]="{'model_n':get_model_type(node)}">
                                     <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
-                                    <button style="float: right;"  *ngIf="node.id.includes('investigations')"  (click)="onExportIsa(node)" class="btn btn-light btn-xs fa fa-upload"></button>
-                                    <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
-                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
-                                    <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
-                                
-                                    <a style="float: right;" *ngIf="node.id.includes('Investigations tree')"  > 
-                                        <button  (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                    <button style="float: right;" *ngIf="node.id.includes('investigations')"
+                                            (click)="onExportIsa(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil"
+                                            title="{{node.def}}"></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o"
+                                            confirm="Are you sure?"></button>
+
+                                    <a style="float: right;" *ngIf="node.id.includes('Investigations tree')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
-                                    <a  style="float: right;" *ngIf="node.id.includes('studies')"> 
-                                        <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                    <a style="float: right;" *ngIf="node.id.includes('studies')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
-                                    <a style="float: right;" *ngIf="node.id.includes('investigations')" > 
-                                        <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                    <a style="float: right;" *ngIf="node.id.includes('investigations')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
-                                    <a style="float: right;" *ngIf="node.id.includes('observation_units')"> 
-                                        <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
+                                    <a style="float: right;" *ngIf="node.id.includes('observation_units')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="OUMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
-    <!--                                 <a style="float: right;"> 
+                                    <!--                                 <a style="float: right;"> 
                                     {{node.def}}
                                     </a>   -->
-                                 
-                                </div> 
+
+                                </div>
                                 <ng-template #LeafButtonContent let-nod="model_n">
                                     <div>
-                                      <nav class="navbar navbar-expand-sm navbar-dark">
-                                          <h3>
-                                              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-                                          </h3>
-                                      </nav>
+                                        <nav class="navbar navbar-expand-sm navbar-dark">
+                                            <h3>
+                                                <a class="logo"><b>P<span>L</span>ant
+                                                    exper<span>I</span>me<span>N</span>tal
+                                                    meta<span>D</span>at<span>A</span></b></a>
+                                            </h3>
+                                        </nav>
                                     </div>
-                                    Here is the button panel where you can add, remove, edit and export any other component than Investigation component. 
-                                </ng-template>   
+                                    Here is the button panel where you can add, remove, edit and export any other
+                                    component than Investigation component.
+                                </ng-template>
                                 <mat-accordion>
-                                    <mat-expansion-panel *ngIf="get_model_selected()==='Investigations tree'" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    <mat-expansion-panel *ngIf="get_model_selected()==='Investigations tree'"
+                                                         (opened)="panelOpenState = true" (click)="show_info(node)"
+                                                         (closed)="panelOpenState = false">
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
-                                                <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                                <mat-checkbox *ngIf=" multiple_selection===true"
+                                                              class="checklist-leaf-node"
+                                                              [checked]="checklistSelection.isSelected(node)"
+                                                              (change)="todoLeafItemSelectionToggle(node)"><i
+                                                        *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <div >
-                                            <mat-card>You have {{ this.statistics['investigations'] }} investigations in your history</mat-card>
+                                        <div>
+                                            <mat-card>You have {{ this.statistics['investigations'] }} investigations in
+                                                your history
+                                            </mat-card>
                                         </div>
                                     </mat-expansion-panel>
-                                    <mat-expansion-panel *ngIf="!node.id.includes('Investigations tree') && !node.id.includes('metadata_files')" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    <mat-expansion-panel
+                                            *ngIf="!node.id.includes('Investigations tree') && !node.id.includes('data_files')"
+                                            (opened)="panelOpenState = true" (click)="show_info(node)"
+                                            (closed)="panelOpenState = false">
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
-                                                <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
+                                                <mat-progress-bar mode="determinate" value="{{node.fill_percentage}}">
+                                                </mat-progress-bar>
                                                 <!-- <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox> -->
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <table *ngIf="!node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
-                                            <tbody >
-                                                <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
-                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a></td>
-                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[0][key]}}</td>
-                                                </tr>
+                                        <table *ngIf="!node.id.includes('observation_units')"
+                                               class="table table-hover table-bordered  table-striped text-center">
+                                            <tbody>
+                                            <tr *ngFor="let key of get_current_data(node) ; index as j;">
+                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}
+                                                </td>
+                                                <td *ngIf="key.includes('file link')"
+                                                    style="font-size:14px;text-align: center; color: blue; "
+                                                    scope="row"><a href="{{get_current_data_array(node)[0][key]}}"
+                                                                   target="_blank">{{get_current_data_array(node)[0][key]}}</a>
+                                                </td>
+                                                <td *ngIf="!key.includes('file link')"
+                                                    style="font-size:14px;text-align: center;" scope="row">
+                                                    {{get_current_data_array(node)[0][key]}}
+                                                </td>
+                                            </tr>
                                             </tbody>
-                                        </table>                                         
+                                        </table>
                                         <ng-container *ngIf="node.id.includes('observation_units')">
                                             <!-- Here put Biological Material Table -->
-                                            <table 
-                                                *ngIf="obs_unit_data.length>0" 
-                                                cellpadding="0" 
-                                                cellspacing="0" 
-                                                cellwidth="2" 
-                                                border="0"
-                                                class="display table table-bordered table-hover" 
-                                                [ngClass]="{'table-dark': mode_table}"
-                                            >
+                                            <table *ngIf="obs_unit_data.length>0" cellpadding="0" cellspacing="0"
+                                                   cellwidth="2" border="0"
+                                                   class="display table table-bordered table-hover"
+                                                   [ngClass]="{'table-dark': mode_table}">
                                                 <!-- <thead class="text-nowrap">   -->
                                                 <thead>
-                                                    <ng-container *ngFor="let field of get_ou_field ; let i=index">
-                                                        <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
-                                                            <div>
-                                                                <label for="{{field}}">{{field}}</label>
-                                                            </div>
-                                                        </th>
-                                                    </ng-container>
+                                                <ng-container *ngFor="let field of get_ou_field ; let i=index">
+                                                    <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
+                                                        <div>
+                                                            <label for="{{field}}">{{field}}</label>
+                                                        </div>
+                                                    </th>
+                                                </ng-container>
                                                 </thead>
                                                 <tbody>
-                                                    <ng-container *ngFor="let group of get_ou_data(node) ; let i=index">
-                                                        <tr (click)="ObservationTableRowSelected(i)" >
-                                                            <ng-container *ngFor="let field of get_ou_field ; let j=index">
-                                                                <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                                                                    {{group[field]}}
-                                                                </td>
-                                                            </ng-container>
-                                                        </tr>
-                                                    </ng-container>
+                                                <ng-container *ngFor="let group of get_ou_data(node) ; let i=index">
+                                                    <tr (click)="ObservationTableRowSelected(i)">
+                                                        <ng-container
+                                                                *ngFor="let field of get_ou_field ; let j=index">
+                                                            <td *ngIf="field!=='obsUUID'"
+                                                                class="text-center align-middle">
+                                                                {{group[field]}}
+                                                            </td>
+                                                        </ng-container>
+                                                    </tr>
+                                                </ng-container>
                                                 </tbody>
                                             </table>
 
-                                            <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
-                                                class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
+                                            <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0"
+                                                   cellwidth="2" border="0"
+                                                   class="display table table-bordered table-hover"
+                                                   [ngClass]="{'table-dark': mode_table}">
                                                 <!-- <thead class="text-nowrap">   -->
                                                 <thead>
-                                                    <ng-container *ngFor="let field of get_bm_field ; let i=index">
-                                                        <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
-                                                            <div>
-                                                                <label for="{{field}}">{{field}}</label>
-                                                            </div>
-                                                        </th>
-                                                    </ng-container>
+                                                <ng-container *ngFor="let field of get_bm_field ; let i=index">
+                                                    <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
+                                                        <div>
+                                                            <label for="{{field}}">{{field}}</label>
+                                                        </div>
+                                                    </th>
+                                                </ng-container>
                                                 </thead>
                                                 <tbody>
-                                                    <ng-container *ngFor="let group of get_bm_data(node) ; let i=index">
-                                                        <tr (click)="MaterialTableRowSelected(i)" *ngIf="group['obsUUID']===observation_id">
-                                                        <ng-container *ngFor="let field of get_bm_field ; let j=index">
-                                                            <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                                                            {{group[field]}}
+                                                <ng-container *ngFor="let group of get_bm_data(node) ; let i=index">
+                                                    <tr (click)="MaterialTableRowSelected(i)"
+                                                        *ngIf="group['obsUUID']===observation_id">
+                                                        <ng-container
+                                                                *ngFor="let field of get_bm_field ; let j=index">
+                                                            <td *ngIf="field!=='obsUUID'"
+                                                                class="text-center align-middle">
+                                                                {{group[field]}}
                                                             </td>
                                                         </ng-container>
-                                                        </tr>
-                                                    </ng-container>
+                                                    </tr>
+                                                </ng-container>
                                                 </tbody>
                                             </table>
                                         </ng-container>
-                                          <!-- <mat-card *ngIf="node.id.includes('observation_units')">
+                                        <!-- <mat-card *ngIf="node.id.includes('observation_units')">
                                             <mat-card-header>
                                               <mat-card-title>Biological Materials</mat-card-title>
                                             </mat-card-header>
@@ -228,7 +260,7 @@
                                     
                                             </mat-card-content>
                                           </mat-card> -->
-                                         <!-- <table *ngIf="node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
+                                        <!-- <table *ngIf="node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
                                             <tbody >
                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
@@ -247,176 +279,283 @@
 
                                                 </tr>
                                             </tbody>
-                                        </table> -->                                          
+                                        </table> -->
                                     </mat-expansion-panel>
-                                     
-                                    <mat-expansion-panel *ngIf="node.id.includes('metadata_files')" (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
+                                    <mat-expansion-panel *ngIf="node.id.includes('metadata_files')"
+                                                         (opened)="panelOpenState = true" (click)="show_info(node)"
+                                                         (closed)="panelOpenState = false">
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
-                                                 <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
-                                             </mat-panel-title>
+                                                <mat-checkbox *ngIf=" multiple_selection===true"
+                                                              class="checklist-leaf-node"
+                                                              [checked]="checklistSelection.isSelected(node)"
+                                                              (change)="todoLeafItemSelectionToggle(node)"><i
+                                                        *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                            </mat-panel-title>
                                         </mat-expansion-panel-header>
                                         <div>
                                             <!--<p>{{get_parent_id(node)}}</p>
-                                            <p>{{get_model_key(node)}}</p>-->             
-                                            <app-download [parent_id]="get_parent_id(node)" [model_key]="get_model_key(node)" model_type="metadata_file" mode="edit" ></app-download>
-                                        </div>  
-                                     </mat-expansion-panel>
-                                 </mat-accordion>
+                                            <p>{{get_model_key(node)}}</p>-->
+                                            <app-download [parent_id]="get_parent_id(node)"
+                                                          [model_key]="get_model_key(node)" model_type="metadata_file"
+                                                          mode="edit"></app-download>
+                                        </div>
+                                    </mat-expansion-panel>
+                                    <mat-expansion-panel *ngIf="node.id.split('/')[0] === 'data_files'"
+                                                         (opened)="panelOpenState = true" (click)="show_info(node)"
+                                                         (closed)="panelOpenState = false">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                <mat-checkbox *ngIf=" multiple_selection===true"
+                                                              class="checklist-leaf-node"
+                                                              [checked]="checklistSelection.isSelected(node)"
+                                                              (change)="todoLeafItemSelectionToggle(node)"><i
+                                                        *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                        <div>
+                                            <table *ngIf="!node.id.includes('observation_units')"
+                                                   class="table table-hover table-bordered  table-striped text-center">
+                                                <tbody>
+                                                <tr *ngFor="let key of get_current_data(node) ; index as j;">
+                                                    
+                                                    <td *ngIf="key != 'headers'" style="font-size:14px;text-align: center; " scope="row">{{key}}
+                                                    </td>
+                                                    
+                                                    <td *ngIf="key.includes('file link')"
+                                                        style="font-size:14px;text-align: center; color: blue; "
+                                                        scope="row"><a href="{{get_current_data_array(node)[0][key]}}"
+                                                                       target="_blank">{{get_current_data_array(node)[0][key]}}</a>
+                                                    </td>
+
+                                                    <td *ngIf="key.includes('file version') || key.includes('file description')" style="font-size:14px;text-align: center;"
+                                                        scope="row">
+                                                        {{get_current_data_array(node)[0][key]}}
+                                                    </td>
+                                                    <td *ngIf="key === 'Data'" style="font-size:14px;text-align: center;" scope="row">
+                                                        <button
+                                                                (click)="show_datatable(node)" class="btn btn-primary btn-xs"
+                                                                title="{{node.id}}">Show data
+                                                        </button>
+                                                    </td>
+                                                    <td *ngIf="key === 'associated_headers'" style="font-size:14px;text-align: center;" scope="row">
+                                                        <div class="btn-group mr-3" *ngFor="let sub_key of get_current_data_file_headers(node) ; index as k;">
+                                                            
+                                                            <!-- <li class="dropdown">
+                                                                <a data-toggle="dropdown" [ngStyle]="getIconStyle(sub_key['associated_component'])" title="{{sub_key['key']}}" class="dropdown-toggle" href="index.html#">
+                                                                  {{sub_key['associated_component']}}
+                                                                  
+                                                                </a>   
+                                                            </li>
+                                                            <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+                                                                <div class="notify-arrow notify-arrow-green"></div>
+                                                                <li><p> Extract component from data </p></li> 
+                                                             </ul>
+                                                             -->
+                                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                                <button style="float: left;" [ngStyle]="getIconStyle(sub_key['associated_component'])" class="btn btn-primary btn-xs"
+                                                                        title="{{sub_key['key']}}">{{sub_key['associated_component']}}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+
+                                    </mat-expansion-panel>
+                                </mat-accordion>
                             </div>
                             <ng-template #genericleafcontent let-nod="model_n">
                                 <div>
-                                  <nav class="navbar navbar-expand-sm navbar-dark">
-                                      <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-                                      </h3>
-                                  </nav>
+                                    <nav class="navbar navbar-expand-sm navbar-dark">
+                                        <h3>
+                                            <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                                                meta<span>D</span>at<span>A</span></b></a>
+                                        </h3>
+                                    </nav>
                                 </div>
-                                The {{nod}} node type contains informations and details about the related component. it does niot have child component described yet. 
-                                By clicking on the lower part of the Node, you will see details about it. If node has child(s), 
+                                The {{nod}} node type contains informations and details about the related component. it
+                                does niot have child component described yet.
+                                By clicking on the lower part of the Node, you will see details about it. If node has
+                                child(s),
                                 click on the upper left to expand the node and reveal its children"
-                              </ng-template>
-                         </mat-tree-node>
+                            </ng-template>
+                        </mat-tree-node>
 
                         <!--#############@######################################-->
                         <!-- This is the tree node template for expandable nodes -->
                         <!--#############@######################################-->
 
-                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding >  
-                            <div 
-                            joyrideStep="step7"
-                            title="Here is a {{get_model_type(node)}} Node !! "
-                            [stepContent]="genericnodecontent"
-                            [stepContentParams]="{'model_n':get_model_type(node)}"
-                            [ngStyle]="getStyle(node)">
-                                
-                            <div
-                            class="btn-group"
-                            >
-                                <button style="width:300px; padding-right: 200px"*ngIf="node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-                                    <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-                                    {{node.id}}
-                                </button>
-                                <a style="float: right;" *ngIf="node.id.includes('Investigations tree')"> 
-                                     <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
-                                </a>
-                            </div>
-                            <div
-                            class="btn-group"
-                            >
-                                <button  *ngIf="!node.id.includes('Investigations tree')" mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-                                    <mat-icon class="mat-icon-rtl-mirror">{{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
-                                    <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
-                                    <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>--> 
-                                </button>
-                            </div>
-                            <div
-                                class="btn-group"
-                                >
-                                <i style='padding-left: 15px' *ngIf="!node.id.includes('Investigations tree')">{{node.name}}</i>
-                            </div>
-                                <div
-                                class="btn-group"
-                                style="float: right;"
-                                joyrideStep="step7_1"
-                                title="Here is the button panel for Investigation node!! "
-                                [stepContent]="investigationButtonContent"
-                                [stepContentParams]="{'model_n':get_model_type(node)}"
-                                >
-                                <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
-                                <button style="float: right;"  *ngIf="node.id.includes('investigations')"  (click)="onExportIsa(node)" class="btn btn-light btn-xs fa" ><i class="icon-play"></i></button>
-                                <button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')"  (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
-                                <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil" title="{{node.def}}"></button>
-                                <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o" confirm="Are you sure?"></button>
-                                
-                                <a style="float: right;" *ngIf="node.id.includes('studies')"  > 
-                                    <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu" class="btn btn-success btn-xs fa fa-plus"></button>
-                                </a>
-                                <a style="float: right;" *ngIf="node.id.includes('investigations')" > 
-                                    <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu" class="btn btn-success btn-xs fa fa-plus"></button>
-                                </a>
-                                <!-- <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild"
+                                       matTreeNodePadding>
+                            <div joyrideStep="step7" title="Here is a {{get_model_type(node)}} Node !! "
+                                 [stepContent]="genericnodecontent"
+                                 [stepContentParams]="{'model_n':get_model_type(node)}" [ngStyle]="getStyle(node)">
+
+                                <div class="btn-group">
+                                    <button style="width:300px; padding-right: 200px"
+                                            *ngIf="node.id.includes('Investigations tree')" mat-icon-button
+                                            matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                        <mat-icon class="mat-icon-rtl-mirror">
+                                            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                        </mat-icon>
+                                        {{node.id}}
+                                    </button>
+                                    <a style="float: right;" *ngIf="node.id.includes('Investigations tree')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="userMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
+                                    </a>
+                                </div>
+                                <div class="btn-group">
+                                    <button *ngIf="!node.id.includes('Investigations tree')" mat-icon-button
+                                            matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                        <mat-icon class="mat-icon-rtl-mirror">
+                                            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                        </mat-icon>
+                                        <!--<mat-icon *ngIf="node.id.includes('investigations')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('investigations')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">I</i> </span></mat-icon>-->
+                                        <!--<mat-icon *ngIf="node.id.includes('studies')" ><span class="fa-stack fa-xs"> <i *ngIf="node.id.includes('studies')" class="fa fa-circle-thin fa-stack-2x"></i> <i class="fa fa-stack-1x">S</i> </span></mat-icon>-->
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <i style='padding-left: 15px'
+                                       *ngIf="!node.id.includes('Investigations tree')">{{node.name}}</i>
+                                </div>
+                                <div class="btn-group" style="float: right;" joyrideStep="step7_1"
+                                     title="Here is the button panel for Investigation node!! "
+                                     [stepContent]="investigationButtonContent"
+                                     [stepContentParams]="{'model_n':get_model_type(node)}">
+                                    <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
+                                    <button style="float: right;" *ngIf="node.id.includes('investigations')"
+                                            (click)="onExportIsa(node)" class="btn btn-light btn-xs fa"><i
+                                            class="icon-play"></i></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil"
+                                            title="{{node.def}}"></button>
+                                    <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
+                                            (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o"
+                                            confirm="Are you sure?"></button>
+
+                                    <a style="float: right;" *ngIf="node.id.includes('studies')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
+                                    </a>
+                                    <a style="float: right;" *ngIf="node.id.includes('investigations')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu"
+                                                class="btn btn-success btn-xs fa fa-plus"></button>
+                                    </a>
+                                    <!-- <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                 </a> -->
                                 </div>
                                 <ng-template #investigationButtonContent let-nod="model_n">
                                     <div>
-                                      <nav class="navbar navbar-expand-sm navbar-dark">
-                                          <h3>
-                                              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-                                          </h3>
-                                      </nav>
+                                        <nav class="navbar navbar-expand-sm navbar-dark">
+                                            <h3>
+                                                <a class="logo"><b>P<span>L</span>ant
+                                                    exper<span>I</span>me<span>N</span>tal
+                                                    meta<span>D</span>at<span>A</span></b></a>
+                                            </h3>
+                                        </nav>
                                     </div>
-                                    Here is the button panel where you can add, remove, edit and export any componet of your investigation tree 
-                                </ng-template> 
+                                    Here is the button panel where you can add, remove, edit and export any componet of
+                                    your investigation tree
+                                </ng-template>
                                 <mat-accordion *ngIf="!node.id.includes('Investigations tree')">
-                                    <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false" [expanded]="isFirst">
+                                    <mat-expansion-panel (opened)="panelOpenState = true" (click)="show_info(node)"
+                                                         (closed)="panelOpenState = false" [expanded]="isFirst">
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
-                                                <mat-progress-bar  mode="determinate" value="{{node.fill_percentage}}"></mat-progress-bar>
+                                                <mat-progress-bar mode="determinate" value="{{node.fill_percentage}}">
+                                                </mat-progress-bar>
                                                 <!-- <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox> -->
                                             </mat-panel-title>
-                                         </mat-expansion-panel-header>
-                                        <table *ngIf="get_model_selected()!=='metadata_files'" class="table table-hover table-bordered  table-striped text-center" >
-                                             <tbody >
-                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
-                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                 <td style="font-size:14px;text-align: center; " scope="row">{{get_current_data_array(node)[0][key]}}</td>
-                                                 </tr>
-                                             </tbody>
-                                         </table>
-                                    </mat-expansion-panel>    
+                                        </mat-expansion-panel-header>
+                                        <table *ngIf="get_model_selected()!=='metadata_files'"
+                                               class="table table-hover table-bordered  table-striped text-center">
+                                            <tbody>
+                                            <tr *ngFor="let key of get_current_data(node) ; index as j;">
+                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}
+                                                </td>
+                                                <td style="font-size:14px;text-align: center; " scope="row">
+                                                    {{get_current_data_array(node)[0][key]}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </mat-expansion-panel>
                                 </mat-accordion>
-                            </div>  
+                            </div>
                             <ng-template #genericnodecontent let-nod="model_n">
                                 <div>
-                                  <nav class="navbar navbar-expand-sm navbar-dark">
-                                      <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
-                                      </h3>
-                                  </nav>
+                                    <nav class="navbar navbar-expand-sm navbar-dark">
+                                        <h3>
+                                            <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                                                meta<span>D</span>at<span>A</span></b></a>
+                                        </h3>
+                                    </nav>
                                 </div>
-                                The {{nod}} node type contains informations and details about the related component. it does have child component. 
-                                By clicking on the lower part of the Node, you will see details about it. Click on the upper left to expand the node 
+                                The {{nod}} node type contains informations and details about the related component. it
+                                does have child component.
+                                By clicking on the lower part of the Node, you will see details about it. Click on the
+                                upper left to expand the node
                                 and reveal its children"
-                              </ng-template>          
+                            </ng-template>
                         </mat-tree-node>
                     </mat-tree>
                 </div>
-                
-            </mat-drawer-container>  
-        </mat-card>    
-        <div style="visibility: hidden; position: fixed"
-            [style.left]="contextMenuPosition.x"
-            [style.top]="contextMenuPosition.y"
-            [matMenuTriggerFor]="contextMenu">
-        </div> 
+
+            </mat-drawer-container>
+        </mat-card>
+        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+             [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+        </div>
         <mat-menu #globalmenu="matMenu">
             <ng-template matMenuContent let-node="node">
-                <button mat-menu-item [matMenuTriggerFor]="multipleMenu"><mat-icon>bookmarks</mat-icon><span>Multiple selection</span></button>
+                <button mat-menu-item [matMenuTriggerFor]="multipleMenu">
+                    <mat-icon>bookmarks</mat-icon>
+                    <span>Multiple selection</span>
+                </button>
                 <button mat-menu-item (click)="remove_selected(node)"><span>Remove selected</span></button>
             </ng-template>
         </mat-menu>
         <!--<button mat-icon-button [matMenuTriggerFor]="globalmenu" aria-label="Example icon-button with a menu"><mat-icon>more_vert</mat-icon>Settings</button>-->
         <mat-menu #contextMenu="matMenu">
             <ng-template matMenuContent let-node="node">
-                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onEdit(node)">Edit</button>
-                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onRemove(node)" confirm="Are you sure?">Remove</button>
-                <button *ngIf="node.id.includes('Investigations tree')" mat-menu-item [matMenuTriggerFor]="userMenu" >Add</button>
+                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item
+                        (click)="onEdit(node)">Edit
+                </button>
+                <button *ngIf="!node.id.includes('Investigations tree')" mat-menu-item (click)="onRemove(node)"
+                        confirm="Are you sure?">Remove
+                </button>
+                <button *ngIf="node.id.includes('Investigations tree')" mat-menu-item
+                        [matMenuTriggerFor]="userMenu">Add
+                </button>
                 <!--<button *ngIf="node.id.includes('Investigations tree')" mat-menu-item [matMenuTriggerFor]="multipleMenu">Multiple selection</button>-->
                 <!--<button *ngIf="node.id.includes('Investigations tree')" mat-menu-item (click)="remove_selected(node)">Remove selected</button>-->
-                <button *ngIf="node.id.includes('investigations')" mat-menu-item [matMenuTriggerFor]="investigationMenu">Add</button>
+                <button *ngIf="node.id.includes('investigations')" mat-menu-item
+                        [matMenuTriggerFor]="investigationMenu">Add
+                </button>
                 <button *ngIf="node.id.includes('studies')" mat-menu-item [matMenuTriggerFor]="studyMenu">Add</button>
-                <button *ngIf="node.id.includes('observation_units')" mat-menu-item [matMenuTriggerFor]="OUMenu">Add</button>
+                <button *ngIf="node.id.includes('observation_units')" mat-menu-item
+                        [matMenuTriggerFor]="OUMenu">Add
+                </button>
             </ng-template>
-        </mat-menu> 
+        </mat-menu>
         <mat-menu #userMenu="matMenu">
-            <button mat-menu-item [matMenuTriggerFor]="userMenusecond" >Investigation</button>
+            <button mat-menu-item [matMenuTriggerFor]="userMenusecond">Investigation</button>
         </mat-menu>
         <mat-menu #userMenusecond="matMenu">
             <button mat-menu-item (click)="add('investigation','original')">From original model template</button>
             <button mat-menu-item (click)="add('investigation','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file"
+                                                                                                  style="display: none;" accept=".zip" (change)="onFileChange($event)"></label>
+            </button>
         </mat-menu>
         <mat-menu #multipleMenu="matMenu">
             <button mat-menu-item (click)="activate_multiple_selection(false)">Deactivate</button>
@@ -425,14 +564,23 @@
         <mat-menu #investigationMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond">Study</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi">Studies</button>
+            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_variable">Observed variables</button>
+            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_OU">Observation units</button>
         </mat-menu>
         <mat-menu #investigationMenusecond="matMenu">
             <button mat-menu-item (click)="add('study','original')">From original model template</button>
             <button mat-menu-item (click)="add('study','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('study','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('study','zip')"><label>From zip file<input type="file"
+                                                                                          style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #investigationMenusecond_multi="matMenu">
-            <button mat-menu-item (click)="add_from_file('study','multi')">From data file</button>
+            <button mat-menu-item (click)="add_from_file('study','multi')">From csv file</button>
+        </mat-menu>
+        <mat-menu #investigationMenusecond_multi_variable="matMenu">
+            <button mat-menu-item (click)="add_from_data_file('observed_variable')">From data files</button>
+        </mat-menu>
+        <mat-menu #investigationMenusecond_multi_OU="matMenu">
+            <button mat-menu-item (click)="add_from_data_file('observation_unit')">From data files</button>
         </mat-menu>
         <mat-menu #studyMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="observation_unitMenu">Observation unit</button>
@@ -442,7 +590,7 @@
             <button mat-menu-item [matMenuTriggerFor]="observed_variableMenu">Observed variable</button>
             <button mat-menu-item [matMenuTriggerFor]="eventMenu">Event</button>
             <button mat-menu-item [matMenuTriggerFor]="environmentMenu">Dynamic variable</button>
-            
+
             <!--here need to change the name of download.component.ts and put read csv functions in file service and call them in user.tree.ts-->
             <button mat-menu-item (click)="add('metadata_file','original')">Metadata file</button>
             <!--<button mat-menu-item (click)="add('metadata_file','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>-->
@@ -456,41 +604,52 @@
         <mat-menu #experimental_factorMenu="matMenu">
             <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
             <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file"
+                                                                                                        style="display: none;" accept=".zip"
+                                                                                                        (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #biological_materialMenu="matMenu">
             <button mat-menu-item (click)="add('biological_material','original')">From original model template</button>
             <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file"
+                                                                                                        style="display: none;" accept=".zip"
+                                                                                                        (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #data_fileMenu="matMenu">
             <button mat-menu-item (click)="add('data_file','original')">Add</button>
-            <button mat-menu-item (click)="add('data_file','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('data_file','zip')"><label>From zip file<input type="file"
+                                                                                              style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
             <!--<button mat-menu-item (click)="add('data_file',true)">From templates</button>-->
         </mat-menu>
         <mat-menu #observed_variableMenu="matMenu">
             <button mat-menu-item (click)="add('observed_variable','original')">From original model template</button>
             <button mat-menu-item (click)="add('observed_variable','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('observed_variable','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('observed_variable','zip')"><label>From zip file<input type="file"
+                                                                                                      style="display: none;" accept=".zip" (change)="onFileChange($event)"></label>
+            </button>
         </mat-menu>
         <mat-menu #eventMenu="matMenu">
             <button mat-menu-item (click)="add('event','original')">From original model template</button>
             <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file"
+                                                                                          style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #environmentMenu="matMenu">
             <button mat-menu-item (click)="add('environment','original')">From original model template</button>
             <button mat-menu-item (click)="add('environment','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('environment','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('environment','zip')"><label>From zip file<input type="file"
+                                                                                                style="display: none;" accept=".zip" (change)="onFileChange($event)"></label>
+            </button>
         </mat-menu>
         <mat-menu #OUMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="eventMenu2">Event</button>
-        </mat-menu> 
-        
+        </mat-menu>
+
         <mat-menu #eventMenu2="matMenu">
             <button mat-menu-item (click)="add('event','original')">From original model template</button>
             <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;"  accept=".zip"  (change)="onFileChange($event)"></label></button>
+            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file"
+                                                                                          style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
         </mat-menu>
     </div>
 

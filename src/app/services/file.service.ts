@@ -23,10 +23,26 @@ export class FileService {
     private extractData(res: Response) {
         
         let body = res;
-        console.log(body)
         return body || {};
     }
 
+    
+    public upload3(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'obj': {
+                'headers': headers,
+                'associated_headers': associated_headers,
+                'data': data,
+                'filename': filename
+            }
+
+        };
+        return this.httpClient.post(`${this.APIUrl + "upload_data"}`, obj2send).pipe(map(this.extractData));
+    }
     public upload2(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {

@@ -34,7 +34,7 @@ import { EnvironmentalParameterComponent } from './documentation/miappe_componen
 import { SampleComponent } from './documentation/miappe_components/sample.component';
 import { GanttComponent } from './test_component/gantt.component'
 import { PublicDataComponent } from './documentation/public-data.component';
-
+import { ExtractComponentComponent } from './extract/extract-component.component';
 
 
 const routes: Routes = [
@@ -45,6 +45,7 @@ const routes: Routes = [
   { path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
   { path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
   { path: 'downloaded',component: DonwloadedComponent,canActivate: [AuthGuard]},
+  { path: 'extract',component: ExtractComponentComponent,canActivate: [AuthGuard]},
   { path: 'home',component: HomeComponent},
   { path: 'investigation',component: InvestigationComponent},
   { path: 'study',component: StudyComponent},
@@ -56,6 +57,7 @@ const routes: Routes = [
   { path: 'environmental_parameter',component: EnvironmentalParameterComponent},
   { path: 'sample',component: SampleComponent},
   { path: 'navbars',component: NavbarComponent},
+  { path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},
   { path: 'generic4',component: MaterialForm2Component},
@@ -69,9 +71,7 @@ const routes: Routes = [
   { path: 'project_example',component: ProjectExampleComponent, canActivate: [AuthGuard]},
   { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
   //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
-  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]},
-  { path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]}
-  
+  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
   ];
 
 @NgModule({

@@ -46,3 +46,27 @@
 .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }*/
+
+
+.radio-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+.radio-margin {
+  margin: 0 10px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
+.dropdown {
+  width: 100px;
+}
