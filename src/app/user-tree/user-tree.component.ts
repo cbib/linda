@@ -41,6 +41,7 @@ export class UserTreeComponent implements OnInit {
     private nodes: MiappeNode[]
     public statistics: {};
     private displayed = false;
+    private loaded:boolean=false
     public vertices: any = []
     private active_node: MiappeNode;
     private current_data_keys = []
@@ -104,7 +105,7 @@ export class UserTreeComponent implements OnInit {
     }
     async ngOnInit() {
         await this.get_vertices()
-
+        
         this.nodes = []
         this.nodes = this.build_hierarchy(this.vertices)
 
@@ -114,7 +115,7 @@ export class UserTreeComponent implements OnInit {
         this.dataSource.data = this.nodes
         //console.log(this.dataSource.data)
         //this.treeControl.expand()
-        this.treeControl.expandAll();
+        ///this.treeControl.expandAll();
 
         //console.log(this.treeControl.dataNodes[4])
         //console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
@@ -127,7 +128,8 @@ export class UserTreeComponent implements OnInit {
         // for (var d in descendants) {
         //     //console.log(this.treeControl.getLevel(descendants[d]))
 
-
+        this.loaded=true
+        
         //     if (this.treeControl.getLevel(descendants[d]) === 1) {
         //         //console.log(descendants[d].name)
         //         this.treeControl.expand(descendants[d])
@@ -442,21 +444,30 @@ export class UserTreeComponent implements OnInit {
                 );
             }
         }
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        //this.router.navigate([this.router.url]);
-        this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-
+        //this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+        this.reloadComponent()
     }
+    reloadCurrentRoute() {
+        let currentUrl = this.router.url;
+        this.router.navigateByUrl('/tree', {skipLocationChange: true}).then(() => {
+            this.router.navigate([currentUrl]);
+        });
+    }
+    reloadComponent() {
+        let currentUrl = this.router.url;
+            this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+            this.router.onSameUrlNavigation = 'reload';
+            this.router.navigate([currentUrl]);
+        }
     onRemove(node: MiappeNode) {
         this.active_node = node
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false , mode: 'remove'} });
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false , mode: 'remove', model_type:this.get_model_type(this.active_node)} });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
-
                     console.log(this.active_node.id.split("/")[0])
                     if (this.active_node.id.split("/")[0] === "observation_units") {
-
                         this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
                             data => {
                                 if (data["success"]) {
@@ -469,6 +480,9 @@ export class UserTreeComponent implements OnInit {
                                 }
                             }
                         );
+                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                        // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                        this.reloadComponent()
                     }
                     else {
                         if (result.all_childs) {
@@ -484,27 +498,36 @@ export class UserTreeComponent implements OnInit {
                                     }
                                 }
                             );
+                            // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                            // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                            this.reloadComponent()
                         }
-                        else if(result.only_observed_variable){
-                            this.globalService.remove_childs_by_type(this.active_node.id, 'observed_variable').pipe(first()).toPromise().then(
+                        else if(result.only){
+                            console.log(result.only)
+                            this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
                                         console.log(data["message"])
                                         var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
-                                        this.alertService.success(message)
+                                        //this.alertService.success(message)
                                         var datafile_ids=data["datafile_ids"]
-                                        // datafile_ids.forEach(element => {
-
-                                        //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {console.log(data);})
-
+                                        var removed_ids=data["removed_ids"]
+                                        // datafile_ids.forEach(datafile_id => {
+                                        //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
+                                        //         data => { console.log(data); }
+                                        //       )
+                                        // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {console.log(data);})
                                         // });
-
                                     }
                                     else {
                                         this.alertService.error("this form contains errors! " + data["message"]);
                                     }
                                 }
                             );
+                            // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                            // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                            this.reloadComponent()
+
                         }
                         else {
                             this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
@@ -519,13 +542,15 @@ export class UserTreeComponent implements OnInit {
                                     }
                                 }
                             );
+                            // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                            // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                            this.reloadComponent()
                         }
 
 
                     }
 
-                    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                    this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                    
                 }
             }
 
@@ -593,9 +618,17 @@ export class UserTreeComponent implements OnInit {
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
             this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract" } });
-
         }
     }
+    assign_component(model_type: string, template: string){
+        var parent_key = this.active_node.id.split("/")[1]
+        var parent_id = ""
+        if (this.active_node.id != 'Investigations tree') {
+            parent_id = this.active_node.id
+            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract-again" } });
+        }
+    }
+
     add_from_data_file(model_type: string) {
         var parent_key = this.active_node.id.split("/")[1]
         var parent_id = ""
@@ -604,24 +637,19 @@ export class UserTreeComponent implements OnInit {
             this.router.navigate(['/extract'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract" } });
         }
     }
-    add(model_type: string, template: string) {
 
+    add(model_type: string, template: string) {
         var parent_key = this.active_node.id.split("/")[1]
         console.log(parent_key)
         console.log(template)
         var model_coll = this.active_node.id.split("/")[0];
         let user = JSON.parse(localStorage.getItem('currentUser'));
         if (template == 'saved') {
-
             //var model_type=this.globalService.get_model_type(this.active_node.id)
             console.log(model_type)
-
-
             const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: model_type, values: {}, parent_id: this.active_node.id } });
-
-
             dialogRef.afterClosed().subscribe(result => {
-
+                
                 if (result) {
                     console.log(result.values)
                     //console.log(model_type)
@@ -645,7 +673,7 @@ export class UserTreeComponent implements OnInit {
                     var new_values = {}
                     keys.forEach(attr => { new_values[attr] = result.values[attr] })
 
-                    this.globalService.add(new_values, model_type, parent_id).pipe(first()).toPromise().then(
+                    this.globalService.add(new_values, model_type, parent_id, false).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
                                 //console.log(data["message"])
@@ -655,32 +683,29 @@ export class UserTreeComponent implements OnInit {
                                 var message = "A new " + model_type[0].toUpperCase() + model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
 
                                 this.alertService.success(message)
-
+                                
                                 return true;
                             }
                             else {
                                 //console.log(data["message"])
                                 this.alertService.error("this form contains errors! " + data["message"]);
+                                
                                 return false;
                                 //this.router.navigate(['/studies']);
                             }
                         }
                     );
+                    this.reloadComponent()
 
                 }
-
             });
-
-
-
-
+            
             //            this.router.navigateByUrl(['/tree'], { skipLocationChange: true }).then(() => 
             //            {
             //                this.router.navigate(['/tree']);
             //            }); 
             //this.router.routeReuseStrategy.shouldReuseRoute = ( ) => false;                              
             //this.router.navigate(['/tree'],{ queryParams: { key: user["_id"].split('/')[1]} });
-
 
         }
         else if (template == 'zip') {
@@ -722,7 +747,7 @@ export class UserTreeComponent implements OnInit {
                             }
                             var new_values = {}
                             keys.forEach(attr => { new_values[attr] = result.values[attr] })
-                            this.globalService.add(new_values, model_type, this.active_node.id).pipe(first()).toPromise().then(
+                            this.globalService.add(new_values, model_type, this.active_node.id, false).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
                                         //console.log(data["message"])
@@ -1019,16 +1044,16 @@ export class UserTreeComponent implements OnInit {
     }
     get_current_data_file_headers(node: MiappeNode) {
         let ass_headers=node["term"].get_current_data_array()[0]['associated_headers']
-        var keys= Object.keys(ass_headers)
         var associated_component=[]
-        keys.forEach(key=>{
-            if (ass_headers[key]["selected"] === true){
-                associated_component.push({"associated_component": ass_headers[key]["associated_component"], "key": key})
+        ass_headers.forEach(element => {
+            if (element.selected){
+                associated_component.push(element)
             }
         });
         return associated_component
     }
 
+  
     get_model_key(node: MiappeNode) {
         return node["term"].get_model_key()
     }

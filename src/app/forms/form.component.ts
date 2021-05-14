@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GlobalService, AlertService, OntologiesService } from '../services';
-import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UniqueIDValidatorComponent } from '../validators';
@@ -27,7 +27,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     @Input() model_key: string;
     @Input() model_type: string;
     @Input() mode: string;
-    @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+    @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
 
     public guided_tour_messages: any = {
         level1: { heading: 'Level 1', message: 'At stage 1, you will see ontology form field for two important Study features' },
@@ -79,6 +79,8 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
 
     ngOnInit() {
+        ///const id = this.activatedRoute.snapshot.params.id;
+
         this.get_max_level();
         this.get_model();
 
@@ -439,25 +441,27 @@ export class FormComponent implements OnInit//, AfterViewInit
             return false;
         }
         else {
-            if (this.marked) {
-                this.globalService.saveTemplate(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
-                    data => {
-                        if (data["success"]) {
-                            let message = "Template saved! " + data["message"]
-                            this.alertService.success(message);
-                        }
-                        else {
-                            let message = "Cannot save template! " + data["message"]
-                            this.alertService.error(message);
-                        }
-                    }
-                );
-            }
+            // if (this.marked) {
+            //     this.globalService.saveTemplate(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
+            //         data => {
+            //             if (data["success"]) {
+            //                 let message = "Template saved! " + data["message"]
+            //                 this.alertService.success(message);
+            //             }
+            //             else {
+            //                 let message = "Cannot save template! " + data["message"]
+            //                 this.alertService.error(message);
+            //             }
+            //         }
+            //     );
+            // }
             if (this.mode === "create") {
-                this.globalService.add(this.modelForm.value, this.model_type, this.parent_id).pipe(first()).toPromise().then(
+                console.log(this.marked)
+                this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(
                     data => {
                         if (data["success"]) {
                             this.model_id = data["_id"];
+                            console.log(data["res_obj"])
                             this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
                             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
                             this.alertService.success(message)
@@ -517,6 +521,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         }
 
     };
+
     submit(form: any) {
         console.log("start to submit")
         if (!this.startfilling && this.mode != "edit") {
@@ -533,7 +538,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                     return false;
                 }
                 else {
-                    this.notify.emit(this.modelForm.value);
+                    var data={'form':this.modelForm.value, 'template':this.marked}
+                    this.notify.emit(data);
                 }
             }
             else{
@@ -550,6 +556,10 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.level+=1
         }
         else{
+            ///console.log(typeof(this.level))
+            //parseInt(this.level)+=1
+            //this.level=parseInt(this.level)+1
+            //parseInt(level) + 1
             this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
         }
 

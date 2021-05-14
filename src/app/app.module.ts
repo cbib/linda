@@ -107,6 +107,7 @@ import { DatatableDialogComponent } from './dialog/datatable-dialog.component';
 import { HelpLoaderDialogComponent } from './dialog/help-loader-dialog.component';
 import { ExtractComponentComponent } from './extract/extract-component.component';
 import { FormDialogComponent } from './dialog/form-dialog.component';
+import { EditComponent } from './edition/edit.component';
 
 @NgModule({
   declarations: [
@@ -167,7 +168,8 @@ import { FormDialogComponent } from './dialog/form-dialog.component';
     DatatableDialogComponent,
     HelpLoaderDialogComponent,
     ExtractComponentComponent,
-    FormDialogComponent
+    FormDialogComponent,
+    EditComponent
         
     
 

@@ -39,6 +39,11 @@
                     All your projects and studies will be stored in this investigation tree. 
                     Tree nodes are expandables if they had child(s) component(s) (e.g an investigation could contain one or more studies)"
                      class="example-sidenav-content">
+                     <div *ngIf="!loaded" class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only" id="loading"></span>
+                        </div>
+                    </div>
                     <mat-tree #tree [dataSource]="get_dataSource()" [treeControl]="get_treeControl()"
                               class="col-md-12 panel">
 
@@ -71,7 +76,7 @@
                                 {{node.name}}
 
                                 <div class="btn-group" style="float: right;" joyrideStep="step8_1"
-                                     title="Here is the button panel for Study or other leaf node!! "
+                                     title="Here is the button panel for leaf node!! "
                                      [stepContent]="LeafButtonContent"
                                      [stepContentParams]="{'model_n':get_model_type(node)}">
                                     <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
@@ -93,6 +98,10 @@
                                     <a style="float: right;" *ngIf="node.id.includes('studies')">
                                         <button (click)="onClick(node)" [matMenuTriggerFor]="studyMenu"
                                                 class="btn btn-success btn-xs fa fa-plus"></button>
+                                    </a>
+                                    <a style="float: right;" *ngIf="node.id.includes('investigations')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="investigationToolsMenu"
+                                                class="btn btn-primary btn-xs fa fa-wrench"></button>
                                     </a>
                                     <a style="float: right;" *ngIf="node.id.includes('investigations')">
                                         <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu"
@@ -339,7 +348,7 @@
                                                         </button>
                                                     </td>
                                                     <td *ngIf="key === 'associated_headers'" style="font-size:14px;text-align: center;" scope="row">
-                                                        <div class="btn-group mr-3" *ngFor="let sub_key of get_current_data_file_headers(node) ; index as k;">
+                                                        <div class="btn-group mr-3" *ngFor="let headers of get_current_data_file_headers(node) ; index as k;">
                                                             
                                                             <!-- <li class="dropdown">
                                                                 <a data-toggle="dropdown" [ngStyle]="getIconStyle(sub_key['associated_component'])" title="{{sub_key['key']}}" class="dropdown-toggle" href="index.html#">
@@ -352,9 +361,14 @@
                                                                 <li><p> Extract component from data </p></li> 
                                                              </ul>
                                                              -->
-                                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                                <button style="float: left;" [ngStyle]="getIconStyle(sub_key['associated_component'])" class="btn btn-primary btn-xs"
-                                                                        title="{{sub_key['key']}}">{{sub_key['associated_component']}}
+                                                            <div *ngIf="headers['associated_linda_id'] === ''" class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                                <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])" class="btn btn-primary btn-xs"
+                                                                        title="{{headers['header']}}">{{headers['associated_component']}}
+                                                                </button>
+                                                            </div>
+                                                            <div *ngIf="headers['associated_linda_id'] !== ''" class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                                <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])" class="btn btn-primary btn-xs"
+                                                                        title="{{headers['associated_linda_id']}}">{{headers['associated_component']}}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -421,7 +435,7 @@
                                     </button>
                                 </div>
                                 <div class="btn-group">
-                                    <i style='padding-left: 15px'
+                                    <i style="padding-left: 15px"
                                        *ngIf="!node.id.includes('Investigations tree')">{{node.name}}</i>
                                 </div>
                                 <div class="btn-group" style="float: right;" joyrideStep="step7_1"
@@ -446,9 +460,14 @@
                                                 class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
                                     <a style="float: right;" *ngIf="node.id.includes('investigations')">
+                                        <button (click)="onClick(node)" [matMenuTriggerFor]="investigationToolsMenu"
+                                                class="btn btn-primary btn-xs fa fa-wrench"></button>
+                                    </a>
+                                    <a style="float: right;" *ngIf="node.id.includes('investigations')">
                                         <button (click)="onClick(node)" [matMenuTriggerFor]="investigationMenu"
                                                 class="btn btn-success btn-xs fa fa-plus"></button>
                                     </a>
+                                    
                                     <!-- <a style="float: right;" *ngIf="node.id.includes('observation_units')" > 
                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                 </a> -->
@@ -561,11 +580,20 @@
             <button mat-menu-item (click)="activate_multiple_selection(false)">Deactivate</button>
             <button mat-menu-item (click)="activate_multiple_selection(true)">Activate</button>
         </mat-menu>
+        
+        <mat-menu #investigationToolsMenu="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="investigationToolsMenusecond">Assign component</button>
+        </mat-menu>
+        <mat-menu #investigationToolsMenusecond="matMenu">
+            <button mat-menu-item (click)="assign_component('study', 'multi')">From data files</button>
+        </mat-menu>
         <mat-menu #investigationMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond">Study</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi">Studies</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_variable">Observed variables</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_OU">Observation units</button>
+            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_BM">Biological materials</button>
+            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_EF">Experimental factors</button>
         </mat-menu>
         <mat-menu #investigationMenusecond="matMenu">
             <button mat-menu-item (click)="add('study','original')">From original model template</button>
@@ -581,6 +609,12 @@
         </mat-menu>
         <mat-menu #investigationMenusecond_multi_OU="matMenu">
             <button mat-menu-item (click)="add_from_data_file('observation_unit')">From data files</button>
+        </mat-menu>
+        <mat-menu #investigationMenusecond_multi_BM="matMenu">
+            <button mat-menu-item (click)="add_from_data_file('biological_material')">From data files</button>
+        </mat-menu>
+        <mat-menu #investigationMenusecond_multi_EF="matMenu">
+            <button mat-menu-item (click)="add_from_data_file('experimental_factor')">From data files</button>
         </mat-menu>
         <mat-menu #studyMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="observation_unitMenu">Observation unit</button>

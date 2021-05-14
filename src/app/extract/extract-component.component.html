@@ -1,0 +1,95 @@
+<div class="border-head">
+    <h3>
+        <a href="index.html" class="logo">
+            <b>
+            P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+            </b>
+        </a>
+    </h3>
+</div>  
+<div>
+    <p>
+        In this page, you can extract component from data files of each studies of your investigation {{model_key}}
+        This investigation contains {{study_array.length}} Studies. {{filename_used.lenght}} source filename has been 
+        found with a total of {{variable_array.length}} "{{model_type_label}}" detected.
+        If you click on variable header, you will select the whole column to extract. 
+        Using checkboxes in first column, you can unselect some rows if you don't want this study to be enriched with selected observed variables
+    
+    </p>
+    <br>
+    <!-- <section *ngFor="let filename of filename_used ; let i=index"> -->
+      <h2>Select your data file </h2>
+    <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+        <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+    </select> 
+    <br>
+    <br>
+    <h2>{{model_type_label}} assignment</h2>
+    <p>
+        Here are {{model_type_label}} in your data file, click on it to fill the form and add in LINDA database as {{model_type_label}}!! 
+    </p>
+    <!-- <p *ngIf="displayedcomponentColumns[selected_file].lenght==0">
+      There are no {{model_type_label}} described in this datafile
+    </p> -->
+    <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
+      <mat-button-toggle [ngStyle]="getToggleStyle('get_model_type()')" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
+        <span>{{column}}</span>
+      </mat-button-toggle> 
+    </mat-button-toggle-group>
+    <br>
+    <br>
+    <h2>{{model_type_label}} table</h2>
+    <p>
+        Once you have declared the {{model_type_label}} you need, select studies in which these components will be integrated by checking corresponding rows !! 
+    </p>
+    <table mat-table [dataSource]="datasources[selected_file]" matSort >
+        <ng-container *ngFor="let column of displayedColumns[selected_file] ; let i=index">
+            <ng-container *ngIf="column!='select' && column!='study ID'" matColumnDef="{{column}}">
+              <th mat-header-cell  *matHeaderCellDef mat-sort-header> {{column}} </th>
+                <td  mat-cell class="flex-stretch" *matCellDef="let element"> 
+                    <button *ngIf="element[column]==='notfound'" [ngStyle]="getIconStyle('notfound')" class="btn btn-primary btn-xs"
+                       title="{{model_type}} not found">Not found
+                    </button>
+                    <button *ngIf="element[column]==='unset'" [ngStyle]="getIconStyle('unset')" class="btn btn-primary btn-xs"
+                       title="{{model_type}} unset">Unset
+                    </button>
+                    <button *ngIf="element[column]==='ready'" [ngStyle]="getIconStyle('ready')" class="btn btn-primary btn-xs"
+                       title="{{model_type}} ready to extract">Ready
+                    </button>
+                    <button  *ngIf="element[column].includes(get_model_type())" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs"
+                       title="{{element[column]}}">Extracted
+                    </button>
+                  </td>
+            </ng-container>
+            <ng-container *ngIf="column!='select' && column==='study ID'" matColumnDef="{{column}}">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
+                 <td mat-cell class="flex-stretch" *matCellDef="let element"> 
+                    {{element[column]}} 
+                  </td>
+              </ng-container>
+          </ng-container>
+
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="$event ? masterToggle(selected_file) : null"
+                [checked]="selection.hasValue() && isAllRowSelected(selected_file)"
+                [indeterminate]="selection.hasValue() && !isAllRowSelected(selected_file)">
+              </mat-checkbox>
+            </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns[selected_file]"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns[selected_file];"></tr>
+      </table>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <button class="btn btn-outline-rounded btn-info" [disabled]="selection.selected.length===0" type="submit">Extract {{model_type_label}} </button>
+     </form>
+    <!-- </section> -->
+
+
+</div>

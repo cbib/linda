@@ -56,7 +56,13 @@
      <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
   </form>
 </div>
+<div *ngIf= "mode.includes('extract-again')" >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
+ </form>
+</div>
 <br>
+
 <!-- [xAxisTickFormatting]='formatTime' -->
 <ngx-charts-line-chart *ngIf= "time_set" #chart
   [view]="view"
@@ -78,11 +84,13 @@
   (deactivate)="onDeactivate($event)"
   >
 </ngx-charts-line-chart>
-<table *ngIf= "model_type==='metadata_file'" cdkDropList cdkDropListOrientation="vertical" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" (cdkDropListDropped)="drop($event)">
+<table *ngIf= "model_type==='metadata_file'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable">
     <thead>
         <tr>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
@@ -90,10 +98,13 @@
     </thead>
     <tbody>
         <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <!-- Selection column-->
             <th scope="col" >
-            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="todoLeafItemSelectionToggle(key)"></mat-checkbox>
+            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
             </th>
-            <th scope="col" >{{key}}
+            <!-- Original headers column-->
+            <th scope="col" >
+                {{key}}
             </th>
             <!-- <th scope="col">
                 <span style="display:inline-block; margin-left: 10px;"> 
@@ -102,14 +113,28 @@
                     </select> 
                 </span>
             </th> -->
-
-            <th scope="col" cdkDrag>
-                <span *ngIf="get_headers_select()[i]==='others'" style="display:inline-block; margin-left: 10px;"> 
+            <!-- MIAPPE assignment-->
+            <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
+                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                    </select> 
+                </span>
+            </th>
+            <!-- Assigned MIAPPE component-->
+            <th scope="col">
+                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header(key).associated_component}} 
+                </span>
+                
+            </th>
+            <!-- Ontologies component column-->
+            <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
                     <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
                         <!--<option value="" disabled>Assign Ontology term</option>-->
                         <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
                         <option value="XEO">XEO</option>
-                        <option value="group_label">Define as group labels</option>
                         <option value="PECO">PECO</option>
                         <option value="EnvO">EnvO</option>
                         <option value="PO_Structure">PO Structure</option>
@@ -118,11 +143,8 @@
                         <option value="CO_20">Crop Ontology 20 </option>
                         <option value="CO_715">Crop Ontology 715 </option>
                     </select> 
-                </span>
-               
-            
-                
-                <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
+                </span> 
+                <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
                     <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
                         <option value="" disabled>Select time format</option>
                         <option value="dd/mm/yyyy">dd/mm/yyyy</option>
@@ -130,26 +152,18 @@
                         <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
                         <option value="custom_date_format">build custom date format</option>
                     </select> 
-                </span>
-
+                </span> -->
             </th>
+            <!-- Assigned Ontology terms component column-->
             <th scope="col">
-                <span *ngIf="i>0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{associated_headers[key].associated_term_id}} 
-                </span>
-                <span *ngIf="i==0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{associated_headers[key].associated_term_id}}
+                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header(key).associated_term_id}} 
                 </span>
             </th>
-
+            <!-- Visualization column-->
             <th scope="col">
-                <span *ngIf="i>0 && get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
                     <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
-                        title="{{key}}">Show Data
-                    </button>
-                </span>
-                <span *ngIf="i==0 && get_associated_header(key).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
-                    <button class="btn btn-primary btn-xs"
                         title="{{key}}">Show Data
                     </button>
                 </span>
@@ -158,11 +172,17 @@
     </tbody>
 </table>
 
-
-<table  *ngIf= "model_type==='data_file' || model_type==='study'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable">
+<section *ngIf= "(model_type==='data_file' || model_type==='study') && mode ==='extract-again'">
+<h2>Select your data file </h2>
+<select class="form-control" [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+    <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+</select> 
+<br>
+<br>
+<table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable2">
     <thead>
         <tr>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
+            <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th> -->
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
@@ -170,18 +190,75 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
-            <th scope="col" >
-            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="todoLeafItemSelectionToggle(key)"></mat-checkbox>
-            </th>
+        <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <!-- <th scope="col" >
+            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
+            </th> -->
             <th scope="col" >{{key}}</th>
             <th scope="col">
                 <span style="display:inline-block; margin-left: 10px;"> 
-                    <select [ngModel]="selectedStudy" name="select_study" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" >
-                        <option *ngFor="let extract_option of extract_options" [value]="extract_option.value">{{extract_option.name}}</option>
+                    <select class="form-control" [value]="get_selected_option(key, selected_file)" name="get_selected_option(key, selected_file)" (change)="onModify($event.target.value,get_headers_by_filename(selected_file)[i], selected_file)" ngModel>
+                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                    </select> 
+                </span>
+
+            </th>
+            <th scope="col">
+                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                </span>
+                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header_by_filename(key, selected_file).associated_component}}
+                </span>
+            </th>
+            <th scope="col">
+                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
+                        title="{{key}}">Show Data
+                    </button>
+                </span>
+                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
+                    <button class="btn btn-primary btn-xs"
+                        title="{{key}}">Show Data
+                    </button>
+                </span>
+            </th>
+        </tr>
+    </tbody>
+</table>
+</section>
+
+<section *ngIf= "(model_type==='data_file' || model_type==='study') && mode!=='extract-again'">
+<table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
+    <thead>
+        <tr>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+            <th scope="col" >
+            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
+            </th>
+            <!-- Original headers column-->
+            <th scope="col" >
+                {{key}}
+            </th>
+            <!-- MIAPPE assignment-->
+            <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
+                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
                 </span>
             </th>
+            <!-- Assigned MIAPPE component-->
             <th scope="col">
                 <span *ngIf="i>0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
                     {{get_associated_header(key).associated_component}} 
@@ -190,6 +267,39 @@
                     {{get_associated_header(key).associated_component}}
                 </span>
             </th>
+            <!-- Ontologies component column-->
+            <th scope="col">
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                        <!--<option value="" disabled>Assign Ontology term</option>-->
+                        <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
+                        <option value="XEO">XEO</option>
+                        <option value="PECO">PECO</option>
+                        <option value="EnvO">EnvO</option>
+                        <option value="PO_Structure">PO Structure</option>
+                        <option value="PO_Development">PO Development</option>
+                        <option value="CO_322">Crop Ontology 322</option>
+                        <option value="CO_20">Crop Ontology 20 </option>
+                        <option value="CO_715">Crop Ontology 715 </option>
+                    </select> 
+                </span> 
+                <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
+                    <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
+                        <option value="" disabled>Select time format</option>
+                        <option value="dd/mm/yyyy">dd/mm/yyyy</option>
+                        <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
+                        <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
+                        <option value="custom_date_format">build custom date format</option>
+                    </select> 
+                </span> -->
+            </th>
+            <!-- Assigned Ontology terms component column-->
+            <th scope="col">
+                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header(key).associated_term_id}} 
+                </span>
+            </th>
+            <!-- Visualization column-->
             <th scope="col">
                 <span *ngIf="i>0 && get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
                     <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
@@ -205,3 +315,4 @@
         </tr>
     </tbody>
 </table>
+</section>

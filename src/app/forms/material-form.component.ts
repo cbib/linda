@@ -529,23 +529,23 @@ export class MaterialFormComponent implements OnInit {
   save(form: any): boolean {
 
 
-    if (this.marked) {
-      this.globalService.saveTemplate(form, this.model_type).pipe(first()).toPromise().then(
-        data => {
-          if (data["success"]) {
-            let message = "Template saved! " + data["message"]
-            this.alertService.success(message);
-          }
-          else {
-            let message = "Cannot save template! " + data["message"]
-            this.alertService.error(message);
-          }
-        }
-      );
-    }
+    // if (this.marked) {
+    //   this.globalService.saveTemplate(form, this.model_type).pipe(first()).toPromise().then(
+    //     data => {
+    //       if (data["success"]) {
+    //         let message = "Template saved! " + data["message"]
+    //         this.alertService.success(message);
+    //       }
+    //       else {
+    //         let message = "Cannot save template! " + data["message"]
+    //         this.alertService.error(message);
+    //       }
+    //     }
+    //   );
+    // }
     if (this.mode === "create") {
       
-      this.globalService.add(form, this.model_type, this.parent_id).pipe(first()).toPromise().then(
+      this.globalService.add(form, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(
         data => {
           if (data["success"]) {
             this.model_id = data["_id"];

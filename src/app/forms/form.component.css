@@ -148,3 +148,12 @@ input:checked + .slider:before {
 	letter-spacing: 1em;
 	color: #aaa;
 } */
+
+
+.table tr.active td {  
+  background-color:#48da24 !important;  
+  color: white;  
+} 
+.mat-slider-vertical{
+  min-height: 60px;
+}

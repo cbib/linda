@@ -98,6 +98,9 @@ export class GlobalService {
     get_all_data_files(model_key:string): Observable<any> {
         return this.http.get(this.APIUrl + "get_all_data_files/" + model_key).pipe(map(this.extractData));
     }
+    get_data_filename(parent_key:string, model_type:string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_data_filename/" + parent_key + "/" + model_type).pipe(map(this.extractData));
+    }
 
 
     is_exist(field: string, value: string, model_type: string): Observable<any> {
@@ -137,6 +140,18 @@ export class GlobalService {
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
+    }
+    remove_associated_headers_linda_id(id: string, removed_ids: [], collection:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_id': id,
+            'removed_ids': removed_ids,
+            'collection': collection
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "remove_associated_headers_linda_id"}`, obj2send);
     }
     update_field(value: string, key: string, field: string, model_type: string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -197,15 +212,18 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs_by_type"}`, obj2send);
     }
-    add(values: {}, model_type: string, parent_id: string) {
+    
+    add(values: {}, model_type: string, parent_id: string, as_template:boolean) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
             'username': user.username,
             'password': user.password,
             'parent_id': parent_id,
             'values': values,
-            'model_type': model_type
+            'model_type': model_type,
+            'as_template': as_template
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
     }
     add_parent_and_childs(parent_model: {}, child_values: {}, model_type_parent: string, parent_id: string, model_type_child: string) {
