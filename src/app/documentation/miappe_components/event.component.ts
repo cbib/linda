@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./event.component.css']
 })
 export class EventComponent implements OnInit {
-
+  mode_table:boolean=true
   constructor() { }
 
   ngOnInit() {

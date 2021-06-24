@@ -12,6 +12,7 @@ import { SelectionDialogComponent } from '../dialog/selection-dialog.component';
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SampleSelectionComponent } from '../dialog/sample-selection.component';
+import {JoyrideService} from 'ngx-joyride';
 
 export interface BiologicalMaterial {
   biologicalMaterialId: string;
@@ -57,6 +58,7 @@ export class ObservationUnitFormComponent implements OnInit {
   biologicalMaterialTouchedRows: any;
   experimentalFactorTouchedRows: any;
   sampleTouchedRows: any;
+  private currentUser
 
 
   private startfilling: boolean = false;
@@ -89,6 +91,7 @@ export class ObservationUnitFormComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
+    private readonly joyrideService: JoyrideService,
     public dialog: MatDialog) {
     this.route.queryParams.subscribe(
       params => {
@@ -129,8 +132,22 @@ export class ObservationUnitFormComponent implements OnInit {
     }
     //this.get_model()
     await this.get_model()
+    this.onClickTour()
 
   }
+  onClickTour() {
+    console.log('start tour part 2')
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+    console.log(this.currentUser['tutoriel_step'])
+        console.log(this.currentUser)
+        if (this.currentUser['tutoriel_step'] === "11"){
+            this.joyrideService.startTour(
+                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //this.currentUser.tutoriel_step="2"
+            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+ }
   ngAfterOnInit() {
     this.observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
     this.biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;

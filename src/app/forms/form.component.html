@@ -10,30 +10,20 @@
 <!-- <div class="loaded-content" [class.blurred]="showSpinner"></div> 
 </div> -->
 
-<div style="overflow: auto">
-    <div class="border-head">
-        <h3>
-            <a href="index.html" class="logo">
-                <b>
-                    P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
-                </b>
-            </a>
-            
-        </h3>
-    </div>
+<div style="overflow: auto"
+    joyrideStep="StepDemoForm"
+    title="Here is a {{model_type}} Form Template to fill !! "
+    [stepContent]="democontent"
+    [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+    (done)= "onDone()">
+    <div class="border-head"><h3><a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a></h3></div>
     <div 
         class="btn-group"
         style="width: 100%;float: right;"
-        joyrideStep="Step1_1"
-        title="Here is a {{model_type}} Form !! "
+        joyrideStep="StepMenuForm"
+        title="Here is a {{model_type}} Form Menu !! "
         [stepContent]="menucontent"
-        [stepContentParams]="{'model_n':model_type, model_len:cleaned_model.length}"
-    >
-     <!-- joyrideStep="Step1_1" 
-        title="Start help tour for form" 
-        text="This menu allows you to navigate to previous or next form page if exists.
-                click on submit when you have completed the form or cancel if you want to go back in analysis
-                The Save as template  checkbox if activated will save your form as a template form available for furthers projest or studies"  -->
+        [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}">
         <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button>
         <button *ngIf="level<max_level" style="float: right;" class="btn btn-info" (click)="goToNext(modelForm,level)">Next</button>
         <!-- <span style="margin-right:10px;"></span>-->
@@ -53,7 +43,7 @@
             <span class="slider round"></span>
         </label> -->
     </div>
-    <ng-template #menucontent let-nod="model_n" let-modellen="model_len">
+    <ng-template #menucontent let-nod="model_n" let-modellen="model_len" let-modell="model_level">
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
@@ -61,9 +51,40 @@
               </h3>
           </nav>
         </div>
-        This menu allows you to navigate to previous or next form page if exists.
-                click on submit when you have completed the form or cancel if you want to go back in analysis
-                The Save as template  checkbox if activated will save your form as a template form available for furthers projest or studies   
+
+        <div>
+
+            <p>This menu allows you to navigate to previous or next form page if exists (Not all forms have multiple pages !! ).</p>
+            <ul>
+                <li>The Save as template checkbox on the left will save your form as a template form, available for furthers reuses</li>
+                <li>Click on Cancel button if you want to go back in analysis</li>
+                <li>Click on Submit button when you have completed the form</li>
+            </ul>
+          
+            <div *ngIf="nod==='study'">
+            <p>The Study form has three parts. </p>
+                <ul>
+                <li>Click on Next button if you want to go to next form panel</li>
+                <li>Click on Back button if you want to go back in analysis</li>
+                </ul>
+            </div>
+            <p>Some field are mandatory like some unique identifiers (submit button unabled) while others are optional and can be filled later.<br>
+            There are three main types of fields:</p>
+            <ul>
+                <li>Field for free text or unique identifier</li>
+                <li>Field for ontology term selection</li>
+                <li>Field for date or time range</li>
+            </ul>
+            <div *ngIf="nod==='experimental_factor'">
+                <h2>Available ontologies for experimental factor description: </h2>
+                <ul>
+                    <li>EFO</li>
+                    <li>PECO</li>
+                </ul>
+
+            </div>
+
+        </div> 
       </ng-template>
 
     <div 
@@ -77,95 +98,215 @@
     <!-- <div *ngIf="model_type!=='biological_material'"> -->
     <form [formGroup]="modelForm">
         <div 
-        joyrideStep="Step1_2"
-        title="Here is a {{model_type}} form stage {{level}} !! "
+        joyrideStep="StepContentForm"
+        title="Here is a {{model_type}} form content  !! "
         [stepContent]="formcontent"
-        [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
-        >
-        <div
-        class="form-group" *ngFor="let field of cleaned_model ; index as i;">
-            <div *ngIf="model[field['key']].Level==level">
-                <label for="{{field['key']}}">{{field['key']}}</label>
-                <span style="display:inline-block; margin-left: 10px;">
-                    <i style="color :lightblue" class="fa fa-info-circle"
-                        title="{{model[field['key']].Definition}}"></i>
-                </span>
-                <!--ontology format =-->
-                <div *ngIf="model[field['key']].Format.includes('Ontology')">
-                    <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;"
-                        class="btn-group">
-                        <button class="btn btn-success btn-xs fa fa-plus"
-                            (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
-                            {{ont}}
-                        </button>
+        [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}">
+            <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
+                <div *ngIf="model[field['key']].Level==level">
+                    <label for="{{field['key']}}">{{field['key']}}</label>
+                    <span style="display:inline-block; margin-left: 10px;">
+                        <i style="color :lightblue" class="fa fa-info-circle"
+                            title="{{model[field['key']].Definition}}"></i>
+                    </span>
+                    <!--ontology format =-->
+                    <div 
+                    *ngIf="model[field['key']].Format.includes('Ontology')"
+                    joyrideStep="Step1_3"
+                    title="Here is an ontology field !! "
+                    [stepContent]="formOntologyContent"
+                    [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+                    (done)= "onDone()">
 
-                    </div>
-                    <span *ngIf="validated_term[field['key']].selected!==true"
-                        style="display:inline-block; margin-left: 10px;">
-                        <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                            formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
-                    </span>
-                    <span *ngIf="validated_term[field['key']].selected===true"
-                        style="display:inline-block; margin-left: 10px;">
-                        <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
-                            formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
-                    </span>
-                </div>
-                <!--not a ontology format =-->
-                <div *ngIf="!model[field['key']].Format.includes('Ontology')">
-                    <!--not a date format-->
-                    <div *ngIf="!field['key'].includes('date')">
-                        <!-- <input *ngIf="!model[field['key']].Format.includes('Free text') && mode==='edit'" mdbInput
-                            [disabled]="model[field['key']].Format.includes('Unique identifier')" placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                                class="form-control" (keypress)="onTaskAdd($event)"
-                                [ngClass]="{ 'is-invalid': f[field['key']].errors }" /> -->
-                        <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
-                                placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                                class="form-control" (keypress)="onTaskAdd($event)"
-                                [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
-                        
-                        <mat-slider formControlName="{{field['key']}}"
-                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
-                            [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
-                        </mat-slider>
-                        <mat-slider formControlName="{{field['key']}}"
-                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')"
-                            [displayWith]="formatLongitudeLabel" step="0.01" thumbLabel min="-180" max="+180"
-                            tickInterval="0.01">
-                        </mat-slider>
-                        <mat-slider vertical #myMaterialLatitudeSlider formControlName="{{field['key']}}"
-                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')"
-                            [displayWith]="formatLatitudeLabel" step="0.01" thumbLabel min="-90" max="+90"
-                            tickInterval="0.01">
-                        </mat-slider>
-                        <mat-slider vertical formControlName="{{field['key']}}"
-                            *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
-                            [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000"
-                            tickInterval="0.1">
-                        </mat-slider>
-                        <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
-                            placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                            class="form-control" (keypress)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
-                        <div *ngIf="f[field['key']].errors" class="invalid-feedback">
-                            <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is
-                                required</div>
-                            <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is
-                                required</div>
-                            <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required -
-                                already used !! </div>
+                        <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;"
+                            class="btn-group">
+                            <button class="btn btn-success btn-xs fa fa-plus"
+                                (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
+                                {{ont}}
+                            </button>
+
                         </div>
+                        <span *ngIf="validated_term[field['key']].selected!==true"
+                            style="display:inline-block; margin-left: 10px;">
+                            <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
+                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                        </span>
+                        <span *ngIf="validated_term[field['key']].selected===true"
+                            style="display:inline-block; margin-left: 10px;">
+                            <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
+                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
+                                [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                        </span>
                     </div>
+                    <ng-template #formOntologyContent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                        <div>
+                          <nav class="navbar navbar-expand-sm navbar-dark">
+                              <h3>
+                                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                              </h3>
+                          </nav>
+                        </div>
+                        <div *ngIf="nod==='study'">
+                            <p>For study form, there are two field that you can fill using ontology trees</p>
+                            <h5>Type of experimental design</h5>
+                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                            <h5>Type of growth facility</h5>
+                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                        </div>
+                        <div *ngIf="nod==='experimental factor'">
+                            <h3>Type of experimental design</h3>
+                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                            <h3>Type of growth facility</h3>
+                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                        </div>
+                        
+                    </ng-template>
 
-                    <!--Date format-->
-                    <div *ngIf="field['key'].includes('date')">
-                        <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
-                            formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                    <!--not a ontology format =-->
+                    <div *ngIf="!model[field['key']].Format.includes('Ontology')">
+                        <!--not a date format-->
+                        <div *ngIf="!field['key'].includes('date')">
+                            <!-- <input *ngIf="!model[field['key']].Format.includes('Free text') && mode==='edit'" mdbInput
+                                [disabled]="model[field['key']].Format.includes('Unique identifier')" placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" /> -->
+                            <div *ngIf="model[field['key']].Format.includes('Unique identifier') && model[field['key']].Position === '1' "
+                                    joyrideStep="StepMandatoryID"
+                                    title="Here is a mandatory unique identifier field !! "
+                                    [stepContent]="formUIcontent"
+                                    [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+                                    (done)= "onDone()">
+                                <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                                <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
+                            </div>
+                            <ng-template #formUIcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                                <div>
+                                  <nav class="navbar navbar-expand-sm navbar-dark">
+                                      <h3>
+                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                                      </h3>
+                                  </nav>
+                                </div>
+                               <p> This field required a unique identifier !! 
+                                Moreover, you have to fill this kind of field in order to submit your form !
+                                There may be more than one field requiring a unique identifier in a form !!</p>
+                                
+                                <!-- <div *ngIf="nod === 'investigation'">
+                                    <p> Let's add a new investigation!</p>
+        
+                                    <p> Add the following :</p>
+                                        <ul>
+                                        <li>  <p> Investigation unique ID : Maizes1</p></li>
+                                        <li> <p> Short title: maizes1</p></li>
+                                        </ul>
+                                     <p> The other fields can be fullfilled later<br></p>
+                                </div>
+                                <div *ngIf="nod === 'study'">
+                                    <p> Let's add a new study!</p>
+                                    <p> Add the following on page 1 :</p>
+                                        <ul>
+                                        <li>  <p> Study unique Id: MaizeStudy1</p></li>
+                                        <li> <p> Short title: Study1</p></li>
+                                        <li> <p> Start date of study : 1/06/2021</p></li>
+                                        <li> <p> End date of study : 30/06/2021</p></li>
+                                        </ul>
+                                    
+                                    <p> Add the following on page 3 :</p>
+                                    <ul>
+                                    <li> <p> Type of experimental design: CO_715:0000145</p></li>
+                                    <li> <p> Type of growth facility: CO_715:0000162</p></li>
+                                    <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
+                                    
+                                    </ul>
+                                  
+                                </div> -->
+                            </ng-template>
+
+                            <div *ngIf="model[field['key']].Format.includes('Unique identifier') && model[field['key']].Position !== '1' "
+>
+                                <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                                <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
+                            </div>
+
+
+                            <div *ngIf="!model[field['key']].Format.includes('Unique identifier')"
+                                    joyrideStep="Step1_5"
+                                    title="Here is a non mandatory field !! !! "
+                                    [stepContent]="formNFcontent"
+                                    [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+                                    (done)= "onDone()">
+                                <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                                <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
+                                    placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
+                                    class="form-control" (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
+                                <!-- <mat-slider formControlName="{{field['key']}}"
+                                    *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
+                                    [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
+                                </mat-slider>
+                                <mat-slider formControlName="{{field['key']}}"
+                                    *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')"
+                                    [displayWith]="formatLongitudeLabel" step="0.01" thumbLabel min="-180" max="+180"
+                                    tickInterval="0.01">
+                                </mat-slider>
+                                <mat-slider vertical #myMaterialLatitudeSlider formControlName="{{field['key']}}"
+                                    *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')"
+                                    [displayWith]="formatLatitudeLabel" step="0.01" thumbLabel min="-90" max="+90"
+                                    tickInterval="0.01">
+                                </mat-slider>
+                                <mat-slider vertical formControlName="{{field['key']}}"
+                                    *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
+                                    [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000"
+                                    tickInterval="0.1">
+                                </mat-slider> -->
+                                
+                            </div>
+                            <ng-template #formNFcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                                <div>
+                                  <nav class="navbar navbar-expand-sm navbar-dark">
+                                      <h3>
+                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                                      </h3>
+                                  </nav>
+                                </div>
+                                Here is the free text area to fill!!
+                            </ng-template>
+                            
+
+
+                            <div *ngIf="f[field['key']].errors" class="invalid-feedback">
+                                <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is
+                                    required</div>
+                                <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is
+                                    required</div>
+                                <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required -
+                                    already used !! </div>
+                            </div>
+                        </div>
+
+                        <!--Date format-->
+                        <div *ngIf="field['key'].includes('date')">
+                            <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
+                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
         <!-- <ng-container *ngIf="level<2">
             <ng-container *ngTemplateOutlet="formcontent.studylevelone; context: guided_tour_messages.level1"></ng-container>
@@ -179,18 +320,34 @@
               </nav>
             </div>
 
-            The {{nod}} form contains informations and details about the related component. <br>
+            <p>
             For each field, you have to described either manually or automatically using differents 
-            kind of widgets thats help you to capture your data. {{nod}} form contains {{modellen}} fields to fill.<br> 
-            Some are mandatory like {{nod}} unique identifier while others are optional and can be filled later.<br>
-            There are three main types of fields:<br>
-                - Field for free text or identifier<br>
-                - Field for ontology term selection<br>
-                - Field for date or time range<br>
-            Others fields using slider to select latitude longitude exist also;  
-            <div>
-                <p>{{modelmessage}}</p>
+            kind of widgets thats help you to capture your data. </p>
+            <div *ngIf="nod==='study'">
+                <p>These form contains informations and details to describe your study.
+                Let's add a new study! add the following</p>
             </div>
+            <div *ngIf="nod==='experimental_factor'">
+                <h5>Definition: </h5>
+                <p>The object of a study is to ascertain the impact of one or more factors on the biological material. Thus, a factor is, by definition a condition that varies between observation units, which may be biotic (pest, disease interaction) or abiotic (treatment and cultural practice) in nature. Depending on the level of the data, an experimental factor can be either  \"what is the factor applied to the plant\" (i.e. Unwatered), or the \"environmental characterisation\" (i.e. if no rain on unwatered plant : Drought ;  if rain on unwatered plant: Irrigated) </p>
+                <p>These form contains informations and details to describe your experimental factor.</p>
+            </div>
+            <div *ngIf="nod==='observed_variable'">
+                <p>These form contains informations and details to describe your observed variable.
+                The observed variable form contains 12 fields to fill. 
+                You can use available ontologies to easily fill this form; 
+            </p>
+                <p>There are four important parts to ffill to correctly describe an observed variable</p>
+                <ul>
+                    <li>The observed trait</li>
+                    <li>The observed variable</li>
+                    <li>The observation method</li>
+                   <li>the observation scale</li>
+                </ul>
+                
+            </div>
+            
+            
             <!-- <ng-template #studylevelone let-heading="heading" let-message="message">
                 <div class="guided_tour_messages">
                     <h4>{{ get_message_guided_tour.heading }}</h4>
@@ -284,3 +441,61 @@
         </form>
     </div> -->
 </div>
+<ng-template #democontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+    <div>
+      <nav class="navbar navbar-expand-sm navbar-dark">
+          <h3>
+              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+          </h3>
+      </nav>
+    </div>
+    <div *ngIf="nod === 'investigation'">
+        <p> Let's add a new investigation!</p>
+
+        <p> Click on DONE to add the following investigation:</p>
+            <ul>
+            <li>  <p> Investigation unique ID : Maizes1</p></li>
+            <li> <p> Short title: maizes1</p></li>
+            </ul>
+         <p> The other fields can be fullfilled later<br></p>
+    </div>
+    <div *ngIf="nod === 'study'">
+        <p> Let's add a new study by clicking on Done!</p>
+        <p> Click on DONE to add the following study:</p>
+            <ul>
+            <li>  <p>Study unique Id: MaizeStudy1</p></li>
+            <li> <p> Short title: Study1</p></li>
+            <li> <p> Start date of study : 1/06/2021</p></li>
+            <li> <p> End date of study : 30/06/2021</p></li>
+            <li> <p> Type of experimental design: CO_715:0000145</p></li>
+            <li> <p> Type of growth facility: CO_715:0000162</p></li>
+            <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
+        
+        </ul>
+      
+    </div>
+    <div *ngIf="nod === 'experimental_factor'">
+        <p> Let's add a new experimental factor!</p>
+        <p> Click on DONE to add the following experimental factor:</p>
+            <ul>
+            <li>  <p> Experimental Factor type: Watering</p></li>
+            <li> <p> Experimental Factor values: rainfed;watered</p></li>
+            <li> <p> Experimental Factor accession number : EFO:0000470</p></li>
+            </ul>
+        
+      
+    </div>
+    <div *ngIf="nod === 'observed_variable'">
+        <p> Let's add a new observed variable!
+            For example, add a new observed variable called Plant height !
+            Click on DONE to add the following Observed variable</p>
+                <ul>
+                    <li><p> Variable ID : PH_M_cm</p></li>
+                    <li><p> Trait m: Plant height</p></li>
+                    <li><p> Method : PH - Measurement</p></li>
+                    <li><p> Scale : cm</p></li>
+                </ul>
+                <p> You can use the search box in the  top of the ontology tree to quickly find terms </p>
+      
+    </div>
+</ng-template>

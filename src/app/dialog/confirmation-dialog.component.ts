@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { DataTablesModule } from 'angular-datatables';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { GlobalService} from '../services';
+import { first } from 'rxjs/operators';
 
 interface DialogData {
   validated: boolean;
@@ -12,6 +13,7 @@ interface DialogData {
   parent_key:string;
   model_filename:string;
   values: {};
+  header:string;
 }
 
 @Component({
@@ -20,22 +22,23 @@ interface DialogData {
   styleUrls: ['./confirmation-dialog.component.css']
 })
 export class ConfirmationDialogComponent implements OnInit {
-  private mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " } }
-  private validated: boolean;
-  private all_childs: boolean = false
-  private use_template: boolean = false
-  private use_existing: boolean = false
-  private only: string = ""
-  private mode: string = ""
-  private user_key: string = ""
-  private parent_key: string = ""
-  private model_type: string = ""
-  private values: {} = {}
-  private model_id: string = ""
-  private model_filename: string = ""
-  private template_result = []
-  private existing_result = []
-  private unique_file_name = []
+  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " },  'extract_env_var_again': { 'title': "Confirm new extraction", 'content': " Are you sure to extract and replace this component ? This will delete corresponding components"}}
+  validated: boolean;
+  all_childs: boolean = false
+  use_template: boolean = false
+  use_existing: boolean = false
+  only: string = ""
+  mode: string = ""
+  user_key: string = ""
+  parent_key: string = ""
+  model_type: string = ""
+  values: {} = {}
+  model_id: string = ""
+  model_filename: string = ""
+  template_result = []
+  existing_result = []
+  unique_file_name = []
+  header: string=""
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
@@ -45,6 +48,7 @@ export class ConfirmationDialogComponent implements OnInit {
     this.model_type = this.data.model_type
     this.parent_key=this.data.parent_key
     this.values = this.data.values
+    this.header = this.data.header
     this.model_id = ""
     this.model_filename=this.data.model_filename
     console.log(this.model_type)
@@ -52,7 +56,7 @@ export class ConfirmationDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.mode == "extract_env_var") {
+    if (this.mode.includes("extract_env_var")) {
       this.globalService.get_templates(this.user_key, this.model_type).toPromise().then(
         data => {
           this.template_result = data;
@@ -65,7 +69,7 @@ export class ConfirmationDialogComponent implements OnInit {
           this.unique_file_name = [];
           
           data.forEach(element=>{
-              this.existing_result.push({"filename":element.filename, "associated_headers": element.associated_headers, "study_id":element.efrom })
+              this.existing_result.push({"datafile_id": element.eto, "filename":element.filename, "associated_headers": element.associated_headers, "study_id":element.efrom })
               if (this.unique_file_name.filter(prop => prop.filename == element.filename).length === 0){
                 if (element.filename !== this.model_filename){                
                   this.unique_file_name.push({"filename":element.filename })
@@ -103,8 +107,30 @@ export class ConfirmationDialogComponent implements OnInit {
       attr => {
         if (attr["filename"] === values) {
           this.data.values = attr
-          console.log(this.data.values)
-          console.log(this.existing_result.filter(prop => prop.filename === values))
+          // console.log(this.data.values)
+          // data to copy 
+          var my_data=this.existing_result.filter(prop => prop.filename === values)
+          // data to update 
+          var my_data_to_update=this.existing_result.filter(prop => prop.filename === this.model_filename)
+          
+          console.log(my_data_to_update)
+          // console.log(my_data)
+          ///my_data.forEach((element, index)=>{})
+          for (let i = 0; i < my_data.length ; i++) {
+            var element=my_data[i]
+            // console.log(element.study_id)
+            // console.log(element.datafile_id)
+            var my_data2= element.associated_headers.filter(associated_header => associated_header.header === this.header)[0]
+            console.log(my_data2.associated_linda_id)
+            var element_to_update=my_data_to_update[i]
+            console.log(element_to_update)
+            console.log(element)
+            this.globalService.update_associated_headers_linda_id(element_to_update.datafile_id, my_data2.associated_linda_id, this.header, 'data_files').pipe(first()).toPromise().then(
+              data => {console.log(data)}
+            )
+
+          }
+          
         }
       }
     );

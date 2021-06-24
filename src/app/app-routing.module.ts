@@ -15,7 +15,6 @@ import { HelpComponent } from './help/help.component';
 //import { SendmailComponent } from './forms/sendmail.component';
 import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
 import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
-import { DonwloadedComponent } from './download/donwloaded.component';
 import { ReleasesComponent } from './documentation/releases.component';
 import { MaterialFormComponent } from './forms/material-form.component';
 import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
@@ -35,6 +34,7 @@ import { SampleComponent } from './documentation/miappe_components/sample.compon
 import { GanttComponent } from './test_component/gantt.component'
 import { PublicDataComponent } from './documentation/public-data.component';
 import { ExtractComponentComponent } from './extract/extract-component.component';
+import { TemplatesComponent } from './templates/templates.component';
 
 
 const routes: Routes = [
@@ -44,12 +44,12 @@ const routes: Routes = [
   { path: 'trees',component: OntologyTreeComponent,canActivate: [AuthGuard]},
   { path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
   { path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
-  { path: 'downloaded',component: DonwloadedComponent,canActivate: [AuthGuard]},
   { path: 'extract',component: ExtractComponentComponent,canActivate: [AuthGuard]},
   { path: 'home',component: HomeComponent},
   { path: 'investigation',component: InvestigationComponent},
   { path: 'study',component: StudyComponent},
   { path: 'event',component: EventComponent},
+  { path: 'templates',component: TemplatesComponent},
   { path: 'observation_unit',component: ObservationUnitComponent},
   { path: 'biological_material',component: BiologicalMaterialComponent},
   { path: 'observed_variable',component: ObservedVariableComponent},

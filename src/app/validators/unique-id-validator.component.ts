@@ -38,30 +38,15 @@ export class UniqueIDValidatorComponent{
   static create(globalService: GlobalService, alertService: AlertService, model_type:string, field:string){
     
     return (control: FormControl) => {
-
-        //return this.get_investigation_service_response(control.value);
-        //console.log(control.value)
-//        if (control.value ===""){
-//            return { 'create': true };
-//        }
         return globalService.is_exist(field, control.value, model_type).pipe(first()).toPromise().then(
             data => {
-//                    setTimeout(() => {control.updateValueAndValidity();}, 10);
-                    //console.log(control.value)
                     if (control.value ===""){
                         return { 'create': true };
                     }
-                    
                     if (data["success"]){
-                        //console.log(data["message"])
                         alertService.clear()
-                        //alertService.success(data["message"])
-                        //return null
-                        //console.log(control.errors);
                     }else{
                         alertService.error("this "+field+" is already used. Please select new one ! ");
-                        //console.log(control.errors);
-                        //return { 'unique_id': true }
                     }
             return data["success"] ? null : { 'create': true };
 

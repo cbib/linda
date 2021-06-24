@@ -68,7 +68,7 @@ export class AppComponent implements OnInit {
         this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(
             data=>{
                 console.log(data)
-                const dialogRef = this.dialog.open(SearchResultDialogComponent, {width: '500px', autoFocus: false, maxHeight: '90vh' , data: {search_type :this.search_string, model_id:"",values:data, parent_id:""}});
+                const dialogRef = this.dialog.open(SearchResultDialogComponent, {width: '1000px', autoFocus: false, maxHeight: '90vh' , data: {search_type :this.search_string, model_id:"",values:data, parent_id:""}});
                 dialogRef.afterClosed().subscribe(result => {
                     if (result){
                         console.log(result)
@@ -155,6 +155,8 @@ export class AppComponent implements OnInit {
          }
          else{
             console.log("This is not the UserTreeComponent")
+            this.get_vertices()
+            return;
          }
     }
 

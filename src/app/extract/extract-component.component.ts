@@ -49,20 +49,20 @@ export class ExtractComponentComponent implements OnInit {
   @ViewChild(MatButtonToggle, { static: false }) toggle: MatButtonToggle;
 
   form: FormGroup;
-  private cleaned_model = []
-  private model_type_label = ""
-  private study_array = []
-  private variable_array = []
-  private headers_form = {}
-  private global = {}
-  private displayedColumns: {} = {};
-  private displayedcomponentColumns: {} = {};
-  private datasources: {} = {};
-  private filename_used = []
-  private initialSelection = []
-  private selection = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
-  private selected_file: string = ""
-  private save_as_template:boolean=false
+  cleaned_model = []
+  model_type_label = ""
+  study_array = []
+  variable_array = []
+  headers_form = {}
+  global = {}
+  displayedColumns: {} = {};
+  displayedcomponentColumns: {} = {};
+  datasources: {} = {};
+  filename_used = []
+  initialSelection = []
+  selection = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
+  selected_file: string = ""
+  save_as_template: boolean = false
 
   constructor(
     private formBuilder: FormBuilder,
@@ -90,63 +90,61 @@ export class ExtractComponentComponent implements OnInit {
   async get_data() {
     const data = await this.globalService.get_all_data_files(this.model_key).toPromise();
     this.filename_used = []
-    data[0].forEach(data_file => {
-      console.log(data_file)
-      if (!this.filename_used.includes(data_file.filename)) {
-        this.filename_used.push(data_file.filename)
-        this.global[data_file.filename] = []
-        this.displayedColumns[data_file.filename] = []
-        this.displayedColumns[data_file.filename].push('study ID')
-        this.displayedcomponentColumns[data_file.filename] = []
-        this.datasources[data_file.filename] = new MatTableDataSource()
-      }
+    if (data.length > 0 && data[0] !== null) {
+      data[0].forEach(data_file => {
+        if (!this.filename_used.includes(data_file.filename)) {
+          this.filename_used.push(data_file.filename)
+          this.global[data_file.filename] = []
+          this.displayedColumns[data_file.filename] = []
+          this.displayedColumns[data_file.filename].push('study ID')
+          this.displayedcomponentColumns[data_file.filename] = []
+          this.datasources[data_file.filename] = new MatTableDataSource()
+        }
 
-      let my_dict = {};
-      this.study_array.push(data_file.efrom);
-      my_dict['study ID'] = data_file.efrom;
-      my_dict['datafile ID'] = data_file.eto;
-      
-      data_file.associated_headers.forEach(element => {
-        if (element['associated_component'] === this.model_type) {
-          if (!this.variable_array.includes(element['header'])) {
-            this.variable_array.push(element['header']);
-          }
-          if (!this.displayedColumns[data_file.filename].includes(element['header'])) {
-            this.displayedColumns[data_file.filename].push(element['header'])
-          }
-          if (element['header'] != 'study ID') {
-            if (!this.displayedcomponentColumns[data_file.filename].includes(element['header'])) {
-              this.displayedcomponentColumns[data_file.filename].push(element['header'])
+        let my_dict = {};
+        if(! this.study_array.includes(data_file.efrom)){
+          this.study_array.push(data_file.efrom);
+        }
+        my_dict['study ID'] = data_file.efrom;
+        my_dict['datafile ID'] = data_file.eto;
+
+        data_file.associated_headers.forEach(element => {
+          if (element['associated_component'] === this.model_type) {
+            if (!this.variable_array.includes(element['header'])) {
+              this.variable_array.push(element['header']);
+            }
+            if (!this.displayedColumns[data_file.filename].includes(element['header'])) {
+              this.displayedColumns[data_file.filename].push(element['header'])
+            }
+            if (element['header'] != 'study ID') {
+              if (!this.displayedcomponentColumns[data_file.filename].includes(element['header'])) {
+                this.displayedcomponentColumns[data_file.filename].push(element['header'])
+              }
+            }
+            this.headers_form[element['header']] = {}
+            if (element['associated_linda_id'] !== '') {
+              my_dict[element['header']] = element['associated_linda_id'];
+            }
+            else {
+              my_dict[element['header']] = 'unset';
             }
           }
-          this.headers_form[element['header']] = {}
-          if (element['associated_linda_id'] !== '') {
-            my_dict[element['header']] = element['associated_linda_id'];
-          }
-          else {
-            my_dict[element['header']] = 'unset';
-          }
+        })
+        if (!this.displayedColumns[data_file.filename].includes('select')) {
+          this.displayedColumns[data_file.filename].push('select');
         }
-      })
-      if (!this.displayedColumns[data_file.filename].includes('select')) {
-        this.displayedColumns[data_file.filename].push('select');
-      }
+        this.global[data_file.filename].push(my_dict)
+        this.datasources[data_file.filename] = this.global[data_file.filename]
 
-      
+        //Harmonize keys for non present/detected component 
+        var defaultObj = this.datasources[data_file.filename].reduce((m, o) => (Object.keys(o).forEach(key => m[key] = "notfound"), m), {});
+        this.datasources[data_file.filename] = this.datasources[data_file.filename].map(e => Object.assign({}, defaultObj, e));
 
-      this.global[data_file.filename].push(my_dict)
+        this.selected_file = this.filename_used[0]
+      });
+      console.log(this.datasources)
+    }
 
-
-      this.datasources[data_file.filename] = this.global[data_file.filename]
-      
-      //Harmonize keys for non present/detected component 
-      var defaultObj = this.datasources[data_file.filename].reduce((m, o) => (Object.keys(o).forEach(key => m[key] = "notfound"), m), {});
-      this.datasources[data_file.filename] = this.datasources[data_file.filename].map(e => Object.assign({}, defaultObj, e));
-
-      this.selected_file = this.filename_used[0]
-    });
-    
-    console.log(this.datasources)
   }
   get_model_type() {
     return this.model_type
@@ -158,7 +156,6 @@ export class ExtractComponentComponent implements OnInit {
     this.get_model(this.model_type);
     this.get_data()
   }
-
 
   get_model(model_type: string) {
     let model = [];
@@ -202,55 +199,87 @@ export class ExtractComponentComponent implements OnInit {
       });
   }
 
+  Delete_extracted_component(value: string, filename: string){
+
+  }
+
   clickToggle(value: string, filename: string) {
-    console.log("button " + value + " clicked")
     let user = JSON.parse(localStorage.getItem('currentUser'));
-    //check if header allready extracted
-    console.log(this.get_state(value, filename))
-    if (this.get_state(value, filename)==='all_extracted'){
-      this.alertService.error("This component has already been extracted for all studies.")
+    //check if this header is already extracted from another file
+    if (this.get_state(value, filename) === 'all_extracted') {
+      this.alertService.error("This component has already been extracted for all studies. Do you want to extract again ? ")
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var_again', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file , header:value} });
+      dialogRef.afterClosed().subscribe((confirmResult) => {
+        if (confirmResult) {
+          if (confirmResult.event == 'Confirmed') {
+            console.log("you have confirmed new extraction of " + this.model_type_label + ": " + value)
+            //first delete all component associated with this header 
+            this.datasources[filename].forEach(element => {
+              this.globalService.remove_childs_by_type_and_id(this.parent_id, this.model_type, element[value]).pipe(first()).toPromise().then(
+                data => { 
+                  this.globalService.remove_association(element[value], element['datafile ID']).pipe(first()).toPromise().then(
+                    association => { 
+                      element[value]='unset';
+
+                    });
+                  
+                }
+
+              )
+              
+              
+            });
+            
+          }
+        }
+      })
+      //propose to extract and replace component
     }
-    else{
-      const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var', user_key: user._key, model_type: this.model_type, values: {},  parent_key:this.parent_id.split("/")[1], model_filename: this.selected_file} });
+    else {
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file , header:value} });
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
             console.log("you have confirmed extraction of " + this.model_type_label + ": " + value)
-            console.log(confirmResult)
-            if (confirmResult.use_template){
-              console.log(confirmResult["template_data"])
-
-              let data_from_template={}
-              for (var key in confirmResult["template_data"]){
-                if (!key.startsWith("_")){
-                  data_from_template[key]=confirmResult["template_data"][key]
+            // Use template mode
+            if (confirmResult.use_template) {
+              let data_from_template = {}
+              for (var key in confirmResult["template_data"]) {
+                if (!key.startsWith("_")) {
+                  data_from_template[key] = confirmResult["template_data"][key]
                 }
               }
-              console.log(data_from_template)
               //clean template with _key, _id, 
               this.headers_form[value] = data_from_template
-              this.global[filename].forEach(element => {
-                element[value] = "ready"
-              })
+              // this.global[filename].forEach(element => {
+              //   element[value] = "ready"
+              // })
+              this.datasources[filename].forEach(
+                element => {
+                  element[value] = "ready"
+              });
 
             }
             else if (confirmResult.use_existing) {
-              console.log("You have confirmed extraction from already described " + this.model_type_label +'s' )
-                //open a dialog with model type already extracted in other file
-            }            
-            else{
-
+              console.log("You have confirmed extraction from already described " + this.model_type_label + 's')
+              window.location.reload();            
+              //open a dialog with model type already extracted in other file
+            }
+            else {
               const formDialogRef = this.dialog.open(FormDialogComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
                   if (result.event == 'Confirmed') {
                     console.log("You have described your " + this.model_type_label + " form !")
-                    console.log(result["formData"])
                     this.headers_form[value] = result["formData"]["form"]
                     this.save_as_template = result["formData"]["template"]
-                    this.global[filename].forEach(element => {
-                      element[value] = "ready"
-                    })
+                    // this.global[filename].forEach(element => {
+                    //   element[value] = "ready"
+                    // });
+                    this.datasources[filename].forEach(
+                      element => {
+                        element[value] = "ready"
+                    });
                   }
                   else {
                     console.log("you have cancelled your " + this.model_type_label + " form !")
@@ -267,31 +296,25 @@ export class ExtractComponentComponent implements OnInit {
 
   onSubmit() {
     console.log("ready to extract !!!!! ")
-    console.log(this.save_as_template)
-    var cnt=0
+    var cnt = 0
     this.datasources[this.selected_file].forEach(
       element => {
 
         Object.keys(element).forEach(
           key => {
-            console.log(key)
             if (element[key] === 'ready') {
               let modelForm = this.headers_form[key]
-              if (cnt>0){
-                this.save_as_template=false
+              if (cnt > 0) {
+                this.save_as_template = false
               }
-              this.globalService.add(modelForm, this.model_type, element['study ID'],this.save_as_template).pipe(first()).toPromise().then(
+              this.globalService.add(modelForm, this.model_type, element['study ID'], this.save_as_template).pipe(first()).toPromise().then(
                 data => {
                   if (data["success"]) {
                     let added_model_id = data["_id"];
                     let data_file_to_update = element['datafile ID']
-                    console.log(data)
                     this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
-                      data => { console.log(data); }
-
+                      data => {}
                     )
-
-                    this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
                     // var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
                     // this.alertService.success(message)
 
@@ -306,13 +329,15 @@ export class ExtractComponentComponent implements OnInit {
             }
           }
         )
-        cnt+=1
+        cnt += 1
 
       });
+    this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
     //for each selected rows and ready  to extract columns
     // 
 
   }
+
   getIconStyle(key: string): Object {
     if (key.includes('study')) {
 
@@ -336,11 +361,11 @@ export class ExtractComponentComponent implements OnInit {
     }
     else if (key.includes('observation_unit')) {
 
-      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'width': '100px'}
+      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'width': '100px' }
     }
     else if (key.includes('unset')) {
 
-      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'width': '100px'}
+      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'width': '100px' }
     }
     else if (key.includes('notfound')) {
 
@@ -396,15 +421,15 @@ export class ExtractComponentComponent implements OnInit {
       return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px', 'float': 'left' }
     }
   }
-    
+
   get_state(column: string, filename: string) {
     console.log(this.global[filename])
-    var tmp_list=[]
-    let res=""
+    var tmp_list = []
+    let res = ""
     this.global[filename].forEach(
       element => {
         console.log(element)
-        if (element[column].includes(this.model_type+"s")) {
+        if (element[column].includes(this.model_type + "s")) {
           //return "extracted"
           tmp_list.push("extracted")
         }
@@ -419,17 +444,17 @@ export class ExtractComponentComponent implements OnInit {
       }
     )
 
-    if (tmp_list.filter(component=> component=='extracted').length === this.global[filename].length){
-      res='all_extracted'
+    if (tmp_list.filter(component => component == 'extracted').length === this.global[filename].length) {
+      res = 'all_extracted'
     }
-    else if (tmp_list.filter(component=> component=='unset').length === this.global[filename].length){
-      res='all_unset'
+    else if (tmp_list.filter(component => component == 'unset').length === this.global[filename].length) {
+      res = 'all_unset'
     }
-    else{
-      res='some_extracted_some_unset'
+    else {
+      res = 'some_extracted_some_unset'
     }
     console.log(this.global[filename].length)
-    console.log(tmp_list.filter(component=> component=='extracted').length)
+    console.log(tmp_list.filter(component => component == 'extracted').length)
     console.log(res)
     return res
   }

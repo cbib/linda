@@ -32,9 +32,10 @@ export class FormComponent implements OnInit//, AfterViewInit
     public guided_tour_messages: any = {
         level1: { heading: 'Level 1', message: 'At stage 1, you will see ontology form field for two important Study features' },
         level2: { heading: 'Level 2', message: 'At stage 2, you will see ontology form field for two important Study features' },
-        level3: { heading: 'Level 3', message: 'At this stage you will see ontology form field for two important Study features <img src="assets/images/ontology_widget_form.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">' }
+        level3: { heading: 'Level 3', message: 'At this stage you will see ontology form field for two important Study features <img src="/Users/benjamin/linda/src/assets/images/ontology_widget_form.png" style="width:100%;height: auto; display: block;" >' }
       }
     private startfilling: boolean = false;
+    private currentUser
     ontology_type: string;
     show_spinner: boolean = false;
     Checked = false
@@ -83,13 +84,116 @@ export class FormComponent implements OnInit//, AfterViewInit
 
         this.get_max_level();
         this.get_model();
+         
+        // if (currentUser['tutoriel_checked'] === false){
+        //     this.onClickTour()
+        // }
+        this.onClickTour()
 
     };
+    onDone(node_type:string) {
+        console.log(this.currentUser['tutoriel_step'])
+        console.log(this.modelForm.value)
+        console.log(this.modelForm.controls)
+        //this.joyrideService.closeTour()
+        //study form template
+        if (this.currentUser['tutoriel_step']==="1"){
+            this.modelForm.controls["Investigation unique ID"].patchValue("Maizes1")
+            this.modelForm.controls["Short title"].patchValue("maizes1")
+        }   
+        //study form template
+        if (this.currentUser['tutoriel_step']==="3"){
+            this.modelForm.controls["Study unique ID"].patchValue("MaizeStudy1")
+            this.modelForm.controls["Short title"].patchValue("Study1")
+            this.modelForm.controls["Start date of study"].patchValue("1/06/2021")
+            this.modelForm.controls["End date of study"].patchValue("30/06/2021")
+            this.modelForm.controls["Type of experimental design"].patchValue("CO_715:0000145")
+            this.modelForm.controls["Type of growth facility"].patchValue("CO_715:0000162")
+            this.modelForm.controls["Description of growth facility"].patchValue("field environement condition")
+            this.modelForm.controls["Observation unit level hierarchy"].patchValue("block>rep>plot")
+            this.modelForm.controls["Observation unit description"].patchValue("Observation units consisted in individual plots themselves consisting of a row of 5 plants at a density of 1 plant per square meter ")
+            this.modelForm.controls["Experimental site name"].patchValue("INRA pierroton")
+            this.startfilling=true
+        }
+        //study form template
+        if (this.currentUser['tutoriel_step']==="5"){
+            this.modelForm.controls["Experimental Factor type"].patchValue("Watering")
+            this.modelForm.controls["Experimental Factor values"].patchValue("rainfed;watered")
+            this.modelForm.controls["Experimental Factor accession number"].patchValue("EFO:0000470")
+            this.modelForm.controls["Experimental Factor description"].patchValue("Daily watering 1L per plant")
+           
+        }
+        if (this.currentUser['tutoriel_step']==="7"){
+            this.modelForm.controls["Variable ID"].patchValue("PH_M_cm")
+            this.modelForm.controls["Variable accession number"].patchValue("CO_322:0000996")
+            this.modelForm.controls["Variable name"].patchValue("PH_M_cm")
+            this.modelForm.controls["Method"].patchValue("PH - Measurement")
+            this.modelForm.controls["Scale"].patchValue("cm")
+            this.modelForm.controls["Scale accession number"].patchValue("CO_322:0000348")
+            this.modelForm.controls["Trait accession number"].patchValue("CO_322:0000994")
+            this.modelForm.controls["Method accession number"].patchValue("CO_322:0000995")
+            this.modelForm.controls["Method description"].patchValue("Recommended to take multiple plants and measure the height from the base of a plant to the top of the tassel, enter the data individually in the FieldBook and calculate the average")
+            this.modelForm.controls["Trait"].patchValue("Plant height")
+        }
+
+        this.startfilling=true
+        console.log(this.modelForm.value)
+
+
+    //     <p> Add the following on page 1 :</p>
+    //     <ul>
+    //     <li>  <p>Study unique Id: MaizeStudy1</p></li>
+    //     <li> <p> Short title: Study1</p></li>
+    //     <li> <p> Start date of study : 1/06/2021</p></li>
+    //     <li> <p> End date of study : 30/06/2021</p></li>
+    //     </ul>
+    
+    // <p> Add the following on page 3 :</p>
+    // <ul>
+    // <li> <p> Type of experimental design: CO_715:0000145</p></li>
+    // <li> <p> Type of growth facility: CO_715:0000162</p></li>
+    // <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
+    }
     onClickTour() {
-        console.log('start tour part 2')
-        this.joyrideService.startTour(
-            { steps: ['Step1_1', 'Step1_2'] } // Your steps order
-        );
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+        console.log(this.currentUser)
+        if (this.currentUser['tutoriel_step'] === "1"){
+            this.joyrideService.startTour(
+                { steps: ['StepMenuForm', 'StepContentForm', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //this.currentUser.tutoriel_step="2"
+            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "3"){
+            this.joyrideService.startTour(
+                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+        
+        }
+        else if (this.currentUser['tutoriel_step'] === "5"){
+            this.joyrideService.startTour(
+                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+        }
+        else if (this.currentUser['tutoriel_step'] === "7"){
+            this.joyrideService.startTour(
+                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+        }
+        else{
+
+        }
+        // console.log('start tour part 2')
+        // if (this.model_type==="experimental_factor"){
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
+        // else{
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
     }
 
     // addSellingPoint() {
@@ -119,12 +223,11 @@ export class FormComponent implements OnInit//, AfterViewInit
             }
             /*  this.onClickTour()*/
         });
-
         return this.formBuilder.group(attributeFilters);
     }
 
     get_message_guided_tour(){
-        if (this.model_type==="Study"){
+        if (this.model_type==="study"){
             if (this.level<2){
                 return this.guided_tour_messages.level1.message
             }
@@ -134,9 +237,10 @@ export class FormComponent implements OnInit//, AfterViewInit
             else{
                 return this.guided_tour_messages.level3.message
             }
-
         }
-        
+        else{
+            return this.guided_tour_messages.level1.message
+        }        
     }
 
     get_model() {
@@ -165,7 +269,6 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
             }
             this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
-
             //console.log(this.cleaned_model)
 
             if (this.mode === "create") {
@@ -180,10 +283,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                         this.validated_term[attr["key"]] = { selected: false, values: "" }
                         //if (attr["key"].includes("ID")) {
                         if (attr["format"] === "Unique identifier") {
-                            attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
-
-                            this.disabled_id_keys.push(attr["key"])
-
+                            //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
+                            if (this.model_to_edit[attr["key"]]=== ""){
+                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                            }
+                            else{
+                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                                this.disabled_id_keys.push(attr["key"])
+                            }
                         }
                         else if (attr["key"].includes("Short title")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
@@ -462,9 +569,13 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (data["success"]) {
                             this.model_id = data["_id"];
                             console.log(data["res_obj"])
-                            this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                            this.router.navigate(['/tree']);
                             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
                             this.alertService.success(message)
+                            let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
 
                             return true;
                         }
@@ -483,7 +594,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (data["success"]) {
                             var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
                             this.alertService.success(message)
-                            this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                            this.router.navigate(['/tree']);
                             return true;
                         }
                         else {
@@ -507,7 +619,8 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.notify.emit('cancel the form');
         }
         else{
-            this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            this.router.navigate(['/tree']);
         }
 
     };

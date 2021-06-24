@@ -91,7 +91,15 @@ export class HomeComponent implements OnInit {
 
 
     constructor(private router: Router, private adService: AdService, private readonly joyrideService: JoyrideService, private guidedTourService: GuidedTourService) {
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));    
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));  
+        if (this.currentUser['tutoriel_checked'] === false){
+            console.log(this.currentUser)
+            console.log("start Guided tour part 1")
+            this.onClick()
+            // this.joyrideService.startTour(
+            //     { steps: ['step6@tree', 'step8@tree', 'step8_1@tree'], stepDefaultPosition: 'bottom'} // Your steps order
+            //     );
+        }  
     }
     
     ngOnInit() {
@@ -105,9 +113,13 @@ export class HomeComponent implements OnInit {
     // }
     onClick() {
          this.joyrideService.startTour(
-             { steps: ['StepZero', 'firstStep', 'secondStep', 'thirdStep', 'fourthStep', 'fifthStep','step6@tree', 'step7@tree','step7_1@tree', 'step8@tree', 'step8_1@tree',], stepDefaultPosition: 'bottom'} // Your steps order
+            { steps: ['StepZero', 'firstStep', 'secondStep', 'thirdStep', 'fourthStep', 'fifthStep'], stepDefaultPosition: 'center'} // Your steps order
          );
      }
+     onDone(){
+         this.router.navigate(['/tree'])
+     }
+
     
     start_linda(){
         

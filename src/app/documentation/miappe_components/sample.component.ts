@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sample.component.css']
 })
 export class SampleComponent implements OnInit {
-
+  mode_table:boolean=true
   constructor() { }
 
   ngOnInit() {

@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./observed-variable.component.css']
 })
 export class ObservedVariableComponent implements OnInit {
-
+  mode_table:boolean=true
   constructor() { }
 
   ngOnInit() {

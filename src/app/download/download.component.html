@@ -61,10 +61,15 @@
     <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
  </form>
 </div>
+<div *ngIf= "mode.includes('extract-form')">
+    <h4>Extract Observation unit form design from tabular file!</h4>
+    <p> Using a external tabular file, Users can easily set form structure before associating into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
+    <!--<app-upload-file ></app-upload-file>-->
+</div>
 <br>
 
 <!-- [xAxisTickFormatting]='formatTime' -->
-<ngx-charts-line-chart *ngIf= "time_set" #chart
+<ngx-charts-line-chart *ngIf= "get_time_set()" #chart
   [view]="view"
   [scheme]="colorScheme"
   [legend]="legend"
@@ -109,7 +114,7 @@
             <!-- <th scope="col">
                 <span style="display:inline-block; margin-left: 10px;"> 
                     <select [ngModel]="selectedTerm" name="select_term" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
-                        <option *ngFor="let extract_option of extract_options" [value]="extract_option.value">{{extract_option.name}}</option>
+                        <option *ngFor="let extract_option of extract_component_options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
                 </span>
             </th> -->
@@ -117,7 +122,7 @@
             <th scope="col">
                 <span style="display:inline-block; margin-left: 10px;"> 
                     <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
-                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                        <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
                 </span>
             </th>
@@ -172,63 +177,16 @@
     </tbody>
 </table>
 
-<section *ngIf= "(model_type==='data_file' || model_type==='study') && mode ==='extract-again'">
+<section *ngIf= "(model_type==='data_file' || model_type==='study') && (mode==='extract-again' || mode==='extract')">
+<div  *ngIf= "mode==='extract-again'">
 <h2>Select your data file </h2>
-<select class="form-control" [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+<!-- class="form-control"  -->
+<select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
     <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
 </select> 
 <br>
+</div>
 <br>
-<table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable2">
-    <thead>
-        <tr>
-            <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th> -->
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
-            <!-- <th scope="col" >
-            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
-            </th> -->
-            <th scope="col" >{{key}}</th>
-            <th scope="col">
-                <span style="display:inline-block; margin-left: 10px;"> 
-                    <select class="form-control" [value]="get_selected_option(key, selected_file)" name="get_selected_option(key, selected_file)" (change)="onModify($event.target.value,get_headers_by_filename(selected_file)[i], selected_file)" ngModel>
-                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
-                    </select> 
-                </span>
-
-            </th>
-            <th scope="col">
-                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header_by_filename(key, selected_file).associated_component}} 
-                </span>
-                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header_by_filename(key, selected_file).associated_component}}
-                </span>
-            </th>
-            <th scope="col">
-                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
-                    <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
-                        title="{{key}}">Show Data
-                    </button>
-                </span>
-                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
-                    <button class="btn btn-primary btn-xs"
-                        title="{{key}}">Show Data
-                    </button>
-                </span>
-            </th>
-        </tr>
-    </tbody>
-</table>
-</section>
-
-<section *ngIf= "(model_type==='data_file' || model_type==='study') && mode!=='extract-again'">
 <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
     <thead>
         <tr>
@@ -252,19 +210,30 @@
             </th>
             <!-- MIAPPE assignment-->
             <th scope="col">
-                <span style="display:inline-block; margin-left: 10px;"> 
+
+                <form [formGroup]="dataFileComponentForm[selected_file]">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(selected_file)[i], selected_file)">
+                            <mat-option>--</mat-option>
+                            <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
+                                {{extract_option.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>                    
+                </form>
+                <!-- <span style="display:inline-block; margin-left: 10px;"> 
                     <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
-                        <option *ngFor="let extract_option of extract_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                        <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
                     </select> 
-                </span>
+                </span> -->
             </th>
             <!-- Assigned MIAPPE component-->
             <th scope="col">
-                <span *ngIf="i>0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header(key).associated_component}} 
+                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header_by_filename(key, selected_file).associated_component}} 
                 </span>
-                <span *ngIf="i==0 && get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header(key).associated_component}}
+                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header_by_filename(key, selected_file).associated_component}}
                 </span>
             </th>
             <!-- Ontologies component column-->
@@ -295,18 +264,18 @@
             </th>
             <!-- Assigned Ontology terms component column-->
             <th scope="col">
-                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header(key).associated_term_id}} 
+                <span *ngIf="get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                    {{get_associated_header_by_filename(key, selected_file).associated_term_id}} 
                 </span>
             </th>
             <!-- Visualization column-->
             <th scope="col">
-                <span *ngIf="i>0 && get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
                     <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
                         title="{{key}}">Show Data
                     </button>
                 </span>
-                <span *ngIf="i==0 && get_associated_header(key).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
+                <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
                     <button class="btn btn-primary btn-xs"
                         title="{{key}}">Show Data
                     </button>
@@ -315,4 +284,85 @@
         </tr>
     </tbody>
 </table>
+</section>
+
+<section *ngIf= "(model_type==='observation_unit') && mode==='extract-form'">
+    <h2>Select your data file </h2>
+    <!-- class="form-control"  -->
+    <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+        <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+    </select> 
+    <br>
+    <br>
+    <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable_form">
+        <thead>
+            <tr>
+                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
+                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE form field</th>
+                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE form field</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+
+                <!-- Original headers column-->
+                <th scope="col" >
+                    {{key}}
+                </th>
+                <!-- MIAPPE assignment-->
+                <th scope="col">
+                    <form [formGroup]="dataFileComponentForm[selected_file]">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
+                                <mat-option>--</mat-option>
+                                <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
+                                    {{extract_option.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>                    
+                    </form>
+    
+                </th>
+                <!-- Assigned MIAPPE component-->
+                <th scope="col">
+                    <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                        {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                    </span>
+                    <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                        {{get_associated_header_by_filename(key, selected_file).associated_component}}
+                    </span>
+                </th>
+                <th>
+                    <!-- <span style="display:inline-block; margin-left: 10px;"> 
+                        <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractField($event.target.value,get_headers_by_filename(selected_file)[i])" ngModel>
+                            <option *ngFor="let extract_option of extract_fields_options.options" [value]="extract_fields_options.value">{{extract_fields_options.name}}</option>
+                        </select> 
+                    </span> -->
+                    <form [formGroup]="dataFileComponentFieldForm[selected_file]">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="Field Options" formControlName="{{key}}" (selectionChange)="onExtractField($event.target.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
+                                <mat-option>--</mat-option>
+                                <mat-option *ngFor="let extract_field_option of extract_fields_options.options" [value]="extract_field_option.value">
+                                    {{extract_field_option.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>                    
+                    </form>
+
+                </th>
+                <th>
+                    <!-- <span get_associated_component_field(key, selected_file, get_associated_header_by_filename(key, selected_file).associated_component).selected" style="display:inline-block; margin-left: 10px;"> 
+                        {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                    </span> 
+                    -->
+
+                    
+                </th>
+                
+            </tr>
+        </tbody>
+    </table>
+
 </section>

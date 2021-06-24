@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Output, Input, EventEmitter } from '@angu
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { GlobalService, OntologiesService, AlertService, FileService, SearchService } from '../services';
+import { GlobalService, OntologiesService, AlertService, FileService, SearchService, UserService } from '../services';
 import { MiappeNode } from '../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,8 +15,8 @@ import { DatatableDialogComponent } from '../dialog/datatable-dialog.component';
 import * as JSZip from 'jszip';
 import { MediaObserver } from "@angular/flex-layout";
 import { FormControl } from '@angular/forms';
-import { JoyrideModule } from 'ngx-joyride';
 import { JoyrideService } from 'ngx-joyride';
+import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
@@ -34,15 +34,23 @@ export class UserTreeComponent implements OnInit {
 
     @Input() search_string: string;
     @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
+    @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
+    @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
+    @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
+    
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     disableSelect = new FormControl(false);
     panelOpenState = false;
     contextMenuPosition = { x: '0px', y: '0px' };
+    userMenuPosition = { x: '0px', y: '0px' };
+    userMenusecondPosition = { x: '0px', y: '0px' };
+    investigationMenuPosition = { x: '0px', y: '0px' };
     private nodes: MiappeNode[]
-    public statistics: {};
+    // public statistics: {};
     private displayed = false;
-    private loaded:boolean=false
+    loaded:boolean=false
     public vertices: any = []
+    private currentUser
     private active_node: MiappeNode;
     private current_data_keys = []
     private current_data_array = []
@@ -60,12 +68,16 @@ export class UserTreeComponent implements OnInit {
     private obs_unit_data = []
     private observation_id = ""
     private biological_material_id = ""
+    startTime: Date;
+    endTime: Date;
+    timeDiff: number;
 
     constructor(
         private globalService: GlobalService,
         private ontologiesService: OntologiesService,
         private fileService: FileService,
         private searchService: SearchService,
+        private userService: UserService,
         private router: Router,
         private alertService: AlertService,
         private readonly joyrideService: JoyrideService,
@@ -73,11 +85,11 @@ export class UserTreeComponent implements OnInit {
         public media: MediaObserver,
         public dialog: MatDialog
     ) {
-        this.route.queryParams.subscribe(
-            params => {
-                this.parent_key = params['key'];
-            }
-        );
+        // this.route.queryParams.subscribe(
+        //     params => {
+        //         this.parent_key = params['key'];
+        //     }
+        // );
     }
     private ont_transformer = (node: MiappeNode, level: number) => {
         return {
@@ -99,23 +111,25 @@ export class UserTreeComponent implements OnInit {
     // async load(){
     //     await this.get_vertices()
     // }
-    public get_statistics() {
-        console.log(this.statistics)
-        //return this.statistics
-    }
+    // public get_statistics() {
+
+    //     console.log(this.statistics)
+    //     //return this.statistics
+    // }
     async ngOnInit() {
+        
         await this.get_vertices()
         
         this.nodes = []
         this.nodes = this.build_hierarchy(this.vertices)
 
-
+        console.log(this.nodes.length)
         //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
         this.sort_nodes(this.nodes[0])
         this.dataSource.data = this.nodes
         //console.log(this.dataSource.data)
         //this.treeControl.expand()
-        ///this.treeControl.expandAll();
+        this.treeControl.expandAll();
 
         //console.log(this.treeControl.dataNodes[4])
         //console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
@@ -129,6 +143,7 @@ export class UserTreeComponent implements OnInit {
         //     //console.log(this.treeControl.getLevel(descendants[d]))
 
         this.loaded=true
+        
         
         //     if (this.treeControl.getLevel(descendants[d]) === 1) {
         //         //console.log(descendants[d].name)
@@ -150,6 +165,96 @@ export class UserTreeComponent implements OnInit {
             console.log(data);
             //this.search_string=data
         })
+        console.log(localStorage)
+        
+          
+        // if (currentUser['tutoriel_checked'] === false){
+        //     this.onClickTour()
+        // }
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        this.onClickTour()
+    }
+
+    onClickTour() {
+        
+        
+        if (this.vertices.length===0){
+            this.currentUser.tutoriel_step="0"
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+        console.log(this.currentUser)
+        if (this.currentUser['tutoriel_step'] === "0"){
+            console.log('start tour part 1 : Add an investigation')
+            this.joyrideService.startTour(
+                { steps: ['step_overview', 'stepNode', 'stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            // this.currentUser.tutoriel_step="1"
+            // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "2"){
+            this.joyrideService.startTour(
+                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            // this.currentUser.tutoriel_step="3"
+            // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "4"){
+            this.joyrideService.startTour(
+                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "6"){
+            this.joyrideService.startTour(
+                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "8"){
+            this.joyrideService.startTour(
+                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "10"){
+            this.joyrideService.startTour(
+                { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else{
+
+        }
+            // if (this.vertices.length===0){
+            //     this.joyrideService.startTour(
+            //     { steps: ['step_add_first_investigation', 'step8', 'step8_1'], stepDefaultPosition: 'center'} // Your steps order
+            //     );
+            // }
+            // else{
+            //     console.log(this.vertices)
+            //     let lowest_node_type=this.vertices[this.vertices.length -1]["e"]["_to"].split("/")[0]
+            
+            //     if(lowest_node_type==="experimental_factors" || lowest_node_type==="observed_variables"){
+            //         this.joyrideService.startTour(
+            //             { steps: ['step8','step8_1', 'step8_3', 'step8_4','step8_5', 'step8_6' ], stepDefaultPosition: 'center'} // Your steps order
+            //         );
+            //     }
+            //     else if(lowest_node_type==="studies"){
+            //         this.joyrideService.startTour(
+            //             { steps: ['step8','step8_1', 'step8_3', 'step8_4','step8_5', 'step8_6'], stepDefaultPosition: 'center'} // Your steps order
+            //         );
+            //     }
+            //     else{
+            //         this.joyrideService.startTour(
+            //             { steps: ['step8','step8_1', 'step8_2', 'step8_3', 'step8_4','step8_5', 'step8_6'], stepDefaultPosition: 'center'} // Your steps order
+            //         );
+            //     } 
+            // }  
+        
     }
 
     sort_nodes(node: MiappeNode) {
@@ -164,37 +269,18 @@ export class UserTreeComponent implements OnInit {
         }
 
     }
-    get_vertices() {
+    get_tutoriel_level(){
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        return this.currentUser.tutoriel_step
+    }
+    async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        console.log(user)
+        //console.log(user)
+        this.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
+                this.end()
                 this.vertices = data;
-                //console.log(data)
-                this.statistics = {
-                    "investigations": 0,
-                    "studies": 0,
-                    "experimental_factors": 0,
-                    "environments": 0,
-                    "metadata_files": 0,
-                    "observation_units": 0,
-                    "samples": 0,
-                    "events": 0,
-                    "data_files": 0,
-                    "biological_materials": 0,
-                    "observed_variables": 0
-                }
-
-                this.vertices.forEach(
-                    attr => {
-                        this.statistics[attr["e"]["_to"].split("/")[0]] += 1
-
-                    }
-                );
-                //console.log(this.statistics)
-
-
-
             }
         )
     }
@@ -282,11 +368,54 @@ export class UserTreeComponent implements OnInit {
         //this.contextMenu.openMenu();
     }
     onClick(node: MiappeNode) {
-        console.log(node.id)
         this.active_node = node
-
-        //this.contextMenu.openMenu();
+        console.log(node.id)
+        if (node.id == "Investigations tree"){
+            this.userMenu.openMenu();
+            this.userMenusecond.openMenu();
+        }
+        //this.joyrideService.closeTour()
+        // if (node.id.split('/')[0]== "investigations"){
+        //     this.investigationMenu.openMenu();
+        // }
+        //this.userMenusecond.openMenu();
     }
+    onNext(node:string) {
+        console.log(node)
+        
+    }
+
+    onDone(node: MiappeNode, node_type:string) {
+        console.log(node_type)
+        if (node_type==='Root'){
+            this.onClick(node)
+        }
+        if (node_type== "investigation"){
+            this.onClick(node)
+        }
+        if (node_type== "experimental_factor"){
+            this.onClick(node)
+        }
+        if (node_type== "observed_variable"){
+            this.onClick(node)
+        }
+        if (node_type== "biological_material"){
+            this.onClick(node)
+        }
+    }
+    start() {
+        this.startTime = new Date();
+    };
+    end() {
+        this.endTime = new Date();
+        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
+        this.timeDiff = this.timeDiff / 1000.0;
+        console.log("Elapsed time :" + this.timeDiff+ " seconds")
+    
+        // get seconds 
+        var seconds = Math.round(this.timeDiff);
+        console.log(seconds + " seconds");
+    } 
     onExport(node: MiappeNode) {
         var model_type = this.globalService.get_model_type(node.id)
         this.globalService.get_parent(node.id).toPromise().then(parent_data => {
@@ -446,7 +575,7 @@ export class UserTreeComponent implements OnInit {
         }
         //this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-        this.reloadComponent()
+        this.reloadComponent(['/tree'])
     }
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
@@ -454,12 +583,13 @@ export class UserTreeComponent implements OnInit {
             this.router.navigate([currentUrl]);
         });
     }
-    reloadComponent() {
+    reloadComponent(path:[string]) {
         let currentUrl = this.router.url;
-            this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-            this.router.onSameUrlNavigation = 'reload';
-            this.router.navigate([currentUrl]);
-        }
+        console.log(currentUrl)
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate(path);
+    }
     onRemove(node: MiappeNode) {
         this.active_node = node
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false , mode: 'remove', model_type:this.get_model_type(this.active_node)} });
@@ -482,7 +612,7 @@ export class UserTreeComponent implements OnInit {
                         );
                         // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                         // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                        this.reloadComponent()
+                        this.reloadComponent(['/tree'])
                     }
                     else {
                         if (result.all_childs) {
@@ -500,7 +630,7 @@ export class UserTreeComponent implements OnInit {
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                            this.reloadComponent()
+                            this.reloadComponent(['/tree'])
                         }
                         else if(result.only){
                             console.log(result.only)
@@ -526,7 +656,7 @@ export class UserTreeComponent implements OnInit {
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                            this.reloadComponent()
+                            this.reloadComponent(['/tree'])
 
                         }
                         else {
@@ -544,7 +674,7 @@ export class UserTreeComponent implements OnInit {
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                            this.reloadComponent()
+                            this.reloadComponent(['/tree'])
                         }
 
 
@@ -613,34 +743,41 @@ export class UserTreeComponent implements OnInit {
         }
     }
     add_from_file(model_type: string, template: string) {
-        var parent_key = this.active_node.id.split("/")[1]
+        var model_key = this.active_node.id.split("/")[1]
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
-            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract" } });
+            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
+        }
+    }
+    add_form_from_file(model_type: string, template: string) {
+        var model_key = this.active_node.id.split("/")[1]
+        var parent_id = ""
+        if (this.active_node.id != 'Investigations tree') {
+            parent_id = this.active_node.id
+            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract-form" } });
         }
     }
     assign_component(model_type: string, template: string){
-        var parent_key = this.active_node.id.split("/")[1]
+        var model_key = this.active_node.id.split("/")[1]
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
-            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract-again" } });
+            this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract-again" } });
         }
     }
-
     add_from_data_file(model_type: string) {
-        var parent_key = this.active_node.id.split("/")[1]
+        console.log(this.active_node.id)
+        var model_key = this.active_node.id.split("/")[1]
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
-            this.router.navigate(['/extract'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "extract" } });
+            this.router.navigate(['/extract'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
         }
     }
-
     add(model_type: string, template: string) {
-        var parent_key = this.active_node.id.split("/")[1]
-        console.log(parent_key)
+        var model_key = this.active_node.id.split("/")[1]
+        console.log(model_key)
         console.log(template)
         var model_coll = this.active_node.id.split("/")[0];
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -672,7 +809,7 @@ export class UserTreeComponent implements OnInit {
                     }
                     var new_values = {}
                     keys.forEach(attr => { new_values[attr] = result.values[attr] })
-
+                    console.log(new_values)
                     this.globalService.add(new_values, model_type, parent_id, false).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
@@ -695,7 +832,7 @@ export class UserTreeComponent implements OnInit {
                             }
                         }
                     );
-                    this.reloadComponent()
+                    this.reloadComponent(['/tree'])
 
                 }
             });
@@ -782,15 +919,24 @@ export class UserTreeComponent implements OnInit {
                 parent_id = user._id
             }
             if (model_type === "metadata_file") {
-                this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: parent_key, model_type: model_type, mode: "create" } });
+                this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "create" } });
             }
             else if (model_type === "biological_material") {
+                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                this.currentUser.tutoriel_step=new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic2'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else if (model_type === "observation_unit") {
+                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                this.currentUser.tutoriel_step=new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic3'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else {
+                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                this.currentUser.tutoriel_step=new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
         }
@@ -824,12 +970,12 @@ export class UserTreeComponent implements OnInit {
         return Object.keys(this.obs_unit_data[0]);
     }
     get_ou_data(node: MiappeNode) {
-        console.log(node["term"].get_current_observation_unit_data()['observation_units'])
+        //console.log(node["term"].get_current_observation_unit_data()['observation_units'])
         return node["term"].get_current_observation_unit_data()['observation_units']
 
     }
     get_bm_data(node: MiappeNode): [] {
-        console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
+        //console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
         return node["term"].get_current_observation_unit_data()['biological_materials']
 
     }
@@ -1063,6 +1209,15 @@ export class UserTreeComponent implements OnInit {
     get_model_type(node: MiappeNode) {
         return this.globalService.get_model_type(node.id)
     }
+    get_model_type_for_wizard(node: MiappeNode) {
+        if (this.globalService.get_model_type(node.id) === 'Investigations tree'){
+            return 'Root'
+        }
+        else{
+            return this.globalService.get_model_type(node.id)
+        }
+    }
+
     get_term(term_id: string): any {
         var term: MiappeNode;
         this.nodes.forEach(
@@ -1220,7 +1375,7 @@ export class UserTreeComponent implements OnInit {
 
         if (node.id.includes('Investigations tree')) {
 
-            return { backgroundColor: 'white', width: '250px', 'margin-left': '10px' }
+            return { backgroundColor: 'white', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
         }
         else if (node.id.includes('studies')) {
 

@@ -16,6 +16,9 @@ import { LineChartComponent } from '@swimlane/ngx-charts'
 import { getUniqueXDomainValues } from '@swimlane/ngx-charts';
 import { scaleLinear, scaleTime, scalePoint } from 'd3-scale';
 import { file } from 'jszip';
+import { FormDialogComponent } from '../dialog/form-dialog.component';
+import { log } from 'console';
+import { element } from 'protractor';
 
 export interface componentInterface {
     name: string;
@@ -39,8 +42,9 @@ export class DownloadComponent implements OnInit {
     //@ViewChild('chart') chart: LineChartComponent;
     @ViewChild(LineChartComponent, { static: false }) chart: LineChartComponent;
     form: FormGroup;
-    dataFileForm = {};
-    AttributesGroups = {}
+    dataFileComponentForm = {};
+    dataFileComponentFieldForm = {};
+    //AttributesGroups = {}
     private data = {}
     private data_files = []
     fileUploaded: File;
@@ -59,26 +63,19 @@ export class DownloadComponent implements OnInit {
 
     private options: componentInterface[];
     public selectedOption: componentInterface;
-
-    private extract_options = {
+    private extract_fields_options = {}
+    private extract_component_options = {
         'options': [
-            { header: "", associated_linda_id: "", name: 'Extract MIAPPE components', value: '' },
-            { header: "", associated_linda_id: "", name: 'Extract Study labels from column', value: 'study' },
-            { header: "", associated_linda_id: "", name: 'Extract Experimental Factors', value: 'experimental_factor' },
-            { header: "", associated_linda_id: "", name: 'Extract Material Sources', value: 'biological_material' },
-            { header: "", associated_linda_id: "", name: 'Extract Observation Units', value: 'observation_unit' },
-            { header: "", associated_linda_id: "", name: 'Extract Observed variables', value: 'observed_variable' },
-            { header: "", associated_linda_id: "", name: 'Extract Timeline', value: 'time' }
+            { header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '' },
+            { header: "", associated_linda_id: "", name: 'Assign Study Identifiers from column', value: 'study' },
+            { header: "", associated_linda_id: "", name: 'Assign Experimental Factors', value: 'experimental_factor' },
+            { header: "", associated_linda_id: "", name: 'Assign Material Sources', value: 'biological_material' },
+            { header: "", associated_linda_id: "", name: 'Assign Observation Units', value: 'observation_unit' },
+            { header: "", associated_linda_id: "", name: 'Assign Observed variables', value: 'observed_variable' },
+            { header: "", associated_linda_id: "", name: 'Assign Timeline', value: 'time' }
         ],
-        'defaut': { name: 'Extract MIAPPE components', value: '', label: 'test' }
+        'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
     };
-    private extract_study_options = [
-        { name: 'Extract MIAPPE components', value: 'undefined' },
-        { name: 'Extract Study labels from column', value: 'study' },
-        { name: 'Extract Study sites from column', value: 'site' },
-    ];
-
-
 
     //Chart part
     view: any[] = [1500, 300];
@@ -117,9 +114,10 @@ export class DownloadComponent implements OnInit {
     private csv: any;
     private cleaned_data_file_model = []
     private cleaned_study_model = []
+    private cleaned_component_model =[]
     // data to be send
     private headers = [];
-    private headers_select = [];
+    //private headers_select = [];
     private associated_headers = [];
     private lines_arr = [];
     private filename_used = []
@@ -128,15 +126,19 @@ export class DownloadComponent implements OnInit {
     private checklistSelection = new SelectionModel<string>(true, this.initialSelection /* multiple */);
     private headers_by_filename = {}
     private associated_headers_by_filename = {}
-    private options_by_filename = {}
+    options_components_by_filename = {}
+    options_fields_by_component_by_filename = {}
     private selected_file: string = ""
-
+    optionForm: FormGroup;
 
     //private loaded:boolean=false;
     ontology_type: string
     selected_term: OntologyTerm
     selected_set: []
     uploadResponse = { status: '', message: 0, filePath: '' };
+
+
+
     constructor(
         private formBuilder: FormBuilder,
         private fileService: FileService,
@@ -156,145 +158,132 @@ export class DownloadComponent implements OnInit {
                 this.parent_id = params['parent_id']
             }
         );
-        this.selectedOption = <componentInterface>{ name: 'Extract MIAPPE components', value: '' }
+        this.selectedOption = <componentInterface>{ name: 'Assign MIAPPE components', value: '' }
 
     }
-    // get_selection(key, selected_file){
-    //     var header=""
-    //     console.log(this.get_associated_header_by_filename(key, selected_file))
-    //     header = this.get_associated_header_by_filename(key, selected_file)
-    //     console.log(header['associated_component'])
-    //     var associated_options= this.extract_options.filter(prop => prop.value == header['associated_component'])[0]
-    //     console.log(associated_options['name'])
-    //     return associated_options['name']
-    // }
-    onFilenameChange(values: string) {
-        this.selected_file = values
-
-    }
-    formatTime(val) {
-        console.log(val)
-        return val
-
-    }
-    async get_data() {
-        console.log(this.extract_options.options)
-        this.data_files = await this.globalService.get_all_data_files(this.model_key).toPromise();
-        this.filename_used = []
-        this.headers = []
-        this.data_files[0].forEach(data_file => {
-            console.log(data_file)
-
-            if (!this.filename_used.includes(data_file.filename)) {
-                this.filename_used.push(data_file.filename)
-                this.headers_by_filename[data_file.filename] = []
-                this.associated_headers_by_filename[data_file.filename] = []
-                //this.selectedStudy[data_file.filename]=[]
-                this.AttributesGroups[data_file.filename] = []
-                this.options_by_filename[data_file.filename] = []
-
-
-            }
-            let tmpAttributesGroups = {}
-            data_file.associated_headers.forEach(element => {
-
-                if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
-                    ///if (!this.headers.includes(element.header)){
-                    var header = element.header
-                    let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
-                    console.log(element.header)
-                    if (element.associated_component != "") {
-                        let tmp = {}
-                        console.log(this.extract_options.options)
-
-                        tmp = { ...this.extract_options.options.filter(prop => prop.value === element.associated_component)[0] }
-                        console.log(tmp)
-                        tmp['header'] = element.header
-                        tmp['associated_linda_id'] = element.associated_linda_id
-                        this.options_by_filename[data_file.filename].push(tmp)
-                    }
-                    else {
-                        let tmp = { header: "", associated_linda_id: "", name: 'Extract MIAPPE components', value: '' }
-                        tmp['header'] = element.header
-                        console.log(tmp)
-                        this.options_by_filename[data_file.filename].push(tmp)
-                    }
-                    tmpAttributesGroups[header] = [null, [Validators.required]]
-                    this.headers.push(element.header)
-
-                    this.headers_by_filename[data_file.filename].push(element.header)
-                    this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
-                    // if (!this.headers_by_filename[data_file.filename].includes(element.header)){
-                    //     this.headers_by_filename[data_file.filename].push(element.header)
-                    //     this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
-
-                    // } 
-
-                }
-            });
-            console.log(this.options_by_filename)
-            console.log(this.associated_headers_by_filename)
-            this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
-            this.dataFileForm[data_file.filename] = this.formBuilder.group(this.AttributesGroups[data_file.filename])
-
-
-        });
-        this.selected_file = this.filename_used[0]
-    }
-    get_selected_option(header, filename) {
-        let res = this.options_by_filename[filename].filter(prop => prop.header === header)
-        return res[0]['name']
-
-    }
+    
     ngOnInit() {
-        this.selected_file=""
+        this.selected_file = ""
         if (this.mode.includes('edit')) {
             this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
-                console.log(received_data)
                 this.data = received_data;
-                this.selected_file= this.data["filename"]
+                this.selected_file = this.data["filename"]
                 this.headers = this.data["headers"];
                 this.associated_headers = this.data["associated_headers"];
-
                 this.associated_headers.forEach(element => {
                     if (element['is_time_values']) {
                         this.time_set = true
                     }
                 })
-                // Object.keys(this.associated_headers).forEach(key=>{
-                //     if (this.associated_headers[key]['is_time_values']){
-                //         this.time_set=true
-                //     }
-                // });
-                console.log(this.associated_headers)
                 if (this.model_type == "data_file") {
                     this.lines_dict = this.data["Data"]
                 }
                 else {
                     this.lines_arr = this.data["data"]
                 }
-                for (var i = 0; i < this.headers.length; i++) {
-                    if (i === 0) {
-                        this.headers_select.push('time')
-                    }
-                    else {
-                        this.headers_select.push('others')
-                    }
-                }
             })
         }
-        if (this.mode === 'extract-again') {
-            //this.get_data()
-            console.log("helo")
+        if (this.mode === 'extract-again' ) {
+            this.get_data()
         }
-        if (this.mode === 'extract') {
-            this.get_model('study');
-            this.get_model('data_file');
+        if (this.mode === 'extract-form'){ 
+            this.cleaned_component_model = this.get_model(this.model_type);
+            console.log(this.cleaned_component_model)
+            this.get_data()
         }
-        this.get_data()
+        //console.log(this.options_fields_by_component_by_filename)
+        this.cleaned_study_model= this.get_model('study');
+        this.cleaned_data_file_model = this.get_model('data_file');
+        //this.get_data()
         let attributeFilters = { file: [''] };
         this.form = this.formBuilder.group(attributeFilters);
-        console.log(this.selectedOption)
+    }
+    get_data() {
+        this.data_files=[]
+        this.globalService.get_all_data_files(this.model_key).toPromise().then(data => {
+            this.data_files=data
+            this.filename_used = []
+            this.headers = []
+            this.extract_fields_options['options']=[] 
+            this.cleaned_component_model.forEach(
+                component_model => {
+                    this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: component_model.key, value: "" })
+                }
+            );
+            this.data_files[0].forEach(data_file => {
+                if (!this.filename_used.includes(data_file.filename)) {
+                    
+                    this.filename_used.push(data_file.filename)
+                    this.headers_by_filename[data_file.filename] = []
+                    this.associated_headers_by_filename[data_file.filename] = []
+                    //this.selectedStudy[data_file.filename]=[]
+                    //this.AttributesGroups[data_file.filename] = []
+                    this.options_components_by_filename[data_file.filename] = []
+                    this.options_fields_by_component_by_filename[data_file.filename] = []
+                    let tmpAttributesGroups = {}
+                    data_file.associated_headers.forEach(element => {
+                        if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
+                            ///if (!this.headers.includes(element.header)){
+                            var header = element.header
+                            let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component, associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
+                            if (element.associated_component != "") {
+                                ///let tmp = {}
+                                let tmp = { ...this.extract_component_options.options.filter(prop => prop.value === element.associated_component)[0] }
+                                tmp['header'] = element.header
+                                tmp['associated_linda_id'] = element.associated_linda_id
+                                this.options_components_by_filename[data_file.filename].push(tmp)
+                                
+                                if (element.associated_component_field != "") {
+                                    let tmp2 = { header: element.header, associated_linda_id: element.associated_linda_id, name: "Assign MIAPPE component name to add ", value: element.associated_component_field }
+                                    this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+                                }
+                                else {
+                                    let tmp2 = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE component fields", value: "" }
+                                    this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+                                }
+                            }
+                            else {
+                                let tmp = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
+                                this.options_components_by_filename[data_file.filename].push(tmp)
+                                
+                                let tmp2 = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE component fields", value: "" }
+                                this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+                            }
+                            
+
+                            tmpAttributesGroups[header] = [header]
+                            //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
+                            this.headers.push(element.header)
+                            this.headers_by_filename[data_file.filename].push(element.header)
+                            this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
+                        }
+                    });
+                    //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
+                    this.dataFileComponentForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                    this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                }
+            });
+            //add corresponding component fields
+            //this.options_fields_by_component_by_filename[this.model_type]=[]
+            // this.extract_fields_options['options']=[]
+            // this.cleaned_component_model.forEach(
+            //     element => {
+            //         this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: element.key, value: '' })
+            //     }
+            // );
+        
+            this.selected_file = this.filename_used[0]
+            console.log(this.options_components_by_filename)
+            console.log(this.extract_fields_options)
+
+
+            this.options_components_by_filename[this.selected_file].forEach(option => {
+                this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
+            });
+            
+        });
+        
+        //console.log(this.associated_headers_by_filename)
     }
 
     // I/O part
@@ -330,6 +319,9 @@ export class DownloadComponent implements OnInit {
         this.lines_arr = [];
         this.lines_dict = []
         this.associated_headers = []
+        this.associated_headers_by_filename[this.fileName] = []
+        this.options_components_by_filename[this.fileName] = []
+        this.headers_by_filename[this.fileName]= []
 
         let allTextLines = csvData.split(/\r|\n|\r/);
         this.headers = allTextLines[0].split(delimitor)
@@ -346,7 +338,13 @@ export class DownloadComponent implements OnInit {
 
             if (line.length === this.headers.length) {
                 let csv_arr = [];
+                let tmpAttributesGroups = {}
                 for (let j = 0; j < this.headers.length; j++) {
+                    this.headers_by_filename[this.fileName].push(this.headers[j])
+                    tmpAttributesGroups[this.headers[j]] = [this.headers[j]]
+                    let tmp = { header: "", associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
+                    tmp['header'] = this.headers[j]
+                    this.options_components_by_filename[this.fileName].push(tmp)
 
                     csv_arr.push(line[j].replace(/['"]+/g, ''));
                     csv_dict[this.headers[j]] = line[j].replace(/['"]+/g, '')
@@ -359,20 +357,21 @@ export class DownloadComponent implements OnInit {
                         }
                     }
                 }
+                this.dataFileComponentForm[this.fileName] = this.formBuilder.group(tmpAttributesGroups)
                 this.lines_arr.push(csv_arr);
                 this.lines_dict.push(csv_dict)
+
             }
         }
         for (var i = 0; i < this.headers.length; i++) {
-            this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
-            if (i === 0) {
-                this.headers_select.push('time')
-            }
-            else {
-                this.headers_select.push('others')
-            }
+            this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
+            this.associated_headers_by_filename[this.fileName].push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
         }
-        console.log(this.associated_headers)
+        this.selected_file = this.fileName
+        this.options_components_by_filename[this.selected_file].forEach(option => {
+            this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
+        });
+        console.log(this.associated_headers_by_filename)
 
     }
     readAsCSV() {
@@ -381,55 +380,18 @@ export class DownloadComponent implements OnInit {
 
         //FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');  
     }
-    get_associated_header(key: string) {
-        return this.associated_headers.filter(prop => prop.header == key)[0]
-    }
-    get_associated_header_by_filename(key: string, filename) {
-        return this.associated_headers_by_filename[filename].filter(prop => prop.header == key)[0]
-    }
-    get_model(model_type: string) {
-        let model = [];
-
-        //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
-        this.globalService.get_model(model_type).toPromise().then(data => {
-            model = data;
-            //console.log(this.model)
-            var keys = Object.keys(model);
-            let cleaned_model = []
-            for (var i = 0; i < keys.length; i++) {
-                if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {
-                    keys.splice(i, 1);
-                    i--;
-                }
-                else {
-                    var dict = {}
-                    dict["key"] = keys[i]
-                    dict["pos"] = model[keys[i]]["Position"]
-                    dict["level"] = model[keys[i]]["Level"]
-                    dict["format"] = model[keys[i]]["Format"]
-                    dict["Associated_ontologies"] = model[keys[i]]["Associated_ontologies"]
-                    cleaned_model.push(dict)
-                }
-            }
-            cleaned_model = cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
-            console.log(cleaned_model)
-            if (model_type == 'study') {
-                this.cleaned_study_model = cleaned_model
-            }
-            else {
-                this.cleaned_data_file_model = cleaned_model
-            }
+    onFilenameChange(values: string) {
+        this.selected_file = values
+        this.options_components_by_filename[this.selected_file].forEach(option => {
+            this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
         });
-
     }
-    //events 
-    drop(event: CdkDragDrop<string[]>) {
-        moveItemInArray(this.headers_select, event.previousIndex, event.currentIndex);
-        this.modified = true
+    formatTime(val) {
+        return val
     }
     onFileChange(event) {
         this.headers = [];
-        this.headers_select = [];
+        // this.headers_select = [];
         this.associated_headers = [];
         this.lines_arr = [];
         this.lines_dict = [];
@@ -457,10 +419,12 @@ export class DownloadComponent implements OnInit {
 
         }
     }
+
     onModify(values: string, key: string, filename: string) {
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
         console.log(values);
         console.log(key);
+        console.log(filename);
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
@@ -469,7 +433,7 @@ export class DownloadComponent implements OnInit {
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = result.date_format; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = "time"; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = true; });
-                console.log(result);
+                ///console.log(result);
                 this.time_set = true
                 this.checklistSelection.toggle(key);
             });
@@ -482,18 +446,6 @@ export class DownloadComponent implements OnInit {
         }
         else {
             this.data_to_extract[values] = key
-            // let groups_label=[]
-            // for (var i = 0; i < this.headers.length; i++){
-            //     if (this.headers[i]==key){
-            //         for (var j = 0; j < this.lines_arr.length; j++){
-            //             groups_label.push(this.lines_arr[j][i])
-            //         }
-            //     }
-            // }
-            //this.checklistSelection.toggle(key);
-            //let component_set=new Set(groups_label)
-            ///let found="found "+ component_set.size + " " +  key + " !! "
-            //     //console.log(found)
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = ''; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = values; });
@@ -503,10 +455,11 @@ export class DownloadComponent implements OnInit {
             console.log(this.associated_headers_by_filename[filename])
         }
     }
+    onExtractField(values: string, key: string, filename: string){
+        console.log(values)
 
+    }
     onExtractStudy(values: string, key: string) {
-        console.log(values);
-        console.log(key);
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
@@ -520,38 +473,24 @@ export class DownloadComponent implements OnInit {
                 // this.associated_headers.filter(prop => prop.header == key)['associated_term_id']=result.date_format
                 // this.associated_headers.filter(prop => prop.header == key)['associated_component']="time"
                 // this.associated_headers.filter(prop => prop.header == key)['is_time_values']=true
-                console.log(result);
                 this.time_set = true
                 this.checklistSelection.toggle(key);
             });
         }
         else if (values === "") {
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = false; });
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = "" });
+            //this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = "" });
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = ""; });
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = false; });
         }
         else {
             this.data_to_extract[values] = key
-            // let groups_label=[]
-            // for (var i = 0; i < this.headers.length; i++){
-            //     if (this.headers[i]==key){
-            //         for (var j = 0; j < this.lines_arr.length; j++){
-            //             groups_label.push(this.lines_arr[j][i])
-            //         }
-            //     }
-            // }
-            //this.checklistSelection.toggle(key);
-            //let component_set=new Set(groups_label)
-            ///let found="found "+ component_set.size + " " +  key + " !! "
-            //     //console.log(found)
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = ''; });
+            /// this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = ''; });
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = values; });
             this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = false; });
-
             //this.associated_headers[key]={selected:true, associated_term_id:"", associated_component:values, is_time_values:false}
-            console.log(this.associated_headers)
+            //console.log(this.associated_headers)
         }
 
     }
@@ -583,41 +522,20 @@ export class DownloadComponent implements OnInit {
                 term_ids = term_ids.slice(0, -1);
                 this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
                 this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = term_ids; });
-                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = "ontology"; });
+                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = ""; });
                 //this.associated_headers[key]={selected:true, associated_term_id:term_ids,  associated_component:"ontology", is_time_values:false}
             };
         });
         //}
     }
-    onSelectTime(values: string, key: string) {
-        if (values === "custom_date_format") {
-            const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
-            dialogRef.afterClosed().subscribe(result => {
-                //this.associated_headers[key]={selected:true, associated_term_id:result.date_format, associated_component:"time", is_time_values:true, is_numeric_values:false}
-                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
-                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = result.date_format; });
-                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = 'time'; });
-                this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = true; });
-                console.log(result);
-                this.time_set = true
-                this.checklistSelection.toggle(key);
-            });
-        }
-        else {
-
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = values; });
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.associated_component = 'time'; });
-            this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = true; });
-            //this.associated_headers[key]={selected:true, associated_term_id:values,associated_component:"time", is_time_values:true}
-            this.checklistSelection.toggle(key);
-            this.time_set = true
-        }
-    }
     Focused(values: string, key: string) {
         console.log(values)
     }
     onShowHelp(page: string) {
+        // Add argument for mode : 
+        // for example for extract-form mode , 
+        // the help page is not the same as for the extract mode
+
         const dialogRef = this.dialog.open(HelpLoaderDialogComponent, { width: '1200px', data: { help_page: page } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -737,168 +655,52 @@ export class DownloadComponent implements OnInit {
     onDeactivate(data): void {
         console.log('Deactivate', JSON.parse(JSON.stringify(data)));
     }
-    onSubmit() {
-        //metadatafiles
-        if (this.mode === "create") {
-            console.log(this.lines_arr.length)
-            if (this.lines_arr.length !== 0) {
-                console.log(this.lines_dict)
-                const formData = new FormData();
-                formData.append('file', this.form.get('file').value);
-                let user = JSON.parse(localStorage.getItem('currentUser'));
-                //let parent_id="studies/981995"
-                //this.associated_headers['associated_linda_id']=this.parent_id
-                //this.fileService.upload2(this.fileName,this.lines_arr,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
-
-                this.fileService.upload3(this.fileName, this.lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise().then(data => { console.log(data); })
-
-                this.router.navigate(['/tree'], { queryParams: { key: user._key } });
-            }
-            else {
-                this.alertService.error("you need to select a file")
-            }
-        }
-        ///extract from files 
-        else if (this.mode === "extract") {
-            console.log(this.data_to_extract)
-            if (Object.keys(this.data_to_extract).length === 0) {
-                this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
-            }
-            if (this.data_to_extract['study']) {
-                let groups_label = []
-                //search for column declared as study column
-                for (var i = 0; i < this.headers.length; i++) {
-                    if (this.headers[i] == this.data_to_extract['study']) {
-                        for (var j = 0; j < this.lines_arr.length; j++) {
-                            groups_label.push(this.lines_arr[j][i])
-                        }
-                    }
-                }
-                //get unique study names
-                let study_component_set = new Set(groups_label)
-                //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build    
-                let study_model_array = []
-                let user = JSON.parse(localStorage.getItem('currentUser'));
-                let study_model_dict = {}
-                this.cleaned_study_model.forEach(attr => { study_model_dict[attr["key"]] = "" });
-                var study_model = { ...study_model_dict };
-                var study_component_set_array = Array.from(study_component_set);
-
-
-                for (var i = 0; i < study_component_set_array.length; i++) {
-                    console.log(study_component_set_array[i])
-                    study_model["Study unique ID"] = study_component_set_array[i]
-                    study_model["Short title"] = study_component_set_array[i]
-                    let unique_study_label = study_component_set_array[i]
-                    //get the header label for study column in the csv file
-                    var study_column_name = this.data_to_extract['study']
-
-                    // filter lines_dict to keep lines that match unique_study_label
-                    var study_lines = this.lines_dict.filter(line => {
-                        // var line_keys = Object.keys(line);
-                        // line_keys.forEach(
-                        //     key => {
-                        //         if (line[key] === "NA"){
-                        //             line[key]= null
-                        //         }
-
-                        //     }
-                        // )
-                        return line[study_column_name] === unique_study_label;
-                    });
-
-
-
-                    //build data file object
-                    let data_model_dict = {}
-                    this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
-                    var data_model = { ...data_model_dict };
-                    data_model['Data file description'] = 'Data have been extracted for ' + study_component_set_array[i] + ' from ' + this.fileName
-                    data_model['Data file version'] = '1.0'
-                    data_model['Data file link'] = this.fileName
-                    data_model['Data'] = study_lines
-                    data_model['associated_headers'] = this.associated_headers
-                    data_model['headers'] = this.headers
-
-                    console.log(study_lines)
-                    console.log(data_model)
-
-                    //TODO Need to add dialog fform for study form in order to pre fill
-
-                    // here try to add Study associated with data files
-                    if (this.labelPosition === "all") {
-                        this.globalService.add_parent_and_childs(study_model, data_model, 'study', this.parent_id, 'data_file').pipe(first()).toPromise().then(
-                            add_study_res => {
-                                if (add_study_res["success"]) {
-                                    console.log(add_study_res["message"])
-                                }
-                            });
-                        this.router.navigate(['/tree'], { queryParams: { key: user._key } });
-                    }
-                    else if (this.labelPosition === "only_data") {
-                        console.log(this.associated_headers_by_filename)
-                        this.fileService.upload3(this.fileName, study_lines, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise().then(
-                            data_upload => {
-                                if (data_upload["success"]) {
-                                    console.log(data_upload["message"])
-                                }
-                            });
-                        this.router.navigate(['/tree'], { queryParams: { key: user._key } });
-                    }
-                    else {
-                        this.globalService.add(study_model, 'study', this.parent_id, false).pipe(first()).toPromise().then(
-                            add_study_res => {
-                                if (add_study_res["success"]) {
-                                    console.log(add_study_res["message"])
-                                }
-                            }
-                        );
-                        this.router.navigate(['/tree'], { queryParams: { key: user._key } });
-
-                    }
-                }
-            }
-            else {
-                this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
-
-            }
-        }
-        else {
-            if (this.mode === 'edit') {
-                if (this.lines_arr.length !== 0) {
-                    let user = JSON.parse(localStorage.getItem('currentUser'));
-                    //let parent_id="studies/981995"
-                    this.globalService.update(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
-                    this.router.navigate(['/tree'], { queryParams: { key: user._key } });
-                }
-                else {
-                    this.alertService.error("you need to select a file")
-                }
-            }
-            else {
-                console.log(this.lines_dict)
-                if (this.lines_dict.length !== 0) {
-
-                    let user = JSON.parse(localStorage.getItem('currentUser'));
-                    
-                    this.data_files[0].forEach(data_file => {});
-                    //let parent_id="studies/981995"
-                    //this.globalService.update(this.model_key,this.data,this.model_type).pipe(first()).toPromise().then(data => {console.log(data);})
-                    //this.router.navigate(['/tree'],{ queryParams: { key: user._key  } });
-                }
-                else {
-                    this.alertService.error("you need to select a file")
-                }
-            }
-        }
-
-        //    this.fileService.upload(this.lines).subscribe(
-        //      (res) => this.uploadResponse = res,
-        //      (err) => this.error = err
-        //    );
+    get_selected_option(header, filename) {
+        return this.dataFileComponentForm[filename].get(header).value;
     }
-    //test new selecct mode
-    //getters and  setters
+    get_associated_component_field(header, filename, associated_component){
+        //search for assoxciated headers if he has a field associated
+    }
+    get_associated_header(key: string) {
+        return this.associated_headers.filter(prop => prop.header == key)[0]
+    }
+    get_associated_header_by_filename(key: string, filename) {
+        return this.associated_headers_by_filename[filename].filter(prop => prop.header == key)[0]
+    }
+    get_model(model_type: string) {
+        let cleaned_model = [];
+
+        //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
+        this.globalService.get_model(model_type).toPromise().then(data => {
+            var keys = Object.keys(data);
+            for (var i = 0; i < keys.length; i++) {
+                if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {
+                    keys.splice(i, 1);
+                    i--;
+                }
+                else {
+                    var dict = {}
+                    dict["key"] = keys[i]
+                    dict["pos"] = data[keys[i]]["Position"]
+                    dict["level"] = data[keys[i]]["Level"]
+                    dict["format"] = data[keys[i]]["Format"]
+                    dict["Associated_ontologies"] = data[keys[i]]["Associated_ontologies"]
+                    cleaned_model.push(dict)
+                }
+            }
+            cleaned_model = cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
+            //console.log(cleaned_model)
+            //return cleaned_model
+            // if (model_type == 'study') {
+            //     this.cleaned_study_model = cleaned_model
+            // }
+            // else {
+            //     this.cleaned_data_file_model = cleaned_model
+            // }
+        });
+        return cleaned_model
+
+    }
     public get_headers() {
         return this.headers
     }
@@ -907,9 +709,6 @@ export class DownloadComponent implements OnInit {
     }
     public get_associated_headers() {
         return this.associated_headers;
-    }
-    public get_headers_select() {
-        return this.headers_select;
     }
     public get_lines() {
         return this.lines_arr
@@ -1005,8 +804,51 @@ export class DownloadComponent implements OnInit {
 
         return scale;
     }
-
-
+    get_data_to_extract() {
+        return this.data_to_extract
+    }
+    get_lines_dict() {
+        return this.lines_dict
+    }
+    get_time_set() {
+        return this.time_set
+    }
+    get_delimitor() {
+        return this.delimitor
+    }
+    get_csv() {
+        return this.csv
+    }
+    get_cleaned_data_file_model() {
+        return this.cleaned_data_file_model
+    }
+    get_cleaned_study_model() {
+        return this.cleaned_study_model
+    }
+    get_lines_arr() {
+        return this.lines_arr
+    }
+    get_filename_used() {
+        return this.filename_used
+    }
+    get_multi() {
+        return this.multi
+    }
+    get_initialSelection() {
+        return this.initialSelection
+    }
+    get_checklistSelection() {
+        return this.checklistSelection
+    }
+    get_associated_headers_by_filename() {
+        return this.associated_headers_by_filename
+    }
+    get_options_components_by_filename() {
+        return this.options_components_by_filename
+    }
+    get_selected_file() {
+        return this.selected_file
+    }
 
 
 
@@ -1018,5 +860,239 @@ export class DownloadComponent implements OnInit {
     //        console.log(this.form.get('file').value)
     //        
     //    }
+
+    onSubmit() {
+        //metadatafiles creation (obsolete ? )
+        if (this.mode === "create") {
+            console.log(this.lines_arr.length)
+            if (this.lines_arr.length !== 0) {
+                console.log(this.lines_dict)
+                const formData = new FormData();
+                formData.append('file', this.form.get('file').value);
+                let user = JSON.parse(localStorage.getItem('currentUser'));
+                //let parent_id="studies/981995"
+                //this.associated_headers['associated_linda_id']=this.parent_id
+                //this.fileService.upload2(this.fileName,this.lines_arr,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
+
+                this.fileService.upload3(this.fileName, this.lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise().then(data => { console.log(data); })
+
+                this.router.navigate(['/tree'], { queryParams: { key: user._key } });
+            }
+            else {
+                this.alertService.error("you need to select a file")
+            }
+        }
+        ///extract from files 
+        else if (this.mode === "extract") {
+            if (Object.keys(this.data_to_extract).length === 0) {
+                this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
+            }
+            if (this.data_to_extract['study']) {
+                let groups_label = []
+                //search for column declared as study column
+                for (var i = 0; i < this.headers.length; i++) {
+                    if (this.headers[i] == this.data_to_extract['study']) {
+                        for (var j = 0; j < this.lines_arr.length; j++) {
+                            groups_label.push(this.lines_arr[j][i])
+                        }
+                    }
+                }
+                //get unique study names
+                let study_component_set = new Set(groups_label)
+                //console.log(study_component_set)
+                //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build    
+                let study_model_dict = {}
+                this.cleaned_study_model.forEach(attr => { study_model_dict[attr["key"]] = "" });
+                var study_model = { ...study_model_dict };
+                let study_model_array = []
+                let user = JSON.parse(localStorage.getItem('currentUser'));
+
+
+                // mode extract with only data upload
+                if (this.labelPosition !== "only_data") {
+                    //build study form for field 
+                    const formDialogRef = this.dialog.open(FormDialogComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
+                    formDialogRef.afterClosed().subscribe((result) => {
+                        if (result) {
+                            if (result.event == 'Confirmed') {
+                                //console.log(result["formData"]["form"])
+                                study_model = result["formData"]["form"]
+                                let is_template = result["formData"]["template"]
+                                var study_component_set_array = Array.from(study_component_set);
+                                //foreach study identifier found other than Study unique ID
+                                for (var i = 0; i < study_component_set_array.length; i++) {
+                                    //console.log(study_component_set_array[i])
+                                    study_model["Study unique ID"] = study_component_set_array[i]
+                                    study_model["Short title"] = study_component_set_array[i]
+                                    let unique_study_label = study_component_set_array[i]
+                                    //get the header label for study column in the csv file
+                                    var study_column_name = this.data_to_extract['study']
+
+                                    // filter lines_dict to keep lines that match unique_study_label
+                                    var study_lines = this.lines_dict.filter(line => {
+                                        return line[study_column_name] === unique_study_label;
+                                    });
+
+
+
+                                    //build data file object if 
+                                    let data_model_dict = {}
+                                    this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
+                                    var data_model = { ...data_model_dict };
+                                    data_model['Data file description'] = 'Data have been extracted for ' + study_component_set_array[i] + ' from ' + this.fileName
+                                    data_model['Data file version'] = '1.0'
+                                    data_model['Data file link'] = this.fileName
+                                    data_model['Data'] = study_lines
+                                    data_model['associated_headers'] = this.associated_headers_by_filename[this.fileName]
+                                    data_model['headers'] = this.headers
+
+                                    //TODO Need to add dialog form for study form in order to pre fill
+                                    console.log(data_model)
+                                    // here try to add Study associated with data files
+                                    if (this.labelPosition === "all") {
+                                        //console.log(this.parent_id)
+                                        this.globalService.add_parent_and_childs(study_model, data_model, 'study', this.parent_id, 'data_file').pipe(first()).toPromise().then(
+                                            add_study_res => {
+                                                if (add_study_res["success"]) {
+                                                    console.log(add_study_res["message"])
+                                                }
+                                            });
+                                        //this.router.navigate(['/tree']);
+                                    }
+                                    else {
+                                        this.globalService.add(study_model, 'study', this.parent_id, false).pipe(first()).toPromise().then(
+                                            add_study_res => {
+                                                if (add_study_res["success"]) {
+                                                    console.log(add_study_res["message"])
+                                                }
+                                            }
+                                        );
+                                        //this.router.navigate(['/tree']);
+
+                                    }
+                                }
+                                this.router.navigate(['/tree']);
+                            }
+                        }
+                    });
+                    
+                }
+                else {
+                    var study_component_set_array = Array.from(study_component_set);
+                    // foreach study identifier found other than Study unique ID
+                    for (var i = 0; i < study_component_set_array.length; i++) {
+                        console.log(study_component_set_array[i])
+                        let unique_study_label = study_component_set_array[i]
+                        // // get the header label for study column in the csv file
+                        // var study_column_name = this.data_to_extract['study']
+                        // // filter lines_dict to keep lines that match unique_study_label
+                        // var study_lines = this.lines_dict.filter(line => {
+                        //     return line[study_column_name] === unique_study_label;
+                        // });
+                        // // build data file object if 
+                        // let data_model_dict = {}
+                        // this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
+                        // var data_model = { ...data_model_dict };
+                        // data_model['Data file description'] = 'Data have been extracted for ' + unique_study_label + ' from ' + this.fileName
+                        // data_model['Data file version'] = '1.0'
+                        // data_model['Data file link'] = this.fileName
+                        // data_model['Data'] = study_lines
+                        // data_model['associated_headers'] = this.associated_headers
+                        // data_model['headers'] = this.headers
+
+                        // // get this study_id with unique_study_label
+                        // // problem when two invvestiagtion have same study ID
+                        // console.log(unique_study_label)
+                        // console.log(this.parent_id.split("/")[1])
+                        this.globalService.get_study_by_ID(unique_study_label, this.parent_id.split("/")[1]).pipe(first()).toPromise().then(
+                            data => {
+                                // get the header label for study column in the csv file
+                                var study_column_name = this.data_to_extract['study']
+                                // filter lines_dict to keep lines that match unique_study_label
+                                var study_lines = this.lines_dict.filter(line => {
+                                    return line[study_column_name] === unique_study_label;
+                                });
+                                // build data file object if 
+                                let data_model_dict = {}
+                                this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
+                                var data_model = { ...data_model_dict };
+                                data_model['Data file description'] = 'Data have been extracted for ' + unique_study_label + ' from ' + this.fileName
+                                data_model['Data file version'] = '1.0'
+                                data_model['Data file link'] = this.fileName
+                                data_model['Data'] = study_lines
+                                data_model['associated_headers'] = this.associated_headers_by_filename[this.fileName]
+                                data_model['headers'] = this.headers
+
+                                // get this study_id with unique_study_label
+                                // problem when two invvestiagtion have same study ID
+                                // console.log(unique_study_label)
+                                // console.log(this.parent_id.split("/")[1])
+                                data['study_ids'].forEach(study_id => {
+                                    console.log(study_id)
+                                    this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
+                                        data_upload => {
+                                            if (data_upload["success"]) {
+                                                console.log(data_upload["message"])
+                                            }
+                                        }
+                                    );
+                                }); 
+                            }
+                        );
+                    }
+                    this.router.navigate(['/tree']);
+                }
+            }
+            else {
+                this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
+            }
+        }
+        else {
+            if (this.mode === 'edit') {
+                if (this.lines_arr.length !== 0) {
+                    let user = JSON.parse(localStorage.getItem('currentUser'));
+                    //let parent_id="studies/981995"
+                    this.globalService.update(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
+                    this.router.navigate(['/tree']);
+                }
+                else {
+                    this.alertService.error("you need to select a file")
+                }
+            }
+            //mode extract-again
+            else {
+                if (this.associated_headers_by_filename[this.selected_file].length !== 0) {
+                    let user = JSON.parse(localStorage.getItem('currentUser'));
+                    this.data_files[0].forEach(data_file => {
+                        if (data_file.filename === this.selected_file){
+                            this.associated_headers_by_filename[this.selected_file].forEach(element => {
+                                data_file.associated_headers.filter(header => header.header === element.header)[0]["associated_component"] = element.associated_component
+                                data_file.associated_headers.filter(header => header.header === element.header)[0]["is_numeric_values"] = element.is_numeric_values
+                                data_file.associated_headers.filter(header => header.header === element.header)[0]["is_time_values"] = element.is_time_values
+                                data_file.associated_headers.filter(header => header.header === element.header)[0]["selected"] = element.selected
+                            });
+                            this.globalService.update_associated_headers(data_file['eto'], data_file.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                                data => {
+                                    this.router.navigate(['/tree']);
+                                 })
+                            
+                        }
+                        
+
+                    });
+                    //this.router.navigate(['/tree']);
+                }
+                else {
+                    this.alertService.error("you need to select a file")
+                }
+            }
+        }
+       
+
+        //    this.fileService.upload(this.lines).subscribe(
+        //      (res) => this.uploadResponse = res,
+        //      (err) => this.error = err
+        //    );
+    }
 
 }

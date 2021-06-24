@@ -75,7 +75,6 @@ import { AdDirective } from './directives/ad.directive';
 import { DragDropDirective } from './directives/drag-drop.directive';
 import { UploadFileComponent } from './download/upload-file.component';
 import { ExportDialogComponent } from './dialog/export-dialog.component';
-import { DonwloadedComponent } from './download/donwloaded.component';
 import { PublicationsComponent } from './documentation/publications.component';
 import { ReleasesComponent } from './documentation/releases.component';
 import { SearchResultDialogComponent } from './dialog/search-result-dialog.component';
@@ -108,6 +107,7 @@ import { HelpLoaderDialogComponent } from './dialog/help-loader-dialog.component
 import { ExtractComponentComponent } from './extract/extract-component.component';
 import { FormDialogComponent } from './dialog/form-dialog.component';
 import { EditComponent } from './edition/edit.component';
+import { TemplatesComponent } from './templates/templates.component';
 
 @NgModule({
   declarations: [
@@ -141,7 +141,6 @@ import { EditComponent } from './edition/edit.component';
     DragDropDirective,
     UploadFileComponent,
     ExportDialogComponent,
-    DonwloadedComponent,
     PublicationsComponent,
     ReleasesComponent,
     SearchResultDialogComponent,
@@ -169,7 +168,8 @@ import { EditComponent } from './edition/edit.component';
     HelpLoaderDialogComponent,
     ExtractComponentComponent,
     FormDialogComponent,
-    EditComponent
+    EditComponent,
+    TemplatesComponent
         
     
 

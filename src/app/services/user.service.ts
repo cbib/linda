@@ -33,6 +33,7 @@ export class UserService {
         return this.http.post(`${this.APIUrl}/register`, user);
     }
 
+
 //    update(user: User) {
 //        return this.http.put(`${this.apiUrl}/users/` + user._id, user);
 //    }

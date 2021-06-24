@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./experimental-factor.component.css']
 })
 export class ExperimentalFactorComponent implements OnInit {
-
+  mode_table:boolean=true
   constructor() { }
 
   ngOnInit() {

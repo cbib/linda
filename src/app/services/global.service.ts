@@ -40,6 +40,9 @@ export class GlobalService {
         if (model_id.split("/")[0] === "studies") {
             model_type = "study"
         }
+        else if(model_id === "Investigations tree"){
+            model_type = 'Root'
+        }
         else {
             model_type = model_id.split("/")[0].slice(0, -1)
         }
@@ -128,17 +131,16 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "update_associated_headers"}`, obj2send);
     }
-    update_associated_headers_linda_id(id: string, value: string, header:string, collection:string) {
+    update_associated_headers_linda_id(datafile_id: string, value: string, header:string, collection:string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
             'username': user.username,
             'password': user.password,
-            '_id': id,
+            'datafile_id': datafile_id,
             'header': header,
             'value': value,
             'collection': collection
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
     }
     remove_associated_headers_linda_id(id: string, removed_ids: [], collection:string) {
@@ -150,7 +152,6 @@ export class GlobalService {
             'removed_ids': removed_ids,
             'collection': collection
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_associated_headers_linda_id"}`, obj2send);
     }
     update_field(value: string, key: string, field: string, model_type: string) {
@@ -197,7 +198,6 @@ export class GlobalService {
             'password': user.password,
             'id': id
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs"}`, obj2send);
     }
 
@@ -209,8 +209,30 @@ export class GlobalService {
             'id': id,
             'model_type':model_type
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs_by_type"}`, obj2send);
+    }
+
+    remove_association(id:string, datafile_id:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'id': id,
+            'datafile_id':datafile_id
+        };
+        return this.http.post(`${this.APIUrl + "remove_association"}`, obj2send);
+    }
+
+    remove_childs_by_type_and_id(id:string, model_type:string, model_id:string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'id': id,
+            'model_type':model_type,
+            'model_id': model_id
+        };
+        return this.http.post(`${this.APIUrl + "remove_childs_by_type_and_id"}`, obj2send);
     }
     
     add(values: {}, model_type: string, parent_id: string, as_template:boolean) {
@@ -223,7 +245,6 @@ export class GlobalService {
             'model_type': model_type,
             'as_template': as_template
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
     }
     add_parent_and_childs(parent_model: {}, child_values: {}, model_type_parent: string, parent_id: string, model_type_child: string) {
@@ -237,7 +258,6 @@ export class GlobalService {
             'model_type': model_type_parent,
             'child_model_type': model_type_child,
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_parent_and_child"}`, obj2send);
     }
     add_multi(values: [], model_type: string, parent_id: string) {
@@ -273,7 +293,6 @@ export class GlobalService {
         };
         var observation_unit_doc = { "External ID": [], "Observation Unit factor value": [], "Observation unit ID": [], "Observation unit type": [], "Spatial distribution": [], "obsUUID": [] }
         //var return_data = {"observation_units":[],"biological_materials":[],"samples":[], "experimental_factor":[] }
-        console.log("observation_units/" + key)
         var observation_units_data = values['observation_units'];
         for (var i = 0; i < observation_units_data.length; i++) {
             observation_unit_doc["External ID"].push(observation_units_data[i]['External ID']);
@@ -285,7 +304,6 @@ export class GlobalService {
 
             var biological_material_data = values['biological_materials'][i];
             var unique_linda_id = [...new Set(biological_material_data.map(item => item.lindaID))];
-            console.log(unique_linda_id)
             // //add biological_material link to observation unit edge 
             // var mat_ids=[ 
             //     { 
@@ -362,7 +380,6 @@ export class GlobalService {
             // }
 
         }
-        console.log(observation_unit_doc)
         return this.http.post(`${this.APIUrl + "update_observation_units"}`, obj2send);
     }
 
@@ -375,7 +392,6 @@ export class GlobalService {
             'values': values,
             'model_type': model_type
         };
-        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_observation_units"}`, obj2send);
     }
 
@@ -409,6 +425,9 @@ export class GlobalService {
     get_templates(user_key: string, model_coll: string): Observable<any> {
         return this.http.get(this.APIUrl + "get_templates/" + user_key + "/" + model_coll).pipe(map(this.extractData));
     }
+    get_all_templates(user_key: string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_all_templates/" + user_key).pipe(map(this.extractData));
+    }
 
     get_type_child_from_parent(parent_name: string, parent_key: string, child_type: string): Observable<any> {
         return this.http.get(this.APIUrl + "get_data_from_child_model/" + parent_name + "/" + parent_key + "/" + child_type).pipe(map(this.extractData));
@@ -438,6 +457,11 @@ export class GlobalService {
     get_data_file(key: string): Observable<ResDataModal>{
         return this.http.get<ResDataModal>(this.APIUrl + '/get_data_file/' + key);
     }
+
+    get_study_by_ID(study_id: string, parent_key:string){
+        return this.http.get(this.APIUrl + '/get_study_by_ID/' + study_id+ '/' + parent_key).pipe(map(this.extractData));
+    }
+
 
     //get all investigations for a given user
     get_by_parent_key(parent_key: string, model_type: string) {

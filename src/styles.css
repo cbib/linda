@@ -186,7 +186,8 @@ mat-progress-bar .mat-progress-bar-buffer {
     align-items: stretch;
 }*/
 p {
-    font-family: 'Poppins', sans-serif;
+    /* font-family: cursive, 'Poppins', sans-serif; */
+    font-family: "Gill Sans", sans-serif;
     font-size: 1.1em;
     font-weight: 300;
     line-height: 1.7em;

@@ -10,8 +10,8 @@
 <div>
     <p>
         In this page, you can extract component from data files of each studies of your investigation {{model_key}}
-        This investigation contains {{study_array.length}} Studies. {{filename_used.lenght}} source filename has been 
-        found with a total of {{variable_array.length}} "{{model_type_label}}" detected.
+        This investigation contains {{this.global[selected_file].length}} Studies. {{filename_used.length}} source filename has been 
+        found with a total of {{displayedcomponentColumns[selected_file].length}} column linked to "{{model_type_label}}" detected.
         If you click on variable header, you will select the whole column to extract. 
         Using checkboxes in first column, you can unselect some rows if you don't want this study to be enriched with selected observed variables
     
@@ -32,7 +32,7 @@
       There are no {{model_type_label}} described in this datafile
     </p> -->
     <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
-      <mat-button-toggle [ngStyle]="getToggleStyle('get_model_type()')" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
+      <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
         <span>{{column}}</span>
       </mat-button-toggle> 
     </mat-button-toggle-group>

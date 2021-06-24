@@ -13,7 +13,7 @@
       (change)="set_check_only($event.checked, 'experimental_factor')">Only Experimental Factors</mat-checkbox>
 
   </section>
-  <section *ngIf="mode==='extract_env_var'" class="format-section">
+  <section *ngIf="mode.includes('extract_env_var')" class="format-section">
     <p> Do you want to use templates ? </p>
     <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_template($event.checked)"> Use
       templates</mat-checkbox>
@@ -22,7 +22,6 @@
     <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_existing($event.checked)"> Use existing
     </mat-checkbox>
   </section>
-  <hr style="width: 310px">
   <section *ngIf="use_template" class="format-section">
     <div *ngIf="get_template_result().length>0">
       <select name="select_template" size="1" (change)="onTemplateSelect($event.target.value)">
@@ -45,7 +44,6 @@
       <p> There is no {{model_type.replace("_"," ")}} to use... Please add one </p>
     </div>
   </section>
-  <hr style="width: 310px">
   <p>{{mode_text[mode]['content']}}</p>
 </div>
 

@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
 import * as uuid from 'uuid';
+import {JoyrideService} from 'ngx-joyride';
 @Component({
   selector: 'app-material-form',
   templateUrl: './material-form.component.html',
@@ -32,6 +33,7 @@ export class MaterialFormComponent implements OnInit {
 
   Checked= false
   private startfilling: boolean = false;
+  private currentUser
   show_spinner: boolean = false;
   index_row = 0
   material_id = ""
@@ -52,7 +54,7 @@ export class MaterialFormComponent implements OnInit {
   used_mat_ids=[]
 
 
-  constructor(private fb: FormBuilder, public globalService: GlobalService,
+  constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
     public ontologiesService: OntologiesService,
 
     private router: Router,
@@ -92,6 +94,9 @@ export class MaterialFormComponent implements OnInit {
     //this.get_model()
     await this.get_model()
     // console.log(this.cleaned_model)
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    this.onClickTour()
+   ; 
 
   }
 
@@ -101,7 +106,18 @@ export class MaterialFormComponent implements OnInit {
     this.generalControl = this.materialTable.get('generalRows') as FormArray;
 
   }
-
+  onClickTour() {
+    console.log('start tour part 2')
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+        console.log(this.currentUser)
+        if (this.currentUser['tutoriel_step'] === "9"){
+            this.joyrideService.startTour(
+                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //this.currentUser.tutoriel_step="2"
+            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+ }
   onTaskAdd(event) {
     this.startfilling = false;
     this.keys.forEach(attr => {
@@ -111,6 +127,45 @@ export class MaterialFormComponent implements OnInit {
     });
     // console.log(this.startfilling)
     // console.log(this.materialTable.value)
+  }
+  onDone(node_type:string) {
+    console.log(this.currentUser['tutoriel_step'])
+    console.log(this.materialTable.value)
+    console.log(this.materialTable.controls)
+    //this.joyrideService.closeTour()
+    
+    //Biological  form template
+    if (this.currentUser['tutoriel_step']==="9"){
+      const generalRows = this.materialTable.get('generalRows') as FormArray;
+    
+      const MaterialControl = this.materialTable.get('materialRows') as FormArray;
+      MaterialControl.push(this.initiateMaterialForm());
+
+      // TODO finish bm incorporation
+      const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,0));
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,1));
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,2));
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,3));
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,4));
+      generalRows.controls[0].patchValue({ "Genus": "Zea" })
+      generalRows.controls[0].patchValue({ "Species": "mays" })
+      generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
+      generalRows.controls[0].patchValue({ "Infraspecific name": "B73" })
+      MaterialControl.controls[0].patchValue({ "Material source ID (Holding institute/stock centre, accession)": "INRA:B73" })
+      //MaterialControl.controls[1].patchValue({ "Material source ID (Holding institute/stock centre, accession)": "INRA:B73" })
+      biologicalMaterialControl.controls[0].patchValue({ "Biological material ID": "INRA:B73_1" })
+      biologicalMaterialControl.controls[0].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+      biologicalMaterialControl.controls[1].patchValue({ "Biological material ID": "INRA:B73_2" })
+      biologicalMaterialControl.controls[1].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+      biologicalMaterialControl.controls[2].patchValue({ "Biological material ID": "INRA:B73_3" })
+      biologicalMaterialControl.controls[2].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+      biologicalMaterialControl.controls[3].patchValue({ "Biological material ID": "INRA:B73_4" })
+      biologicalMaterialControl.controls[3].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+      biologicalMaterialControl.controls[4].patchValue({ "Biological material ID": "INRA:B73_5" })
+      biologicalMaterialControl.controls[4].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+    }  
+    this.startfilling=true
   }
   get_model() {
     this.model = [];
@@ -552,6 +607,9 @@ export class MaterialFormComponent implements OnInit {
             this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
+            let new_step=parseInt(this.currentUser.tutoriel_step)+1
+            this.currentUser.tutoriel_step=new_step.toString()
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
 
             return true;
           }

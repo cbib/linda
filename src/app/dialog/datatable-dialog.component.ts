@@ -33,14 +33,12 @@ tableData = [];
   }
   getDataFromSource() {
     this.globalService.get_data_file(this.model_key).subscribe(data => {
-      console.log(data)
       this.tableData = data.data;
       var columns = []
       var tableData_columns = Object.keys(this.tableData[0]);
       tableData_columns.forEach(key => {
         columns.push({title: key, data: key})
       });
-      console.log(columns)
       this.dtOptions = {
         data: this.tableData,
         columns: columns
