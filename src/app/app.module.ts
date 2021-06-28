@@ -229,7 +229,8 @@ import { TemplatesComponent } from './templates/templates.component';
     JoyrideModule.forRoot(),
     NgGanttEditorModule,
     GuidedTourModule,
-    NgxChartsModule  
+    NgxChartsModule,
+      
   ],
   entryComponents:[DialogComponent,
                    OntologyTreeComponent,

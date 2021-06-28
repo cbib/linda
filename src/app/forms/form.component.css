@@ -157,3 +157,9 @@ input:checked + .slider:before {
 .mat-slider-vertical{
   min-height: 60px;
 }
+li {
+  margin-bottom: 1px;
+}
+ul {
+  margin-bottom: 1px;
+}

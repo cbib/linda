@@ -392,6 +392,7 @@ export class GlobalService {
             'values': values,
             'model_type': model_type
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_observation_units"}`, obj2send);
     }
 

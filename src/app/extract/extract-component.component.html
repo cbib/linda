@@ -8,12 +8,13 @@
     </h3>
 </div>  
 <div>
+    
     <p>
-        In this page, you can extract component from data files of each studies of your investigation {{model_key}}
-        This investigation contains {{this.global[selected_file].length}} Studies. {{filename_used.length}} source filename has been 
+        In this page, you can extract components from data files to each study of your investigation {{model_key}}
+        <!-- This investigation contains {{global[selected_file].length}} Studies. {{filename_used.length}} source filename has been 
         found with a total of {{displayedcomponentColumns[selected_file].length}} column linked to "{{model_type_label}}" detected.
         If you click on variable header, you will select the whole column to extract. 
-        Using checkboxes in first column, you can unselect some rows if you don't want this study to be enriched with selected observed variables
+        Using checkboxes in first column, you can unselect some rows if you don't want this study to be enriched with selected observed variables -->
     
     </p>
     <br>
@@ -24,7 +25,7 @@
     </select> 
     <br>
     <br>
-    <h2>{{model_type_label}} assignment</h2>
+    <h2>Add a new {{model_type_label}}</h2>
     <p>
         Here are {{model_type_label}} in your data file, click on it to fill the form and add in LINDA database as {{model_type_label}}!! 
     </p>
@@ -32,8 +33,21 @@
       There are no {{model_type_label}} described in this datafile
     </p> -->
     <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
-      <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
+      <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column]['state'])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
         <span>{{column}}</span>
+      </mat-button-toggle> 
+    </mat-button-toggle-group>
+    <br>
+    <br>
+    <h2>link a existing {{model_type_label}}</h2>
+     We found a list of existing observed variables described in these studies. Is this the one you want to link with ? 
+    <p>
+        Here are {{model_type_label}}(s) in your data file, click on it to fill the form and add in LINDA database as {{model_type_label}} !! 
+       
+    </p>
+    <mat-button-toggle-group *ngFor="let observed_variable of ObservedVariables[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
+      <mat-button-toggle [ngStyle]="getToggleStyle('test')" (click)="$event ? clickToggleExisting(observed_variable['observed_variable'], selected_file) : null" value="{{observed_variable['observed_variable']['Trait']}}">
+        <span>{{observed_variable['observed_variable']['Variable name']}}</span>
       </mat-button-toggle> 
     </mat-button-toggle-group>
     <br>
@@ -47,17 +61,18 @@
             <ng-container *ngIf="column!='select' && column!='study ID'" matColumnDef="{{column}}">
               <th mat-header-cell  *matHeaderCellDef mat-sort-header> {{column}} </th>
                 <td  mat-cell class="flex-stretch" *matCellDef="let element"> 
-                    <button *ngIf="element[column]==='notfound'" [ngStyle]="getIconStyle('notfound')" class="btn btn-primary btn-xs"
+                    <button *ngIf="element[column]['state']==='notfound'" [ngStyle]="getIconStyle('notfound')" class="btn btn-primary btn-xs"
                        title="{{model_type}} not found">Not found
                     </button>
-                    <button *ngIf="element[column]==='unset'" [ngStyle]="getIconStyle('unset')" class="btn btn-primary btn-xs"
+                    <button *ngIf="element[column]['state']==='unset'" [ngStyle]="getIconStyle('unset')" class="btn btn-primary btn-xs"
                        title="{{model_type}} unset">Unset
                     </button>
-                    <button *ngIf="element[column]==='ready'" [ngStyle]="getIconStyle('ready')" class="btn btn-primary btn-xs"
+                    <button *ngIf="element[column]['state']==='ready'" [ngStyle]="getIconStyle('ready')" class="btn btn-primary btn-xs"
                        title="{{model_type}} ready to extract">Ready
                     </button>
-                    <button  *ngIf="element[column].includes(get_model_type())" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs"
-                       title="{{element[column]}}">Extracted
+                    <!-- <button  *ngIf="element[column]['id'].includes(get_model_type())" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs" -->
+                    <button  *ngIf="element[column]['state']==='extracted'" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs"
+                       title="{{element[column]['id']}}">Extracted
                     </button>
                   </td>
             </ng-container>

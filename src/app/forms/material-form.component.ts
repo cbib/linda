@@ -112,7 +112,7 @@ export class MaterialFormComponent implements OnInit {
         console.log(this.currentUser)
         if (this.currentUser['tutoriel_step'] === "9"){
             this.joyrideService.startTour(
-                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
             );
             //this.currentUser.tutoriel_step="2"
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
@@ -136,34 +136,37 @@ export class MaterialFormComponent implements OnInit {
     
     //Biological  form template
     if (this.currentUser['tutoriel_step']==="9"){
+      var species_list=["B73", "PH207", "Oh43", "W64A", "EZ47"]
       const generalRows = this.materialTable.get('generalRows') as FormArray;
-    
-      const MaterialControl = this.materialTable.get('materialRows') as FormArray;
-      MaterialControl.push(this.initiateMaterialForm());
-
-      // TODO finish bm incorporation
-      const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,0));
-      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,1));
-      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,2));
-      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,3));
-      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",0 ,4));
       generalRows.controls[0].patchValue({ "Genus": "Zea" })
       generalRows.controls[0].patchValue({ "Species": "mays" })
       generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
-      generalRows.controls[0].patchValue({ "Infraspecific name": "B73" })
-      MaterialControl.controls[0].patchValue({ "Material source ID (Holding institute/stock centre, accession)": "INRA:B73" })
-      //MaterialControl.controls[1].patchValue({ "Material source ID (Holding institute/stock centre, accession)": "INRA:B73" })
-      biologicalMaterialControl.controls[0].patchValue({ "Biological material ID": "INRA:B73_1" })
-      biologicalMaterialControl.controls[0].patchValue({ "Biological material preprocessing": "PECO:0007210" })
-      biologicalMaterialControl.controls[1].patchValue({ "Biological material ID": "INRA:B73_2" })
-      biologicalMaterialControl.controls[1].patchValue({ "Biological material preprocessing": "PECO:0007210" })
-      biologicalMaterialControl.controls[2].patchValue({ "Biological material ID": "INRA:B73_3" })
-      biologicalMaterialControl.controls[2].patchValue({ "Biological material preprocessing": "PECO:0007210" })
-      biologicalMaterialControl.controls[3].patchValue({ "Biological material ID": "INRA:B73_4" })
-      biologicalMaterialControl.controls[3].patchValue({ "Biological material preprocessing": "PECO:0007210" })
-      biologicalMaterialControl.controls[4].patchValue({ "Biological material ID": "INRA:B73_5" })
-      biologicalMaterialControl.controls[4].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+      generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
+      var cpt=0
+      var gbl_cpt=0
+      const MaterialControl = this.materialTable.get('materialRows') as FormArray;
+      const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+      species_list.forEach(species=>{
+
+        console.log(species)
+        
+        MaterialControl.push(this.initiateMaterialForm('create', cpt));
+        var m_id='INRA:'+species
+        console.log(m_id)
+        MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
+        // TODO finish bm incorporation
+        
+        
+        for (var i=1;i<11;i++){
+          var bm_id=m_id+'_' + i
+          console.log(bm_id)
+          biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",cpt ,i-1));
+          biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material ID": bm_id })
+          biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+          gbl_cpt+=1
+        }
+        cpt+=1
+      })
     }  
     this.startfilling=true
   }
@@ -329,7 +332,7 @@ export class MaterialFormComponent implements OnInit {
   }
 
   initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0,): FormGroup {
-    console.log(this.cleaned_model)
+    //console.log(this.cleaned_model)
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
       var value=''
@@ -666,6 +669,9 @@ export class MaterialFormComponent implements OnInit {
     this.marked = e.target.checked;
   };
   cancel(form: any) {
+    let new_step=parseInt(this.currentUser.tutoriel_step)-1
+    this.currentUser.tutoriel_step=new_step.toString()
+    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
 
   };

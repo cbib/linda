@@ -12,22 +12,50 @@
 
 <div style="overflow: auto"
     joyrideStep="StepDemoForm"
-    title="Here is a {{model_type}} Form Template to fill !! "
+    title=""
     [stepContent]="democontent"
     [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
-    (done)= "onDone()">
+    (next)= "on_Next()">
     <div class="border-head"><h3><a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a></h3></div>
     <div 
         class="btn-group"
         style="width: 100%;float: right;"
         joyrideStep="StepMenuForm"
-        title="Here is a {{model_type}} Form Menu !! "
+        title=""
         [stepContent]="menucontent"
         [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}">
-        <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button>
+        <button (click)="onClickTour(true)" style="float: right;" class="btn btn-light">Help</button>
         <button *ngIf="level<max_level" style="float: right;" class="btn btn-info" (click)="goToNext(modelForm,level)">Next</button>
         <!-- <span style="margin-right:10px;"></span>-->
-        <button class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || ((get_startfilling()===false && mode==='create'))">Submit</button>
+
+        <button 
+        joyrideStep="StepSubmit"
+        title=""
+        [stepContent]="submitcontent"
+        [stepPosition]="bottom"
+        [stepContentParams]="{'model_n':model_type}"
+        class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || ((get_startfilling()===false && mode==='create'))">Submit</button>
+        <!-- </div> -->
+        <ng-template #submitcontent let-nod="model_n">
+            <div>
+              <nav class="navbar navbar-expand-sm navbar-dark">
+                  <h3>
+                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span> </b><span style="color: black;"> : THE TUTORIAL</span></a>
+                  </h3>
+              </nav>
+            </div>
+            <h5>Data submission</h5>
+            <div *ngIf="help_mode">
+                <p> Feel free to complete the form !  <br>
+                When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
+            </div>
+            <div *ngIf="!help_mode">
+                <p>As you can see, your form has been filled with the corresponding values ! Feel free to complete the form !  <br>
+                    When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
+            </div>
+            
+            
+        </ng-template>
         <!-- <span style="margin-right:10px;"></span> -->
         <button (click)="cancel(modelForm)" style="float: right;" class="btn btn-danger">Cancel</button>
         <!-- <span style="margin-right:10px;"></span> -->
@@ -47,43 +75,88 @@
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
               </h3>
           </nav>
         </div>
 
         <div>
-
-            <p>This menu allows you to navigate to previous or next form page if exists (Not all forms have multiple pages !! ).</p>
-            <ul>
-                <li>The Save as template checkbox on the left will save your form as a template form, available for furthers reuses</li>
-                <li>Click on Cancel button if you want to go back in analysis</li>
-                <li>Click on Submit button when you have completed the form</li>
-            </ul>
-          
+            <div *ngIf="nod==='investigation'">
+                <h5>Investigations</h5>
+                <mat-card>
+                <p><b>Investigation</b> is the entry point of each MIAPPE dataset. It contains several general metadata fields 
+                    (e.g. title, description, submission/publication dates), including some critical for FAIRness 
+                    (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
+                </mat-card>
+            </div>
             <div *ngIf="nod==='study'">
-            <p>The Study form has three parts. </p>
-                <ul>
-                <li>Click on Next button if you want to go to next form panel</li>
-                <li>Click on Back button if you want to go back in analysis</li>
-                </ul>
+                <h5>Studies</h5>
+                <mat-card>
+                <p><b>Study</b> corresponds to one experiment and defines its location (which by definition must be single per study) 
+                    and duration. It lists general fields documenting the experiment (e.g. experimental design, cultural practices, 
+                    growth facility). Like the investigation, it contains a unique identifier field. An investigation must have one or more studies.  </p>
+                </mat-card>
             </div>
-            <p>Some field are mandatory like some unique identifiers (submit button unabled) while others are optional and can be filled later.<br>
-            There are three main types of fields:</p>
-            <ul>
-                <li>Field for free text or unique identifier</li>
-                <li>Field for ontology term selection</li>
-                <li>Field for date or time range</li>
-            </ul>
+            
             <div *ngIf="nod==='experimental_factor'">
-                <h2>Available ontologies for experimental factor description: </h2>
-                <ul>
-                    <li>EFO</li>
-                    <li>PECO</li>
-                </ul>
+                <h4>Experimental factors</h4>
 
             </div>
-
+            <div *ngIf="nod==='observed_variable'">
+                <h4>Observed variable</h4>
+            </div>
+            <div *ngIf="nod==='biological_material'">
+                <h4>Observed variable</h4>
+            </div>
+            <div *ngIf="nod==='observation_unit'">
+                <h4>Observation units</h4>
+            </div>
+            
+            <mat-card>
+            <h5>Menu options</h5>
+            <p>The highlighted menu allows you to navigate to previous or next form page if exists (Not all forms have multiple pages !! ).</p>
+            <div *ngIf="nod==='study'">
+            <ul>
+            <li><p>Click on <button class="btn btn-info" >Back</button> button if you want to go back in previous form page</p></li>
+            </ul>
+            </div>
+            <div *ngIf="nod==='observed_variable'">
+                <ul>
+                <li><p>Click on <button class="btn btn-info" >Back</button> button if you want to go back in previous form page</p></li>
+                </ul>
+            </div>
+            
+            <ul>
+                <li><p>Click on <button class="btn btn-danger" >Cancel</button> button if you want to cancel the current form</p></li>
+                <li><p>Click on <button class="btn btn-success" >Submit</button> button when you have completed the form</p></li>
+                <li><p>Click on <button class="btn btn-light" >Help</button> button to replay tutorial for this form</p></li>
+            </ul>
+            <div *ngIf="nod==='study'">
+                <ul>
+                <li><p>Click on <button class="btn btn-info" >Next</button> button if you want to go to next form page</p></li>
+                </ul>
+            </div>
+            <div *ngIf="nod==='observed_variable'">
+                <ul>
+                <li><p>Click on <button class="btn btn-info" >Next</button> button if you want to go to next form page</p></li>
+                </ul>
+            </div>
+            <ul>
+                <li><p><input class="form-check-input" type="checkbox" id="checkbox_example">
+                <label class="form-check-label" for="checkbox_example">Save as template</label> checkbox on the left will save your form as a template form, available for furthers reuses</p></li>
+            </ul>
+            </mat-card>
+            
+            <div *ngIf="nod==='experimental_factor'">
+                <mat-card>
+                <h5>Available ontologies</h5>
+                <ul>
+                    <li><p><b>EFO </b>:  The Experimental Factor Ontology (EFO) provides a systematic description of many experimental variables available in EBI databases, and for projects such as the GWAS catalog.</p> </li>
+                    <li><p><b>PECO </b>: A structured, controlled vocabulary which describes the treatments, growing conditions, and/or study types used in plant biology experiments.</p></li>
+                </ul>
+            </mat-card>
+            </div>
+            
         </div> 
       </ng-template>
 
@@ -99,7 +172,7 @@
     <form [formGroup]="modelForm">
         <div 
         joyrideStep="StepContentForm"
-        title="Here is a {{model_type}} form content  !! "
+        title=""
         [stepContent]="formcontent"
         [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}">
             <div class="form-group" *ngFor="let field of cleaned_model ; index as i;">
@@ -112,8 +185,8 @@
                     <!--ontology format =-->
                     <div 
                     *ngIf="model[field['key']].Format.includes('Ontology')"
-                    joyrideStep="Step1_3"
-                    title="Here is an ontology field !! "
+                    joyrideStep="StepOntologyField"
+                    title=""
                     [stepContent]="formOntologyContent"
                     [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
                     (done)= "onDone()">
@@ -142,22 +215,66 @@
                         <div>
                           <nav class="navbar navbar-expand-sm navbar-dark">
                               <h3>
-                                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                               </h3>
                           </nav>
                         </div>
                         <div *ngIf="nod==='study'">
+                            <h4>studies (field example)</h4>
                             <p>For study form, there are two field that you can fill using ontology trees</p>
                             <h5>Type of experimental design</h5>
+                                <p>
+                                    Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                                </p>
+                                <h5>Type of growth facility</h5>
+                            <p>
                                 Click on corresponding ontology button CO_715 or OBI to define your experimental design
-                            <h5>Type of growth facility</h5>
-                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+                            </p>
+                            <h6>Notes</h6>
+                            <p> You can use the search box in the  top of the ontology tree to quickly find terms </p>
                         </div>
-                        <div *ngIf="nod==='experimental factor'">
-                            <h3>Type of experimental design</h3>
-                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
-                            <h3>Type of growth facility</h3>
-                                Click on corresponding ontology button CO_715 or OBI to define your experimental design
+
+                        <div *ngIf="nod==='experimental_factor'">
+
+                            <h4>Experimental factors </h4>
+                            <mat-card>
+                            <h5>Ontology field (Ontology field)</h5>
+                            <p>
+                                Ontology term is required for this field. You can use tree at you disposal to explore the following ontologies
+                            </p>
+                            </mat-card>
+                            <mat-card>
+                            <h5>Experimental factor accession number</h5>
+                            <p>
+                                Click on corresponding ontology button EFO or PECO to define your experimental factor using ontology accession number
+                            </p>
+                            </mat-card>
+
+                        </div>
+                        <div *ngIf="nod==='observed_variable'">
+                            <h4>Observed variables</h4>
+                            <mat-card>
+                                <h5>Ontology field (Ontology field)</h5>
+                                <p>
+                                    Ontology term is required for this field. You can use tree at you disposal to explore the following ontologies
+                                </p>
+                            </mat-card>
+                            <mat-card>
+                                <h5>Trait accession number</h5>
+                                <p>
+                                    Click on available ontologies (CO_322, CO_325, CO_331, XEO, Solanacae) to define trait accession number. 
+                                    
+                                </p>
+                            </mat-card>
+                            <mat-card>
+                                <h6>Notes</h6>
+                                <p> 
+                                    You can use the search box in the  top of the ontology tree to quickly find terms 
+                                </p>
+                                <p>
+                                    If selected ontology term contains definition, this definition will filled the Trait name field 
+                                </p>
+                            </mat-card>
                         </div>
                         
                     </ng-template>
@@ -172,7 +289,7 @@
                                     [ngClass]="{ 'is-invalid': f[field['key']].errors }" /> -->
                             <div *ngIf="model[field['key']].Format.includes('Unique identifier') && model[field['key']].Position === '1' "
                                     joyrideStep="StepMandatoryID"
-                                    title="Here is a mandatory unique identifier field !! "
+                                    title=""
                                     [stepContent]="formUIcontent"
                                     [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
                                     (done)= "onDone()">
@@ -189,13 +306,35 @@
                                 <div>
                                   <nav class="navbar navbar-expand-sm navbar-dark">
                                       <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                       </h3>
                                   </nav>
                                 </div>
-                               <p> This field required a unique identifier !! 
-                                Moreover, you have to fill this kind of field in order to submit your form !
-                                There may be more than one field requiring a unique identifier in a form !!</p>
+                                <div *ngIf="nod === 'investigation'">
+                                    <h4>Investigations</h4>
+                                    </div>
+                                <mat-card>
+                                    <h5>Unique identifier field</h5>
+                                    <p> 
+                                       This field requires a unique identifier !! <br>
+                                    </p>
+                                </mat-card>
+                                
+                                <div *ngIf="nod === 'investigation'">
+                                <mat-card>
+                                    <h5>Investigation Unique ID (Unique identifier)</h5>
+                                    <p> 
+                                        Identifier comprising the unique name of the institution/database hosting the submission of the 
+                                        investigation data, and the accession number of the investigation in that institution. 
+                                    </p>
+                                </mat-card>
+                                </div>
+                                
+                                <mat-card>
+                                <h6>Notes</h6>
+                                <p> You must complete this kind of field in order to submit your form !! <br></p>
+                                    <p>In addition, there may be more than one field requiring a unique identifier in a form !!</p>
+                                </mat-card>
                                 
                                 <!-- <div *ngIf="nod === 'investigation'">
                                     <p> Let's add a new investigation!</p>
@@ -242,10 +381,10 @@
 
 
                             <div *ngIf="!model[field['key']].Format.includes('Unique identifier')"
-                                    joyrideStep="Step1_5"
-                                    title="Here is a non mandatory field !! !! "
+                                    joyrideStep="StepNormalField"
+                                    title=""
                                     [stepContent]="formNFcontent"
-                                    [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
+                                    [stepContentParams]="{'model_n':model_type}"
                                     (done)= "onDone()">
                                 <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
                                     placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
@@ -276,15 +415,55 @@
                                 </mat-slider> -->
                                 
                             </div>
-                            <ng-template #formNFcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                            <ng-template #formNFcontent let-nod="model_n">
                                 <div>
                                   <nav class="navbar navbar-expand-sm navbar-dark">
                                       <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                       </h3>
                                   </nav>
                                 </div>
-                                Here is the free text area to fill!!
+                                
+                                <div *ngIf="nod === 'investigation'">
+                                    <h4>Investigations</h4>
+                                    <mat-card>
+                                        <h5>Associated publication (free text field)</h5>
+                                        <p> 
+                                            An identifier for a literature publication where the investigation is described. Use of DOIs is recommended. 
+                                        </p>
+                                    </mat-card>    
+                                </div>
+                                <div *ngIf="nod === 'study'">
+                                    <h4>Studies </h4>
+                                    <mat-card>
+                                
+                                        <h5>Contact institution (Free text field)</h5>
+                                        <p> 
+                                            Name and adress of the institution responsible for the study 
+                                        </p>
+                                    </mat-card> 
+                                </div>
+                                    
+                                <div *ngIf="nod === 'experimental_factor'">
+                                    <h4>Experimental factors </h4>
+                                    <mat-card>
+                                    <h5>Experimental factor values (Formated text field)</h5>
+                                    <p> List of possible values for the factor separated by ;</p>
+                                    </mat-card> 
+                                </div>
+                                <div *ngIf="nod === 'observed_variable'">
+                                    
+                                    <h4>Observed variables</h4>
+                                    <mat-card>
+                                    <h5>Trait (Free text/Ontology field)</h5>
+                                        <p> Name of the (plant or environmental) trait under observation </p>
+                                    </mat-card>
+                                    <mat-card>
+                                        <h6>Notes</h6>
+                                        <p>This field  will be automatically filled when selecting Trait accession number with ontology tree;</p>
+                                    </mat-card>
+                                </div>
+                                
                             </ng-template>
                             
 
@@ -315,37 +494,77 @@
             <div>
               <nav class="navbar navbar-expand-sm navbar-dark">
                   <h3>
-                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                   </h3>
               </nav>
             </div>
 
-            <p>
-            For each field, you have to described either manually or automatically using differents 
-            kind of widgets thats help you to capture your data. </p>
+            
+            <div *ngIf="nod==='investigation'">
+                <h4>Investigations</h4>
+                <mat-card>
+                <h5>Field description</h5>
+                <p>
+                    For each field, you have to described either manually or automatically using differents 
+                    kind of widgets thats help you to capture your data. 
+                </p>
+                <p>
+                    Some field are mandatory like some unique identifiers (submit button unabled) while others are optional and can be filled later.<br>
+                    There are three main types of fields:
+                </p>
+                <ol>
+                    <li><p>Free text or unique identifier fields</p></li>
+                    <li><p>Ontology term selection field </p></li>
+                    <li><p>Date or time range field</p></li>
+                </ol>
+                </mat-card>
+                <mat-card>
+                <h5>Notes:</h5>
+                <p>
+                    These form must contain informations and details that describe your investigation (8 fields).
+                </p>
+                </mat-card>
+            </div>
             <div *ngIf="nod==='study'">
-                <p>These form contains informations and details to describe your study.
-                Let's add a new study! add the following</p>
+                <h4>Studies</h4>
+                <mat-card>
+                <p>
+                    These form contains twenty fields to fullfill in order to capture informations and details from your study. <br> 
+                    Like investigation, <b>Study identifier</b> requires to be <b>unique</b>. <br>
+                    Let's see what a unique identifier field looks like.
+                </p>
+                </mat-card>
+            
             </div>
             <div *ngIf="nod==='experimental_factor'">
-                <h5>Definition: </h5>
-                <p>The object of a study is to ascertain the impact of one or more factors on the biological material. Thus, a factor is, by definition a condition that varies between observation units, which may be biotic (pest, disease interaction) or abiotic (treatment and cultural practice) in nature. Depending on the level of the data, an experimental factor can be either  \"what is the factor applied to the plant\" (i.e. Unwatered), or the \"environmental characterisation\" (i.e. if no rain on unwatered plant : Drought ;  if rain on unwatered plant: Irrigated) </p>
-                <p>These form contains informations and details to describe your experimental factor.</p>
+                <h4>Experimental factors</h4>
+                <mat-card>
+                <p>
+                    These form contains four fields to fill out over two pages to describe your observed variable.. <br>
+                    You can use ontologies at your disposal ( EFO and PECO) to fill some of the form fields; 
+                </p>
+                </mat-card>
             </div>
             <div *ngIf="nod==='observed_variable'">
-                <p>These form contains informations and details to describe your observed variable.
-                The observed variable form contains 12 fields to fill. 
-                You can use available ontologies to easily fill this form; 
-            </p>
-                <p>There are four important parts to ffill to correctly describe an observed variable</p>
-                <ul>
-                    <li>The observed trait</li>
-                    <li>The observed variable</li>
-                    <li>The observation method</li>
-                   <li>the observation scale</li>
-                </ul>
-                
+                <h4>Observed variables</h4>
+                <mat-card>
+                <p>
+                    These form contains informations and details to describe your observed variable.<br> 
+                    The observed variable form contains twelve fields to fill out over two pages. <br>
+                    You can use available ontologies to easily fill this form; 
+                </p>
+                <p>
+                    There are four important parts to fill to correctly describe an observed variable
+                </p>
+                <ol>
+                    <li><p>The observed <b>trait</b></p></li>
+                    <li><p>The observed <b>variable</b></p></li>
+                    <li><p>The observation <b>method</b></p></li>
+                    <li><p>the observation <b>scale</b></p></li>
+                </ol>
+                </mat-card>
             </div>
+            
             
             
             <!-- <ng-template #studylevelone let-heading="heading" let-message="message">
@@ -445,57 +664,78 @@
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>
     <div *ngIf="nod === 'investigation'">
-        <p> Let's add a new investigation!</p>
+        <h4>Investigations</h4>
+        <mat-card>
+        <h5> Add a new investigation!</h5>
 
-        <p> Click on DONE to add the following investigation:</p>
+        <p> Click on <b>NEXT</b> to add a new investigation short-called <b>maizes1</b> with the following values:</p>
             <ul>
-            <li>  <p> Investigation unique ID : Maizes1</p></li>
-            <li> <p> Short title: maizes1</p></li>
+            <li> <p> <b>Investigation unique ID </b> : Maizes1</p></li>
+            <li> <p> <b>Short title </b> : maizes1 </p></li>
             </ul>
+        </mat-card>
+        <mat-card>
+        <h6>Notes</h6>
          <p> The other fields can be fullfilled later<br></p>
+        </mat-card>
     </div>
     <div *ngIf="nod === 'study'">
-        <p> Let's add a new study by clicking on Done!</p>
-        <p> Click on DONE to add the following study:</p>
+        <h4>Studies</h4>
+        <mat-card>
+        <h5> Add a new study!</h5>
+        <p> Click on <b>NEXT</b> to add a new study short-called <b>Study1</b> with the following values:</p>
             <ul>
-            <li>  <p>Study unique Id: MaizeStudy1</p></li>
-            <li> <p> Short title: Study1</p></li>
-            <li> <p> Start date of study : 1/06/2021</p></li>
-            <li> <p> End date of study : 30/06/2021</p></li>
-            <li> <p> Type of experimental design: CO_715:0000145</p></li>
-            <li> <p> Type of growth facility: CO_715:0000162</p></li>
-            <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
-        
+            <li> <p style="font-size: 14px;"> <b>Study unique Id </b> : MaizeStudy1</p></li>
+            <li> <p style="font-size: 14px;"> <b>Short title </b> : Study1</p></li>
+            <li> <p style="font-size: 14px;"> <b>Start date of study </b> : 1/06/2021</p></li>
+            <li> <p style="font-size: 14px;"> <b>End date of study </b> : 30/06/2021</p></li>
+            <li> <p style="font-size: 14px;"> <b>Type of experimental design </b> : CO_715:0000145</p></li>
+            <li> <p style="font-size: 14px;"> <b>Type of growth facility </b> : CO_715:0000162 </p></li>
+            <li> <p style="font-size: 14px;"> <b>Observation unit level hierarchy </b> : block &gt; rep &gt; plot</p></li>
+            <li> <p style="font-size: 14px;"> <b>Description of growth facility</b> : field environement condition</p></li>
+            <li> <p style="font-size: 14px;"> <b>Observation unit description</b> : Observation units consisted in individual plots themselves consisting of a row of 5 plants at a density of 1 plant per square meter</p></li>
+            <li> <p style="font-size: 14px;"> <b>Experimental site name</b> : INRA, UE Diascope - Chemin de Mezouls - Domaine experimental de Melgueil - 34130 Mauguio - France</p></li>
+            <li> <p style="font-size: 14px;"> <b>Study title</b> : 2021 evaluation of hydric stress for a panel of 5 maize line (B73, PH207, Oh43, W64A, EZ47) at the experimental station of Maugio (France).</p></li>
+            <li> <p style="font-size: 14px;"> <b>Cultural practices</b> : Irrigation was applied according needs for one field and not applied for the other during the month of june to compare water stress.</p></li>
+
         </ul>
+    </mat-card>
       
     </div>
     <div *ngIf="nod === 'experimental_factor'">
-        <p> Let's add a new experimental factor!</p>
-        <p> Click on DONE to add the following experimental factor:</p>
+        <h4>Experimental factors</h4>
+        <mat-card>
+        <h5> Add a new experimental factor!</h5>
+        <p> Click on <b>NEXT</b> to add a new experimental factor of type <b>Watering</b> with the following values:</p>
             <ul>
-            <li>  <p> Experimental Factor type: Watering</p></li>
-            <li> <p> Experimental Factor values: rainfed;watered</p></li>
-            <li> <p> Experimental Factor accession number : EFO:0000470</p></li>
+            <li> <p> <b>Experimental Factor type </b>: Watering</p></li>
+            <li> <p> <b>Experimental Factor values </b>: rainfed;watered</p></li>
+            <li> <p> <b>Experimental Factor accession number </b> : EFO:0000470</p></li>
             </ul>
+        </mat-card>
         
       
     </div>
     <div *ngIf="nod === 'observed_variable'">
-        <p> Let's add a new observed variable!
-            For example, add a new observed variable called Plant height !
-            Click on DONE to add the following Observed variable</p>
+        <h4>Observed variables</h4>
+        <mat-card>
+            <h5> Add a new observed variable!</h5>
+            <p>
+                Click on <b>NEXT</b> to add a new observed variable called <b>Plant height</b> with the following values : <br>
+            </p>
                 <ul>
-                    <li><p> Variable ID : PH_M_cm</p></li>
-                    <li><p> Trait m: Plant height</p></li>
-                    <li><p> Method : PH - Measurement</p></li>
-                    <li><p> Scale : cm</p></li>
+                    <li><p> <b>Variable ID </b> : PH_M_cm</p></li>
+                    <li><p> <b>Trait </b> : Plant height</p></li>
+                    <li><p> <b>Method </b> : PH - Measurement</p></li>
+                    <li><p> <b>Scale </b> : cm</p></li>
                 </ul>
-                <p> You can use the search box in the  top of the ontology tree to quickly find terms </p>
+        </mat-card>
+                
       
     </div>
 </ng-template>

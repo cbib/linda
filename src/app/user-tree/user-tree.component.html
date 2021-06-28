@@ -21,10 +21,9 @@
     </div> -->
     <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button>
     <div style="overflow: auto"
-    joyrideStep="nextStep" title="Next steps !! "
+    joyrideStep="nextStep" title=""
     [stepContent]="nextSteps"
     [stepContentParams]="{'tuto_l':get_tutoriel_level()}"
-    
     >
         <mat-card>
             <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
@@ -38,8 +37,10 @@
             <mat-drawer-container class="example-container">
                 <div class="example-sidenav-content"
                 joyrideStep="step_overview" 
-                title="Project overview"
-                text="Here is the main page for project overview. All your projects and studies will be stored in this investigation tree. Tree nodes are expandables if they had child(s) component(s) (e.g an investigation could contain one or more studies)">      
+                title=""
+                [stepContent]="overviewcontent"
+                [stepContentParams]="{'tuto_l':get_tutoriel_level()}"
+                >      
                     <div *ngIf="!loaded" class="d-flex justify-content-center">
                         <div class="spinner-border" role="status">
                             <span class="sr-only" id="loading"></span>
@@ -54,9 +55,13 @@
 
                         <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding
                                        title="{{node.def}}">
-                            <div joyrideStep="stepNode" title="Here is a {{get_model_type_for_wizard(node)}} Node !! "
-                                 [stepContent]="genericleafcontent"
-                                 [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}" [ngStyle]="getStyle(node)">
+                            <div 
+                            joyrideStep="stepNode" 
+                            title=""
+                            [stepContent]="genericleafcontent"
+                            [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}" 
+                            [ngStyle]="getStyle(node)"
+                            >
                                 <!-- use a disabled button to provide padding for tree leaf -->
                                 <!--                                 <button mat-icon-button style="margin-right:  200px" [attr.aria-label]="node.name">
                                      <mat-icon class="mat-icon-rtl-mirror">{{'arrow_right'}}</mat-icon>
@@ -78,7 +83,7 @@
 
                                 <div class="btn-group" style="float: right;" 
                                     joyrideStep="stepButtonPanel"
-                                    title="Here is the button panel for {{get_model_type_for_wizard(node)}} node!! "
+                                    title=""
                                     (next)="onNext(node, get_model_type_for_wizard(node))"
                                     (done)="onDone(node, get_model_type_for_wizard(node))"
                                     [stepContent]="LeafButtonContent"
@@ -88,35 +93,35 @@
                                     <!-- ISA EXPORT BUTTON-->
                                     <div 
                                         joyrideStep="step8_2"
-                                        title="Here is the ISA  export button for {{get_model_type_for_wizard(node)}} node!! "
+                                        title=""
                                         [stepContent]="InvestigationISAButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     >
                                         <!-- <button title="Here is the button to export is ISA format!! " style="float: right;" *ngIf="node.id.includes('investigations')" (click)="onExportIsa(node)" class="btn btn-light btn-xs fa"></button> -->
                                         <button style="float: right;" *ngIf="node.id.includes('investigations')" (click)="onExportIsa(node)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
                                     </div>
-                                    <ng-template #InvestigationISAButtonContent let-nod="model_n">
+                                    <ng-template style="width: 400px;" #InvestigationISAButtonContent let-nod="model_n">
                                         <div>
                                             <nav class="navbar navbar-expand-sm navbar-dark">
-                                                <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                             </nav>
                                         </div>
-                                        Click if you want  export your whole investigation in ISA tab format (included chils components )!! 
+                                        Click if you want  export your whole investigation in ISA tab format (included childs components )!! 
                                     </ng-template>
 
                                     <!-- TABULAR AND JSON EXPORT BUTTON-->
                                     <div 
                                         joyrideStep="stepButtonExportCSV"
-                                        title="Here is the csv/json export button for {{get_model_type_for_wizard(node)}} node!! "
+                                        title=""
                                         [stepContent]="InvestigationCSVButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     >
                                         <button title="Here is the button to export as popular tabular format!! " style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                     </div>
-                                        <ng-template #InvestigationCSVButtonContent let-nod="model_n">
+                                        <ng-template style="width: 400px;" #InvestigationCSVButtonContent let-nod="model_n">
                                             <div>
                                                 <nav class="navbar navbar-expand-sm navbar-dark">
-                                                    <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                    <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                                 </nav>
                                             </div>
                                             <p>Click if you want to export your {{get_model_type_for_wizard(node)}} in csv or json format (included or not child components) !! </p>
@@ -126,7 +131,7 @@
                                     <!-- EDIT BUTTON-->
                                     <div 
                                         joyrideStep="stepButtonEdit"
-                                        title="Here is the Edit button for {{get_model_type_for_wizard(node)}} node!! "
+                                        title=""
                                         [stepContent]="InvestigationEditButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     >
@@ -134,10 +139,10 @@
                                                 (click)="onEdit(node)" class="btn btn-primary btn-xs fa fa-pencil"
                                                 title="{{node.def}}"></button>
                                     </div>
-                                    <ng-template #InvestigationEditButtonContent let-nod="model_n">
+                                    <ng-template style="width: 400px;" #InvestigationEditButtonContent let-nod="model_n">
                                         <div>
                                             <nav class="navbar navbar-expand-sm navbar-dark">
-                                                <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                             </nav>
                                         </div>
                                         <p>Clik if you want to edit your {{get_model_type_for_wizard(node)}} !! </p>
@@ -147,7 +152,7 @@
                                     <!-- REMOVE BUTTON-->
                                     <div 
                                         joyrideStep="stepButtonRemove"
-                                        title="Here is the Remove button for {{get_model_type_for_wizard(node)}} node!! "
+                                        title=""
                                         [stepContent]="InvestigationRemoveButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                         (done)= "onDone(node, get_model_type_for_wizard(node))"
@@ -156,10 +161,10 @@
                                             (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o"
                                             confirm="Are you sure?"></button>
                                     </div>
-                                    <ng-template #InvestigationRemoveButtonContent let-nod="model_n">
+                                    <ng-template style="width: 400px;" #InvestigationRemoveButtonContent let-nod="model_n">
                                             <div>
                                                 <nav class="navbar navbar-expand-sm navbar-dark">
-                                                    <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                    <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                                 </nav>
                                             </div>
                                            <p>Clik if you want to remove your {{get_model_type_for_wizard(node)}} !! </p>
@@ -175,7 +180,7 @@
                                     
                                     <div
                                     joyrideStep="stepButtonAdd"
-                                    title="Here is the Add Button for {{get_model_type_for_wizard(node)}} node!!  "
+                                    title=""
                                     [stepContent]="InvestigationAddButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     (done)="onDone(node,get_model_type_for_wizard(node))"
@@ -191,10 +196,10 @@
                                     
                                     </div>
                                     
-                                    <ng-template #InvestigationAddButtonContent let-nod="model_n">
+                                    <ng-template style="width: 400px;" #InvestigationAddButtonContent let-nod="model_n">
                                         <div>
                                             <nav class="navbar navbar-expand-sm navbar-dark">
-                                                <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                             </nav>
                                         </div>
                                         <p>Clik if you want to add your {{get_model_type_for_wizard(node)}} !! </p>
@@ -217,7 +222,7 @@
 
                                     <div
                                     joyrideStep="stepButtonAssign"
-                                    title="Here is the Assign button for {{get_model_type_for_wizard(node)}} node!! "
+                                    title=""
                                     [stepContent]="InvestigationAssignButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     (done)="onDone(node,get_model_type_for_wizard(node))"
@@ -226,10 +231,10 @@
                                         <button title="Here is the button to assign MIAPPE component to observations units data file!! " (click)="onClick(node)" [matMenuTriggerFor]="investigationToolsMenu" class="btn btn-primary btn-xs fa fa-wrench" *ngIf="node.id.includes('investigations')"></button>
                                     </a>
                                     </div>
-                                    <ng-template #InvestigationAssignButtonContent let-nod="model_n">
+                                    <ng-template style="width: 400px;" #InvestigationAssignButtonContent let-nod="model_n">
                                         <div>
                                             <nav class="navbar navbar-expand-sm navbar-dark">
-                                                <h3><a class="logo"><b>P<span>L</span>antexper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b></a></h3>
+                                                <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>talmeta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3>
                                             </nav>
                                         </div>
                                         <p> the Assign button allows you to manipulate datafiles directly to link some components (observed variable, timeline series, observation units from your investigation) with real datafiles.
@@ -248,24 +253,101 @@
                                     </a>   -->
 
                                 </div>
-                                <ng-template #LeafButtonContent let-nod="model_n">
+                                <ng-template style="width: 400px;" #LeafButtonContent let-nod="model_n">
                                     <div>
                                         <nav class="navbar navbar-expand-sm navbar-dark">
                                             <h3>
                                                 <a class="logo"><b>P<span>L</span>ant
                                                     exper<span>I</span>me<span>N</span>tal
-                                                    meta<span>D</span>at<span>A</span></b></a>
+                                                    meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                             </h3>
                                         </nav>
                                     </div>
                                     <div *ngIf="nod === 'Root'">
-                                        <p>Here is the button panel where you can add Investigation component. </p>
-                                    
-        
+                                        <h4>Root node</h4>
+                                        <mat-card>
+                                            <p>
+                                                Here is the button panel where you can add an Investigation component. 
+                                            </p>
+                                        </mat-card>
                                     </div>
-                                    <div *ngIf="nod !== 'Root'">
-                                        <p> Here is the button panel where you can add, remove, edit and export MIAPPE
-                                        component.</p>
+                                    <div *ngIf="nod == 'investigation'">
+                                        <h4>Investigation</h4>
+                                        <mat-card>
+                                         <p>Here is the Investigation button panel where you will find :<br></p>
+                                            <ul>
+                                             <li> <p>The <button class="btn btn-success btn-xs fa fa-plus"></button> button to add new Study in your investigation. </p></li>
+                                             <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove either component, its childs, or both.</p></li>
+                                             <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your investigation form</p></li>
+                                             <li> <p>The <button class="btn btn-primary btn-xs fa fa-wrench"></button> button to assign component from data files </p></li>  
+                                             <li> <p>The <button class="btn btn-light btn-xs fa"><i class="icon-play"></i></button> button to export part of or complete investigation with respect to ISA tab Hierarchy and Format</p></li>
+                                             <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export part of or complete investigation with childs components in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
+                                    </div>
+                                    <div *ngIf="nod == 'study'">
+                                        <h4>Studies</h4>
+                                        <mat-card>
+                                        <p>Here is the study button panel where you will find :<br></p>
+                                           <ul>
+                                            <li> <p>The <button class="btn btn-success btn-xs fa fa-plus"></button> button to add new sub-components like observed variables, events, experimental factors in your investigation. </p></li>
+                                            <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove either component, its childs, or both.</p></li>
+                                            <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your investigation form</p></li>
+                                            <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export part of or complete sttudy with childs components in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
+                                    </div>
+                                    <div *ngIf="nod == 'experimental_factor'">
+                                        <h4>Experimental factors</h4>
+                                        <mat-card>
+                                        <p>
+                                            Here is the experimental factor button panel where you will find :<br>
+                                        </p>
+                                        <ul>
+                                            <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove Experimental factor component.</p></li>
+                                            <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your experimental factor form</p></li>
+                                            <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export experimental factor form in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
+                                    </div>
+                                    <div *ngIf="nod == 'observed_variable'">
+                                        <h4>Observed variables</h4>
+                                        <mat-card>
+                                        <p>
+                                            Here is the observed variable button panel where you will find :<br>
+                                        </p>
+                                        <ul>
+                                            <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove observed variable component.</p></li>
+                                            <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your observed variable form</p></li>
+                                            <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export observed variable form in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
+                                    </div>
+                                    <div *ngIf="nod == 'observation_unit'">
+                                        <h4>Observation units</h4>
+                                        <mat-card>
+                                        <p>
+                                            Here is the observation unit button panel where you will find :<br>
+                                        </p>
+                                        <ul>
+                                            <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove observation unit component.</p></li>
+                                            <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your observation unit form</p></li>
+                                            <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export observation unit form in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
+                                    </div>
+                                    <div *ngIf="nod == 'biological_material'">
+                                        <h4>Biological materials</h4>
+                                        <mat-card>
+                                        <p>
+                                            Here is the biological material button panel where you will find :<br>
+                                        </p>
+                                        <ul>
+                                            <li> <p>The <button class="btn btn-danger btn-xs fa fa-trash-o"></button> button to remove biological material component.</p></li>
+                                            <li> <p>The <button class="btn btn-primary btn-xs fa fa-pencil"></button> button to edit your biological material form</p></li>
+                                            <li> <p>The <button class="btn btn-light btn-xs fa fa-upload"></button> button to export biological material form in csv, tsv, json format</p></li>                                               
+                                        </ul>
+                                        </mat-card>
                                     </div>
                                 </ng-template>
                                 <mat-accordion>
@@ -298,20 +380,29 @@
                                                 <!-- <mat-checkbox *ngIf=" multiple_selection===true" class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox> -->
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <table *ngIf="!node.id.includes('observation_units')"
-                                               class="table table-hover table-bordered  table-striped text-center">
+                                        <table *ngIf="!node.id.includes('observation_units')" class="table table-hover table-bordered  table-striped text-center">
                                             <tbody>
                                             <tr *ngFor="let key of get_current_data(node) ; index as j;">
-                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}
-                                                </td>
+                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
                                                 <td *ngIf="key.includes('file link')"
                                                     style="font-size:14px;text-align: center; color: blue; "
-                                                    scope="row"><a href="{{get_current_data_array(node)[0][key]}}"
-                                                                   target="_blank">{{get_current_data_array(node)[0][key]}}</a>
+                                                    scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a>
                                                 </td>
                                                 <td *ngIf="!key.includes('file link')"
                                                     style="font-size:14px;text-align: center;" scope="row">
-                                                    {{get_current_data_array(node)[0][key]}}
+                                                    <div *ngIf="isArray(get_current_data_array(node)[0][key])">
+                                                        <mat-chip-list>
+                                                            <mat-chip class="example-box" *ngFor="let id of get_current_data_array(node)[0][key][0]"> {{id}} </mat-chip>
+                                                        </mat-chip-list>
+                                                    </div>
+                                                    <div *ngIf="!isArray(get_current_data_array(node)[0][key])">
+                                                        {{get_current_data_array(node)[0][key]}}
+                                                    </div>
+                                                    <!-- <div *ngIf="get_current_data_array(node)[0][key][0] && !isArray(get_current_data_array(node)[0][key][0])">
+                                                        {{get_current_data_array(node)[0][key][0]}}
+                                                    </div> -->
+                                                   
+                                                    <!-- <mat-chip>{{get_current_data_array(node)[0][key]}}</mat-chip> -->
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -522,43 +613,104 @@
                                     </mat-expansion-panel>
                                 </mat-accordion>
                             </div>
-                            <ng-template #genericleafcontent let-nod="model_n">
+                            <ng-template style="width: 400px;" #genericleafcontent let-nod="model_n">
                                 <div>
                                     <nav class="navbar navbar-expand-sm navbar-dark">
                                         <h3>
                                             <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
-                                                meta<span>D</span>at<span>A</span></b></a>
+                                                meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                         </h3>
                                     </nav>
                                 </div>
                                 <div *ngIf="nod === 'Root'">
-                                    The {{nod}} type contains all your investigations and studies. it
-                                    does not have investigation component described yet.
-                                    Let's click "
+                                    <h4>Root node</h4>
+                                    <mat-card>
+                                    <p>
+                                        The Root node type contains all your investigations and their child components (studies and their own child components (experimental factor, observed variables,.etc)). 
+                                        it does not have any investigation component described yet.
+                                    </p>
+                                    </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'experimental_factor'">
-                                    <p>The {{nod}} type contains informations and details about the experimental factor used in your study. 
+                                    <h4>Experimental factors</h4>
+                                    <mat-card>
+                                    <p>Congratulations you have created your first experimental factor <b>Watering</b>   !!! </p>
+                                    <p>The experimental factor type contains informations and details about the experimental factor used in your study. 
                                     Multiple factors can be added either one by one or using data extractor from linda 
                                     Experimental factor cannot have childs.
                                     By clicking on the lower part of the Node, you will see details about it.</p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="nod === 'observed_variable'">
+                                    <h4>Observed variables</h4>
+                                    <mat-card>
+                                        <p>
+                                            Congratulations you have created your first observed variable <b>plant height</b>   !!! 
+                                        </p>
+                                        <h5>Observed variables details</h5>
+                                        <p>
+                                            The observed variable type contains informations and details about the observed variable used in your study. 
+                                            Multiple variables can be added either one by one or using data extractor from linda. <br>
+                                            Observed variable cannot have childs.
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                        </p>
+                                    </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'study'">
-                                    <p> {{nod}} type contains informations and details about the related component. it
-                                    does not have child component described yet but could contain studies
-                                    By clicking on the lower part of the Node, you will see details about it. If node has
-                                    child(s), click on the upper left to expand the node and reveal its children</p>
+                                    <h4>Studies</h4>
+                                    <mat-card>
+                                    <p>Congratulations you have created your first study !!! </p>
+       
+                                    <h5>Study details</h5>
+                                        <p>
+                                            By clicking on the lower part of the Node, you will see details about it. <br>
+                                        </p>
+                                   
+                                    <h5>Tree expansion</h5>
+                                        <p>
+                                            If Study node has at least one child node, click on the upper left to expand the node and reveal child node.<br>
+                                            This study does not have child component described yet <br>
+                                        </p>
+                                    </mat-card>
+                                    <mat-card>
+                                    <h6>Notes:</h6>  
+                                        <p>
+                                            Remember that Study type could have many components as children (observed variable, biological material, etc.)
+                                        </p>
+                                    </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'investigation'">
-                                    <p>The {{nod}} type contains informations and details about your investigation component. <br>
-                                    Investigation is the highest level in MIAPPE hierarchy.</p>
-                                    <h4>{{nod}} description</h4>
-                                        <p>By clicking on the lower part of the Node, you will see details about it. </p>
                                     
-                                    <h4>{{nod}} childs</h4>
-                                        <p>If node has child(s), click on the upper left to expand the node and reveal its children
-                                        This investigation does not have child component described yet </p>
-                                        <br>
-                                        <p>Remember that Study component is the only possible child for an investigation</p>
+                                    
+                                    <h4>Investigations</h4>
+                                    <mat-card>
+                                    <h5>Investigation node</h5>
+                                    <p>
+                                        Investigation is the highest level in your investigations tree hierarchy.
+                                    </p>
+                                    <p>
+                                        The {{nod}} node type contains informations and details about the related component.
+                                    </p>
+                                    </mat-card>
+                                    <mat-card>
+                                    <h5>Investigation details</h5>
+                                        <p>
+                                            By clicking on the lower part of the Node, you will see details about it. <br>
+                                        </p>
+                                    </mat-card>
+                                    <mat-card>
+                                    <h5>Tree expansion</h5>
+                                        <p>
+                                            If Investigation node has at least one child node, click on the upper left to expand the node and reveal child node. <br>
+                                            This investigation does not have child component described yet <br>
+                                        </p>
+                                    </mat-card>
+                                    <mat-card>
+                                    <h6>Notes:</h6>  
+                                        <p>
+                                            Remember that Study type components are the only possible children for an investigation type component
+                                        </p>
+                                    </mat-card>
                                 </div>
                             </ng-template>
                         </mat-tree-node>
@@ -569,7 +721,7 @@
 
                         <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild"
                                        matTreeNodePadding>
-                            <div joyrideStep="step7" title="Here is a {{get_model_type_for_wizard(node)}} Node !! "
+                            <div joyrideStep="step7" title=""
                                  [stepContent]="genericnodecontent"
                                  [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}" [ngStyle]="getStyle(node)">
 
@@ -604,7 +756,7 @@
                                 <div 
                                     class="btn-group" style="float: right;" 
                                     joyrideStep="step7_1"
-                                    title='<div class="border-head"><h3><a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a></h3></div>Here is the button panel for {{get_model_type_for_wizard(node)}} node!!'
+                                    title=""
                                     [stepContent]="investigationButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}">
                                     
@@ -639,18 +791,20 @@
                                     <button  (click)="onClick(node)" [matMenuTriggerFor]="OUMenu" class="btn btn-success btn-xs fa fa-plus"></button>
                                 </a> -->
                                 </div>
-                                <ng-template #investigationButtonContent let-nod="model_n">
+                                <ng-template style="width: 400px;" #investigationButtonContent let-nod="model_n">
                                     <!-- <div>
                                         <nav class="navbar navbar-expand-sm navbar-dark">
                                             <h3>
                                                 <a class="logo"><b>P<span>L</span>ant
                                                     exper<span>I</span>me<span>N</span>tal
-                                                    meta<span>D</span>at<span>A</span></b></a>
+                                                    meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                             </h3>
                                         </nav>
                                     </div> -->
-                                    <p>Here is the button panel where you can add, remove, edit and export any component in
-                                    your investigation tree</p>
+                                    <h4>Button panel</h4>
+                                    <p>
+                                        Here is the button panel where you can add, remove, edit and export any component in your investigation tree
+                                    </p>
                                 </ng-template>
                                 <mat-accordion *ngIf="!node.id.includes('Investigations tree')">
                                     <mat-expansion-panel (opened)="panelOpenState = true" (click)="show_info(node)"
@@ -662,14 +816,13 @@
                                                 <!-- <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox> -->
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <table *ngIf="get_model_selected()!=='metadata_files'"
-                                               class="table table-hover table-bordered  table-striped text-center">
+                                        <table *ngIf="get_model_selected()!=='metadata_files'" class="table table-hover table-bordered  table-striped text-center">
                                             <tbody>
                                             <tr *ngFor="let key of get_current_data(node) ; index as j;">
                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}
                                                 </td>
                                                 <td style="font-size:14px;text-align: center; " scope="row">
-                                                    {{get_current_data_array(node)[0][key]}}
+                                                    <mat-chip>{{get_current_data_array(node)[0][key]}}</mat-chip>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -677,23 +830,86 @@
                                     </mat-expansion-panel>
                                 </mat-accordion>
                             </div>
-                            <ng-template #genericnodecontent let-nod="model_n">
+                            <ng-template style="width: 400px;" #genericnodecontent let-nod="model_n">
                                 <div>
                                     <nav class="navbar navbar-expand-sm navbar-dark">
                                         <h3>
                                             <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
-                                                meta<span>D</span>at<span>A</span></b></a>
+                                                meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                         </h3>
                                     </nav>
                                 </div>
-                                <p>The {{nod}} node type contains informations and details about the related component. it
-                                does have child component.</p>
-                                <p>By clicking on the lower part of the Node, you will see details about it. Click on the
-                                upper left to expand the node and reveal its children"</p>
+                                <div *ngIf="nod==='investigation'">
+                                    <h5>Investigations</h5>
+                                    <p>
+                                        The {{nod}} node type contains informations and details about the related component.
+                                    </p>
+                                    
+                                    <h5>Investigation details</h5>
+                                    <p>
+                                        By clicking on the lower part of the Node, you will see details about it. <br>
+                                        Click on the upper left to expand the node to reveal its children"
+                                    </p>
+                                </div>
                             </ng-template>
                         </mat-tree-node>
                     </mat-tree>
                 </div>
+                <ng-template style="width: 400px;" #overviewcontent let-ttl="tuto_l">
+                    <div>
+                        <nav class="navbar navbar-expand-sm navbar-dark">
+                            <h3>
+                                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                                    meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                            </h3>
+                        </nav>
+                    </div>
+                    <h4>Welcome in LINDA Tutorial ! </h4>
+                    <mat-card>
+                    <h5>Step by step procedure</h5>
+                    <p>
+                        Throughout this material, you will be guided step by step in the creation of a complete investigation containing 
+                        one study. This study aims to compare two differents conditions (rainfed and watered) for a experimental factor <b>Watering</b> representing an environmental stress on two batches of corn plants.
+                    </p>
+                    </mat-card>
+                    <mat-card>
+                    <h5>Projects tree</h5>
+                    <p>
+                        Let's start the tutorial by taking a look at the projects tree. 
+                        All your projects and studies will be stored in this investigation tree. 
+                        Tree nodes are expandables if they had child(s) component(s) (e.g an investigation could contain one or more studies).
+                    </p>
+                    </mat-card>
+                    <!-- <div *ngIf="nod === 'Root'">
+                        <p>The {{nod}} type contains all your investigations and their child components (studies and their own child components (experimental factor, observed variables,.etc)). 
+                        it does not have investigation component described yet.</p>
+                        
+                    </div>
+                    <div *ngIf="nod === 'experimental_factor'">
+                        <p>The {{nod}} type contains informations and details about the experimental factor used in your study. 
+                        Multiple factors can be added either one by one or using data extractor from linda 
+                        Experimental factor cannot have childs.
+                        By clicking on the lower part of the Node, you will see details about it.</p>
+                    </div>
+                    <div *ngIf="nod === 'study'">
+                        <p> {{nod}} type contains informations and details about the related component. it
+                        does not have child component described yet but could contain studies
+                        By clicking on the lower part of the Node, you will see details about it. If node has
+                        child(s), click on the upper left to expand the node and reveal its children</p>
+                    </div>
+                    <div *ngIf="nod === 'investigation'">
+                        <p>The {{nod}} type contains informations and details about your investigation component. <br>
+                        Investigation is the highest level in MIAPPE hierarchy.</p>
+                        <h4>{{nod}} description</h4>
+                            <p>By clicking on the lower part of the Node, you will see details about it. </p>
+                        
+                        <h4>{{nod}} childs</h4>
+                            <p>If Investigation node has at least one child node, click on the upper left to expand the node and reveal child node
+                            This investigation does not have child component described yet </p>
+                            <br>
+                            <p>Remember that Study component is the only possible child for an investigation</p>
+                    </div> -->
+                </ng-template>
                 
             </mat-drawer-container>
         </mat-card>
@@ -708,41 +924,7 @@
              [style.top]="userMenusecondPosition.y" [matMenuTriggerFor]="userMenusecond">
         </div>
         
-        <div style="visibility: hidden; position: fixed" [style.left]="investigationMenuPosition.x"
-        [style.top]="investigationMenuPosition.y" [matMenuTriggerFor]="investigationMenu">
-   </div>
-  
-   <ng-template #nextSteps let-tutl="tuto_l">
-    <div>
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <h3>
-                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
-                    meta<span>D</span>at<span>A</span></b></a>
-            </h3>
-        </nav>
-    </div>
-    <div *ngIf="tutl==='0'">
-    <p>Select Investigation &gt; From original model template</p>
-    </div>
-    <div *ngIf="tutl==='2'">
-        <p>Click on + to open Menu for Investigation and select Study &gt; From original model template !! </p>
-    </div>
-    <div *ngIf="tutl==='4'">
-        <p>Click on + to open Menu for study "Study1" and select Experimental factor &gt; From original model template !! </p>
-    </div>
-    <div *ngIf="tutl==='6'">
-        <p>Click on + to open Menu for study "Study1" and select Observed variable &gt; From original model template !! </p>
-    </div>
-    <div *ngIf="tutl==='8'">
-        <p>Click on + to open Menu for study "Study1" and select Biological Material &gt; From original model template !! </p>
-    </div>
-    <div *ngIf="tutl==='10'">
-        <p>Click on + to open Menu for study "Study1" and select Observation units &gt; From original model template !! </p>
-    </div>
-</ng-template>
-  
-        
-
+        <div style="visibility: hidden; position: fixed" [style.left]="investigationMenuPosition.x" [style.top]="investigationMenuPosition.y" [matMenuTriggerFor]="investigationMenu"></div>
         <mat-menu #globalmenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button mat-menu-item [matMenuTriggerFor]="multipleMenu">
@@ -798,7 +980,7 @@
         </mat-menu>
         <mat-menu #investigationMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond">Study</button>
-            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi">Studies</button>
+            <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi">Data files</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_variable">Observed variables</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_OU">Observation units</button>
             <button mat-menu-item [matMenuTriggerFor]="investigationMenusecond_multi_BM">Biological materials</button>
@@ -811,7 +993,7 @@
                                                                                           style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
         </mat-menu>
         <mat-menu #investigationMenusecond_multi="matMenu">
-            <button mat-menu-item (click)="add_from_file('study','multi')">From csv file</button>
+            <button mat-menu-item (click)="add_from_file('study','multi')">From tabular files</button>
         </mat-menu>
         <mat-menu #investigationMenusecond_multi_variable="matMenu">
             <button mat-menu-item (click)="add_from_data_file('observed_variable')">From data files</button>
@@ -895,6 +1077,135 @@
                                                                                           style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
         </mat-menu>
     </div>
+    <ng-template style="width: 400px;" #nextSteps let-tutl="tuto_l">
+        <div>
+            <nav class="navbar navbar-expand-sm navbar-dark">
+                <h3>
+                    <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                        meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                </h3>
+            </nav>
+        </div>
+        <div *ngIf="tutl==='0'">
+            <h4>Investigations</h4>
+            <mat-card>
+            <h5>What about investigations ?</h5>
+            <p><b>Investigation  </b>is the entry point of each MIAPPE dataset. It contains several general metadata fields (e.g. title, description, submission/publication dates), including some critical for FAIRness (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add a new investigation</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for root node and select Investigation &gt; From original model template</p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='2'">
+            <h4>Studies</h4>
+            <mat-card>
+            <h5>What about studies ?</h5>
+            <p><b>Study </b> corresponds to one experiment and defines its location (which by definition must be single per study) and duration. 
+            It lists general fields documenting the experiment (e.g. experimental design, cultural practices, growth facility). 
+            Like the investigation, it contains a unique identifier field. An investigation must have one or more studies.  </p>
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add a new study</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> in your investigation button panel to open investigation add menu. <br> Then, select Study &gt; From original model template !! </p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='4'">
+            <h4>Experimental factors</h4>
+            <mat-card>
+            <h5>What about experimental factors ?</h5>
+            <p><b>Experimental factor</b> describes a management practice that varied between observation units in a study, 
+                assessing the effect of which is the object of the study. Experimental factors can be biotic or abiotic 
+                (e.g. pest, disease interaction, cultural practice) and are characterised by a type, a description and 
+                a list of possible values. For instance, a “drought” experimental factor can discriminate “rainfed” and 
+                “irrigated” blocks, and a “nitrogen input level” can identify groups of plants under “high nitrogen input”, 
+                “low nitrogen input” and “no nitrogen inputs”. <br>A study may have one or more experimental factors. </p>
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add a new experimental factor</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for study "Study1" and select Experimental factor &gt; From original model template !! </p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='6'">
+            <h4>Observed variables</h4>
+            <mat-card>
+            <h5>What about observed variables ?</h5>
+            <p>Observed variable – documents a phenotypic or environment parameter that was observed and recorded as part of the study. 
+                It follows the Crop Ontology model of representing variables as combinations of a trait, a method and a scale. </p><br>
+                <ul>
+                    <li><p>Trait details the characteristic being observed/measured (e.g. “plant height”).</p></li>
+                    <li><p>Method describes the procedure used in the observation/measurement (e.g. “with a measuring tape, starting at ground level”). </p></li>
+                    <li><p>Scale indicates the unit or scale with which observations/measurements were recorded (e.g. “cm”). </p></li>
+                </ul>
+    
+                <p>
+                    Observed variables, traits, methods and scales are each identified by name, and may have a reference to the corresponding 
+                    ontology concept (ideally from the Crop Ontology). Observed variables also have an ID by which they are referenced in the data file. 
+                    Methods can also have a description plus an additional reference, usually from the literature. The time scale indicates the unit of 
+                    time (e.g. “date–time”, or “growing degree days”) used to timestamp observations of this observed variable. 
+                </p>
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add a new observed variable</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for study "Study1" and select Observed variable &gt; From original model template !! </p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='8'">
+            <h4>Biological materials</h4>
+            <mat-card>
+            <h5>What about biological materials ?</h5>
+            <p>The <b>biological material</b> defines material being studied (e.g. plants grown from a certain bag or seed, or plants grown in a particular field). The original source of that material (e.g., the seeds or the original plant cloned) is called the material source, which, when held by a material repository, should have its stock identified.</p>
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add biological materials</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for study "Study1" and select Biological Material &gt; From original model template !! </p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='10'">
+            <h4>Observation units</h4>
+            <mat-card>
+            <h5>What about observation units ?</h5>
+    
+            <p> 
+                Observation unit is the experimentation object on which phenotypic and environmental parameters are measured and 
+                to which experimental factors are applied. It is characterised by a type or level, which can be a single “plant”, 
+                a group of plants (“pot”, “plot”, “block”), or the whole “study”. 
+            </p>
+            <p>    
+                These types are hierarchical, meaning that we can have observation units and corresponding observations made from the study level down to the plant level. 
+                In some cases, an observation unit may contain no plant (e.g. raw plots after harvest or areas of a forest without tree), but can still be the object of environmental observations. 
+            </p>
+            <p>    
+                Optionally, an observation unit can have a cross-reference to an external database, such as BioSamples (Courtot et al., 2019). Also optionally, it can have one or more spatial 
+                distribution key-value pairs that locate the observation unit in the experimental hierarchy (e.g. “block: 1”) or 
+                globally (e.g. “latitude: +43.619261”). 
+            </p>
+            <h6>Notes</h6>
+                A study should have one or more observation units.
+            </mat-card>
+            <mat-card>
+            <h5>Next step : Add observation units</h5>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for study "Study1" and select Observation units &gt; From original model template !! </p>
+            </mat-card>
+        </div>
+        <div *ngIf="tutl==='12'">
+            <h4>Observation data files</h4>
+            <mat-card>
+            <h5>What about observation data files ?</h5>
+            <p> 
+                Data file – references a data file of the MIAPPE dataset (e.g. a tabular file containing the results of observations, an image file), 
+                which may be attached to the dataset (referenced by name) or available in an online repository (referenced by URL).
+                A version and a description must be provided for each data file. 
+            </p>
+            <h6>Notes</h6>
+                A study may have any number of data files.
+            </mat-card>
+            <mat-card>
+            <p>Click on <button class="btn btn-success btn-xs fa fa-plus"></button> to open Menu for investigation "maizes1" and select Data files &gt; From tabular files !! </p>
+        
+            </mat-card>
+        </div>
+    </ng-template>
 
 
 </div>

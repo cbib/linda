@@ -2643,13 +2643,9 @@ router.post('/check', function (req, res) {
         res.send({ success: false, message: 'nothing in value' });
     }
 
-    const user = db._query(aql`
-        FOR entry IN ${users}
-        FILTER entry.username == ${username}
-        FILTER entry.password == ${password}
-        RETURN entry
-    `);
-    if (user.next() === null) {
+    const user = db._query(aql`FOR entry IN ${users} FILTER entry.username == ${username} FILTER entry.password == ${password} RETURN entry`).toArray();
+    
+    if (user.length === 0) {
         res.send({ success: false, message: 'username ' + username + 'doesn\'t exists', _id: "" });
     }
     else {
@@ -2657,7 +2653,10 @@ router.post('/check', function (req, res) {
         //now check if investigation exists else modify field
         /////////////////////////////
         var check = [];
-        check = db._query(aql` FOR entry IN ${coll} FILTER entry.${field} == ${value} RETURN entry`).toArray()
+        var user_id=user[0]._id
+        check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
+        //check = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${user_id} GRAPH 'global' FILTER CONTAINS(e._to, ${coll}) AND v.${field} === ${value} RETURN {eto:e._to, vertice:v}`).toArray();
+        //check = db._query(aql` FOR entry IN ${coll} FILTER entry.${field} == ${value} RETURN entry`).toArray()
         if (check.length === 0) {
             res.send({
                 success: true,
@@ -2669,7 +2668,7 @@ router.post('/check', function (req, res) {
             res.send({
                 success: false,
                 message: 'data already exist, cannot use this \" model unique ID\" ',
-                _id: check[0]['_id']
+                _id: check[0]['vertice']['_id']
             });
         }
     };
@@ -2892,7 +2891,7 @@ router.post('/add_observation_units', function (req, res) {
 
                     }
 
-                    //Add experimental factor link with each obsdervation unit
+                    //Add experimental factor link with each observation unit
                     var experimental_factor_data = values['experimental_factors'][i];
                     var ef_db_id = ''
                     var ef_obj = {}

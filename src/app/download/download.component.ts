@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileService, GlobalService, AlertService } from '../services';
 import { OntologyTerm } from '../ontology/ontology-term';
 import { first } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { DateformatComponent } from '../dateformat/dateformat.component';
@@ -19,6 +19,7 @@ import { file } from 'jszip';
 import { FormDialogComponent } from '../dialog/form-dialog.component';
 import { log } from 'console';
 import { element } from 'protractor';
+import {JoyrideService} from 'ngx-joyride';
 
 export interface componentInterface {
     name: string;
@@ -32,7 +33,7 @@ export interface componentInterface {
     styleUrls: ['./download.component.css']
 })
 
-export class DownloadComponent implements OnInit {
+export class DownloadComponent implements OnInit, OnDestroy {
     // input part
     @Input() parent_id: string;
     @Input() model_key: string;
@@ -130,13 +131,15 @@ export class DownloadComponent implements OnInit {
     options_fields_by_component_by_filename = {}
     private selected_file: string = ""
     optionForm: FormGroup;
+    private currentUser
+    private mySubscription
 
     //private loaded:boolean=false;
     ontology_type: string
     selected_term: OntologyTerm
     selected_set: []
     uploadResponse = { status: '', message: 0, filePath: '' };
-
+    demo_subset=1
 
 
     constructor(
@@ -146,6 +149,7 @@ export class DownloadComponent implements OnInit {
         private alertService: AlertService,
         private globalService: GlobalService,
         private route: ActivatedRoute,
+        private readonly joyrideService: JoyrideService,
         public dialog: MatDialog) {
 
         //use this when you pass argument using this.router.navigate
@@ -159,7 +163,19 @@ export class DownloadComponent implements OnInit {
             }
         );
         this.selectedOption = <componentInterface>{ name: 'Assign MIAPPE components', value: '' }
-
+        this.demo_subset=1
+        this.router.routeReuseStrategy.shouldReuseRoute = function () {
+            return false;
+        };
+          
+        this.mySubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+              // Trick the Router into believing it's last link wasn't previously loaded
+              this.initializeInvites();
+              this.router.navigated = false;
+            
+            }
+        });
     }
     
     ngOnInit() {
@@ -184,6 +200,8 @@ export class DownloadComponent implements OnInit {
             })
         }
         if (this.mode === 'extract-again' ) {
+            this.cleaned_component_model = this.get_model(this.model_type);
+            console.log(this.cleaned_component_model)
             this.get_data()
         }
         if (this.mode === 'extract-form'){ 
@@ -197,6 +215,62 @@ export class DownloadComponent implements OnInit {
         //this.get_data()
         let attributeFilters = { file: [''] };
         this.form = this.formBuilder.group(attributeFilters);
+        this.onClickTour()
+    }
+    onNext(){
+        // this.demo_subset+=1
+        // console.log(this.demo_subset)
+        if (this.demo_subset==1){
+            console.log("step2")
+            this.fileName="my_data.csv"
+            var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed, 23, B73\nMaizeStudy1,plot2,rainfed, 22, PH207\nMaizeStudy1,plot3,rainfed, 24, Oh43\nMaizeStudy1,plot4,rainfed, 21.8, W64A\nMaizeStudy1,plot5,rainfed, 23.4, EZ47\nMaizeStudy1,plot6,watered, 48.3, B73\nMaizeStudy1,plot7,watered, 49.5, PH207\nMaizeStudy1,plot8,watered, 52, Oh43\nMaizeStudy1,plot9,watered, 48, W64A\nMaizeStudy1,plot10,watered, 45, EZ47"
+            this.load_csv(csv_text, 100, 100, ",")
+        }
+    }
+    onBack(){
+        // this.demo_subset-=1
+        // console.log(this.demo_subset)
+        // if (this.demo_subset==3){
+        //     console.log("step2")
+        //     this.fileName="my_data.csv"
+        //     var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed, 23, B73_1\nMaizeStudy1,plot2,rainfed, 23, B73_2"
+        //     this.load_csv(csv_text, 100, 100, ",")
+        // }
+    }
+    //Set default values and re-fetch any data you need.
+    initializeInvites(){
+        this.joyrideService.closeTour()
+    }
+    ngOnDestroy(): void {
+        //Called once, before the instance is destroyed.
+        //Add 'implements OnDestroy' to the class.
+        if (this.mySubscription) {  
+            this.mySubscription.unsubscribe();
+         }
+    }
+    onClickTour() {
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+        console.log(this.currentUser)
+        console.log(this.demo_subset)
+        if (this.currentUser['tutoriel_step'] === "12"){
+            this.joyrideService.startTour(
+                { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'StepAssignForm', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form', 'StepUpload4Form',], stepDefaultPosition: 'bottom'} // Your steps order
+            );
+            //this.currentUser.tutoriel_step="2"
+            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+        
+        // console.log('start tour part 2')
+        // if (this.model_type==="experimental_factor"){
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
+        // else{
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
     }
     get_data() {
         this.data_files=[]
@@ -261,7 +335,12 @@ export class DownloadComponent implements OnInit {
                     //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
                     this.dataFileComponentForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
                     this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                    this.options_components_by_filename[data_file.filename].forEach(option => {
+                        //console.log(option.header)
+                        this.dataFileComponentForm[data_file.filename].get(option.header).setValue(option.value);
+                    });
                 }
+                
             });
             //add corresponding component fields
             //this.options_fields_by_component_by_filename[this.model_type]=[]
@@ -273,13 +352,12 @@ export class DownloadComponent implements OnInit {
             // );
         
             this.selected_file = this.filename_used[0]
-            console.log(this.options_components_by_filename)
-            console.log(this.extract_fields_options)
-
-
-            this.options_components_by_filename[this.selected_file].forEach(option => {
-                this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
-            });
+            // console.log(this.options_components_by_filename)
+            // console.log(this.extract_fields_options)
+            // console.log(this.headers_by_filename)
+            // console.log(this.dataFileComponentForm)
+            // console.log(this.associated_headers_by_filename)
+            
             
         });
         
@@ -291,7 +369,9 @@ export class DownloadComponent implements OnInit {
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
             this.csv = fileReader.result;
-            this.load_csv(this.csv, e, delimitor)
+            console.log(this.csv)
+            
+            this.load_csv(this.csv, e.loaded,e.total, delimitor)
         }
         fileReader.readAsText(this.fileUploaded);
     }
@@ -307,14 +387,15 @@ export class DownloadComponent implements OnInit {
             var first_sheet_name = book.SheetNames[0];
             this.worksheet = book.Sheets[first_sheet_name];
             this.csv = XLSX.utils.sheet_to_csv(this.worksheet);
-            this.load_csv(this.csv, e);
+            this.load_csv(this.csv, e.loaded, e.total);
         }
         fileReader.readAsArrayBuffer(this.fileUploaded);
     }
     isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
-    load_csv(csvData: any, e: any, delimitor: string = ",") {
+    load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
+
 
         this.lines_arr = [];
         this.lines_dict = []
@@ -324,15 +405,18 @@ export class DownloadComponent implements OnInit {
         this.headers_by_filename[this.fileName]= []
 
         let allTextLines = csvData.split(/\r|\n|\r/);
+        ///console.log(allTextLines)
         this.headers = allTextLines[0].split(delimitor)
-
+        ///console.log(this.headers )
         for (let i = 0; i < this.headers.length; i++) {
+           
             this.headers[i] = this.headers[i].replace(/['"]+/g, '').replace(/\./g, '_')
+            this.headers_by_filename[this.fileName].push(this.headers[i])
         }
         let type_dict = {}
         for (let i = 1; i < allTextLines.length; i++) {
             let csv_dict = {}
-            this.uploadResponse.message = Math.round(100 * (e.loaded / e.total))
+            this.uploadResponse.message = Math.round(100 * (e_loaded / e_total))
             // split content based on separator
             let line = allTextLines[i].split(delimitor);
 
@@ -340,7 +424,7 @@ export class DownloadComponent implements OnInit {
                 let csv_arr = [];
                 let tmpAttributesGroups = {}
                 for (let j = 0; j < this.headers.length; j++) {
-                    this.headers_by_filename[this.fileName].push(this.headers[j])
+                    
                     tmpAttributesGroups[this.headers[j]] = [this.headers[j]]
                     let tmp = { header: "", associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
                     tmp['header'] = this.headers[j]
@@ -363,6 +447,7 @@ export class DownloadComponent implements OnInit {
 
             }
         }
+        // console.log(this.headers_by_filename[this.fileName])
         for (var i = 0; i < this.headers.length; i++) {
             this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
             this.associated_headers_by_filename[this.fileName].push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
@@ -371,7 +456,6 @@ export class DownloadComponent implements OnInit {
         this.options_components_by_filename[this.selected_file].forEach(option => {
             this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
         });
-        console.log(this.associated_headers_by_filename)
 
     }
     readAsCSV() {
@@ -422,9 +506,6 @@ export class DownloadComponent implements OnInit {
 
     onModify(values: string, key: string, filename: string) {
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
-        console.log(values);
-        console.log(key);
-        console.log(filename);
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
@@ -433,7 +514,6 @@ export class DownloadComponent implements OnInit {
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = result.date_format; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = "time"; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = true; });
-                ///console.log(result);
                 this.time_set = true
                 this.checklistSelection.toggle(key);
             });
@@ -689,14 +769,6 @@ export class DownloadComponent implements OnInit {
                 }
             }
             cleaned_model = cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
-            //console.log(cleaned_model)
-            //return cleaned_model
-            // if (model_type == 'study') {
-            //     this.cleaned_study_model = cleaned_model
-            // }
-            // else {
-            //     this.cleaned_data_file_model = cleaned_model
-            // }
         });
         return cleaned_model
 

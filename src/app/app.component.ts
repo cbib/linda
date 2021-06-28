@@ -159,6 +159,9 @@ export class AppComponent implements OnInit {
             return;
          }
     }
+    reset_tuto(){
+        this.currentUser['tutoriel_step']=0
+    }
 
     
     

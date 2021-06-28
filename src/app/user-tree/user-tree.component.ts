@@ -16,6 +16,7 @@ import * as JSZip from 'jszip';
 import { MediaObserver } from "@angular/flex-layout";
 import { FormControl } from '@angular/forms';
 import { JoyrideService } from 'ngx-joyride';
+import {MatChipsModule} from '@angular/material/chips'
 import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 
 /** Flat node with expandable and level information */
@@ -90,6 +91,7 @@ export class UserTreeComponent implements OnInit {
         //         this.parent_key = params['key'];
         //     }
         // );
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     }
     private ont_transformer = (node: MiappeNode, level: number) => {
         return {
@@ -191,35 +193,43 @@ export class UserTreeComponent implements OnInit {
             // this.currentUser.tutoriel_step="1"
             // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         }
+        //'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign',
         else if (this.currentUser['tutoriel_step'] === "2"){
             this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['stepNode','stepButtonPanel',  'nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
             // this.currentUser.tutoriel_step="3"
             // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         }
         else if (this.currentUser['tutoriel_step'] === "4"){
             this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
             //currentUser.tutoriel_step="3"
             //localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
         else if (this.currentUser['tutoriel_step'] === "6"){
             this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
             //currentUser.tutoriel_step="3"
             //localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
         else if (this.currentUser['tutoriel_step'] === "8"){
             this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
             //currentUser.tutoriel_step="3"
             //localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
         else if (this.currentUser['tutoriel_step'] === "10"){
+            this.joyrideService.startTour(
+                { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "12"){
             this.joyrideService.startTour(
                 { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
@@ -271,7 +281,7 @@ export class UserTreeComponent implements OnInit {
     }
     get_tutoriel_level(){
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        return this.currentUser.tutoriel_step
+        return this.currentUser['tutoriel_step']
     }
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -604,6 +614,7 @@ export class UserTreeComponent implements OnInit {
                                     console.log(data["message"])
                                     var message = this.active_node.id + " has been removed from your history !!"
                                     this.alertService.success(message)
+                                    this.currentUser["tutoriel_step"]="0"
                                 }
                                 else {
                                     this.alertService.error("this form contains errors! " + data["message"]);
@@ -612,7 +623,8 @@ export class UserTreeComponent implements OnInit {
                         );
                         // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                         // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                        this.reloadComponent(['/tree'])
+                        //this.reloadComponent(['/tree'])
+                        window.location.reload();
                     }
                     else {
                         if (result.all_childs) {
@@ -630,9 +642,10 @@ export class UserTreeComponent implements OnInit {
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                            this.reloadComponent(['/tree'])
+                            //this.reloadComponent(['/tree'])
+                            window.location.reload();
                         }
-                        else if(result.only){
+                        else if(result.only!=""){
                             console.log(result.only)
                             this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
                                 data => {
@@ -657,9 +670,11 @@ export class UserTreeComponent implements OnInit {
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
                             this.reloadComponent(['/tree'])
+                            //window.location.reload();
 
                         }
                         else {
+                            console.log(this.active_node.id)
                             this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
@@ -673,8 +688,9 @@ export class UserTreeComponent implements OnInit {
                                 }
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                            // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
                             this.reloadComponent(['/tree'])
+                            ///window.location.reload();
                         }
 
 
@@ -945,6 +961,9 @@ export class UserTreeComponent implements OnInit {
     identify() {
         console.log('Hello, Im user tree!');
     }
+    isArray(obj : any ){
+        return Array.isArray(obj)
+    }
     ObservationTableRowSelected(i: number) {
         this.observation_id = this.obs_unit_data[i]['obsUUID']
         console.log(this.observation_id)
@@ -1120,6 +1139,11 @@ export class UserTreeComponent implements OnInit {
                 data => {
                     this.current_data_keys = Object.keys(data);
                     this.current_data_array.push(data);
+                    console.log(this.current_data_array)
+                    for (var i = 0; i < this.current_data_array[0]['Biological material ID'].length; i++) {
+                        console.log(this.current_data_array[0]['Biological material ID'][i][0])
+                    }
+                        
                     node["term"].set_current_data_array(this.current_data_array)
 
                     for (var i = 0; i < this.current_data_keys.length; i++) {

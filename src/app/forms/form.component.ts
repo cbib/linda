@@ -53,6 +53,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     cleaned_model: any = [];
     keys: any = [];
     disabled_id_keys = []
+    help_mode=false
 
     constructor(
         public globalService: GlobalService,
@@ -91,7 +92,63 @@ export class FormComponent implements OnInit//, AfterViewInit
         this.onClickTour()
 
     };
-    onDone(node_type:string) {
+
+
+    onClickTour(help_mode:boolean=false) {
+        if(help_mode){
+            this.help_mode=true
+            if (this.model_type==='study'){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+        }
+        else{
+            this.help_mode=false
+            this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+            console.log(this.currentUser)
+            //Investigation form
+            if (this.currentUser['tutoriel_step'] === "1"){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepMandatoryID', 'StepNormalField', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //this.currentUser.tutoriel_step="2"
+                //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            //Study form
+            else if (this.currentUser['tutoriel_step'] === "3"){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            
+            }
+            else if (this.currentUser['tutoriel_step'] === "5"){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+            else if (this.currentUser['tutoriel_step'] === "7"){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+            else{
+
+            }
+        }
+        // console.log('start tour part 2')
+        // if (this.model_type==="experimental_factor"){
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
+        // else{
+        //     this.joyrideService.startTour(
+        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
+        //     );
+        // }
+    }
+    on_Next(node_type:string) {
         console.log(this.currentUser['tutoriel_step'])
         console.log(this.modelForm.value)
         console.log(this.modelForm.controls)
@@ -100,6 +157,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         if (this.currentUser['tutoriel_step']==="1"){
             this.modelForm.controls["Investigation unique ID"].patchValue("Maizes1")
             this.modelForm.controls["Short title"].patchValue("maizes1")
+            
         }   
         //study form template
         if (this.currentUser['tutoriel_step']==="3"){
@@ -113,7 +171,11 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.modelForm.controls["Observation unit level hierarchy"].patchValue("block>rep>plot")
             this.modelForm.controls["Observation unit description"].patchValue("Observation units consisted in individual plots themselves consisting of a row of 5 plants at a density of 1 plant per square meter ")
             this.modelForm.controls["Experimental site name"].patchValue("INRA pierroton")
+            this.modelForm.controls["Experimental site name"].patchValue("INRA, UE Diascope - Chemin de Mezouls - Domaine experimental de Melgueil - 34130 Mauguio - France")
+            this.modelForm.controls["Study title"].patchValue("2002 evaluation of hydric stress for a panel of 1 maize line (B73) at the experimental station of Maugio (France).")
+            this.modelForm.controls["Cultural practices"].patchValue("Irrigation was applied according needs for one field and not appliedd for the other that stays rainfed during summer to compare water stress.")
             this.startfilling=true
+            
         }
         //study form template
         if (this.currentUser['tutoriel_step']==="5"){
@@ -137,6 +199,10 @@ export class FormComponent implements OnInit//, AfterViewInit
         }
 
         this.startfilling=true
+        // this.joyrideService.closeTour();
+        // this.joyrideService.startTour(
+        //     { steps: ['StepSubmit'], stepDefaultPosition: 'bottom'} // Your steps order
+        // );
         console.log(this.modelForm.value)
 
 
@@ -154,47 +220,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     // <li> <p> Type of growth facility: CO_715:0000162</p></li>
     // <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
     }
-    onClickTour() {
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-        console.log(this.currentUser)
-        if (this.currentUser['tutoriel_step'] === "1"){
-            this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepContentForm', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //this.currentUser.tutoriel_step="2"
-            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "3"){
-            this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
-            );
-        
-        }
-        else if (this.currentUser['tutoriel_step'] === "5"){
-            this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
-            );
-        }
-        else if (this.currentUser['tutoriel_step'] === "7"){
-            this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepContentForm', 'Step1_3', 'StepMandatoryID', 'Step1_5', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
-            );
-        }
-        else{
-
-        }
-        // console.log('start tour part 2')
-        // if (this.model_type==="experimental_factor"){
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
-        // else{
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
-    }
+    
 
     // addSellingPoint() {
     //     this.sellingPoints.push(this.fb.group({point:''}));
@@ -619,6 +645,9 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.notify.emit('cancel the form');
         }
         else{
+            let new_step=parseInt(this.currentUser.tutoriel_step)-1
+            this.currentUser.tutoriel_step=new_step.toString()
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
             this.router.navigate(['/tree']);
         }

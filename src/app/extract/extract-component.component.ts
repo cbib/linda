@@ -55,6 +55,8 @@ export class ExtractComponentComponent implements OnInit {
   variable_array = []
   headers_form = {}
   global = {}
+  ObservedVariables: {} = {};
+  AllObservedVariables: {} = {};
   displayedColumns: {} = {};
   displayedcomponentColumns: {} = {};
   datasources: {} = {};
@@ -91,60 +93,85 @@ export class ExtractComponentComponent implements OnInit {
     const data = await this.globalService.get_all_data_files(this.model_key).toPromise();
     this.filename_used = []
     if (data.length > 0 && data[0] !== null) {
-      data[0].forEach(data_file => {
-        if (!this.filename_used.includes(data_file.filename)) {
-          this.filename_used.push(data_file.filename)
-          this.global[data_file.filename] = []
-          this.displayedColumns[data_file.filename] = []
-          this.displayedColumns[data_file.filename].push('study ID')
-          this.displayedcomponentColumns[data_file.filename] = []
-          this.datasources[data_file.filename] = new MatTableDataSource()
-        }
+      data[0].forEach(
+        data_file => {
 
-        let my_dict = {};
-        if(! this.study_array.includes(data_file.efrom)){
-          this.study_array.push(data_file.efrom);
-        }
-        my_dict['study ID'] = data_file.efrom;
-        my_dict['datafile ID'] = data_file.eto;
-
-        data_file.associated_headers.forEach(element => {
-          if (element['associated_component'] === this.model_type) {
-            if (!this.variable_array.includes(element['header'])) {
-              this.variable_array.push(element['header']);
-            }
-            if (!this.displayedColumns[data_file.filename].includes(element['header'])) {
-              this.displayedColumns[data_file.filename].push(element['header'])
-            }
-            if (element['header'] != 'study ID') {
-              if (!this.displayedcomponentColumns[data_file.filename].includes(element['header'])) {
-                this.displayedcomponentColumns[data_file.filename].push(element['header'])
-              }
-            }
-            this.headers_form[element['header']] = {}
-            if (element['associated_linda_id'] !== '') {
-              my_dict[element['header']] = element['associated_linda_id'];
-            }
-            else {
-              my_dict[element['header']] = 'unset';
-            }
+          if (!this.filename_used.includes(data_file.filename)) {
+            this.filename_used.push(data_file.filename)
+            this.global[data_file.filename] = []
+            this.displayedColumns[data_file.filename] = []
+            this.displayedColumns[data_file.filename].push('study ID')
+            this.displayedcomponentColumns[data_file.filename] = []
+            this.ObservedVariables[data_file.filename] = []
+            this.AllObservedVariables[data_file.filename] = []
+            this.datasources[data_file.filename] = new MatTableDataSource()
           }
-        })
-        if (!this.displayedColumns[data_file.filename].includes('select')) {
-          this.displayedColumns[data_file.filename].push('select');
+          this.selected_file = this.filename_used[0]
+
+          let my_dict = {};
+          if(! this.study_array.includes(data_file.efrom)){
+            this.study_array.push(data_file.efrom);
+          }
+          my_dict['study ID'] = data_file.efrom;
+          my_dict['datafile ID'] = data_file.eto;
+          this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], this.model_type+'s').toPromise().then(
+          observed_variable_data => {
+            console.log(observed_variable_data)
+            
+            observed_variable_data.forEach(observed_variable => {
+              var found=false
+              this.AllObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
+              this.ObservedVariables[data_file.filename].forEach(variable => {
+                if (variable['observed_variable']["Variable name"]===observed_variable["Variable name"]){
+                  found=true
+                }
+              });
+              if (!found) {
+                this.ObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
+              }
+              
+             
+            });
+            console.log(this.ObservedVariables)
+      
+            data_file.associated_headers.forEach(element => {
+              if (element['associated_component'] === this.model_type) {
+                if (!this.variable_array.includes(element['header'])) {
+                  this.variable_array.push(element['header']);
+                }
+                if (!this.displayedColumns[data_file.filename].includes(element['header'])) {
+                  this.displayedColumns[data_file.filename].push(element['header'])
+                }
+                if (element['header'] != 'study ID') {
+                  if (!this.displayedcomponentColumns[data_file.filename].includes(element['header'])) {
+                    this.displayedcomponentColumns[data_file.filename].push(element['header'])
+                  }
+                }
+                this.headers_form[element['header']] = {}
+                if (element['associated_linda_id'] !== '') {
+                  my_dict[element['header']] = {"state":"extracted","already_there":true, "id":element['associated_linda_id'],};
+                }
+                else {
+                  my_dict[element['header']] = {"state":'unset',"already_there":false, 'id':""};
+                }
+              }
+            })
+            if (!this.displayedColumns[data_file.filename].includes('select')) {
+              this.displayedColumns[data_file.filename].push('select');
+            }
+            this.global[data_file.filename].push(my_dict)
+            this.datasources[data_file.filename] = this.global[data_file.filename]
+
+            //   //Harmonize keys for non present/detected component 
+            // var defaultObj = this.datasources[data_file.filename].reduce((m, o) => (Object.keys(o).forEach(key => m[key] = "notfound"), m), {});
+            // console.log(defaultObj)
+            // this.datasources[data_file.filename] = this.datasources[data_file.filename].map(e => Object.assign({}, defaultObj, e));
+            // console.log(this.datasources[data_file.filename])
+          });
         }
-        this.global[data_file.filename].push(my_dict)
-        this.datasources[data_file.filename] = this.global[data_file.filename]
-
-        //Harmonize keys for non present/detected component 
-        var defaultObj = this.datasources[data_file.filename].reduce((m, o) => (Object.keys(o).forEach(key => m[key] = "notfound"), m), {});
-        this.datasources[data_file.filename] = this.datasources[data_file.filename].map(e => Object.assign({}, defaultObj, e));
-
-        this.selected_file = this.filename_used[0]
-      });
+      );
       console.log(this.datasources)
     }
-
   }
   get_model_type() {
     return this.model_type
@@ -202,12 +229,43 @@ export class ExtractComponentComponent implements OnInit {
   Delete_extracted_component(value: string, filename: string){
 
   }
+  clickToggleExisting(value: string, filename: string){
+    console.log(value)
+    var variable_name=value['Variable name']
+    let user = JSON.parse(localStorage.getItem('currentUser'));
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_existing_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file , header:value, headers:this.displayedcomponentColumns[filename]} });
+    dialogRef.afterClosed().subscribe((confirmResult) => {
+      if (confirmResult) {
+        if (confirmResult.event == 'Confirmed') {
+          //console.log(value)
+          //console.log(filename)
+          console.log(confirmResult)
+          //console.log(confirmResult.selected_header)
+          console.log(this.ObservedVariables[filename])
+          console.log(this.AllObservedVariables[filename])
+          var test =this.AllObservedVariables[filename].filter(ov => ov['observed_variable']["Variable name"] == variable_name)
+          console.log(test)
+          //this.headers_form[value] = this.ObservedVariables[filename]
+          this.datasources[filename].forEach(
+            element => {
+              console.log(element["study ID"])
+              let variable_id =test.filter(ov => ov["study_id"] == element["study ID"])[0]['observed_variable']['_id']
+              console.log(variable_id)
+              element[confirmResult.selected_header]["state"] = "ready"
+              element[confirmResult.selected_header]["id"] = variable_id
+              element[confirmResult.selected_header]["already_there"] = true
+          });
+        }
+      }
+    });
+  }
+
 
   clickToggle(value: string, filename: string) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     //check if this header is already extracted from another file
     if (this.get_state(value, filename) === 'all_extracted') {
-      this.alertService.error("This component has already been extracted for all studies. Do you want to extract again ? ")
+      this.alertService.error("This component has already been linked for all studies. Do you want to extract again ? ")
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var_again', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file , header:value} });
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
@@ -219,7 +277,9 @@ export class ExtractComponentComponent implements OnInit {
                 data => { 
                   this.globalService.remove_association(element[value], element['datafile ID']).pipe(first()).toPromise().then(
                     association => { 
-                      element[value]='unset';
+                      element[value]["state"]='unset';
+                      element[value]["id"]='';
+                      element[value]["already_there"]=false;
 
                     });
                   
@@ -240,7 +300,7 @@ export class ExtractComponentComponent implements OnInit {
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
-            console.log("you have confirmed extraction of " + this.model_type_label + ": " + value)
+            console.log("you have confirmed linkage of " + this.model_type_label + ": " + value)
             // Use template mode
             if (confirmResult.use_template) {
               let data_from_template = {}
@@ -256,7 +316,7 @@ export class ExtractComponentComponent implements OnInit {
               // })
               this.datasources[filename].forEach(
                 element => {
-                  element[value] = "ready"
+                  element[value]["state"] = "ready"
               });
 
             }
@@ -278,7 +338,7 @@ export class ExtractComponentComponent implements OnInit {
                     // });
                     this.datasources[filename].forEach(
                       element => {
-                        element[value] = "ready"
+                        element[value]["state"] = "ready"
                     });
                   }
                   else {
@@ -299,33 +359,41 @@ export class ExtractComponentComponent implements OnInit {
     var cnt = 0
     this.datasources[this.selected_file].forEach(
       element => {
-
+        console.log(element)
         Object.keys(element).forEach(
           key => {
-            if (element[key] === 'ready') {
-              let modelForm = this.headers_form[key]
-              if (cnt > 0) {
-                this.save_as_template = false
+            if (element[key]["state"] === 'ready') {
+              if (element[key]["already_there"]===true) {
+                let data_file_to_update = element['datafile ID']
+                this.globalService.update_associated_headers_linda_id(data_file_to_update, element[key]["id"], key, 'data_files').pipe(first()).toPromise().then(
+                  data => {}
+                )
               }
-              this.globalService.add(modelForm, this.model_type, element['study ID'], this.save_as_template).pipe(first()).toPromise().then(
-                data => {
-                  if (data["success"]) {
-                    let added_model_id = data["_id"];
-                    let data_file_to_update = element['datafile ID']
-                    this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
-                      data => {}
-                    )
-                    // var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
-                    // this.alertService.success(message)
-
-                    return true;
-                  }
-                  else {
-                    this.alertService.error("this form contains errors! " + data["message"]);
-                    return false;
-                  }
+              else{
+                let modelForm = this.headers_form[key]
+                if (cnt > 0) {
+                  this.save_as_template = false
                 }
-              );
+                this.globalService.add(modelForm, this.model_type, element['study ID'], this.save_as_template).pipe(first()).toPromise().then(
+                  data => {
+                    if (data["success"]) {
+                      let added_model_id = data["_id"];
+                      let data_file_to_update = element['datafile ID']
+                      this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
+                        data => {}
+                      )
+                      // var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                      // this.alertService.success(message)
+
+                      return true;
+                    }
+                    else {
+                      this.alertService.error("this form contains errors! " + data["message"]);
+                      return false;
+                    }
+                  }
+                );
+              } 
             }
           }
         )
@@ -429,7 +497,7 @@ export class ExtractComponentComponent implements OnInit {
     this.global[filename].forEach(
       element => {
         console.log(element)
-        if (element[column].includes(this.model_type + "s")) {
+        if (element[column]['id'].includes(this.model_type + "s")) {
           //return "extracted"
           tmp_list.push("extracted")
         }

@@ -395,7 +395,7 @@ export class FileService {
         console.log(model)
         console.log(isa_model)
         return_data = this.build_isa_model2(model_data, model, isa_model, return_data, model_type, filename, parent_id, parent_data)
-
+        console.log(submodels)
         submodels['models_data'].forEach(
             submodel => {
                 console.log(submodel)
@@ -421,7 +421,7 @@ export class FileService {
                     // return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id) 
                 }
                 else if (submodel["v"]["_id"].split('/')[0] === "biological_materials") {
-                    //console.log(submodel["v"]["_id"])
+                    console.log(submodel["v"]["_id"])
                     model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
                     filename = "s_study_" + study_id.split('/')[1] + ".txt"
                     if (parent_id.includes("observation_units")) {
@@ -448,9 +448,23 @@ export class FileService {
                     //console.log(submodel["v"]["_id"])
                     model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
                     filename = "tdf_" + study_id.split('/')[1] + ".txt"
-                    if (parent_id.includes("observation_units")) {
+                    
+                    if (!parent_id.includes("observation_units")) {
+                        parent_data = submodel
+                        console.log(submodel)
+                        console.log(return_data)
+                        console.log(parent_id)
+                        console.log(parent_data)
                         return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data)
                     }
+                    // else {
+                    //     parent_data = model_data
+                    //     console.log(submodel)
+                    //     console.log(return_data)
+                    //     console.log(parent_id)
+                    //     console.log(parent_data)
+                    //     return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data)
+                    // }
                 }
                 else {
                     console.log(submodel["v"]["_id"])
@@ -712,7 +726,8 @@ export class FileService {
                     return_data['Investigation']['STUDY']['Study File Name'][index].push(filename)
                 }
                 // console.log(parent_data['v']["obsUUID"])
-                var parent_index = parent_data['v']["obsUUID"].indexOf(data["obsUUID"])
+                //console.log(data["obsUUID"])
+                //var parent_index = parent_data['v']["obsUUID"].indexOf(data["obsUUID"])
                 // console.log(data)
                 // console.log(parent_data)
                 // console.log(parent_index)
@@ -741,7 +756,7 @@ export class FileService {
                             var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
                             var isa_field: string = mapping_data["ISA-Tab Field"]
                             console.log("----------------------get key ", keys[i], " write field ", isa_field, " in section ", isa_section, " for ", isa_file)
-
+                            console.log(return_data[isa_file][index]["study_data"])
                             if (return_data[isa_file][index]["study_data"][isa_field]) {
                                 if (return_data[isa_file][index]["study_data"][isa_field]["data"]) {
                                     var data2;
@@ -1073,6 +1088,7 @@ export class FileService {
 
         }
         else if (model_type === "observed_variable") {
+            console.log("#############################################################model type", model_type)
 
             var isa_file = "Trait Definition File"
             var parent_keys = Object.keys(parent_data["v"]);

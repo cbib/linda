@@ -12,3 +12,15 @@
 #bmpreprocess{
     width: 150px; 
 }
+li {
+    margin-bottom: 2px;
+  }
+  
+  li:last-child {
+   margin-bottom: 0px;
+  }
+  
+  ul {
+    padding: 10px;  
+    padding-left: 40px;
+  }

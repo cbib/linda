@@ -14,6 +14,7 @@ interface DialogData {
   model_filename:string;
   values: {};
   header:string;
+  headers:[];
 }
 
 @Component({
@@ -22,7 +23,7 @@ interface DialogData {
   styleUrls: ['./confirmation-dialog.component.css']
 })
 export class ConfirmationDialogComponent implements OnInit {
-  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " },  'extract_env_var_again': { 'title': "Confirm new extraction", 'content': " Are you sure to extract and replace this component ? This will delete corresponding components"}}
+  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " }, 'extract_existing_env_var':{'title': "Confirm new extraction", 'content': " Are you sure to link with this exisitng observed variable ?"}, 'extract_env_var_again': { 'title': "Confirm new extraction", 'content': " Are you sure to extract and replace this component ? This will delete corresponding components"}}
   validated: boolean;
   all_childs: boolean = false
   use_template: boolean = false
@@ -39,6 +40,8 @@ export class ConfirmationDialogComponent implements OnInit {
   existing_result = []
   unique_file_name = []
   header: string=""
+  headers=[]
+  selected_header=""
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
@@ -49,13 +52,17 @@ export class ConfirmationDialogComponent implements OnInit {
     this.parent_key=this.data.parent_key
     this.values = this.data.values
     this.header = this.data.header
+    this.headers = this.data.headers
     this.model_id = ""
     this.model_filename=this.data.model_filename
     console.log(this.model_type)
+    console.log(this.headers)
 
   }
 
   ngOnInit() {
+    //this.only=this.model_type
+    //this.all_childs=false
     if (this.mode.includes("extract_env_var")) {
       this.globalService.get_templates(this.user_key, this.model_type).toPromise().then(
         data => {
@@ -63,6 +70,10 @@ export class ConfirmationDialogComponent implements OnInit {
 
         }
       );
+
+      
+
+
       this.globalService.get_data_filename(this.parent_key, this.model_type).toPromise().then(
         data => {
           this.existing_result = [];
@@ -86,17 +97,24 @@ export class ConfirmationDialogComponent implements OnInit {
     }
 
   }
-  onTemplateSelect(values: string) {
+  onTemplateSelect(value: string) {
 
-    this.model_id = values
+    this.model_id = value
     this.template_result.forEach(
       attr => {
-        if (attr["_id"] === values) {
+        if (attr["_id"] === value) {
           this.data.values = attr
         }
       }
     );
   }
+  onHeaderSelect(value: string){
+    this.selected_header=value
+  }
+  get_headers_result(){
+    return this.headers
+  }
+
   get_template_result(){
     return this.template_result
   }
@@ -153,7 +171,7 @@ export class ConfirmationDialogComponent implements OnInit {
   }
     
   onOkClick(): void {
-    this.dialogRef.close({event:"Confirmed",validated:this.validated, all_childs:this.all_childs, only:this.only, template_data:this.data.values, use_template:this.use_template, use_existing:this.use_existing});
+    this.dialogRef.close({event:"Confirmed",validated:this.validated, all_childs:this.all_childs, only:this.only, template_data:this.data.values, use_template:this.use_template, use_existing:this.use_existing, selected_header:this.selected_header});
   }
 
   set_check_all_childs(all_childs: boolean) {
@@ -166,8 +184,10 @@ export class ConfirmationDialogComponent implements OnInit {
   }
   set_check_template(template: boolean) {
     this.use_template = template
+    this.use_existing = false
   }
   set_check_existing(existing: boolean) {
     this.use_existing = existing
+    this.use_template = false
   }
 }
