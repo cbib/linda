@@ -104,7 +104,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     //radio button box
     checked = false;
     indeterminate = false;
-    labelPosition: 'all' | 'only_studies' | 'only_data' = 'only_studies';
+    labelPosition: 'all' | 'only_data' = 'only_data';
     disabled = false;
 
     //parsing CSV
@@ -217,25 +217,38 @@ export class DownloadComponent implements OnInit, OnDestroy {
         this.form = this.formBuilder.group(attributeFilters);
         this.onClickTour()
     }
-    onNext(){
+    onNext(index:any){
         // this.demo_subset+=1
-        // console.log(this.demo_subset)
-        if (this.demo_subset==1){
+        console.log(index)
+        if (index=="load_csv"){
             console.log("step2")
             this.fileName="my_data.csv"
             var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed, 23, B73\nMaizeStudy1,plot2,rainfed, 22, PH207\nMaizeStudy1,plot3,rainfed, 24, Oh43\nMaizeStudy1,plot4,rainfed, 21.8, W64A\nMaizeStudy1,plot5,rainfed, 23.4, EZ47\nMaizeStudy1,plot6,watered, 48.3, B73\nMaizeStudy1,plot7,watered, 49.5, PH207\nMaizeStudy1,plot8,watered, 52, Oh43\nMaizeStudy1,plot9,watered, 48, W64A\nMaizeStudy1,plot10,watered, 45, EZ47"
             this.load_csv(csv_text, 100, 100, ",")
         }
-    }
-    onBack(){
-        // this.demo_subset-=1
-        // console.log(this.demo_subset)
-        // if (this.demo_subset==3){
-        //     console.log("step2")
-        //     this.fileName="my_data.csv"
-        //     var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed, 23, B73_1\nMaizeStudy1,plot2,rainfed, 23, B73_2"
-        //     this.load_csv(csv_text, 100, 100, ",")
-        // }
+        if (index==0){
+            //assign study to row 0
+            this.onModify('study', 'Study_ID', this.fileName)
+        }
+        else if (index==1){
+            //assign study to row 0
+            this.onModify('observation_unit', 'plotID', this.fileName)
+        }
+        else if (index==2){
+            //assign study to row 0
+            this.onModify('experimental_factor', 'treatment', this.fileName)
+        }
+        else if (index==3){
+            //assign study to row 0
+            this.onModify('observed_variable', 'plant_height', this.fileName)
+        }
+        else if (index==4){
+            //assign study to row 0
+            this.onModify('biological_material', 'code_ID', this.fileName)
+        }
+        else{
+            //assign study to row 0
+        }
     }
     //Set default values and re-fetch any data you need.
     initializeInvites(){
@@ -251,10 +264,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
     onClickTour() {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
         console.log(this.currentUser)
-        console.log(this.demo_subset)
-        if (this.currentUser['tutoriel_step'] === "12"){
+        if (this.currentUser['tutoriel_step'] === "13"){
             this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'StepAssignForm', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form', 'StepUpload4Form',], stepDefaultPosition: 'bottom'} // Your steps order
+                { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'itemN0','itemN1', 'itemN2', 'itemN3','itemN4', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form'], stepDefaultPosition: 'left'} // Your steps order
             );
             //this.currentUser.tutoriel_step="2"
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
@@ -932,7 +944,13 @@ export class DownloadComponent implements OnInit, OnDestroy {
     //        console.log(this.form.get('file').value)
     //        
     //    }
-
+    reloadComponent(path:[string]) {
+        let currentUrl = this.router.url;
+        console.log(currentUrl)
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate(path);
+    }
     onSubmit() {
         //metadatafiles creation (obsolete ? )
         if (this.mode === "create") {
@@ -1105,6 +1123,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                         data_upload => {
                                             if (data_upload["success"]) {
                                                 console.log(data_upload["message"])
+                                                //this.router.navigate(['/tree']);
+                                                this.reloadComponent(['/tree'])
                                             }
                                         }
                                     );
@@ -1112,7 +1132,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                             }
                         );
                     }
-                    this.router.navigate(['/tree']);
+                    
                 }
             }
             else {

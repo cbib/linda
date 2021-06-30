@@ -148,6 +148,16 @@ export class FormComponent implements OnInit//, AfterViewInit
         //     );
         // }
     }
+    private formatDate(date) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+        console.log(year + '/' + month + '/' + day)
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        return [year, month, day].join('-');
+      }
     on_Next(node_type:string) {
         console.log(this.currentUser['tutoriel_step'])
         console.log(this.modelForm.value)
@@ -163,8 +173,8 @@ export class FormComponent implements OnInit//, AfterViewInit
         if (this.currentUser['tutoriel_step']==="3"){
             this.modelForm.controls["Study unique ID"].patchValue("MaizeStudy1")
             this.modelForm.controls["Short title"].patchValue("Study1")
-            this.modelForm.controls["Start date of study"].patchValue("1/06/2021")
-            this.modelForm.controls["End date of study"].patchValue("30/06/2021")
+            this.modelForm.controls["Start date of study"].patchValue(this.formatDate(new Date("6/01/2021")))
+            this.modelForm.controls["End date of study"].patchValue(this.formatDate(new Date("6/30/2021")))
             this.modelForm.controls["Type of experimental design"].patchValue("CO_715:0000145")
             this.modelForm.controls["Type of growth facility"].patchValue("CO_715:0000162")
             this.modelForm.controls["Description of growth facility"].patchValue("field environement condition")
@@ -596,13 +606,28 @@ export class FormComponent implements OnInit//, AfterViewInit
                             this.model_id = data["_id"];
                             console.log(data["res_obj"])
                             //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-                            this.router.navigate(['/tree']);
+                            
                             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
                             this.alertService.success(message)
-                            let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                            let new_step=0
+                            if (this.model_type === "investigation") {
+                                new_step=2
+                            }
+                            else if (this.model_type === "study") {
+                                new_step=4
+                            }
+                            else if(this.model_type==="experimental_factor"){
+                                new_step=6
+                            }
+                            else if(this.model_type==="observed_variable"){
+                                new_step=8
+                            }
+                            else{
+                                new_step=4
+                            }
                             this.currentUser.tutoriel_step=new_step.toString()
                             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-
+                            this.router.navigate(['/tree']);
                             return true;
                         }
                         else {
@@ -645,7 +670,23 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.notify.emit('cancel the form');
         }
         else{
-            let new_step=parseInt(this.currentUser.tutoriel_step)-1
+            let new_step=0
+            if (this.model_type==="investigation"){
+                new_step=0
+            }
+            else if(this.model_type==="study"){
+                new_step=2
+            }
+            else if(this.model_type==="experimental_factor"){
+                new_step=4
+            }
+            else if(this.model_type==="observed_variable"){
+                new_step=6
+            }
+            else{
+                new_step=0
+            }
+            new_step=parseInt(this.currentUser.tutoriel_step)-1
             this.currentUser.tutoriel_step=new_step.toString()
             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });

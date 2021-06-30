@@ -58,7 +58,7 @@
                             <div 
                             joyrideStep="stepNode" 
                             title=""
-                            [stepContent]="genericleafcontent"
+                            [stepContent]="nodecontent"
                             [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}" 
                             [ngStyle]="getStyle(node)"
                             >
@@ -91,6 +91,7 @@
                                 >
                                     <!--<button style="float: right;"  *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
                                     <!-- ISA EXPORT BUTTON-->
+                                    
                                     <div 
                                         joyrideStep="step8_2"
                                         title=""
@@ -98,7 +99,9 @@
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     >
                                         <!-- <button title="Here is the button to export is ISA format!! " style="float: right;" *ngIf="node.id.includes('investigations')" (click)="onExportIsa(node)" class="btn btn-light btn-xs fa"></button> -->
-                                        <button style="float: right;" *ngIf="node.id.includes('investigations')" (click)="onExportIsa(node)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
+                                        <button style="float: right;" *ngIf="node.id.includes('investigations')" (click)="onExportIsa(node)" class="btn btn-light btn-xs fa">
+                                            <i class="icon-play"></i>
+                                        </button>
                                     </div>
                                     <ng-template style="width: 400px;" #InvestigationISAButtonContent let-nod="model_n">
                                         <div>
@@ -116,7 +119,8 @@
                                         [stepContent]="InvestigationCSVButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                     >
-                                        <button title="Here is the button to export as popular tabular format!! " style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                        <button title="Here is the button to export as popular tabular format!! " style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload">
+                                        </button>
                                     </div>
                                         <ng-template style="width: 400px;" #InvestigationCSVButtonContent let-nod="model_n">
                                             <div>
@@ -264,16 +268,18 @@
                                         </nav>
                                     </div>
                                     <div *ngIf="nod === 'Root'">
-                                        <h4>Root node</h4>
+                                        <h2>Root node</h2>
                                         <mat-card>
+                                            <h5>Button panel</h5>
                                             <p>
                                                 Here is the button panel where you can add an Investigation component. 
                                             </p>
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'investigation'">
-                                        <h4>Investigation</h4>
+                                        <h2>Investigation</h2>
                                         <mat-card>
+                                        <h5>Button panel</h5>
                                          <p>Here is the Investigation button panel where you will find :<br></p>
                                             <ul>
                                              <li> <p>The <button class="btn btn-success btn-xs fa fa-plus"></button> button to add new Study in your investigation. </p></li>
@@ -286,8 +292,9 @@
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'study'">
-                                        <h4>Studies</h4>
+                                        <h2>Studies</h2>
                                         <mat-card>
+                                        <h5>Button panel</h5>
                                         <p>Here is the study button panel where you will find :<br></p>
                                            <ul>
                                             <li> <p>The <button class="btn btn-success btn-xs fa fa-plus"></button> button to add new sub-components like observed variables, events, experimental factors in your investigation. </p></li>
@@ -298,8 +305,9 @@
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'experimental_factor'">
-                                        <h4>Experimental factors</h4>
+                                        <h2>Experimental factors</h2>
                                         <mat-card>
+                                        <h5>Button panel</h5>
                                         <p>
                                             Here is the experimental factor button panel where you will find :<br>
                                         </p>
@@ -311,8 +319,9 @@
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'observed_variable'">
-                                        <h4>Observed variables</h4>
+                                        <h2>Observed variables</h2>
                                         <mat-card>
+                                        <h5>Button panel</h5>
                                         <p>
                                             Here is the observed variable button panel where you will find :<br>
                                         </p>
@@ -324,8 +333,9 @@
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'observation_unit'">
-                                        <h4>Observation units</h4>
+                                        <h2>Observation units</h2>
                                         <mat-card>
+                                        <h5>Button panel</h5><h5>Button panel</h5>
                                         <p>
                                             Here is the observation unit button panel where you will find :<br>
                                         </p>
@@ -337,7 +347,7 @@
                                         </mat-card>
                                     </div>
                                     <div *ngIf="nod == 'biological_material'">
-                                        <h4>Biological materials</h4>
+                                        <h2>Biological materials</h2>
                                         <mat-card>
                                         <p>
                                             Here is the biological material button panel where you will find :<br>
@@ -613,7 +623,7 @@
                                     </mat-expansion-panel>
                                 </mat-accordion>
                             </div>
-                            <ng-template style="width: 400px;" #genericleafcontent let-nod="model_n">
+                            <ng-template style="width: 400px;" #nodecontent let-nod="model_n">
                                 <div>
                                     <nav class="navbar navbar-expand-sm navbar-dark">
                                         <h3>
@@ -623,7 +633,7 @@
                                     </nav>
                                 </div>
                                 <div *ngIf="nod === 'Root'">
-                                    <h4>Root node</h4>
+                                    <h2>Root node</h2>
                                     <mat-card>
                                     <p>
                                         The Root node type contains all your investigations and their child components (studies and their own child components (experimental factor, observed variables,.etc)). 
@@ -632,7 +642,7 @@
                                     </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'experimental_factor'">
-                                    <h4>Experimental factors</h4>
+                                    <h2>Experimental factors</h2>
                                     <mat-card>
                                     <p>Congratulations you have created your first experimental factor <b>Watering</b>   !!! </p>
                                     <p>The experimental factor type contains informations and details about the experimental factor used in your study. 
@@ -642,7 +652,7 @@
                                     </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'observed_variable'">
-                                    <h4>Observed variables</h4>
+                                    <h2>Observed variables</h2>
                                     <mat-card>
                                         <p>
                                             Congratulations you have created your first observed variable <b>plant height</b>   !!! 
@@ -657,16 +667,17 @@
                                     </mat-card>
                                 </div>
                                 <div *ngIf="nod === 'study'">
-                                    <h4>Studies</h4>
+                                    <h2>Studies</h2>
                                     <mat-card>
-                                    <p>Congratulations you have created your first study !!! </p>
-       
+                                    <p>Congratulations you have created your first study <b>Study1</b>!!! </p>
+                                    </mat-card>
+                                    <mat-card>
                                     <h5>Study details</h5>
                                         <p>
                                             By clicking on the lower part of the Node, you will see details about it. <br>
                                         </p>
                                    
-                                    <h5>Tree expansion</h5>
+                                    
                                         <p>
                                             If Study node has at least one child node, click on the upper left to expand the node and reveal child node.<br>
                                             This study does not have child component described yet <br>
@@ -682,7 +693,10 @@
                                 <div *ngIf="nod === 'investigation'">
                                     
                                     
-                                    <h4>Investigations</h4>
+                                    <h2>Investigations</h2>
+                                    <mat-card>
+                                        <p>Congratulations you have created your first investigation <b>maizes1</b>!!! </p>
+                                        </mat-card>
                                     <mat-card>
                                     <h5>Investigation node</h5>
                                     <p>
@@ -697,9 +711,7 @@
                                         <p>
                                             By clicking on the lower part of the Node, you will see details about it. <br>
                                         </p>
-                                    </mat-card>
-                                    <mat-card>
-                                    <h5>Tree expansion</h5>
+                                    
                                         <p>
                                             If Investigation node has at least one child node, click on the upper left to expand the node and reveal child node. <br>
                                             This investigation does not have child component described yet <br>
@@ -761,7 +773,11 @@
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}">
                                     
                                      <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
-                                    
+                                     
+                                    <button style="float: right;" *ngIf="(node.id.includes('investigations')) || (node.id.includes('studies'))" (click)="onExplore(node)" class="btn btn-light btn-xs fa fa-bar-chart">
+                                            
+                                    </button>
+                                   
                                     <button style="float: right;" *ngIf="node.id.includes('investigations')"
                                             (click)="onExportIsa(node)" class="btn btn-light btn-xs fa "><i
                                             class="icon-play"></i></button>
@@ -801,7 +817,7 @@
                                             </h3>
                                         </nav>
                                     </div> -->
-                                    <h4>Button panel</h4>
+                                    <h2>Button panel</h2>
                                     <p>
                                         Here is the button panel where you can add, remove, edit and export any component in your investigation tree
                                     </p>
@@ -864,7 +880,7 @@
                             </h3>
                         </nav>
                     </div>
-                    <h4>Welcome in LINDA Tutorial ! </h4>
+                    <h2>Welcome in LINDA Tutorial ! </h2>
                     <mat-card>
                     <h5>Step by step procedure</h5>
                     <p>
@@ -900,10 +916,10 @@
                     <div *ngIf="nod === 'investigation'">
                         <p>The {{nod}} type contains informations and details about your investigation component. <br>
                         Investigation is the highest level in MIAPPE hierarchy.</p>
-                        <h4>{{nod}} description</h4>
+                        <h2>{{nod}} description</h2>
                             <p>By clicking on the lower part of the Node, you will see details about it. </p>
                         
-                        <h4>{{nod}} childs</h4>
+                        <h2>{{nod}} childs</h2>
                             <p>If Investigation node has at least one child node, click on the upper left to expand the node and reveal child node
                             This investigation does not have child component described yet </p>
                             <br>
@@ -1087,7 +1103,7 @@
             </nav>
         </div>
         <div *ngIf="tutl==='0'">
-            <h4>Investigations</h4>
+            <h2>Investigations</h2>
             <mat-card>
             <h5>What about investigations ?</h5>
             <p><b>Investigation  </b>is the entry point of each MIAPPE dataset. It contains several general metadata fields (e.g. title, description, submission/publication dates), including some critical for FAIRness (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
@@ -1098,7 +1114,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='2'">
-            <h4>Studies</h4>
+            <h2>Studies</h2>
             <mat-card>
             <h5>What about studies ?</h5>
             <p><b>Study </b> corresponds to one experiment and defines its location (which by definition must be single per study) and duration. 
@@ -1111,7 +1127,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='4'">
-            <h4>Experimental factors</h4>
+            <h2>Experimental factors</h2>
             <mat-card>
             <h5>What about experimental factors ?</h5>
             <p><b>Experimental factor</b> describes a management practice that varied between observation units in a study, 
@@ -1127,7 +1143,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='6'">
-            <h4>Observed variables</h4>
+            <h2>Observed variables</h2>
             <mat-card>
             <h5>What about observed variables ?</h5>
             <p>Observed variable – documents a phenotypic or environment parameter that was observed and recorded as part of the study. 
@@ -1151,7 +1167,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='8'">
-            <h4>Biological materials</h4>
+            <h2>Biological materials</h2>
             <mat-card>
             <h5>What about biological materials ?</h5>
             <p>The <b>biological material</b> defines material being studied (e.g. plants grown from a certain bag or seed, or plants grown in a particular field). The original source of that material (e.g., the seeds or the original plant cloned) is called the material source, which, when held by a material repository, should have its stock identified.</p>
@@ -1162,7 +1178,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='10'">
-            <h4>Observation units</h4>
+            <h2>Observation units</h2>
             <mat-card>
             <h5>What about observation units ?</h5>
     
@@ -1189,7 +1205,7 @@
             </mat-card>
         </div>
         <div *ngIf="tutl==='12'">
-            <h4>Observation data files</h4>
+            <h2>Observation data files</h2>
             <mat-card>
             <h5>What about observation data files ?</h5>
             <p> 

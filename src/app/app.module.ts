@@ -108,6 +108,7 @@ import { ExtractComponentComponent } from './extract/extract-component.component
 import { FormDialogComponent } from './dialog/form-dialog.component';
 import { EditComponent } from './edition/edit.component';
 import { TemplatesComponent } from './templates/templates.component';
+import { ExplorationComponent } from './statistics/exploration.component';
 
 @NgModule({
   declarations: [
@@ -169,7 +170,8 @@ import { TemplatesComponent } from './templates/templates.component';
     ExtractComponentComponent,
     FormDialogComponent,
     EditComponent,
-    TemplatesComponent
+    TemplatesComponent,
+    ExplorationComponent
         
     
 

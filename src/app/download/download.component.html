@@ -1,3 +1,4 @@
+
 <div class="border-head">
     <h3>
         <a href="index.html" class="logo">
@@ -7,19 +8,9 @@
         </a>
     </h3>
 </div>
-<div
-    joyrideStep="StepExampleForm"
-    title=""
-    [stepContent]="ExampleForm"
-    [stepContentParams]="{'model_n':demo_subset}"
-    [stepPosition]="center"
-    (next)="onNext()">  
-    <div 
-    joyrideStep="StepMenuForm"
-    title=""
-    [stepContent]="MenuForm"
-    [stepContentParams]="{'model_n':demo_subset}"
-    *ngIf= "mode==='extract'" >
+
+<joyrideStep joyrideStep="StepExampleForm" title="" [stepContent]="ExampleForm" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
+    <div joyrideStep="StepMenuForm" title="" [stepContent]="MenuForm" [stepContentParams]="{'model_n':demo_subset}" *ngIf= "mode==='extract'" >
     <h4>Extract Investigation design from tabular file!</h4>
     <p> Using a external tabular file, Users can easily export whole investigation structure into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
     <!--<app-upload-file ></app-upload-file>-->
@@ -39,14 +30,14 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
         <button 
-        joyrideStep="StepUpload4Form"
+        joyrideStep="StepUpload3Form"
         title=""
-        [stepContent]="Upload4Form"
+        [stepContent]="Upload3Form"
         [stepContentParams]="{'model_n':demo_subset}"
         class="btn btn-default btn-info" type="submit">
             Upload
         </button>
-        <ng-template #Upload4Form let-nod="model_n">
+        <ng-template #Upload3Form let-nod="model_n">
             <div>
               <nav class="navbar navbar-expand-sm navbar-dark">
                   <h3>
@@ -56,19 +47,19 @@
             </div>
             
             <h4>Data files</h4>
-            <br>
-                
+            <mat-card>
                 <h5>Upload your data files</h5>
                 <p>
                     If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br>
                     Once you have checked the ccorrect redio button, please click on the <button class="btn btn-default btn-info" type="submit">Upload</button> button 
                 </p> 
+            </mat-card>
         </ng-template>
         <mat-radio-group 
         
         [(ngModel)]="labelPosition" 
         [ngModelOptions]="{standalone: true}">
-            <mat-radio-button 
+            <!-- <mat-radio-button 
             joyrideStep="StepUpload1Form"
             title=""
             [stepContent]="Upload1Form"
@@ -95,47 +86,49 @@
                     <p> You could extract only studies backbone the same way by identifying and assigning the study unique identifier column. 
                     In this case, only the studies will be created. No data files are imported</p>
                      
+            </ng-template> -->
+            
+            <mat-radio-button 
+            joyrideStep="StepUpload1Form"
+            title=""
+            [stepContent]="Upload1Form"
+            [stepContentParams]="{'model_n':demo_subset}" 
+            class="radio-margin" value="all">
+                Datafiles + Studies
+            </mat-radio-button>
+            <ng-template #Upload1Form let-nod="model_n">
+                <div>
+                  <nav class="navbar navbar-expand-sm navbar-dark">
+                      <h3>
+                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                      </h3>
+                  </nav>
+                </div>
+                
+                <h4>Data files</h4>
+                <p>Before to upload datafiles in LINDA, you need to select the import mode :</p>
+                <mat-card>
+                    
+                    <h5>Import data files and create studies inplace</h5>
+                    <p>
+                         In the case, you had only created the investigation node, you could want to define your studies
+                        automatically(sometimes you could have a lot of studies).
+                        If you select to import data and studies, as indicated both will be imported (studies are not created again if
+                        they already exist)
+                    </p>
+                </mat-card>
+                <mat-card>
+                    <h6>Notes</h6>
+                    You will be ask to fill some common field between each studies
+                </mat-card>
             </ng-template>
             <mat-radio-button 
             joyrideStep="StepUpload2Form"
             title=""
             [stepContent]="Upload2Form"
             [stepContentParams]="{'model_n':demo_subset}" 
-            class="radio-margin" value="all">
-                Studies + associated data
-            </mat-radio-button>
-            <ng-template #Upload2Form let-nod="model_n">
-                <div>
-                  <nav class="navbar navbar-expand-sm navbar-dark">
-                      <h3>
-                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-                      </h3>
-                  </nav>
-                </div>
-                
-                <h4>Data files</h4>
-                <br>
-                    <h5>Different import mode</h5>
-                    <h6>Only data files</h6>
-                    <p> Given that you could have built your experimental design prior to import data files, you can, if you want, only load the data as data files in your investigations using the 
-                        <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button> radio button.
-                    Data files must have a column assigned to study unique id in order to link data to corresponding studies.</p>
-                    <h6>Only studies</h6>
-                    <p> You could also extract only studies backbone the same way by identiyfing the study unique identiffier column. 
-                    In this case, only the studies will be created. </p>
-                    <h6>Only studies</h6>
-                    <p>
-                        If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br>
-                        Once you have checked the ccorrect redio button, please click on the <button class="btn btn-default btn-info" type="submit">Upload Studies</button> button 
-                    </p> 
-            </ng-template>
-            <mat-radio-button 
-            joyrideStep="StepUpload3Form"
-            title=""
-            [stepContent]="Upload3Form"
-            [stepContentParams]="{'model_n':demo_subset}" 
             class="radio-margin" value="only_data">
-                Only data
+                Datafiles
             </mat-radio-button>
             <ng-template #Upload2Form let-nod="model_n">
                 <div>
@@ -147,27 +140,21 @@
                 </div>
                 
                 <h4>Data files</h4>
-                <br>
-                    <h5>Different import mode</h5>
-                    <h6>Only data files</h6>
+                <mat-card>
+                    <h6>Import data files only</h6>
                     <p> Given that you could have built your experimental design prior to import data files, you can, if you want, only load the data as data files in your investigations using the 
                         <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button> radio button.
-                    Data files must have a column assigned to study unique id in order to link data to corresponding studies.</p>
-                    <h6>Only studies</h6>
-                    <p> You could also extract only studies backbone the same way by identiyfing the study unique identiffier column. 
-                    In this case, only the studies will be created. </p>
-                    <h6>Only studies</h6>
-                    <p>
-                        If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br>
-                        Once you have checked the ccorrect redio button, please click on the <button class="btn btn-default btn-info" type="submit">Upload Studies</button> button 
-                    </p> 
+                    Data files must have a column assigned to study unique id in order to link data to corresponding studies. </p>
+                </mat-card>
+                    
+                
+                    
             </ng-template>
         </mat-radio-group>
     </form>
     </div>
-    
-</div>
-<ng-template #MenuForm let-nod="model_n">
+    </div>
+    <ng-template #MenuForm let-nod="model_n">
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
@@ -187,403 +174,487 @@
         You could also extract only studies backbone the same way by identiyfing the study unique identiffier column. 
         In this case, only the studies will be created. 
         If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br></p> 
-</ng-template>
-<div *ngIf= "mode==='create'" >
-  <h1>CSV Data Loader</h1>
-  <!--<app-upload-file ></app-upload-file>-->
-  <div *ngIf="error">
-    {{ error.message }}
-  </div>
-  <div *ngIf="uploadResponse.status === 'error'">
-    {{ uploadResponse.message }}
-  </div>
-  <!-- <div *ngIf="uploadResponse.status === 'progress'">
-    <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-      {{uploadResponse.message}}%
-    </div>
-  </div> -->
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
-      <button class="btn btn-default btn-info" type="submit">Upload</button>
-  </form>
-</div>
- <div *ngIf= "mode.includes('edit')" >
-     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-     <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
-  </form>
-</div>
-<div *ngIf= "mode.includes('extract-again')" >
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
- </form>
-</div>
-<div *ngIf= "mode.includes('extract-form')">
-    <h4>Extract Observation unit form design from tabular file!</h4>
-    <p> Using a external tabular file, Users can easily set form structure before associating into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
+    </ng-template>
+
+
+    <div *ngIf= "mode==='create'" >
+    <h1>CSV Data Loader</h1>
     <!--<app-upload-file ></app-upload-file>-->
-</div>
-<br>
+    <div *ngIf="error">
+        {{ error.message }}
+    </div>
+    <div *ngIf="uploadResponse.status === 'error'">
+        {{ uploadResponse.message }}
+    </div>
+    <!-- <div *ngIf="uploadResponse.status === 'progress'">
+        <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+        {{uploadResponse.message}}%
+        </div>
+    </div> -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+        <button class="btn btn-default btn-info" type="submit">Upload</button>
+    </form>
+    </div>
+    <div *ngIf= "mode.includes('edit') || mode.includes('extract-again')" >
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
+    </form>
+    </div>
+    <!-- <div *ngIf= "mode.includes('extract-again')" >
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
+    </form>
+    </div> -->
+    <div *ngIf= "mode.includes('extract-form')">
+        <h4>Extract Observation unit form design from tabular file!</h4>
+        <p> Using a external tabular file, Users can easily set form structure before associating into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
+        <!--<app-upload-file ></app-upload-file>-->
+    </div>
+    <br>
 
-<!-- [xAxisTickFormatting]='formatTime' -->
-<ngx-charts-line-chart *ngIf= "get_time_set()" #chart
-  [view]="view"
-  [scheme]="colorScheme"
-  [legend]="legend"
-  [showXAxisLabel]="showXAxisLabel"
-  [showYAxisLabel]="showYAxisLabel"
-  [xAxis]="xAxis"
-  [yAxis]="yAxis"
-  [xAxisLabel]="xAxisLabel"
-  [maxXAxisTickLength]=10
-  [yAxisLabel]="yAxisLabel"
-  [timeline]="timeline"
-  [rotateXAxisTicks]="rotateXAxisTicks"
-  [autoScale]="autoScale"
-  [results]="multi"
-  (select)="onSelectChart($event)"
-  (activate)="onActivate($event)"
-  (deactivate)="onDeactivate($event)"
-  >
-</ngx-charts-line-chart>
-<table *ngIf= "model_type==='metadata_file'" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable1">
-    <thead>
-        <tr>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
-            <!-- Selection column-->
-            <th scope="col" >
-            <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
-            </th>
-            <!-- Original headers column-->
-            <th scope="col" >
-                {{key}}
-            </th>
-            <!-- <th scope="col">
-                <span style="display:inline-block; margin-left: 10px;"> 
-                    <select [ngModel]="selectedTerm" name="select_term" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
-                        <option *ngFor="let extract_option of extract_component_options" [value]="extract_option.value">{{extract_option.name}}</option>
-                    </select> 
-                </span>
-            </th> -->
-            <!-- MIAPPE assignment-->
-            <th scope="col">
-                <span style="display:inline-block; margin-left: 10px;"> 
-                    <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
-                        <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
-                    </select> 
-                </span>
-            </th>
-            <!-- Assigned MIAPPE component-->
-            <th scope="col">
-                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header(key).associated_component}} 
-                </span>
+    <!-- [xAxisTickFormatting]='formatTime' -->
+    <ngx-charts-line-chart *ngIf= "get_time_set()" #chart
+    [view]="view"
+    [scheme]="colorScheme"
+    [legend]="legend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxis]="xAxis"
+    [yAxis]="yAxis"
+    [xAxisLabel]="xAxisLabel"
+    [maxXAxisTickLength]=10
+    [yAxisLabel]="yAxisLabel"
+    [timeline]="timeline"
+    [rotateXAxisTicks]="rotateXAxisTicks"
+    [autoScale]="autoScale"
+    [results]="multi"
+    (select)="onSelectChart($event)"
+    (activate)="onActivate($event)"
+    (deactivate)="onDeactivate($event)"
+    >
+    </ngx-charts-line-chart>
+    <!-- Specific table for metadata files -->
+    <section *ngIf= "model_type==='metadata_file'">
+        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable1">
+            <thead>
+                <tr>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Selection</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+                    <!-- Selection column-->
+                    <th scope="col" >
+                    <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
+                    </th>
+                    <!-- Original headers column-->
+                    <th scope="col" >
+                        {{key}}
+                    </th>
+                    <!-- <th scope="col">
+                        <span style="display:inline-block; margin-left: 10px;"> 
+                            <select [ngModel]="selectedTerm" name="select_term" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                                <option *ngFor="let extract_option of extract_component_options" [value]="extract_option.value">{{extract_option.name}}</option>
+                            </select> 
+                        </span>
+                    </th> -->
+                    <!-- MIAPPE assignment-->
+                    <th scope="col">
+                        <span style="display:inline-block; margin-left: 10px;"> 
+                            <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
+                                <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                            </select> 
+                        </span>
+                    </th>
+                    <!-- Assigned MIAPPE component-->
+                    <th scope="col">
+                        <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                            {{get_associated_header(key).associated_component}} 
+                        </span>
+                        
+                    </th>
+                    <!-- Ontologies component column-->
+                    <th scope="col">
+                        <span style="display:inline-block; margin-left: 10px;"> 
+                            <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                                <!--<option value="" disabled>Assign Ontology term</option>-->
+                                <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
+                                <option value="XEO">XEO</option>
+                                <option value="PECO">PECO</option>
+                                <option value="EnvO">EnvO</option>
+                                <option value="PO_Structure">PO Structure</option>
+                                <option value="PO_Development">PO Development</option>
+                                <option value="CO_322">Crop Ontology 322</option>
+                                <option value="CO_20">Crop Ontology 20 </option>
+                                <option value="CO_715">Crop Ontology 715 </option>
+                            </select> 
+                        </span> 
+                        <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
+                            <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
+                                <option value="" disabled>Select time format</option>
+                                <option value="dd/mm/yyyy">dd/mm/yyyy</option>
+                                <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
+                                <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
+                                <option value="custom_date_format">build custom date format</option>
+                            </select> 
+                        </span> -->
+                    </th>
+                    <!-- Assigned Ontology terms component column-->
+                    <th scope="col">
+                        <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
+                            {{get_associated_header(key).associated_term_id}} 
+                        </span>
+                    </th>
+                    <!-- Visualization column-->
+                    <th scope="col">
+                        <span *ngIf="get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                            <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
+                                title="{{key}}">Show Data
+                            </button>
+                        </span>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- Specific table for download datafiles and assign component -->
+    <section *ngIf= "(model_type==='data_file' || model_type==='study') && (mode==='extract-again' || mode==='extract')">
+    
+    <!-- Assign component for a already existing datafiles -->
+    <div  *ngIf= "mode==='extract-again'">
+        <h2>Select your data file </h2>
+        <!-- class="form-control"  -->
+        <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+            <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+        </select> 
+        <br>
+    </div>
+    <br>
+
+    <div>
+        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
+            <thead joyrideStep="StepTableForm" title="" [stepContent]="TableForm" [stepPosition]="center" [stepContentParams]="{'model_n':demo_subset}" (next)="onNext('load_csv')">
+                <tr>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE component</th>
+                    <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th> -->
+                    <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th> -->
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
+                </tr>
+            </thead>
+            
+            <ng-template #TableForm let-nod="model_n">
+                <div>
+                    <nav class="navbar navbar-expand-sm navbar-dark">
+                        <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                                    meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                        </h3>
+                    </nav>
+                </div>
+                <h4>Data files</h4>
+                <mat-card>
+                    <h5>Original headers column</h5>
+                    <p> 
+                        this column contains the headers found in your tabular file. Let's assign the corresponding MIAPPE component to each column. 
+                        You must have a column for study unique ID  !! In this way, the data will be distributed over each study when they are imported. 
+                        
+                    </p>
+                    <h5>MIAPPE assignment column</h5>
+                    <p>
+                        The MIAPPE assignment column allows you to declare a column as MIAPPE component column.
+                        It could be a study component, but also an experimental factor, an observed variable, a biological material or a observation units.
+                        This way, you inform Linda that this column contains only given MIAPPE component associated data. 
+                    </p>
+                    
+                    
+                    <!-- <h5>Ontologies column</h5>
+                    <p> This column allows you to associated an ontology term to , but also an experimental factor, an observed
+                        variable, a biological material or a observation units.
+                        This way, you inform Linda that this column contains only given MIAPPE component associated data. 
+                    </p> -->
+                </mat-card>
                 
-            </th>
-            <!-- Ontologies component column-->
-            <th scope="col">
-                <span style="display:inline-block; margin-left: 10px;"> 
-                    <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
-                        <!--<option value="" disabled>Assign Ontology term</option>-->
-                        <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
-                        <option value="XEO">XEO</option>
-                        <option value="PECO">PECO</option>
-                        <option value="EnvO">EnvO</option>
-                        <option value="PO_Structure">PO Structure</option>
-                        <option value="PO_Development">PO Development</option>
-                        <option value="CO_322">Crop Ontology 322</option>
-                        <option value="CO_20">Crop Ontology 20 </option>
-                        <option value="CO_715">Crop Ontology 715 </option>
-                    </select> 
-                </span> 
-                <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
-                    <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
-                        <option value="" disabled>Select time format</option>
-                        <option value="dd/mm/yyyy">dd/mm/yyyy</option>
-                        <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
-                        <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
-                        <option value="custom_date_format">build custom date format</option>
-                    </select> 
-                </span> -->
-            </th>
-            <!-- Assigned Ontology terms component column-->
-            <th scope="col">
-                <span *ngIf="get_associated_header(key).selected" style="display:inline-block; margin-left: 10px;"> 
-                    {{get_associated_header(key).associated_term_id}} 
-                </span>
-            </th>
-            <!-- Visualization column-->
-            <th scope="col">
-                <span *ngIf="get_associated_header(key).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
-                    <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
-                        title="{{key}}">Show Data
-                    </button>
-                </span>
-            </th>
-        </tr>
-    </tbody>
-</table>
+                    
+                
+            </ng-template>
+            <tbody>
+                <tr joyrideStep="itemN{{i}}" 
+                    [stepContent]="RowForm"
+                    [stepContentParams]="{'row_n':i}"
+                    (next)="onNext(i)"
+                    *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
 
-<section *ngIf= "(model_type==='data_file' || model_type==='study') && (mode==='extract-again' || mode==='extract')">
-<div  *ngIf= "mode==='extract-again'">
-<h2>Select your data file </h2>
-<!-- class="form-control"  -->
-<select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
-    <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
-</select> 
-<br>
-</div>
-<br>
-<div
-joyrideStep="StepTableForm"
-    title=""
-    [stepContent]="TableForm"
-    [stepContentParams]="{'model_n':demo_subset}"
-    (prev)="onBack()"
-    (next)="onNext()">
-<table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
-    <thead>
-        <tr>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th>
-            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col" >
+                        <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
+                        </th>
+                        <!-- Original headers column-->
+                        <th scope="col" >
+                            {{key}}
+                        </th>
+                        <!-- MIAPPE assignment-->
+                        <th scope="col">
 
-                <th scope="col" >
-                <mat-checkbox [checked]="checklistSelection.isSelected(key)" (change)="itemSelectionToggle(key)"></mat-checkbox>
-                </th>
-                <!-- Original headers column-->
-                <th scope="col" >
-                    {{key}}
-                </th>
-                <!-- MIAPPE assignment-->
-                <th *ngIf="i==0"
-                joyrideStep="StepAssignForm"
-                title=""
-                [stepContent]="assignmentForm"
-                [stepContentParams]="{'demo_n':demo_subset, 'row_index':i}"
-                (prev)="onBack()"
-                (next)="onNext()" 
-                scope="col">
+                            <form [formGroup]="dataFileComponentForm[selected_file]">
+                                <mat-form-field class="full-width">
+                                    <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(selected_file)[i], selected_file)">
+                                        <mat-option>--</mat-option>
+                                        <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
+                                            {{extract_option.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>                    
+                            </form>
+                            <!-- <span style="display:inline-block; margin-left: 10px;"> 
+                                <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
+                                    <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
+                                </select> 
+                            </span> -->
+                        </th>
+                        <!-- Assigned MIAPPE component-->
+                        <th scope="col">
+                            <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                                {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                            </span>
+                            <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                                {{get_associated_header_by_filename(key, selected_file).associated_component}}
+                            </span>
+                        </th>
+                        <!-- Ontologies component column-->
+                        <!-- <th scope="col">
+                            <span style="display:inline-block; margin-left: 10px;"> 
+                                <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
+                                   
+                                    <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
+                                    <option value="XEO">XEO</option>
+                                    <option value="PECO">PECO</option>
+                                    <option value="EnvO">EnvO</option>
+                                    <option value="PO_Structure">PO Structure</option>
+                                    <option value="PO_Development">PO Development</option>
+                                    <option value="CO_322">Crop Ontology 322</option>
+                                    <option value="CO_20">Crop Ontology 20 </option>
+                                    <option value="CO_715">Crop Ontology 715 </option>
+                                </select> 
+                            </span> 
+                        </th> -->
+                            <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
+                                <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
+                                    <option value="" disabled>Select time format</option>
+                                    <option value="dd/mm/yyyy">dd/mm/yyyy</option>
+                                    <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
+                                    <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
+                                    <option value="custom_date_format">build custom date format</option>
+                                </select> 
+                            </span> -->
+                        
 
-                    <form [formGroup]="dataFileComponentForm[selected_file]">
-                        <mat-form-field class="full-width">
-                            <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(selected_file)[i], selected_file)">
-                                <mat-option>--</mat-option>
-                                <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
-                                    {{extract_option.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                    
-                    </form>
-                    <!-- <span style="display:inline-block; margin-left: 10px;"> 
-                        <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
-                            <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
-                        </select> 
-                    </span> -->
-                </th>
-                <ng-template #assignmentForm let-demonumber="demo_n" let-ri="row_index">
+                        <!-- Assigned Ontology terms component column (obsolete) -->
+                        <!-- <th scope="col">
+                            <span *ngIf="get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                                {{get_associated_header_by_filename(key, selected_file).associated_term_id}} 
+                            </span>
+                        </th> -->
+
+                        <!-- Visualization column-->
+                        <th scope="col">
+                            <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
+                                <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
+                                    title="{{key}}">Show Data
+                                </button>
+                            </span>
+                            <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
+                                <button class="btn btn-primary btn-xs"
+                                    title="{{key}}">Show Data
+                                </button>
+                            </span>
+                        </th>
+
+
+                </tr>
+                <ng-template #RowForm let-rn="row_n">
                     <div>
                         <nav class="navbar navbar-expand-sm navbar-dark"><h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3></nav>
                     </div> 
-
                     <h4>Data files</h4>
-                
+                    <div *ngIf="rn===0">
+                        <mat-card>
+                        <h5> Assign Studies data</h5>
+                           <p>
+                               Here you can assign column as study unique ID. You could create and link corresponding study later.
+                             !!! Study column will not always be at first position like in this example !!! 
+                           </p>  
+                        </mat-card>
+                        <mat-card> 
+                            <h6>Notes</h6>
+                            <p>
+                                Study ids were used to assign each component to its corresponding study. 
+                                For example, in our file, we have only one study <b>MaizeStudy1</b>, 
+                                so all others components (observation units, experimental factors, observed variables, etc.) will be integrated in this study.
+                            </p>
+                        </mat-card>
+                    </div>
+                    <div *ngIf="rn===1">
+                        <mat-card>
+                        <h5> Assign observation units data</h5>
+                           <p>
+                                Here you can assign column as observation unit ids. 
+                                You could create and link corresponding observation units later
+                            </p>  
+                        </mat-card>
+                    </div>
+                    <div *ngIf="rn===2">
+                        <mat-card>
+                            <h5> Assign experimental factors data </h5>
+                               <p>
+                                   Here you can assign column as experimental factors values (rainfed, watered) labelled column. 
+                                   You could create and link corresponding experimental factors later
+                                </p>  
+                        </mat-card>
+                        
+                    </div>
+                    <div *ngIf="rn===3">
+                        <mat-card>
+                            <h5> Assign observed variables data</h5>
+                               <p>Here you can assign column as observed variable for plant.height observations. 
+                                You could extract corresponding observed variable later to create node in your history.
 
-                    Here you can assign your study column in order to map each component to your investigation structure. we select study for you for this first time 
-
+                            </p>
+                            
+                        </mat-card>
+                        <mat-card> 
+                            <h6>Notes</h6>
+                            <p>
+                                In our case, we have already created the observed variable for plant height 
+                                but we need to link the node to the column in LINDa database </p>
+                        </mat-card>
+                    </div>
+                    <div *ngIf="rn===4">
+                        <mat-card>
+                            <h5> Assign biological materials data</h5>  
+                                <p>
+                                    Here you can assign column for materials source IDs representing plant accessions in each plot. 
+                                    Once data file column has been assigned as material source IDs. You could later create biological materials with respect to these material source IDs. 
+                                    You could also only link them to already existing biological material nodes.
+                                </p>
+                            
+                        </mat-card>
+                        
+                    </div>
+                    <div *ngIf="rn===5">
+                        <mat-card>
+                            <h5> Assign observation units</h5>
+                               <p>Here you can assign column as observation unit ids. you can extract  ccorrespondign obserrvation units later
+                                Assign observation units to this column</p>  
+                            </mat-card>
+                        
+                    </div>
                 </ng-template>
-                <th *ngIf="i!=0" scope="col">
-
-                    <form [formGroup]="dataFileComponentForm[selected_file]">
-                        <mat-form-field class="full-width">
-                            <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(selected_file)[i], selected_file)">
-                                <mat-option>--</mat-option>
-                                <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
-                                    {{extract_option.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                    
-                    </form>
-                    <!-- <span style="display:inline-block; margin-left: 10px;"> 
-                        <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractStudy($event.target.value,get_headers()[i])" ngModel>
-                            <option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">{{extract_option.name}}</option>
-                        </select> 
-                    </span> -->
-                </th>
-                <!-- Assigned MIAPPE component-->
-                <th scope="col">
-                    <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_component}} 
-                    </span>
-                    <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_component}}
-                    </span>
-                </th>
-                <!-- Ontologies component column-->
-                <th scope="col">
-                    <span style="display:inline-block; margin-left: 10px;"> 
-                        <select [ngModel]="selectedOntology" name="select_ontology" size="1" (change)="onSelectOntology($event.target.value,get_headers()[i])" >
-                            <!--<option value="" disabled>Assign Ontology term</option>-->
-                            <option [value]="undefined" [selected]="selected">Assign Ontology term</option>
-                            <option value="XEO">XEO</option>
-                            <option value="PECO">PECO</option>
-                            <option value="EnvO">EnvO</option>
-                            <option value="PO_Structure">PO Structure</option>
-                            <option value="PO_Development">PO Development</option>
-                            <option value="CO_322">Crop Ontology 322</option>
-                            <option value="CO_20">Crop Ontology 20 </option>
-                            <option value="CO_715">Crop Ontology 715 </option>
-                        </select> 
-                    </span> 
-                    <!-- <span *ngIf="get_headers_select()[i]==='time'" style="display:inline-block; margin-left: 10px;"> 
-                        <select name="select_dateformat" size="1" (change)="onSelectTime($event.target.value,get_headers()[i])">
-                            <option value="" disabled>Select time format</option>
-                            <option value="dd/mm/yyyy">dd/mm/yyyy</option>
-                            <option value="yyyy-MM-DDThh:mm:ss.sTZD">yyyy-MM-DDThh:mm:ss.sTZD</option>
-                            <option value="yyyy/MM/ddThh:mm:ss">yyyy/MM/ddThh:mm:ss</option>
-                            <option value="custom_date_format">build custom date format</option>
-                        </select> 
-                    </span> -->
-                </th>
-                <!-- Assigned Ontology terms component column-->
-                <th scope="col">
-                    <span *ngIf="get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_term_id}} 
-                    </span>
-                </th>
-                <!-- Visualization column-->
-                <th scope="col">
-                    <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" style="display:inline-block; margin-left: 10px;"> 
-                        <button class="btn btn-primary btn-xs" (click)="todoLeafItemSelectionToggle(key)"
-                            title="{{key}}">Show Data
-                        </button>
-                    </span>
-                    <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).is_numeric_values && time_set" (click)="todoLeafItemSelectionToggle(key)" style="display:inline-block; margin-left: 10px;"> 
-                        <button class="btn btn-primary btn-xs"
-                            title="{{key}}">Show Data
-                        </button>
-                    </span>
-                </th>
-
-
-        </tr>
-    </tbody>
-</table>
-</div>
-<ng-template #TableForm let-nod="model_n">
-    <div>
-        <nav class="navbar navbar-expand-sm navbar-dark"><h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3></nav>
-    </div> 
-    <h4>Data files</h4>
-    <p>As you can see only headers of your  csv files were displayed in original headers column. </p>
-        
-    <p>The MIAPPE assignment column allows you to declare a column as MIAPPE component column. </p>
-    <p>It could be a study component, but also an experimental factor, an observed variable, a biological material or a observation units.
-    This way you inform Linda that this column contains only given MIAPPE component.  </p>
-
-    <p>Let's assign the corresponding study column. In this way, the data will be distributed over each study when they are imported. </p> 
-    <br>
-</ng-template>
-</section>
-
-<section *ngIf= "(model_type==='observation_unit') && mode==='extract-form'">
-    <h2>Select your data file </h2>
-    <!-- class="form-control"  -->
-    <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
-        <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
-    </select> 
-    <br>
-    <br>
-    <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable_form">
-        <thead>
-            <tr>
-                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
-                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
-                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
-                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE form field</th>
-                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE form field</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
-
-                <!-- Original headers column-->
-                <th scope="col" >
-                    {{key}}
-                </th>
-                <!-- MIAPPE assignment-->
-                <th scope="col">
-                    <form [formGroup]="dataFileComponentForm[selected_file]">
-                        <mat-form-field class="full-width">
-                            <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
-                                <mat-option>--</mat-option>
-                                <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
-                                    {{extract_option.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                    
-                    </form>
+            </tbody>
+        </table>
+    </div>
     
-                </th>
-                <!-- Assigned MIAPPE component-->
-                <th scope="col">
-                    <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_component}} 
-                    </span>
-                    <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_component}}
-                    </span>
-                </th>
-                <th>
-                    <!-- <span style="display:inline-block; margin-left: 10px;"> 
-                        <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractField($event.target.value,get_headers_by_filename(selected_file)[i])" ngModel>
-                            <option *ngFor="let extract_option of extract_fields_options.options" [value]="extract_fields_options.value">{{extract_fields_options.name}}</option>
-                        </select> 
-                    </span> -->
-                    <form [formGroup]="dataFileComponentFieldForm[selected_file]">
-                        <mat-form-field class="full-width">
-                            <mat-select placeholder="Field Options" formControlName="{{key}}" (selectionChange)="onExtractField($event.target.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
-                                <mat-option>--</mat-option>
-                                <mat-option *ngFor="let extract_field_option of extract_fields_options.options" [value]="extract_field_option.value">
-                                    {{extract_field_option.name}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>                    
-                    </form>
+    </section>
+    <!-- Specific table for biological materials extraction form data files -->
+    <section *ngIf= "(model_type==='biological_material') && mode==='extract-form'">
+    </section>
+    <!-- Specific table for observation units extraction form data files -->
+    <section *ngIf= "(model_type==='observation_unit') && mode==='extract-form'">
+        <h2>Select your data file </h2>
+        <!-- class="form-control"  -->
+        <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+            <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+        </select> 
+        <br>
+        <br>
+        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable_form">
+            <thead>
+                <tr>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE component</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE form field</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE form field</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let key of get_headers_by_filename(selected_file) ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
 
-                </th>
-                <th>
-                    <!-- <span get_associated_component_field(key, selected_file, get_associated_header_by_filename(key, selected_file).associated_component).selected" style="display:inline-block; margin-left: 10px;"> 
-                        {{get_associated_header_by_filename(key, selected_file).associated_component}} 
-                    </span> 
-                    -->
+                    <!-- Original headers column-->
+                    <th scope="col" >
+                        {{key}}
+                    </th>
+                    <!-- MIAPPE assignment-->
+                    <th scope="col">
+                        <form [formGroup]="dataFileComponentForm[selected_file]">
+                            <mat-form-field class="full-width">
+                                <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
+                                    <mat-option>--</mat-option>
+                                    <mat-option *ngFor="let extract_option of extract_component_options.options" [value]="extract_option.value">
+                                        {{extract_option.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>                    
+                        </form>
+        
+                    </th>
+                    <!-- Assigned MIAPPE component-->
+                    <th scope="col">
+                        <span *ngIf="i>0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                            {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                        </span>
+                        <span *ngIf="i==0 && get_associated_header_by_filename(key, selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                            {{get_associated_header_by_filename(key, selected_file).associated_component}}
+                        </span>
+                    </th>
+                    <th>
+                        <!-- <span style="display:inline-block; margin-left: 10px;"> 
+                            <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractField($event.target.value,get_headers_by_filename(selected_file)[i])" ngModel>
+                                <option *ngFor="let extract_option of extract_fields_options.options" [value]="extract_fields_options.value">{{extract_fields_options.name}}</option>
+                            </select> 
+                        </span> -->
+                        <form [formGroup]="dataFileComponentFieldForm[selected_file]">
+                            <mat-form-field class="full-width">
+                                <mat-select placeholder="Field Options" formControlName="{{key}}" (selectionChange)="onExtractField($event.target.value,get_associated_header_by_filename(key, selected_file).header, selected_file)">
+                                    <mat-option>--</mat-option>
+                                    <mat-option *ngFor="let extract_field_option of extract_fields_options.options" [value]="extract_field_option.value">
+                                        {{extract_field_option.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>                    
+                        </form>
 
+                    </th>
+                    <th>
+                        <!-- <span get_associated_component_field(key, selected_file, get_associated_header_by_filename(key, selected_file).associated_component).selected" style="display:inline-block; margin-left: 10px;"> 
+                            {{get_associated_header_by_filename(key, selected_file).associated_component}} 
+                        </span> 
+                        -->
+
+                        
+                    </th>
                     
-                </th>
-                
-            </tr>
-        </tbody>
-    </table>
+                </tr>
+            </tbody>
+        </table>
 
-</section>
-</div>
+    </section>
+
+
+
+
+
+
+</joyrideStep>
 <ng-template #ExampleForm let-nod="model_n">
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
@@ -594,8 +665,7 @@ joyrideStep="StepTableForm"
     </div>
     
     <h4>Data files</h4>
-    <br>
-
+    <mat-card>
         <h5>Example file to import</h5>
         <p> Supposed you have a simple csv file called my_data.csv with given data:</p>
         <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" >
@@ -679,14 +749,8 @@ joyrideStep="StepTableForm"
                     <th scope="col" >45</th>
                     <th scope="col" > EZ47</th>
                 </tr>
-                
             </tbody>
         </table>
-        <p> click on Next to import this file into LINDA</p>
-
-    
-        
-
-
-    
+        <p> click on Next to import this file into LINDA</p> 
+    </mat-card>
 </ng-template>

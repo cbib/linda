@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { User } from '../models/user';
-import { throwError, Observable } from 'rxjs';
-import { map, catchError, tap  } from 'rxjs/operators';
+import { HttpClient} from '@angular/common/http';
+import { map} from 'rxjs/operators';
 import {Constants} from "../constants";
 @Injectable({
   providedIn: 'root'

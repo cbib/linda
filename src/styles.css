@@ -185,6 +185,16 @@ mat-progress-bar .mat-progress-bar-buffer {
     width: 100%;
     align-items: stretch;
 }*/
+h2 {
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    font-family: Comic;
+   }
+
+h5 {
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    font-family: Comic;
+   }
+
 p {
     /* font-family: cursive, 'Poppins', sans-serif; */
     font-family: "Gill Sans", sans-serif;

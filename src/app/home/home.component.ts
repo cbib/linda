@@ -113,7 +113,7 @@ export class HomeComponent implements OnInit {
     // }
     onClick() {
          this.joyrideService.startTour(
-            { steps: ['StepZero', 'firstStep', 'secondStep', 'thirdStep', 'fourthStep', 'fifthStep'], stepDefaultPosition: 'center'} // Your steps order
+            { steps: ['StepZero', 'firstStep', 'secondStep', 'thirdStep', 'fourthStep', 'fifthStep'], stepDefaultPosition: 'bottom'} // Your steps order
          );
      }
      onDone(){

@@ -224,7 +224,7 @@ export class UserTreeComponent implements OnInit {
         }
         else if (this.currentUser['tutoriel_step'] === "10"){
             this.joyrideService.startTour(
-                { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['stepNode','stepButtonPanel','nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
             //currentUser.tutoriel_step="3"
             //localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -455,6 +455,10 @@ export class UserTreeComponent implements OnInit {
             })
         });
     }
+    onExplore(node: MiappeNode){
+        console.log("you are gonna explore your data !!")
+
+    }
     onExportIsa(node: MiappeNode) {
         var model_type = this.globalService.get_model_type(node.id)
         var model_key = node.id.split("/")[1];
@@ -614,7 +618,7 @@ export class UserTreeComponent implements OnInit {
                                     console.log(data["message"])
                                     var message = this.active_node.id + " has been removed from your history !!"
                                     this.alertService.success(message)
-                                    this.currentUser["tutoriel_step"]="0"
+                                    
                                 }
                                 else {
                                     this.alertService.error("this form contains errors! " + data["message"]);
@@ -681,6 +685,36 @@ export class UserTreeComponent implements OnInit {
                                         console.log(data["message"])
                                         var message = this.active_node.id + " has been removed from your history !!"
                                         this.alertService.success(message)
+                                        let new_step=0
+                                        if (this.active_node.id.split("/")[0] === "investigations") {
+                                            new_step=0
+                                        }
+                                        else if (this.active_node.id.split("/")[0] === "studies") {
+                                            new_step=2
+                                        }
+                                        else if(this.active_node.id.split("/")[0] ==="experimental_factors"){
+                                            new_step=4
+                                        }
+                                        else if(this.active_node.id.split("/")[0] ==="observed_variables"){
+                                            new_step=6
+                                        }
+                                        else if(this.active_node.id.split("/")[0] ==="biological_materials"){
+                                            new_step=8
+                                        }
+                                        else if(this.active_node.id.split("/")[0] ==="biological_materials"){
+                                            new_step=10
+                                        }
+                                        else if(this.active_node.id.split("/")[0] ==="data_files"){
+                                            new_step=12
+                                        }
+                                        else{
+                                            new_step=0
+                                        }
+                                        this.currentUser.tutoriel_step=new_step.toString()
+                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                        this.reloadComponent(['/tree'])
+                                        //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                                        
                                     }
                                     else {
                                         this.alertService.error("this form contains errors! " + data["message"]);
@@ -688,8 +722,8 @@ export class UserTreeComponent implements OnInit {
                                 }
                             );
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
-                            this.reloadComponent(['/tree'])
+                            
+                            
                             ///window.location.reload();
                         }
 
@@ -763,6 +797,9 @@ export class UserTreeComponent implements OnInit {
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
+            let new_step=13
+            this.currentUser.tutoriel_step=new_step.toString()
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
         }
     }
@@ -934,23 +971,46 @@ export class UserTreeComponent implements OnInit {
             else {
                 parent_id = user._id
             }
+            let new_step=0
             if (model_type === "metadata_file") {
                 this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "create" } });
             }
+            
             else if (model_type === "biological_material") {
-                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                ///new_step=parseInt(this.currentUser.tutoriel_step)+1
+                new_step=9
                 this.currentUser.tutoriel_step=new_step.toString()
                 localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic2'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else if (model_type === "observation_unit") {
-                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                new_step=11
+                new_step=parseInt(this.currentUser.tutoriel_step)+1
                 this.currentUser.tutoriel_step=new_step.toString()
                 localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic3'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else {
-                let new_step=parseInt(this.currentUser.tutoriel_step)+1
+                if (model_type === "investigation") {
+                    new_step=1
+                    //new_step=parseInt(this.currentUser.tutoriel_step)+1  
+                }
+                else if(model_type === "study"){
+                    new_step=3
+                    //new_step=parseInt(this.currentUser.tutoriel_step)+1
+
+                }
+                else if(model_type === "experimental_factor"){
+                    new_step=5
+                    //new_step=parseInt(this.currentUser.tutoriel_step)+1
+                }
+                else if(model_type === "observed_variable"){
+                    new_step=7
+                    //new_step=parseInt(this.currentUser.tutoriel_step)+1
+                }
+                else{
+
+                }
                 this.currentUser.tutoriel_step=new_step.toString()
                 localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });

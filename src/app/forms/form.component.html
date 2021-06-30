@@ -44,15 +44,18 @@
                   </h3>
               </nav>
             </div>
-            <h5>Data submission</h5>
+            <h2>Data submission</h2>
+            <mat-card>
             <div *ngIf="help_mode">
                 <p> Feel free to complete the form !  <br>
                 When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
             </div>
             <div *ngIf="!help_mode">
-                <p>As you can see, your form has been filled with the corresponding values ! Feel free to complete the form !  <br>
+                <p>As you can see, your form has been filled with the corresponding values ! Feel free to complete the form ! 
+                    You can also save this form as template for further reuses ! <br>
                     When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
             </div>
+        </mat-card>
             
             
         </ng-template>
@@ -82,16 +85,18 @@
 
         <div>
             <div *ngIf="nod==='investigation'">
-                <h5>Investigations</h5>
+                <h2>Investigation Form</h2>
                 <mat-card>
+                <h5>Definition</h5>
                 <p><b>Investigation</b> is the entry point of each MIAPPE dataset. It contains several general metadata fields 
                     (e.g. title, description, submission/publication dates), including some critical for FAIRness 
                     (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
                 </mat-card>
             </div>
             <div *ngIf="nod==='study'">
-                <h5>Studies</h5>
+                <h2>Studies</h2>
                 <mat-card>
+                <h5>Definition</h5>
                 <p><b>Study</b> corresponds to one experiment and defines its location (which by definition must be single per study) 
                     and duration. It lists general fields documenting the experiment (e.g. experimental design, cultural practices, 
                     growth facility). Like the investigation, it contains a unique identifier field. An investigation must have one or more studies.  </p>
@@ -99,21 +104,36 @@
             </div>
             
             <div *ngIf="nod==='experimental_factor'">
-                <h4>Experimental factors</h4>
-
+                <h2>Experimental factors</h2>
+                <mat-card>
+                    <h5>Definition</h5>
+                    <p><b>Experimental factors</b>  </p>
+                </mat-card>
             </div>
             <div *ngIf="nod==='observed_variable'">
-                <h4>Observed variable</h4>
+                <h2>Observed variables</h2>
+                <mat-card>
+                    <h5>Definition</h5>
+                    <p><b>Observed variables</b>  </p>
+                </mat-card>
             </div>
             <div *ngIf="nod==='biological_material'">
-                <h4>Observed variable</h4>
+                <h2>Biological_materials</h2>
+                <mat-card>
+                    <h5>Definition</h5>
+                    <p><b>Biological_material</b>  </p>
+                </mat-card>
             </div>
             <div *ngIf="nod==='observation_unit'">
-                <h4>Observation units</h4>
+                <h2>Observation units</h2>
+                <mat-card>
+                    <h5>Definition</h5>
+                    <p><b>Observation units</b>  </p>
+                </mat-card>
             </div>
             
             <mat-card>
-            <h5>Menu options</h5>
+            <h5>Form menu</h5>
             <p>The highlighted menu allows you to navigate to previous or next form page if exists (Not all forms have multiple pages !! ).</p>
             <div *ngIf="nod==='study'">
             <ul>
@@ -220,23 +240,29 @@
                           </nav>
                         </div>
                         <div *ngIf="nod==='study'">
-                            <h4>studies (field example)</h4>
+                            <h2>studies</h2>
+                            <mat-card>
                             <p>For study form, there are two field that you can fill using ontology trees</p>
-                            <h5>Type of experimental design</h5>
+                            <h5>Type of experimental design  (Ontology field example)</h5>
                                 <p>
                                     Click on corresponding ontology button CO_715 or OBI to define your experimental design
                                 </p>
-                                <h5>Type of growth facility</h5>
+                            </mat-card>
+                            <mat-card>
+                            <h5>Type of growth facility</h5>
                             <p>
                                 Click on corresponding ontology button CO_715 or OBI to define your experimental design
                             </p>
+                            </mat-card>
+                                <mat-card>
                             <h6>Notes</h6>
                             <p> You can use the search box in the  top of the ontology tree to quickly find terms </p>
+                            </mat-card>
                         </div>
 
                         <div *ngIf="nod==='experimental_factor'">
 
-                            <h4>Experimental factors </h4>
+                            <h2>Experimental factors </h2>
                             <mat-card>
                             <h5>Ontology field (Ontology field)</h5>
                             <p>
@@ -252,7 +278,7 @@
 
                         </div>
                         <div *ngIf="nod==='observed_variable'">
-                            <h4>Observed variables</h4>
+                            <h2>Observed variables</h2>
                             <mat-card>
                                 <h5>Ontology field (Ontology field)</h5>
                                 <p>
@@ -311,8 +337,11 @@
                                   </nav>
                                 </div>
                                 <div *ngIf="nod === 'investigation'">
-                                    <h4>Investigations</h4>
-                                    </div>
+                                    <h2>Investigation Form</h2>
+                                </div>
+                                <div *ngIf="nod === 'study'">
+                                    <h2>Study Form</h2>
+                                </div>
                                 <mat-card>
                                     <h5>Unique identifier field</h5>
                                     <p> 
@@ -329,6 +358,15 @@
                                     </p>
                                 </mat-card>
                                 </div>
+                                <div *ngIf="nod === 'study'">
+                                    <mat-card>
+                                        <h5>Study Unique ID (Unique identifier)</h5>
+                                        <p> 
+                                            Unique identifier comprising the name or identifier for the institution/database hosting 
+                                            the submission of the study data, and the identifier of the study in that institution. 
+                                        </p>
+                                    </mat-card>
+                                    </div>
                                 
                                 <mat-card>
                                 <h6>Notes</h6>
@@ -425,7 +463,7 @@
                                 </div>
                                 
                                 <div *ngIf="nod === 'investigation'">
-                                    <h4>Investigations</h4>
+                                    <h2>Investigation Form</h2>
                                     <mat-card>
                                         <h5>Associated publication (free text field)</h5>
                                         <p> 
@@ -434,7 +472,7 @@
                                     </mat-card>    
                                 </div>
                                 <div *ngIf="nod === 'study'">
-                                    <h4>Studies </h4>
+                                    <h2>Studies </h2>
                                     <mat-card>
                                 
                                         <h5>Contact institution (Free text field)</h5>
@@ -445,7 +483,7 @@
                                 </div>
                                     
                                 <div *ngIf="nod === 'experimental_factor'">
-                                    <h4>Experimental factors </h4>
+                                    <h2>Experimental factors </h2>
                                     <mat-card>
                                     <h5>Experimental factor values (Formated text field)</h5>
                                     <p> List of possible values for the factor separated by ;</p>
@@ -453,7 +491,7 @@
                                 </div>
                                 <div *ngIf="nod === 'observed_variable'">
                                     
-                                    <h4>Observed variables</h4>
+                                    <h2>Observed variables</h2>
                                     <mat-card>
                                     <h5>Trait (Free text/Ontology field)</h5>
                                         <p> Name of the (plant or environmental) trait under observation </p>
@@ -501,7 +539,7 @@
 
             
             <div *ngIf="nod==='investigation'">
-                <h4>Investigations</h4>
+                <h2>Investigation Form</h2>
                 <mat-card>
                 <h5>Field description</h5>
                 <p>
@@ -519,15 +557,16 @@
                 </ol>
                 </mat-card>
                 <mat-card>
-                <h5>Notes:</h5>
+                <h6>Notes</h6>
                 <p>
                     These form must contain informations and details that describe your investigation (8 fields).
                 </p>
                 </mat-card>
             </div>
             <div *ngIf="nod==='study'">
-                <h4>Studies</h4>
+                <h2>Studies</h2>
                 <mat-card>
+                <h5>Field description</h5>
                 <p>
                     These form contains twenty fields to fullfill in order to capture informations and details from your study. <br> 
                     Like investigation, <b>Study identifier</b> requires to be <b>unique</b>. <br>
@@ -537,8 +576,9 @@
             
             </div>
             <div *ngIf="nod==='experimental_factor'">
-                <h4>Experimental factors</h4>
+                <h2>Experimental factors</h2>
                 <mat-card>
+                <h5>Field description</h5>
                 <p>
                     These form contains four fields to fill out over two pages to describe your observed variable.. <br>
                     You can use ontologies at your disposal ( EFO and PECO) to fill some of the form fields; 
@@ -546,8 +586,9 @@
                 </mat-card>
             </div>
             <div *ngIf="nod==='observed_variable'">
-                <h4>Observed variables</h4>
+                <h2>Observed variables</h2>
                 <mat-card>
+                <h5>Field description</h5>
                 <p>
                     These form contains informations and details to describe your observed variable.<br> 
                     The observed variable form contains twelve fields to fill out over two pages. <br>
@@ -569,7 +610,7 @@
             
             <!-- <ng-template #studylevelone let-heading="heading" let-message="message">
                 <div class="guided_tour_messages">
-                    <h4>{{ get_message_guided_tour.heading }}</h4>
+                    <h2>{{ get_message_guided_tour.heading }}</h2>
                     <p>{{ get_message_guided_tour.message }}</p>
                 </div>
             </ng-template> -->
@@ -669,11 +710,11 @@
       </nav>
     </div>
     <div *ngIf="nod === 'investigation'">
-        <h4>Investigations</h4>
+        <h2>Investigation Form</h2>
         <mat-card>
         <h5> Add a new investigation!</h5>
 
-        <p> Click on <b>NEXT</b> to add a new investigation short-called <b>maizes1</b> with the following values:</p>
+        <p> Click on <b>NEXT</b> to fill a new form for an investigation short-called <b>maizes1</b> with the following values:</p>
             <ul>
             <li> <p> <b>Investigation unique ID </b> : Maizes1</p></li>
             <li> <p> <b>Short title </b> : maizes1 </p></li>
@@ -685,17 +726,17 @@
         </mat-card>
     </div>
     <div *ngIf="nod === 'study'">
-        <h4>Studies</h4>
+        <h2>Studies</h2>
         <mat-card>
         <h5> Add a new study!</h5>
-        <p> Click on <b>NEXT</b> to add a new study short-called <b>Study1</b> with the following values:</p>
+        <p> Click on <b>NEXT</b>  to fill a new form for a study short-called <b>Study1</b> with the following values:</p>
             <ul>
             <li> <p style="font-size: 14px;"> <b>Study unique Id </b> : MaizeStudy1</p></li>
             <li> <p style="font-size: 14px;"> <b>Short title </b> : Study1</p></li>
             <li> <p style="font-size: 14px;"> <b>Start date of study </b> : 1/06/2021</p></li>
             <li> <p style="font-size: 14px;"> <b>End date of study </b> : 30/06/2021</p></li>
-            <li> <p style="font-size: 14px;"> <b>Type of experimental design </b> : CO_715:0000145</p></li>
-            <li> <p style="font-size: 14px;"> <b>Type of growth facility </b> : CO_715:0000162 </p></li>
+            <li> <p style="font-size: 14px;"> <b>Type of experimental design </b> : CO_715:0000145 (Complete block design)</p></li>
+            <li> <p style="font-size: 14px;"> <b>Type of growth facility </b> : CO_715:0000162 (Field environment condition) </p></li>
             <li> <p style="font-size: 14px;"> <b>Observation unit level hierarchy </b> : block &gt; rep &gt; plot</p></li>
             <li> <p style="font-size: 14px;"> <b>Description of growth facility</b> : field environement condition</p></li>
             <li> <p style="font-size: 14px;"> <b>Observation unit description</b> : Observation units consisted in individual plots themselves consisting of a row of 5 plants at a density of 1 plant per square meter</p></li>
@@ -708,10 +749,10 @@
       
     </div>
     <div *ngIf="nod === 'experimental_factor'">
-        <h4>Experimental factors</h4>
+        <h2>Experimental factors</h2>
         <mat-card>
         <h5> Add a new experimental factor!</h5>
-        <p> Click on <b>NEXT</b> to add a new experimental factor of type <b>Watering</b> with the following values:</p>
+        <p> Click on <b>NEXT</b>  to fill a new form for an experimental factor of type <b>Watering</b> with the following values:</p>
             <ul>
             <li> <p> <b>Experimental Factor type </b>: Watering</p></li>
             <li> <p> <b>Experimental Factor values </b>: rainfed;watered</p></li>
@@ -722,11 +763,11 @@
       
     </div>
     <div *ngIf="nod === 'observed_variable'">
-        <h4>Observed variables</h4>
+        <h2>Observed variables</h2>
         <mat-card>
             <h5> Add a new observed variable!</h5>
             <p>
-                Click on <b>NEXT</b> to add a new observed variable called <b>Plant height</b> with the following values : <br>
+                Click on <b>NEXT</b>  to fill a new form for an observed variable called <b>Plant height</b> with the following values : <br>
             </p>
                 <ul>
                     <li><p> <b>Variable ID </b> : PH_M_cm</p></li>
