@@ -679,7 +679,6 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 
 
 // router.get('/get_ontology_term/:term_id', function (req, res) {
-
 //     var term_id=req.pathParams.term_id;
 //     var data={} 
 //     const coll = db._collection("ontologies");
@@ -789,12 +788,10 @@ router.get('/get_data_file/:key', function (req, res) {
         res.throw(404, 'The entry does not exist', e);
     }
 
-})
-    .pathParam('key', joi.string().required(), 'unique key.')
-    .response(joi.object().required(), 'Entry stored in the collection.')
-    .summary('Retrieve an entry')
-    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
-
+}).pathParam('key', joi.string().required(), 'unique key.')
+  .response(joi.object().required(), 'Entry stored in the collection.')
+  .summary('Retrieve an entry')
+  .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
 router.get('/get_study_by_ID/:study_id/:parent_key', function (req, res) {
@@ -2219,7 +2216,8 @@ router.post('/add', function (req, res) {
             const template_edge = db._collection(template_edge_coll);
 
             var data = [];
-            var cleaned_values = { ...values }
+            //var cleaned_values = { ...values }
+            var cleaned_values = Object.assign({}, values);
             if (cleaned_values['Study unique ID']) {
                 cleaned_values['Study unique ID'] = ""
             }
