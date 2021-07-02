@@ -949,11 +949,7 @@ router.get('/get_all_data_files/:investigation_key/', function (req, res) {
             results.push(study_ids)
         }
     }
-
     res.send(results);
-
-
-
 }).pathParam('investigation_key', joi.string().required(), 'investigation key requested.')
     .response(joi.array().items(joi.array().items(joi.object().required()).required()).required(), 'Entry stored in the collection.')
     .summary('Retrieve an entry')
@@ -1555,11 +1551,7 @@ router.post('/update_field', function (req, res) {
         /////////////////////////////
         var update = [];
         var _id = '';
-        if (model_type === 'user') {
-            _id = 'users/' + _key;
-            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW.${field}`).toArray();
-        }
-        else if (model_type === 'investigation') {
+        if (model_type === 'investigation') {
             _id = 'investigations/' + _key;
             update = db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray();
         }
@@ -1636,8 +1628,6 @@ router.post('/update_user', function (req, res) {
                 _id = 'users/' + _key;
                 update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW.${field}`).toArray();
             }
-            
-        
             //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
             //Document has been updated
             if (update[0] === value) {
@@ -1648,21 +1638,20 @@ router.post('/update_user', function (req, res) {
                 res.send({ success: false, message: 'document cannot be updated' });
             }
         };
-    })
-        .body(joi.object({
-            username: joi.string().required(),
-            password: joi.string().required(),
-            _key: joi.string().required(),
-            field: joi.string().required(),
-            value: joi.boolean().required(),
-            model_type: joi.string().required()
-        }).required(), 'Values to check.')
-        .response(joi.object({
-            success: true,
-            message: joi.string().required()
-        }).required(), 'response.')
-        .summary('List entry keys')
-        .description('check if user exist and update specific field in MIAPPE model.');
+}).body(joi.object({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    _key: joi.string().required(),
+    field: joi.string().required(),
+    value: joi.boolean().required(),
+    model_type: joi.string().required()
+}).required(), 'Values to check.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('check if user exist and update specific field in MIAPPE model.');
     
 
 router.post('/remove_childs', function (req, res) {
