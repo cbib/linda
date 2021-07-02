@@ -259,7 +259,6 @@ import { ExplorationComponent } from './statistics/exploration.component';
               GlobalService,
               SearchService,
               JoyrideService,
-              GuidedTourService,
               AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
