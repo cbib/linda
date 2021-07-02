@@ -33,18 +33,17 @@
   <p>{{model.Definition}}</p>
   <div
     joyrideStep="StepDemoForm"
-    title="Here is a {{model_type}} Form Template to fill !! "
+    title=""
     [stepContent]="democontent"
     [stepContentParams]="{'model_n':model_type}"
     (done)= "onDone()"
     >
     <div 
-      joyrideStep="Step1_1"
-      title="Here is the Observation Unit form !! "
+      joyrideStep="generalContent"
+      title=""
       [stepContent]="observationUnitGeneralContent"
       [stepContentParams]="{'model_n':model_type}">
     <form [formGroup]="observationUnitTable">
-      <!-- <h3>General Material information</h3> -->
       
       <br>
 
@@ -53,8 +52,8 @@
       ###############################observation Unit##############################
       ################################################################################# -->
       <div 
-      joyrideStep="Step1_2"
-      title="Here is the Observation Unit form !! "
+      joyrideStep="addObservationUnit"
+      title=""
       [stepContent]="observationUnitAddContent"
       [stepContentParams]="{'model_n':model_type}">
         <mat-card>
@@ -89,7 +88,7 @@
               <tbody>
                 <ng-container formArrayName="observationUnitRows"
                   *ngFor="let group of getObservationUnitFormControls.controls ; let i=index">
-                  <tr (click)="ObservationTableRowSelected(i)" [formGroupName]="i">
+                  <tr (click)="ObservationTableRowSelected(i)" [formGroupName]="i" [ngClass]="{'highlight': ou_index_row == i}">
                     <ng-container *ngFor="let field of cleaned_model ; let j=index">
                       <td class="text-center align-middle">
                         <div *ngIf="model[field['key']].Format.includes('Ontology')">
@@ -197,19 +196,23 @@
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
-                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
             </h3>
         </nav>
       </div>
-      <h3>General Material information</h3>
-        Here you can described general informations about your material like Species, Genus... <br> 
+      <h4>Observation units</h4>
+      <mat-card>
+        <h5>Add Observation units</h5>
+        <p>you can add a new observation unit by clicking on  <button class="btn btn-primary">Add observation unit</button></p>
+      </mat-card> 
+        
       </ng-template>
       <!-- #################################################################################
       ###############################Biological Material##############################
       ################################################################################# -->
       <div 
-      joyrideStep="Step1_3"
-      title="Here is the biological material associated panel !! "
+      joyrideStep="associateBiologicalMAterial"
+      title=""
       [stepContent]="observationUnitAssociatebm"
       [stepContentParams]="{'model_n':model_type}">
       <mat-card>
@@ -228,7 +231,7 @@
             class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
             <!-- <thead class="text-nowrap">   -->
             <thead>
-              <ng-container *ngFor="let field of get_bm_field ; let i=index">
+              <ng-container *ngFor="let field of get_bm_field ; let j=index">
                 <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
                   <div>
                     <label for="{{field}}">{{field}}</label>
@@ -237,16 +240,16 @@
               </ng-container>
             </thead>
             <tbody>
-              <ng-container *ngFor="let group of bm_data ; let i=index">
-                <tr (click)="MaterialTableRowSelected(i)" *ngIf="group['obsUUID']===observation_id" >
-                  <ng-container *ngFor="let field of get_bm_field ; let j=index">
+              <ng-container *ngFor="let group of bm_data ; let j=index">
+                <tr (click)="MaterialTableRowSelected(j)" *ngIf="group['obsUUID']===observation_id" [ngClass]="{'highlight': mat_index_row == j}">
+                  <ng-container *ngFor="let field of get_bm_field ; let k=index">
                     <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
                       {{group[field]}}
                       
                     </td>
                   </ng-container>
                   <td class="text-center align-middle">
-                    <mat-icon class="delete" (click)="deletebiologicalMaterialRow(i)">delete_forever</mat-icon>
+                    <mat-icon class="delete" (click)="deletebiologicalMaterialRow(j)">delete_forever</mat-icon>
                   </td>
                 </tr>
               </ng-container>
@@ -260,19 +263,27 @@
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
               </h3>
           </nav>
         </div>
-        <h3>General Material information</h3>
-          Here you can described general informations about your material like Species, Genus... <br> 
+        <h4>Observation units</h4>
+      <mat-card>
+        <h5>Linking biological materials to observations</h5>
+        <p>
+          You have to define the observed biological materials observed in this observation unit. it could be at  plant level, plot level. 
+          To do this, click <button class="btn btn-primary">Add biological material</button><br>
+          This will open a dialog that helps you to select which materials to associate. 
+          When selected, the table of biological material will be displayed to let you choose which biological materials are observed and linked to which observation units.
+        </p>
+      </mat-card> 
       </ng-template>
       <!-- #################################################################################
       ###############################Biological Samples###############################
       ################################################################################# -->
       <div 
-      joyrideStep="Step1_4"
-      title="Here is the sample associated panel !! "
+      joyrideStep="addBiologicalSample"
+      title=""
       [stepContent]="observationUnitSample"
       [stepContentParams]="{'model_n':model_type}">
       <mat-card>
@@ -325,12 +336,24 @@
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
               </h3>
           </nav>
         </div>
-        <h3>General Material information</h3>
-          Here you can described general informations about your material like Species, Genus... <br> 
+        <h4>Observation units</h4>
+        <mat-card>
+          <h5>Add samples from your observations</h5>
+          <p>
+            Once you have defined the associated biological materials. You could want to extract also samples from this biologiccal materials. 
+            To do this, click <button class="btn btn-primary">Add samples</button>; this will open a dialog that helps you to select in a table which biological materials to sample. 
+          </p>
+        </mat-card> 
+        <mat-card>
+          <h5>Associate samples to biological materials</h5>
+          <p>
+            When biological materials have been selected, <button class="btn btn-primary">Generate sample for each selected material</button> is active; If you click once, a sample will be created for each selected biological material and sample will be linked to the current observation unit.
+          </p>
+        </mat-card> 
       </ng-template>
 
       <!-- ################################################################################
@@ -338,7 +361,7 @@
       ################################################################################# -->
       <!-- <div 
       joyrideStep="Step1_5"
-      title="Here is the experimental factor associated panel !! "
+      title=""
       [stepContent]="observationUnitassociateef"
       [stepContentParams]="{'model_n':model_type}">
       <mat-card>
@@ -387,12 +410,17 @@
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
               </h3>
           </nav>
         </div>
-        <h3>General Material information</h3>
-          Here you can described general informations about your material like Species, Genus... <br> 
+        <h4>Observation units</h4>
+      <h5>Add Observation units</h5>
+      <mat-card>
+        <p>
+          
+        </p>
+      </mat-card>
       </ng-template> -->
 
 
@@ -400,7 +428,7 @@
       ###############Environmental Metadata (Observed variable)########################
       ################################################################################# -->
 
-      <mat-card>
+      <!-- <mat-card>
         <mat-card-header>
           <mat-card-title>Environmental Metadata selection (Observed variable)</mat-card-title>
         </mat-card-header>
@@ -414,10 +442,8 @@
               Add Observed variable</button>
           </div>
           <span style="display:inline-block; margin-left: 10px;"></span>
-          <!-- Here put Experimental factor Table -->
           <table *ngIf="-1>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
             class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
-            <!-- <thead class="text-nowrap">   -->
             <thead>
               <ng-container *ngFor="let field of get_ef_field ; let i=index">
                 <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
@@ -426,24 +452,21 @@
                   </div>
                 </th>
               </ng-container>
-
             </thead>
             <tbody>
               <ng-container *ngFor="let group of ef_data ; let i=index">
                 <tr *ngIf="group['obsUUID']===observation_id" >
                   <ng-container *ngFor="let field of get_ef_field ; let j=index">
                     <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                      {{group[field]}}
-                      
+                      {{group[field]}}                      
                     </td>
                   </ng-container>
                 </tr>
               </ng-container>
             </tbody>
           </table>
-
         </mat-card-content>
-      </mat-card>
+      </mat-card> -->
 
 
 
@@ -451,7 +474,7 @@
       ###############Event########################
       ################################################################################# -->
 
-      <mat-card>
+      <!-- <mat-card>
         <mat-card-header>
           <mat-card-title>Event Description</mat-card-title>
         </mat-card-header>
@@ -465,10 +488,8 @@
               Add Observed variable</button>
           </div>
           <span style="display:inline-block; margin-left: 10px;"></span>
-          <!-- Here put Experimental factor Table -->
           <table *ngIf="-1>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
             class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
-            <!-- <thead class="text-nowrap">   -->
             <thead>
               <ng-container *ngFor="let field of get_ef_field ; let i=index">
                 <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
@@ -477,7 +498,6 @@
                   </div>
                 </th>
               </ng-container>
-
             </thead>
             <tbody>
               <ng-container *ngFor="let group of ef_data ; let i=index">
@@ -485,32 +505,29 @@
                   <ng-container *ngFor="let field of get_ef_field ; let j=index">
                     <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
                       {{group[field]}}
-                      
                     </td>
                   </ng-container>
                 </tr>
               </ng-container>
             </tbody>
           </table>
-
         </mat-card-content>
-      </mat-card>
-
-
-      
-
+      </mat-card> -->
     </form>
     </div>
     <ng-template #observationUnitGeneralContent let-nod="model_n">
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
-                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
             </h3>
         </nav>
       </div>
-      <h3>General Material information</h3>
-        Here you can described general informations about your material like Species, Genus... <br> 
+      <h4>Observation units</h4>
+      <mat-card>
+        <h5>Definition</h5>
+        <p><b>Observation units</b> Observation units are objects that are subject to particular instances of observation and measurement. An observation unit comprises one or more plants, and their environment. Synonym : Experimental unit.</p>
+      </mat-card> 
     </ng-template>
     
   </div>
@@ -518,7 +535,7 @@
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+             <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>
@@ -539,10 +556,10 @@
     </div>
   </ng-template>
   <div class="output">
-    <p>Form Data: {{observationUnitTable.value | json}}</p>
+    <!-- <p>Form Data: {{observationUnitTable.value | json}}</p>
     <p>experimental factor data: {{ef_data | json}}</p>
     <p>biological material data : {{bm_data | json}}</p>
     <p>sample data : {{sample_data | json}}</p>
-    <p>Is Valid: {{observationUnitTable.valid}}</p>
+    <p>Is Valid: {{observationUnitTable.valid}}</p> -->
   </div>
 </div>

@@ -24,3 +24,6 @@ li {
     padding: 10px;  
     padding-left: 40px;
   }
+  .highlight{
+    background: #4ECDC4; /* green */
+  }

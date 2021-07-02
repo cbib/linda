@@ -10,6 +10,7 @@ export * from './file.service';
 export * from './ontologies.service';
 export * from './ad.service';
 export * from './search.service';
+export * from './statistics.service'
 
 
 

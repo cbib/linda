@@ -31,10 +31,11 @@ import { ObservedVariableComponent } from './documentation/miappe_components/obs
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
 import { SampleComponent } from './documentation/miappe_components/sample.component';
-import { GanttComponent } from './test_component/gantt.component'
+//import { GanttComponent } from './test_component/gantt.component'
 import { PublicDataComponent } from './documentation/public-data.component';
 import { ExtractComponentComponent } from './extract/extract-component.component';
 import { TemplatesComponent } from './templates/templates.component';
+import { ExplorationComponent } from './statistics/exploration.component';
 
 
 const routes: Routes = [
@@ -50,6 +51,7 @@ const routes: Routes = [
   { path: 'study',component: StudyComponent},
   { path: 'event',component: EventComponent},
   { path: 'templates',component: TemplatesComponent},
+  { path: 'explore', component:ExplorationComponent},
   { path: 'observation_unit',component: ObservationUnitComponent},
   { path: 'biological_material',component: BiologicalMaterialComponent},
   { path: 'observed_variable',component: ObservedVariableComponent},
@@ -57,7 +59,7 @@ const routes: Routes = [
   { path: 'environmental_parameter',component: EnvironmentalParameterComponent},
   { path: 'sample',component: SampleComponent},
   { path: 'navbars',component: NavbarComponent},
-  { path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]},
+  //{ path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]},
   { path: 'generic',component: FormComponent},
   { path: 'generic2',component: MaterialFormComponent},
   { path: 'generic4',component: MaterialForm2Component},

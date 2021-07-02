@@ -1,0 +1,84 @@
+<div class="border-head">
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </nav>
+</div>
+<h4>Investigation exploration </h4>
+<p>You're about to mine your data with Linda. 
+    You can visualize easily your observations and correlate them with experimental factors and environmental conditions.  </p>
+<div>
+    Select by clicking which studies to explore then select group to compare and group by exp factor
+</div>
+<br>
+<section>
+    <!--The content below is only a placeholder and can be replaced.-->
+    <div style="text-align:center">
+        <!-- <h1 class="card-header bg-info">
+      Welcome to {{ title }}!
+    </h1> -->
+
+        <!-- <div class="row ml-5">
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Vertical Bar Chart
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical [view]="view" [scheme]="colorScheme" [results]="single"
+                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Vertical Bar Chart Normalized
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical-normalized [view]="view" [scheme]="colorScheme" [results]="multi"
+                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical-normalized>
+                </div>
+            </div>
+        </div>
+        <br> -->
+        <div class="row ml-5">
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Stacked variable plant height by genotype (watered vs rainfed conditions)
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="multi"
+                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical-stacked>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Plant height by genotype (watered vs rainfed conditions)
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical-2d [view]="view" [scheme]="colorScheme" [results]="multi" [gradient]="gradient"
+                        [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                        [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                        (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical-2d>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -52,7 +52,7 @@ export class MaterialFormComponent implements OnInit {
   cleaned_model: any = [];
   keys: any = [];
   used_mat_ids=[]
-
+  selectedRowIndex = -1;
 
   constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
     public ontologiesService: OntologiesService,
@@ -106,6 +106,7 @@ export class MaterialFormComponent implements OnInit {
     this.generalControl = this.materialTable.get('generalRows') as FormArray;
 
   }
+  
   onClickTour() {
     console.log('start tour part 2')
     this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
@@ -404,6 +405,9 @@ export class MaterialFormComponent implements OnInit {
   RowSelected(i) {
     //console.log(i)
     this.index_row = i
+
+    this.selectedRowIndex = i;
+
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     this.material_id = materialControl.controls[i].value['mat-id']
     //console.log(control.controls[i].value)

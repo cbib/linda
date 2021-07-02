@@ -11,7 +11,7 @@
 
 <joyrideStep joyrideStep="StepExampleForm" title="" [stepContent]="ExampleForm" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
     <div joyrideStep="StepMenuForm" title="" [stepContent]="MenuForm" [stepContentParams]="{'model_n':demo_subset}" *ngIf= "mode==='extract'" >
-    <h4>Extract Investigation design from tabular file!</h4>
+    <h4>Extract MIAPPE component from tabular file!</h4>
     <p> Using a external tabular file, Users can easily export whole investigation structure into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
     <!--<app-upload-file ></app-upload-file>-->
     <div *ngIf="error">
@@ -28,6 +28,7 @@
     <div
     >
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        
         <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
         <button 
         joyrideStep="StepUpload3Form"
@@ -41,7 +42,7 @@
             <div>
               <nav class="navbar navbar-expand-sm navbar-dark">
                   <h3>
-                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                       <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                   </h3>
               </nav>
             </div>
@@ -51,10 +52,11 @@
                 <h5>Upload your data files</h5>
                 <p>
                     If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br>
-                    Once you have checked the ccorrect redio button, please click on the <button class="btn btn-default btn-info" type="submit">Upload</button> button 
+                    Once you have checked the ccorrect redio button, please click on the <button class="btn btn-default btn-info">Upload</button> button 
                 </p> 
             </mat-card>
         </ng-template>
+        <button (click)="cancel()" class="btn btn-danger">Cancel</button>
         <mat-radio-group 
         
         [(ngModel)]="labelPosition" 
@@ -71,7 +73,7 @@
                 <div>
                   <nav class="navbar navbar-expand-sm navbar-dark">
                       <h3>
-                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                           <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                       </h3>
                   </nav>
                 </div>
@@ -100,7 +102,7 @@
                 <div>
                   <nav class="navbar navbar-expand-sm navbar-dark">
                       <h3>
-                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                           <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                       </h3>
                   </nav>
                 </div>
@@ -134,7 +136,7 @@
                 <div>
                   <nav class="navbar navbar-expand-sm navbar-dark">
                       <h3>
-                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                           <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                       </h3>
                   </nav>
                 </div>
@@ -158,22 +160,28 @@
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>
     
     <h4>Data files</h4>
     <br>
-        <h5>Import data in LINDA</h5>
-        <p> Here is the menu for import data in LINDA. By clicking on browse, you can import some tabular files easily. Then you will see the data headers display below in the headers table<br>
-        </p>
+        <mat-card class="menu_mat_card">
+            <h5>Import data in LINDA</h5>
+        
+            <p> 
+                Here is the menu for import data in LINDA. By clicking on browse, you can import some tabular files easily. Then you will see the data headers display below in the headers table<br>
+            </p>
+        </mat-card>
+        <mat-card class="menu_mat_card">
         <h6>Notes</h6>
             <p> Given that you could have built your experimental design prior to import data, you can if you want only load the data as data files in your investigations. 
         Data files must contains a column for study unique id in order to link data to corresponding studies. 
         You could also extract only studies backbone the same way by identiyfing the study unique identiffier column. 
         In this case, only the studies will be created. 
         If you select to import data and studies, as indicated both will be imported (studies are not created again if they already exist) <br></p> 
+    </mat-card>
     </ng-template>
 
 
@@ -357,20 +365,23 @@
             <ng-template #TableForm let-nod="model_n">
                 <div>
                     <nav class="navbar navbar-expand-sm navbar-dark">
-                        <h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                        <h3> <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
                                     meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                         </h3>
                     </nav>
                 </div>
-                <h4>Data files</h4>
-                <mat-card>
-                    <h5>Original headers column</h5>
+                <h4>Data files table</h4>
+                <mat-card class="menu_mat_card">
+                    <h6>Original headers column</h6>
                     <p> 
                         this column contains the headers found in your tabular file. Let's assign the corresponding MIAPPE component to each column. 
                         You must have a column for study unique ID  !! In this way, the data will be distributed over each study when they are imported. 
                         
                     </p>
-                    <h5>MIAPPE assignment column</h5>
+                </mat-card>
+                    <mat-card class="menu_mat_card">
+                    
+                    <h6>MIAPPE assignment column</h6>
                     <p>
                         The MIAPPE assignment column allows you to declare a column as MIAPPE component column.
                         It could be a study component, but also an experimental factor, an observed variable, a biological material or a observation units.
@@ -389,7 +400,7 @@
                 
             </ng-template>
             <tbody>
-                <tr joyrideStep="itemN{{i}}" 
+                <tr joyrideStep="Row{{i}}" 
                     [stepContent]="RowForm"
                     [stepContentParams]="{'row_n':i}"
                     (next)="onNext(i)"
@@ -483,18 +494,18 @@
                 </tr>
                 <ng-template #RowForm let-rn="row_n">
                     <div>
-                        <nav class="navbar navbar-expand-sm navbar-dark"><h3><a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3></nav>
+                        <nav class="navbar navbar-expand-sm navbar-dark"><h3> <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a></h3></nav>
                     </div> 
                     <h4>Data files</h4>
                     <div *ngIf="rn===0">
-                        <mat-card>
+                        <mat-card  class="menu_mat_card">
                         <h5> Assign Studies data</h5>
                            <p>
                                Here you can assign column as study unique ID. You could create and link corresponding study later.
                              !!! Study column will not always be at first position like in this example !!! 
                            </p>  
                         </mat-card>
-                        <mat-card> 
+                        <mat-card class="menu_mat_card"> 
                             <h6>Notes</h6>
                             <p>
                                 Study ids were used to assign each component to its corresponding study. 
@@ -504,7 +515,7 @@
                         </mat-card>
                     </div>
                     <div *ngIf="rn===1">
-                        <mat-card>
+                        <mat-card class="menu_mat_card">
                         <h5> Assign observation units data</h5>
                            <p>
                                 Here you can assign column as observation unit ids. 
@@ -513,7 +524,7 @@
                         </mat-card>
                     </div>
                     <div *ngIf="rn===2">
-                        <mat-card>
+                        <mat-card class="menu_mat_card">
                             <h5> Assign experimental factors data </h5>
                                <p>
                                    Here you can assign column as experimental factors values (rainfed, watered) labelled column. 
@@ -523,7 +534,7 @@
                         
                     </div>
                     <div *ngIf="rn===3">
-                        <mat-card>
+                        <mat-card class="menu_mat_card">
                             <h5> Assign observed variables data</h5>
                                <p>Here you can assign column as observed variable for plant.height observations. 
                                 You could extract corresponding observed variable later to create node in your history.
@@ -531,7 +542,7 @@
                             </p>
                             
                         </mat-card>
-                        <mat-card> 
+                        <mat-card class="menu_mat_card"> 
                             <h6>Notes</h6>
                             <p>
                                 In our case, we have already created the observed variable for plant height 
@@ -539,7 +550,7 @@
                         </mat-card>
                     </div>
                     <div *ngIf="rn===4">
-                        <mat-card>
+                        <mat-card class="menu_mat_card">
                             <h5> Assign biological materials data</h5>  
                                 <p>
                                     Here you can assign column for materials source IDs representing plant accessions in each plot. 
@@ -551,7 +562,7 @@
                         
                     </div>
                     <div *ngIf="rn===5">
-                        <mat-card>
+                        <mat-card class="menu_mat_card">
                             <h5> Assign observation units</h5>
                                <p>Here you can assign column as observation unit ids. you can extract  ccorrespondign obserrvation units later
                                 Assign observation units to this column</p>  
@@ -659,7 +670,7 @@
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>

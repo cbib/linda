@@ -158,8 +158,44 @@ input:checked + .slider:before {
   min-height: 60px;
 }
 li {
-  margin-bottom: 1px;
+  margin-bottom: 5px;
+  max-height: 40px;
 }
 ul {
-  margin-bottom: 1px;
+  margin-bottom: 5px;
+}
+/* .formOntologyContent{
+  max-width: 600px;
+  max-height: 800px;
+}
+.formcontent{
+  max-width: 600px;
+  max-height: 800px;
+}
+.menucontent{
+  max-width: 600px;
+  max-height: 800px;
+
+}
+.democontent{
+  max-width: 600px;
+  max-height: 800px;
+} */
+/* #joyride-step-StepMenuForm{
+  max-width: 600px;
+  max-height: 800px;
+}
+.joyride-step{
+  max-width: 600px;
+  max-height: 800px;
+} */
+.joyride-step__holder{
+  min-width: 800px;
+  max-height: 800px;
+}
+.mat-card{
+  max-width: 600px;
+}
+.menu_mat_card{
+  max-width: 1000px;
 }

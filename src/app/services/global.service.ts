@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { User } from '../models/user';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map} from 'rxjs/operators';
 import {ResDataModal} from '../models/datatable_model';
 import { Constants } from "../constants";
 @Injectable({
@@ -165,7 +164,20 @@ export class GlobalService {
             'model_type': model_type
 
         };
-        return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
+        return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
+    }
+    update_user(value: boolean, key: string, field: string, model_type: string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_key': key,
+            'field': field,
+            'value': value,
+            'model_type': model_type
+
+        };
+        return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
     }
 
     update(key: string, values: {}, model_type: string) {

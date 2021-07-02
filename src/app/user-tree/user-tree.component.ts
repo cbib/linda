@@ -231,8 +231,23 @@ export class UserTreeComponent implements OnInit {
         }
         else if (this.currentUser['tutoriel_step'] === "12"){
             this.joyrideService.startTour(
+                { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "14"){
+            this.joyrideService.startTour(
+                { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //currentUser.tutoriel_step="3"
+            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        else if (this.currentUser['tutoriel_step'] === "16"){
+            this.joyrideService.startTour(
                 { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
             );
+            //this.globalService.update_user(true, '1421044', 'tutoriel_done', 'user') 
             //currentUser.tutoriel_step="3"
             //localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
@@ -280,6 +295,7 @@ export class UserTreeComponent implements OnInit {
 
     }
     get_tutoriel_level(){
+        console.log(this.currentUser['tutoriel_step'])
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         return this.currentUser['tutoriel_step']
     }
@@ -457,8 +473,9 @@ export class UserTreeComponent implements OnInit {
     }
     onExplore(node: MiappeNode){
         console.log("you are gonna explore your data !!")
-
+        this.router.navigate(['/explore'], { queryParams: {parent_id: node.id} })
     }
+
     onExportIsa(node: MiappeNode) {
         var model_type = this.globalService.get_model_type(node.id)
         var model_key = node.id.split("/")[1];
@@ -681,6 +698,7 @@ export class UserTreeComponent implements OnInit {
                             console.log(this.active_node.id)
                             this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
+                                    console.log(data)
                                     if (data["success"]) {
                                         console.log(data["message"])
                                         var message = this.active_node.id + " has been removed from your history !!"
@@ -714,6 +732,8 @@ export class UserTreeComponent implements OnInit {
                                         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                                         this.reloadComponent(['/tree'])
                                         //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                                        //window.location.reload();
+                                        ///this.router.navigate(['/tree']);
                                         
                                     }
                                     else {
@@ -724,7 +744,7 @@ export class UserTreeComponent implements OnInit {
                             // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                             
                             
-                            ///window.location.reload();
+                            
                         }
 
 
@@ -825,6 +845,9 @@ export class UserTreeComponent implements OnInit {
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
+            let new_step=15
+            this.currentUser.tutoriel_step=new_step.toString()
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             this.router.navigate(['/extract'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
         }
     }
@@ -873,7 +896,7 @@ export class UserTreeComponent implements OnInit {
                                 var message = "A new " + model_type[0].toUpperCase() + model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
 
                                 this.alertService.success(message)
-                                
+                                this.reloadComponent(['/tree'])
                                 return true;
                             }
                             else {
@@ -885,7 +908,7 @@ export class UserTreeComponent implements OnInit {
                             }
                         }
                     );
-                    this.reloadComponent(['/tree'])
+                    
 
                 }
             });

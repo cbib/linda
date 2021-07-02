@@ -44,7 +44,7 @@
   </section>
   <section *ngIf="mode.includes('extract_existing_env_var')" class="format-section">
     <select name="select_headers" size="1" (change)="onHeaderSelect($event.target.value)">
-      <option value="" disabled>Select headers to link ?</option>
+      <option value="" disabled>Select headers to link to this component?</option>
       <option *ngFor="let t of get_headers_result()" [value]="t">{{t}}</option>
     </select>
   </section>

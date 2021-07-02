@@ -301,7 +301,7 @@ router.post('/register', function (req, res) {
     const data = req.body;
     //var username=req.body.username;
     var searchExpression = { "username": req.body.username, "password": req.body.password };
-    var data_to_insert = { "username": req.body.username, "password": req.body.password, "firstName": req.body.firstName, "lastName": req.body.lastName, "email": req.body.email, "tutoriel_step": 0 };
+    var data_to_insert = { "username": req.body.username, "password": req.body.password, "firstName": req.body.firstName, "lastName": req.body.lastName, "email": req.body.email, "tutoriel_step": 0, "tutoriel_done": false };
 
     //alert(username);
     //var password=req.body.password;
@@ -1555,10 +1555,15 @@ router.post('/update_field', function (req, res) {
         /////////////////////////////
         var update = [];
         var _id = '';
-        if (model_type === 'investigation') {
+        if (model_type === 'user') {
+            _id = 'users/' + _key;
+            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'investigation') {
             _id = 'investigations/' + _key;
             update = db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray();
         }
+
         else if (model_type === 'study') {
             _id = 'studies/' + _key;
             update = db._query(aql` FOR entry IN ${studies} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${studies} RETURN NEW.${field}`).toArray();
@@ -1602,6 +1607,63 @@ router.post('/update_field', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
+router.post('/update_user', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _key = req.body._key;
+        var field = req.body.field;
+        var value = req.body.value;
+        var model_type = req.body.model_type;
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+        `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            /////////////////////////////
+            //now check if investigation exists else modify field
+            /////////////////////////////
+            var update = [];
+            var _id = '';
+            if (model_type === 'user') {
+                _id = 'users/' + _key;
+                update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW.${field}`).toArray();
+            }
+            
+        
+            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+            //Document has been updated
+            if (update[0] === value) {
+                res.send({ success: true, message: 'document has been updated ' });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated' });
+            }
+        };
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            _key: joi.string().required(),
+            field: joi.string().required(),
+            value: joi.boolean().required(),
+            model_type: joi.string().required()
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and update specific field in MIAPPE model.');
+    
 
 router.post('/remove_childs', function (req, res) {
     var username = req.body.username;

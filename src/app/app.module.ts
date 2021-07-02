@@ -99,7 +99,7 @@ import { SampleComponent } from './documentation/miappe_components/sample.compon
 import { JoyrideModule, JoyrideService } from 'ngx-joyride';
 import { NgGanttEditorModule } from 'ng-gantt';
 import { GanttComponent } from './test_component/gantt.component'
-import {GuidedTourModule, GuidedTourService} from 'ngx-guided-tour';
+//import {GuidedTourModule, GuidedTourService} from 'ngx-guided-tour';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { PublicDataComponent } from './documentation/public-data.component';
 import { DatatableDialogComponent } from './dialog/datatable-dialog.component';
@@ -230,7 +230,7 @@ import { ExplorationComponent } from './statistics/exploration.component';
     DragDropModule,
     JoyrideModule.forRoot(),
     NgGanttEditorModule,
-    GuidedTourModule,
+    //GuidedTourModule,
     NgxChartsModule,
       
   ],

@@ -70,3 +70,10 @@
 .dropdown {
   width: 100px;
 }
+
+.mat-card{
+  max-width: 600px;
+}
+.menu_mat_card{
+  max-width: 1000px;
+}

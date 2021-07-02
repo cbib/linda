@@ -60,12 +60,15 @@ export class ObservationUnitFormComponent implements OnInit {
   experimentalFactorTouchedRows: any;
   sampleTouchedRows: any;
   private currentUser
+  selectedRowIndex = -1;
+
 
 
   private startfilling: boolean = false;
   ontology_type: string;
   show_spinner: boolean = false;
-  index_row = 0
+  ou_index_row=0
+  mat_index_row = 0
   observation_id = ""
   biological_material_id = ""
   experimental_factor_id = ""
@@ -118,8 +121,8 @@ export class ObservationUnitFormComponent implements OnInit {
     this.bm_data = []
     this.ef_data = []
     this.sample_data = []
-
-    this.index_row = 0
+    this.ou_index_row = 0
+    this.mat_index_row = 0
     this.observation_id = ""
     this.experimental_factor_id = ""
     this.observationUnitTable = this.fb.group({
@@ -143,7 +146,7 @@ export class ObservationUnitFormComponent implements OnInit {
         console.log(this.currentUser)
         if (this.currentUser['tutoriel_step'] === "11"){
             this.joyrideService.startTour(
-                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+                { steps: ['generalContent', 'addObservationUnit', 'associateBiologicalMAterial', 'addBiologicalSample', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
             );
             //this.currentUser.tutoriel_step="2"
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
@@ -272,6 +275,8 @@ export class ObservationUnitFormComponent implements OnInit {
  }
 
   ngAfterOnInit() {
+    this.ou_index_row = 0
+    this.mat_index_row = 0
     this.observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
     this.biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
     this.experimentalFactorControl = this.observationUnitTable.get('experimentalFactorRows') as FormArray;
@@ -460,7 +465,8 @@ export class ObservationUnitFormComponent implements OnInit {
 
   ObservationTableRowSelected(i) {
 
-    this.index_row = i
+    this.ou_index_row = i
+
     const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
     this.observation_id = observationUnitControl.controls[i].value['obsUUID']
     const biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
@@ -473,7 +479,7 @@ export class ObservationUnitFormComponent implements OnInit {
 
   MaterialTableRowSelected(i) {
     //console.log(i)
-    this.index_row = i
+    this.mat_index_row = i
     this.biological_material_id = this.bm_data[i]['bmUUID']
   }
 

@@ -266,7 +266,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         console.log(this.currentUser)
         if (this.currentUser['tutoriel_step'] === "13"){
             this.joyrideService.startTour(
-                { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'itemN0','itemN1', 'itemN2', 'itemN3','itemN4', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form'], stepDefaultPosition: 'left'} // Your steps order
+                { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'Row0','Row1', 'Row2', 'Row3','Row4', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form'], stepDefaultPosition: 'bottom'} // Your steps order
             );
             //this.currentUser.tutoriel_step="2"
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
@@ -933,17 +933,12 @@ export class DownloadComponent implements OnInit, OnDestroy {
     get_selected_file() {
         return this.selected_file
     }
-
-
-
-    //    cancel(modelForm){
-    //        console.log(this.form.get('file').value)
-    //        this.fileData=null
-    //        this.loaded=false
-    //        this.form.reset();
-    //        console.log(this.form.get('file').value)
-    //        
-    //    }
+    cancel(){
+        let new_step=12
+        this.currentUser.tutoriel_step=new_step.toString()
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        this.router.navigate(['/tree']) 
+    }
     reloadComponent(path:[string]) {
         let currentUrl = this.router.url;
         console.log(currentUrl)
@@ -1121,10 +1116,14 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                     console.log(study_id)
                                     this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
                                         data_upload => {
-                                            if (data_upload["success"]) {
-                                                console.log(data_upload["message"])
-                                                //this.router.navigate(['/tree']);
-                                                this.reloadComponent(['/tree'])
+                                            console.log(data_upload)
+                                            if (data_upload[0]["id"]) {
+                                                console.log(data_upload[0]["new"]["Data file description"])
+                                                let new_step=14
+                                                this.currentUser.tutoriel_step=new_step.toString()
+                                                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                                this.router.navigate(['/tree']);
+                                                //this.reloadComponent(['/tree'])
                                             }
                                         }
                                     );

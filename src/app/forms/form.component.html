@@ -32,7 +32,7 @@
         joyrideStep="StepSubmit"
         title=""
         [stepContent]="submitcontent"
-        [stepPosition]="bottom"
+        [stepPosition]="left"
         [stepContentParams]="{'model_n':model_type}"
         class="btn btn-success" style="float: right;" type="submit" (click)="submit(modelForm);" [disabled]="!modelForm.valid || ((get_startfilling()===false && mode==='create'))">Submit</button>
         <!-- </div> -->
@@ -40,7 +40,7 @@
             <div>
               <nav class="navbar navbar-expand-sm navbar-dark">
                   <h3>
-                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span> </b><span style="color: black;"> : THE TUTORIAL</span></a>
+                       <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span> </b><span style="color: black;"> : THE TUTORIAL</span></a>
                   </h3>
               </nav>
             </div>
@@ -74,19 +74,18 @@
             <span class="slider round"></span>
         </label> -->
     </div>
-    <ng-template #menucontent let-nod="model_n" let-modellen="model_len" let-modell="model_level">
+    <ng-template style="min-height: 800px;max-height: 800px;" #menucontent let-nod="model_n" let-modellen="model_len" let-modell="model_level">
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
               </h3>
           </nav>
         </div>
-
         <div>
             <div *ngIf="nod==='investigation'">
                 <h2>Investigation Form</h2>
-                <mat-card>
+                <mat-card class="menu_mat_card">
                 <h5>Definition</h5>
                 <p><b>Investigation</b> is the entry point of each MIAPPE dataset. It contains several general metadata fields 
                     (e.g. title, description, submission/publication dates), including some critical for FAIRness 
@@ -95,7 +94,7 @@
             </div>
             <div *ngIf="nod==='study'">
                 <h2>Studies</h2>
-                <mat-card>
+                <mat-card  class="menu_mat_card">
                 <h5>Definition</h5>
                 <p><b>Study</b> corresponds to one experiment and defines its location (which by definition must be single per study) 
                     and duration. It lists general fields documenting the experiment (e.g. experimental design, cultural practices, 
@@ -105,73 +104,79 @@
             
             <div *ngIf="nod==='experimental_factor'">
                 <h2>Experimental factors</h2>
-                <mat-card>
+                <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
-                    <p><b>Experimental factors</b>  </p>
+                    <p>
+                        An <b>Experimental factor</b>  is, by definition a condition that varies between observation units, which may be biotic (pest, disease interaction) or abiotic (treatment and cultural practice) in nature. 
+                        Depending on the level of the data, an experimental factor can be either  \"what is the factor applied to the plant\" (i.e. Unwatered), or the \"environmental characterisation\" (i.e. if no rain on unwatered plant : Drought ;  if rain on unwatered plant: Irrigated).
+                        The object of a study is to ascertain the impact of one or more factors on the biological material.
+                    </p>
                 </mat-card>
             </div>
             <div *ngIf="nod==='observed_variable'">
                 <h2>Observed variables</h2>
-                <mat-card>
+                <mat-card class="menu_mat_card">
                     <h5>Definition</h5>
-                    <p><b>Observed variables</b>  </p>
+                    <p> An <b>Observed variable</b> describes how a measurement has been made. It typically takes the form of a measured characteristic of the observation unit (plant or environmental trait), associated to the method and unit of measurement. </p>
                 </mat-card>
             </div>
             <div *ngIf="nod==='biological_material'">
                 <h2>Biological_materials</h2>
-                <mat-card>
+                <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
                     <p><b>Biological_material</b>  </p>
                 </mat-card>
             </div>
             <div *ngIf="nod==='observation_unit'">
                 <h2>Observation units</h2>
-                <mat-card>
+                <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
                     <p><b>Observation units</b>  </p>
                 </mat-card>
             </div>
             
-            <mat-card>
-            <h5>Form menu</h5>
-            <p>The highlighted menu allows you to navigate to previous or next form page if exists (Not all forms have multiple pages !! ).</p>
+            <mat-card  class="menu_mat_card">
+            <h5>Available actions</h5>
+            <p>The highlighted menu allows you to navigate through form pages (Not all forms have multiple pages !! ).</p>
+            <ul style="margin-bottom: 0px;">
             <div *ngIf="nod==='study'">
-            <ul>
-            <li><p>Click on <button class="btn btn-info" >Back</button> button if you want to go back in previous form page</p></li>
-            </ul>
+        
+            <li style="margin-bottom: 0px;max-height: 40px;"><p>Click on <button class="btn btn-info" >Back</button> if you want to go back in previous form page</p></li>
+            
             </div>
             <div *ngIf="nod==='observed_variable'">
-                <ul>
-                <li><p>Click on <button class="btn btn-info" >Back</button> button if you want to go back in previous form page</p></li>
-                </ul>
+                
+                <li style="margin-bottom: 0px;"><p>Click on <button class="btn btn-info" >Back</button> if you want to go back in previous form page</p></li>
+                
             </div>
             
-            <ul>
-                <li><p>Click on <button class="btn btn-danger" >Cancel</button> button if you want to cancel the current form</p></li>
-                <li><p>Click on <button class="btn btn-success" >Submit</button> button when you have completed the form</p></li>
-                <li><p>Click on <button class="btn btn-light" >Help</button> button to replay tutorial for this form</p></li>
-            </ul>
+           
+                <li style="margin-bottom: 0px;"><p>Click on <button class="btn btn-danger" >Cancel</button> if you want to cancel the current form</p></li>
+                <li style="margin-bottom: 0px;"><p>Click on <button class="btn btn-success" >Submit</button> when you have completed the form</p></li>
+                <li style="margin-bottom: 0px;"><p>Click on <button class="btn btn-light" >Help</button> to replay tutorial for this form</p></li>
+            
             <div *ngIf="nod==='study'">
-                <ul>
-                <li><p>Click on <button class="btn btn-info" >Next</button> button if you want to go to next form page</p></li>
-                </ul>
+                
+                <li style="margin-bottom: 0px;"><p>Click on <button class="btn btn-info" >Next</button> if you want to go to next form page</p></li>
+                
             </div>
             <div *ngIf="nod==='observed_variable'">
-                <ul>
-                <li><p>Click on <button class="btn btn-info" >Next</button> button if you want to go to next form page</p></li>
-                </ul>
+                
+                <li  style="margin-bottom: 0px;"><p>Click on <button class="btn btn-info" >Next</button> if you want to go to next form page</p></li>
+                
             </div>
+            </ul>
             <ul>
-                <li><p><input class="form-check-input" type="checkbox" id="checkbox_example">
+                <li  style="margin-bottom: 0px;" ><p><input class="form-check-input" type="checkbox" id="checkbox_example">
                 <label class="form-check-label" for="checkbox_example">Save as template</label> checkbox on the left will save your form as a template form, available for furthers reuses</p></li>
             </ul>
             </mat-card>
             
             <div *ngIf="nod==='experimental_factor'">
-                <mat-card>
+                <mat-card  class="menu_mat_card">
                 <h5>Available ontologies</h5>
                 <ul>
-                    <li><p><b>EFO </b>:  The Experimental Factor Ontology (EFO) provides a systematic description of many experimental variables available in EBI databases, and for projects such as the GWAS catalog.</p> </li>
+                    <li style="margin-bottom: 8px;max-height: 50px;"><p><b>EFO </b>:  The Experimental Factor Ontology (EFO) provides a systematic description of many experimental variables available in EBI databases, and for projects such as the GWAS catalog.</p> </li>
                     <li><p><b>PECO </b>: A structured, controlled vocabulary which describes the treatments, growing conditions, and/or study types used in plant biology experiments.</p></li>
                 </ul>
             </mat-card>
@@ -231,11 +236,11 @@
                                 [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
                         </span>
                     </div>
-                    <ng-template #formOntologyContent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                    <ng-template style="min-height: 800px;max-height: 800px;" #formOntologyContent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
                         <div>
                           <nav class="navbar navbar-expand-sm navbar-dark">
                               <h3>
-                                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                               </h3>
                           </nav>
                         </div>
@@ -328,11 +333,11 @@
                                     class="form-control" (keypress)="onTaskAdd($event)"
                                     [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
                             </div>
-                            <ng-template #formUIcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+                            <ng-template style="min-height: 800px;max-height: 800px;" #formUIcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
                                 <div>
                                   <nav class="navbar navbar-expand-sm navbar-dark">
                                       <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                                           <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                       </h3>
                                   </nav>
                                 </div>
@@ -453,11 +458,11 @@
                                 </mat-slider> -->
                                 
                             </div>
-                            <ng-template #formNFcontent let-nod="model_n">
+                            <ng-template style="min-height: 800px;max-height: 800px;" #formNFcontent let-nod="model_n">
                                 <div>
                                   <nav class="navbar navbar-expand-sm navbar-dark">
                                       <h3>
-                                          <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                                           <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                                       </h3>
                                   </nav>
                                 </div>
@@ -528,11 +533,11 @@
         <!-- <ng-container *ngIf="level<2">
             <ng-container *ngTemplateOutlet="formcontent.studylevelone; context: guided_tour_messages.level1"></ng-container>
           </ng-container> -->
-        <ng-template #formcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+        <ng-template style="min-height: 800px;max-height: 800px;" #formcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
             <div>
               <nav class="navbar navbar-expand-sm navbar-dark">
                   <h3>
-                      <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                       <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
                   </h3>
               </nav>
             </div>
@@ -701,11 +706,12 @@
         </form>
     </div> -->
 </div>
-<ng-template #democontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+<ng-template style="min-height: 800px;max-height: 800px;" #democontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+    <div>
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>
@@ -732,7 +738,7 @@
         <p> Click on <b>NEXT</b>  to fill a new form for a study short-called <b>Study1</b> with the following values:</p>
             <ul>
             <li> <p style="font-size: 14px;"> <b>Study unique Id </b> : MaizeStudy1</p></li>
-            <li> <p style="font-size: 14px;"> <b>Short title </b> : Study1</p></li>
+            <li> <p style="font-size: 14px;"> <b>Short title </b> : MaizeStudy1</p></li>
             <li> <p style="font-size: 14px;"> <b>Start date of study </b> : 1/06/2021</p></li>
             <li> <p style="font-size: 14px;"> <b>End date of study </b> : 30/06/2021</p></li>
             <li> <p style="font-size: 14px;"> <b>Type of experimental design </b> : CO_715:0000145 (Complete block design)</p></li>
@@ -778,5 +784,6 @@
         </mat-card>
                 
       
+    </div>
     </div>
 </ng-template>

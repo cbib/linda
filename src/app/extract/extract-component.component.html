@@ -6,31 +6,171 @@
             </b>
         </a>
     </h3>
-</div>  
-<div>
-    
+</div> 
+<joyrideStep joyrideStep="StepCheck" title="" [stepContent]="checkAndUpload" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
+</joyrideStep>
+<ng-template #checkAndUpload let-nod="model_n">
+  <div>
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+             <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+        </h3>
+    </nav>
+  </div>
+  <h4>Cross Linking your data with MIAPPE</h4>
+  <mat-card>
+      <h5>Link your data files with your components</h5>
+      <p> 
+        In our case, we have only one study, but you could have more and consequently you have to check which studies to proceed in the table. <br> 
+        Once it is done, click on  <button class="btn btn-outline-rounded btn-info" [disabled]="0===0">Extract <b>{{model_type_label}}</b> </button>
+
+        </p>
+
+  </mat-card>
+</ng-template>
+<joyrideStep joyrideStep="StepDescription" title="" [stepContent]="Description" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
+</joyrideStep>
+<ng-template #Description let-nod="model_n">
+  <div>
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+             <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+        </h3>
+    </nav>
+  </div>
+  <h4>Cross Linking your data with MIAPPE</h4>
+  <mat-card>
+      <h5>Link your data files with your components</h5>
+      <p> 
+        Supposed you have imported a simple csv file as seen previously and you have only declared (assigned) columns type. <br>
+       
+        Then, you want to link this data with the corresponding MIAPPE component in your investigation tree.
+        To do that, you have 2 solutions: </p>
+        <ol>
+          <li><p>If you have already created the node for your component (as we did in this tutorial), you only need to link it with your data</p></li>
+          <li><p>You could also create a new MIAPPE component to link with your column</p></li>
+        </ol>
+  </mat-card>
+</ng-template>
+<div >
     <p>
         In this page, you can extract components from data files to each study of your investigation {{model_key}}
         <!-- This investigation contains {{global[selected_file].length}} Studies. {{filename_used.length}} source filename has been 
-        found with a total of {{displayedcomponentColumns[selected_file].length}} column linked to "{{model_type_label}}" detected.
+        found with a total of {{displayedcomponentColumns[selected_file].length}} column linked to "<b>{{model_type_label}}</b>" detected.
         If you click on variable header, you will select the whole column to extract. 
         Using checkboxes in first column, you can unselect some rows if you don't want this study to be enriched with selected observed variables -->
     
     </p>
     <br>
+
     <!-- <section *ngFor="let filename of filename_used ; let i=index"> -->
+   
+    <mat-card joyrideStep="StepSelectFile" title="" [stepContent]="selectFile" [stepContentParams]="{'model_n':demo_subset}">
       <h2>Select your data file </h2>
-    <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
-        <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
-    </select> 
+      <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+          <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+      </select> 
+      <br>
+    </mat-card>
+    <ng-template #selectFile let-nod="model_n">
+      <div>
+        <nav class="navbar navbar-expand-sm navbar-dark">
+            <h3>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+            </h3>
+        </nav>
+      </div>
+      
+      <h4>Cross Linking your data with MIAPPE</h4>
+      <mat-card>
+          
+          <h5> Data files selection</h5>
+          <p>
+            First, you have to choose the data file (use the select option appropriatly).
+          </p>
+      </mat-card>
+
+    </ng-template>
     <br>
-    <br>
-    <h2>Add a new {{model_type_label}}</h2>
+    <mat-card joyrideStep="StepComponentTable" title="" [stepContent]="componentTable" [stepContentParams]="{'model_n':demo_subset}">
+      <h2><b>{{model_type_label}}</b> table</h2>
+      <p>
+          Once you have declared the <b>{{model_type_label}}</b> you need, select studies in which these components will be integrated by checking corresponding rows !! 
+      </p>
+      <table mat-table [dataSource]="datasources[selected_file]" matSort >
+          <ng-container *ngFor="let column of displayedColumns[selected_file] ; let i=index">
+              <ng-container *ngIf="column!='select' && column!='study ID'" matColumnDef="{{column}}">
+                <th mat-header-cell  *matHeaderCellDef mat-sort-header> {{column}} </th>
+                  <td  mat-cell class="flex-stretch" *matCellDef="let element"> 
+                      <button *ngIf="element[column]['state']==='notfound'" [ngStyle]="getIconStyle('notfound')" class="btn btn-primary btn-xs"
+                         title="{{model_type}} not found">Not found
+                      </button>
+                      <button *ngIf="element[column]['state']==='unset'" [ngStyle]="getIconStyle('unset')" class="btn btn-primary btn-xs"
+                         title="{{model_type}} unset">Unset
+                      </button>
+                      <button *ngIf="element[column]['state']==='ready'" [ngStyle]="getIconStyle('ready')" class="btn btn-primary btn-xs"
+                         title="{{model_type}} ready to extract">Ready
+                      </button>
+                      <!-- <button  *ngIf="element[column]['id'].includes(get_model_type())" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs" -->
+                      <button  *ngIf="element[column]['state']==='extracted'" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs"
+                         title="{{element[column]['id']}}">Extracted
+                      </button>
+                    </td>
+              </ng-container>
+              <ng-container *ngIf="column!='select' && column==='study ID'" matColumnDef="{{column}}">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
+                   <td mat-cell class="flex-stretch" *matCellDef="let element"> 
+                      {{element[column]}} 
+                    </td>
+                </ng-container>
+            </ng-container>
+  
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle(selected_file) : null"
+                  [checked]="selection.hasValue() && isAllRowSelected(selected_file)"
+                  [indeterminate]="selection.hasValue() && !isAllRowSelected(selected_file)">
+                </mat-checkbox>
+              </th>
+              <td mat-cell class="flex-stretch" *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColumns[selected_file]"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns[selected_file];"></tr>
+        </table>
+      </mat-card>
+      <ng-template #componentTable let-nod="model_n">
+        <div>
+          <nav class="navbar navbar-expand-sm navbar-dark">
+              <h3>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+              </h3>
+
+          </nav>
+        </div>
+        
+        <h4>Detected <b>{{model_type_label}}</b></h4>
+        <mat-card>
+            <h5> Component detection</h5>
+            <p>
+              Here are <b>{{model_type_label}}</b>(s) that you have assigned in your data file. As you can see, there is one column called <b>plant_height</b> that you have assigned as <b>{{model_type_label}}</b>.
+              You also notice that the assumed <b>{{model_type_label}}</b> is in unset state for now. To extract it, you can either add a new MIAPPE component or use an existing one. 
+
+            </p>
+        </mat-card>
+      </ng-template>
+      <br>
+    <mat-card joyrideStep="StepAddComponent" title="" [stepContent]="addComponent" [stepContentParams]="{'model_n':demo_subset}">
+    <h2>Link <b>{{model_type_label}} column from your data files</b></h2>
     <p>
-        Here are {{model_type_label}} in your data file, click on it to fill the form and add in LINDA database as {{model_type_label}}!! 
+        Here are <b>{{model_type_label}}</b> in your data file, click on it to fill the form and add in LINDA database as <b>{{model_type_label}}</b>!! 
     </p>
     <!-- <p *ngIf="displayedcomponentColumns[selected_file].lenght==0">
-      There are no {{model_type_label}} described in this datafile
+      There are no <b>{{model_type_label}}</b> described in this datafile
     </p> -->
     <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
       <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column]['state'])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
@@ -38,73 +178,106 @@
       </mat-button-toggle> 
     </mat-button-toggle-group>
     <br>
+    </mat-card>
+    <ng-template #addComponent let-nod="model_n">
+      <div>
+        <nav class="navbar navbar-expand-sm navbar-dark">
+            <h3>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+            </h3>
+        </nav>
+      </div>
+      
+      <h4>Cross Linking your data with MIAPPE</h4>
+      <mat-card>
+          
+          <h5> Link <b>{{model_type_label}}</b></h5>
+          <p>
+            If you did not created the <b>{{model_type_label}}</b> yet, you can jointly extract and link MIAPPE component(<b>{{model_type_label}}</b> in our case) to your data.
+          </p>
+      </mat-card>
+    </ng-template>
     <br>
-    <h2>link a existing {{model_type_label}}</h2>
-     We found a list of existing observed variables described in these studies. Is this the one you want to link with ? 
+    <mat-card joyrideStep="StepLinkComponent" title="" [stepContent]="linkComponent" [stepContentParams]="{'model_n':demo_subset}">
+    <h2>Use a existing <b>{{model_type_label}}</b></h2>
+     We found a list of existing <b>{{model_type_label}}</b> described in these studies. Is this the one you want to link with ? 
     <p>
-        Here are {{model_type_label}}(s) in your data file, click on it to fill the form and add in LINDA database as {{model_type_label}} !! 
-       
+        Here are <b>{{model_type_label}}</b>(s) in your data file, click on it to fill the form and add in LINDA database as <b>{{model_type_label}}</b> !! 
     </p>
     <mat-button-toggle-group *ngFor="let observed_variable of ObservedVariables[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
-      <mat-button-toggle [ngStyle]="getToggleStyle('test')" (click)="$event ? clickToggleExisting(observed_variable['observed_variable'], selected_file) : null" value="{{observed_variable['observed_variable']['Trait']}}">
-        <span>{{observed_variable['observed_variable']['Variable name']}}</span>
+      <mat-button-toggle  
+      joyrideStep="StepClickToggle" 
+      title="" [stepContent]="clickToggle" [stepContentParams]="{'model_n':demo_subset}"
+      
+      [ngStyle]="getToggleStyle('')" (click)="$event ? clickToggleExisting(observed_variable['observed_variable'], selected_file) : null" value="{{observed_variable['observed_variable']['Trait']}}">
+        <span *ngIf="model_type==='observed_variable'">{{observed_variable['observed_variable']['Variable name']}}</span>
+        <span *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
+        <!-- <span *ngIf="model_type==observed_variable">{{observed_variable['observed_variable']['Variable name']}}</span>
+        <span *ngIf="model_type==experimental_factor">{{observed_variable['observed_variable']['Experimental Factor type']}}</span> -->
       </mat-button-toggle> 
+      <ng-template #clickToggle let-nod="model_n">
+        <div>
+          <nav class="navbar navbar-expand-sm navbar-dark">
+              <h3>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+              </h3>
+          </nav>
+        </div>
+        
+        <h4>Cross Linking your data with MIAPPE</h4>
+        <mat-card>
+            
+            <h5><h5> Existing Miappe Component</h5></h5>
+            <p>
+              If you have already created the <b>{{model_type_label}}</b> (as we did in this tutorial), 
+              click on <button [ngStyle]="getToggleStyle('test')">
+                <span *ngIf="model_type==='observed_variable'">{{observed_variable['observed_variable']['Variable name']}}</span>
+                <span *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
+              </button>. 
+              You will have to select which headers between the one proposed in the table you want to link with this component.
+              Once you've selected the headers, click on OK and you will see now that the component is ready to extract.<br>
+              
+
+            </p>
+            <h6>Notes</h6>
+            <p>
+            Here you can see the <b>pH_M_cm</b> button because you have already created this MIAPPE component in your investigation tree;
+            No button will appear otherwise !!<br>
+            In this case, you need to either, add the component when you link the column or go back in the project tree to add the corresponding MIAPPE component !!  
+          </p>
+        </mat-card>
+      </ng-template>
     </mat-button-toggle-group>
     <br>
+  </mat-card>
+  <ng-template #linkComponent let-nod="model_n">
+    <div>
+      <nav class="navbar navbar-expand-sm navbar-dark">
+          <h3>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+          </h3>
+      </nav>
+    </div>
+    
+    <h4>Cross Linking your data with MIAPPE</h4>
+    <mat-card>
+        
+        <h5><h5> Link a existing Observed Variable</h5></h5>
+        <p>
+          If you have already created the <b>{{model_type_label}}</b> (as we did in this tutorial), you can simply link our <b>{{model_type_label}}</b> to your data.
+        </p>
+        <h6>Notes</h6>
+        <p>
+        Here you can see the <b>pH_M_cm</b> button because you have already created this MIAPPE component in your investigation tree;
+        No button will appear otherwise !!<br>
+        In this case, you need to either, add the component when you link the column or go back in the project tree to add the corresponding MIAPPE component !!  
+      </p>
+    </mat-card>
+  </ng-template>
     <br>
-    <h2>{{model_type_label}} table</h2>
-    <p>
-        Once you have declared the {{model_type_label}} you need, select studies in which these components will be integrated by checking corresponding rows !! 
-    </p>
-    <table mat-table [dataSource]="datasources[selected_file]" matSort >
-        <ng-container *ngFor="let column of displayedColumns[selected_file] ; let i=index">
-            <ng-container *ngIf="column!='select' && column!='study ID'" matColumnDef="{{column}}">
-              <th mat-header-cell  *matHeaderCellDef mat-sort-header> {{column}} </th>
-                <td  mat-cell class="flex-stretch" *matCellDef="let element"> 
-                    <button *ngIf="element[column]['state']==='notfound'" [ngStyle]="getIconStyle('notfound')" class="btn btn-primary btn-xs"
-                       title="{{model_type}} not found">Not found
-                    </button>
-                    <button *ngIf="element[column]['state']==='unset'" [ngStyle]="getIconStyle('unset')" class="btn btn-primary btn-xs"
-                       title="{{model_type}} unset">Unset
-                    </button>
-                    <button *ngIf="element[column]['state']==='ready'" [ngStyle]="getIconStyle('ready')" class="btn btn-primary btn-xs"
-                       title="{{model_type}} ready to extract">Ready
-                    </button>
-                    <!-- <button  *ngIf="element[column]['id'].includes(get_model_type())" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs" -->
-                    <button  *ngIf="element[column]['state']==='extracted'" [ngStyle]="getIconStyle('get_model_type()')" class="btn btn-primary btn-xs"
-                       title="{{element[column]['id']}}">Extracted
-                    </button>
-                  </td>
-            </ng-container>
-            <ng-container *ngIf="column!='select' && column==='study ID'" matColumnDef="{{column}}">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
-                 <td mat-cell class="flex-stretch" *matCellDef="let element"> 
-                    {{element[column]}} 
-                  </td>
-              </ng-container>
-          </ng-container>
-
-          <ng-container matColumnDef="select">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox (change)="$event ? masterToggle(selected_file) : null"
-                [checked]="selection.hasValue() && isAllRowSelected(selected_file)"
-                [indeterminate]="selection.hasValue() && !isAllRowSelected(selected_file)">
-              </mat-checkbox>
-            </th>
-            <td mat-cell class="flex-stretch" *matCellDef="let row">
-              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                [checked]="selection.isSelected(row)">
-              </mat-checkbox>
-            </td>
-          </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="displayedColumns[selected_file]"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns[selected_file];"></tr>
-      </table>
+    
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <button class="btn btn-outline-rounded btn-info" [disabled]="selection.selected.length===0" type="submit">Extract {{model_type_label}} </button>
-     </form>
+        <button class="btn btn-outline-rounded btn-info" [disabled]="selection.selected.length===0" type="submit">Extract <b>{{model_type_label}}</b> </button>
+    </form>
     <!-- </section> -->
-
-
 </div>

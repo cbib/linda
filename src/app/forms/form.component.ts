@@ -8,7 +8,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
 import {JoyrideService} from 'ngx-joyride';
-import {InvestigationForm} from '../models/investigation'
 
 // import { isBuffer } from 'util';
 // import { ConsoleReporter } from 'jasmine';
@@ -97,11 +96,32 @@ export class FormComponent implements OnInit//, AfterViewInit
     onClickTour(help_mode:boolean=false) {
         if(help_mode){
             this.help_mode=true
-            if (this.model_type==='study'){
+            if (this.model_type==='investigation'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
+            if (this.model_type==='study'){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+            if (this.model_type==='experimental_factor'){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+            if (this.model_type==='observed_variable'){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+            if (this.model_type==='event'){
+                this.joyrideService.startTour(
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                );
+            }
+
         }
         else{
             this.help_mode=false
@@ -172,7 +192,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         //study form template
         if (this.currentUser['tutoriel_step']==="3"){
             this.modelForm.controls["Study unique ID"].patchValue("MaizeStudy1")
-            this.modelForm.controls["Short title"].patchValue("Study1")
+            this.modelForm.controls["Short title"].patchValue("MaizeStudy1")
             this.modelForm.controls["Start date of study"].patchValue(this.formatDate(new Date("6/01/2021")))
             this.modelForm.controls["End date of study"].patchValue(this.formatDate(new Date("6/30/2021")))
             this.modelForm.controls["Type of experimental design"].patchValue("CO_715:0000145")

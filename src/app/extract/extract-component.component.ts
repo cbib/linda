@@ -10,6 +10,7 @@ import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.compo
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent } from '../dialog/form-dialog.component';
 import { first } from 'rxjs/operators';
+import {JoyrideService} from 'ngx-joyride';
 
 /*
  Maybe add data filename to investigation component when adding data files with studies in download_component.ts
@@ -65,6 +66,9 @@ export class ExtractComponentComponent implements OnInit {
   selection = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
   selected_file: string = ""
   save_as_template: boolean = false
+  private currentUser
+  private demo_subset=0
+  part2=false
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,6 +76,7 @@ export class ExtractComponentComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private globalService: GlobalService,
+    private readonly joyrideService: JoyrideService,
     private route: ActivatedRoute,
     public dialog: MatDialog) {
     //use this when you pass argument using this.router.navigate
@@ -89,6 +94,18 @@ export class ExtractComponentComponent implements OnInit {
     this.selected_file = values
 
   }
+  onClickTour() {
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+    console.log(this.currentUser)
+    if (this.currentUser['tutoriel_step'] === "15"){
+      if (!this.part2){
+          this.joyrideService.startTour(
+              { steps: ['StepDescription',  'StepSelectFile', 'StepComponentTable','StepAddComponent', 'StepLinkComponent', 'StepClickToggle'], stepDefaultPosition: 'bottom'} // Your steps order
+          );
+      }
+    }
+
+}
   async get_data() {
     const data = await this.globalService.get_all_data_files(this.model_key).toPromise();
     this.filename_used = []
@@ -182,6 +199,7 @@ export class ExtractComponentComponent implements OnInit {
     this.model_type_label = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ")
     this.get_model(this.model_type);
     this.get_data()
+    this.onClickTour()
   }
 
   get_model(model_type: string) {
@@ -254,6 +272,10 @@ export class ExtractComponentComponent implements OnInit {
               element[confirmResult.selected_header]["state"] = "ready"
               element[confirmResult.selected_header]["id"] = variable_id
               element[confirmResult.selected_header]["already_there"] = true
+              this.part2=true
+              this.joyrideService.startTour(
+                { steps: ['StepCheck'], stepDefaultPosition: 'bottom'} // Your steps order
+            );
           });
         }
       }
@@ -400,6 +422,9 @@ export class ExtractComponentComponent implements OnInit {
         cnt += 1
 
       });
+    let new_step=16
+    this.currentUser.tutoriel_step=new_step.toString()
+    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
     //for each selected rows and ready  to extract columns
     // 
@@ -484,6 +509,9 @@ export class ExtractComponentComponent implements OnInit {
     else if (key.includes('extracted')) {
 
       return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('test')) {
+      return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px'}
     }
     else {
       return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px', 'float': 'left' }

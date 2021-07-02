@@ -28,8 +28,8 @@
           <div>
             <nav class="navbar navbar-expand-sm navbar-dark">
                 <h3>
-                    <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span> </b><span style="color: black;"> : THE TUTORIAL</span></a>
-                </h3>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+              </h3>
             </nav>
           </div>
           <h5>Data submission</h5>
@@ -135,17 +135,21 @@
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
               <h3>
-                  <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
               </h3>
           </nav>
         </div>
         <h4>Biological material</h4>
+        <mat-card>
+        <h5>Biological materials details</h5>
         <p><b>Biological material</b> – identifies and describes the plant materials used in the studies. </p>
         <p>They must be identified through the organism field, which indicates the unique taxonomic identifier of the biological material 
         in a standard such as the NCBI taxonomy. Optionally, they may be identified through the fields genus, species and infraspecific name, 
         where textual names are expected (but should follow accepted standards).</p>
+        </mat-card>
+        <mat-card>
         <h5>General Material information</h5>
-        Here you can described general informations about your Organism, Species, Genus... <br> 
+        <p>Here you can described general informations about your Organism, Species, Genus... </p><br> 
         <!-- For example, add the following
         <ul>
           <li> Genus : Zea</li>
@@ -154,7 +158,7 @@
           <li> Infraspecific name : B73</li>
         </ul> -->
         
-
+      </mat-card>
       </ng-template>
       <br>
       <div 
@@ -173,8 +177,7 @@
             <button class="btn btn-primary" mat-raised-button type="submit" (click)="addMaterialRow()">Add material</button>
           </div>
           <span style="display:inline-block; margin-left: 10px;"></span>
-          <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
-            [ngClass]="{'table-dark': mode_table}">
+          <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
             <!-- <thead class="text-nowrap">   -->
             <thead>
               <ng-container *ngFor="let field of cleaned_model ; let i=index">
@@ -190,8 +193,8 @@
               <th></th>
             </thead>
             <tbody>
-              <ng-container formArrayName="materialRows" *ngFor="let group of getMaterialFormControls.controls ; let i=index">
-                <tr (click)="RowSelected(i)" [formGroupName]="i">
+              <ng-container formArrayName="materialRows" *ngFor="let group of getMaterialFormControls.controls ; let i=index"> 
+                <tr (click)="RowSelected(i)" [formGroupName]="i" [ngClass]="{'highlight': selectedRowIndex == i}">
                   <ng-container *ngFor="let field of cleaned_model ; let j=index">
                     <td class="text-center align-middle" *ngIf="model[field['key']].Level==2">
                       <div *ngIf="model[field['key']].Format.includes('Ontology')">
@@ -278,7 +281,7 @@
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
-                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
             </h3>
         </nav>
       </div>
@@ -432,7 +435,7 @@
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
-                <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
             </h3>
         </nav>
       </div>
@@ -470,7 +473,7 @@
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
-              <a class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
           </h3>
       </nav>
     </div>
@@ -495,8 +498,8 @@
        <p> The other fields can be fullfilled later<br></p>
     </div>
 </ng-template>
-  <div class="output">
+  <!-- <div class="output">
     <p>Form Data: {{materialTable.value | json}}</p>
     <p>Is Valid: {{materialTable.valid}}</p>
-  </div>
+  </div> -->
 </div>
