@@ -235,13 +235,15 @@
                 <span *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
               </button>. 
               You will have to select which headers between the one proposed in the table you want to link with this component.
-              Once you've selected the headers, click on OK and you will see now that the component is ready to extract.<br>
-              
-
+              <br>
+              Once you've selected the headers, click on OK and you will see now that the component is now ready to be extracted  <button style="background-color: LightGreen;">ready</button>
             </p>
             <h6>Notes</h6>
             <p>
-            Here you can see the <b>pH_M_cm</b> button because you have already created this MIAPPE component in your investigation tree;
+            Here you can see the <button [ngStyle]="getToggleStyle('test')">
+              <span *ngIf="model_type==='observed_variable'">{{observed_variable['observed_variable']['Variable name']}}</span>
+              <span *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
+            </button> button because you have already created this {{model_type_label}} component in your investigation tree;
             No button will appear otherwise !!<br>
             In this case, you need to either, add the component when you link the column or go back in the project tree to add the corresponding MIAPPE component !!  
           </p>
@@ -268,16 +270,15 @@
         </p>
         <h6>Notes</h6>
         <p>
-        Here you can see the <b>pH_M_cm</b> button because you have already created this MIAPPE component in your investigation tree;
+        Here you can see the <button [ngStyle]="getToggleStyle('test')">PH_M_cm</button> button because you have already created this MIAPPE component in your investigation tree;
         No button will appear otherwise !!<br>
         In this case, you need to either, add the component when you link the column or go back in the project tree to add the corresponding MIAPPE component !!  
       </p>
     </mat-card>
   </ng-template>
     <br>
-    
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <button class="btn btn-outline-rounded btn-info" [disabled]="selection.selected.length===0" type="submit">Extract <b>{{model_type_label}}</b> </button>
+        <button class="btn btn-info" [disabled]="selection.selected.length===0" type="submit">Extract</button>
+        <button (click)="cancel()" class="btn btn-danger">Cancel</button>
     </form>
-    <!-- </section> -->
 </div>

@@ -8,8 +8,9 @@
         </b>
       </a>
       <div class="form-group text-center" style="float: right;">
+        <button (click)="onClickTour(true)" class="btn btn-xs btn-light">Help</button>
+        <span style="margin-right:10px;"></span>
         <button (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
-          <span style="margin-right:10px;"></span>
           Cancel
         </button>
         <span style="margin-right:10px;"></span>        
@@ -36,12 +37,17 @@
             <p>As you can see, your form has been filled with the corresponding values ! 1O plants (INRA:B73_1 to INRA:B73_10) from the same material source (INRA:B73) have been integrated in the Study. <br> Feel free to complete the form !  <br>
             When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
         </ng-template>
-
-        Save as template
+        <!-- Save as template
         <label class="switch ">
           <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
           <span class="slider round"></span>
-        </label>
+        </label> -->
+
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" id="flexSwitchCheckDefault">
+          <label class="form-check-label" for="flexSwitchCheckDefault">Save as template</label>
+      </div>
+
       </div>
     </h3>
     </nav>

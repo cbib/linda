@@ -1119,9 +1119,20 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                             console.log(data_upload)
                                             if (data_upload[0]["id"]) {
                                                 console.log(data_upload[0]["new"]["Data file description"])
-                                                let new_step=14
-                                                this.currentUser.tutoriel_step=new_step.toString()
-                                                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+
+
+                                                if (!this.currentUser.tutoriel_done){
+                                                    if (this.currentUser.tutoriel_step==="13"){
+                                                      let new_step=14
+                                                      this.currentUser.tutoriel_step=new_step.toString()
+                                                      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                                    }
+                                                    else{
+                                                      this.alertService.error("You are not in the right form as requested by the tutorial")
+                                                    }
+                                                  
+                                                  }
+
                                                 this.router.navigate(['/tree']);
                                                 //this.reloadComponent(['/tree'])
                                             }

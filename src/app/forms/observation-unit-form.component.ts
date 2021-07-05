@@ -757,9 +757,16 @@ get_biological_material_list() {
     this.marked = e.target.checked;
   };
   cancel() {
-    let new_step=parseInt(this.currentUser.tutoriel_step)-1
-    this.currentUser.tutoriel_step=new_step.toString()
-    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    if  (!this.currentUser.tutoriel_done){
+      if (this.currentUser.tutoriel_step==="15"){
+        let new_step=14
+        this.currentUser.tutoriel_step=new_step.toString()
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+      else{
+        
+      }
+    }
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
 
   };
@@ -868,12 +875,20 @@ get_biological_material_list() {
           if (data["success"]) {
 
             this.model_id = data["id"];
+            if  (!this.currentUser.tutoriel_done){
+              if (this.currentUser.tutoriel_step==="15"){
+                  let new_step=16
+                  this.currentUser.tutoriel_step=new_step.toString()
+                  localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+              }
+              else{
+                this.alertService.error("You are not in the right form as requested by the tutorial")
+              }
+            }
             this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
-            let new_step=parseInt(this.currentUser.tutoriel_step)+1
-            this.currentUser.tutoriel_step=new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            
 
             return true;
           }

@@ -214,7 +214,7 @@
                     title=""
                     [stepContent]="formOntologyContent"
                     [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
-                    (done)= "onDone()">
+                    >
 
                         <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;"
                             class="btn-group">
@@ -323,7 +323,7 @@
                                     title=""
                                     [stepContent]="formUIcontent"
                                     [stepContentParams]="{'model_n':model_type, 'model_len':cleaned_model.length, 'model_level':level, 'message':get_message_guided_tour()}"
-                                    (done)= "onDone()">
+                                    >
                                 <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
                                     placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                                     class="form-control" (keypress)="onTaskAdd($event)"
@@ -427,8 +427,7 @@
                                     joyrideStep="StepNormalField"
                                     title=""
                                     [stepContent]="formNFcontent"
-                                    [stepContentParams]="{'model_n':model_type}"
-                                    (done)= "onDone()">
+                                    [stepContentParams]="{'model_n':model_type}">
                                 <input *ngIf="!model[field['key']].Format.includes('Free text') " mdbInput
                                     placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                                     class="form-control" (keypress)="onTaskAdd($event)"

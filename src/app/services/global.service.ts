@@ -177,6 +177,7 @@ export class GlobalService {
             'model_type': model_type
 
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
     }
 

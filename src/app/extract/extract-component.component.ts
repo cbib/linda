@@ -193,6 +193,23 @@ export class ExtractComponentComponent implements OnInit {
   get_model_type() {
     return this.model_type
   }
+  cancel(){
+    
+    if (!this.currentUser.tutoriel_done){
+      if (this.currentUser.tutoriel_step==="15"){
+          if (this.model_type==="investigation"){
+              var new_step=14
+              this.currentUser.tutoriel_step=new_step.toString()
+              localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+          }
+      }
+      else{
+          this.alertService.error("You are not in the right form as requested by the tutorial")
+
+      }
+    }
+    this.router.navigate(['/tree'])
+  }
   ngOnInit() {
     let attributeFilters = { variables: [''] };
     this.form = this.formBuilder.group(attributeFilters);
@@ -422,9 +439,17 @@ export class ExtractComponentComponent implements OnInit {
         cnt += 1
 
       });
-    let new_step=16
-    this.currentUser.tutoriel_step=new_step.toString()
-    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    if (!this.currentUser.tutoriel_done){
+      if (this.currentUser.tutoriel_step==="15"){
+        let new_step=16
+        this.currentUser.tutoriel_step=new_step.toString()
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+      else{
+        this.alertService.error("You are not in the right form as requested by the tutorial")
+      }
+    
+    } 
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
     //for each selected rows and ready  to extract columns
     // 
@@ -505,6 +530,10 @@ export class ExtractComponentComponent implements OnInit {
     else if (key.includes('ready')) {
 
       return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('ready-tuto')) {
+
+      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'right'}
     }
     else if (key.includes('extracted')) {
 

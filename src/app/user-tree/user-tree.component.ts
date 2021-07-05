@@ -162,98 +162,119 @@ export class UserTreeComponent implements OnInit {
 
         // }
         //this.treeControl.expand(this.treeControl.dataNodes[0]);
+        
 
         this.searchService.getData().subscribe(data => {
             console.log(data);
             //this.search_string=data
         })
-        console.log(localStorage)
+        //console.log(localStorage)
         
           
         // if (currentUser['tutoriel_checked'] === false){
         //     this.onClickTour()
         // }
+
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        //var user = this.userService.get_user(this.currentUser['username'], this.currentUser['password'])
+        //console.log(user)
+        //localStorage.setItem('currentUser', JSON.stringify(user));
+        
         this.onClickTour()
     }
 
+    onDone() {
+        if (this.currentUser['tutoriel_step'] === "16"){
+            this.globalService.update_user(true, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
+                data => {
+                    console.log(data['user'])
+                    localStorage.setItem('currentUser', JSON.stringify(data['user']));
+            });
+        }
+        
+    }
     onClickTour() {
         
-        
-        if (this.vertices.length===0){
-            this.currentUser.tutoriel_step="0"
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
         console.log(this.currentUser)
-        if (this.currentUser['tutoriel_step'] === "0"){
-            console.log('start tour part 1 : Add an investigation')
-            this.joyrideService.startTour(
-                { steps: ['step_overview', 'stepNode', 'stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+        if (!this.currentUser['tutoriel_done']){
+            if (this.vertices.length===0){
+                this.currentUser.tutoriel_step="0"
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            console.log(this.currentUser)
+            if (this.currentUser['tutoriel_step'] === "0"){
+                console.log('start tour part 1 : Add an investigation')
+                this.joyrideService.startTour(
+                    { steps: ['step_overview', 'stepNode', 'stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                // this.currentUser.tutoriel_step="1"
+                // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            //'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign',
+            else if (this.currentUser['tutoriel_step'] === "2"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','stepButtonPanel',  'nextStep'], stepDefaultPosition: 'center'} // Your steps order
                 );
-            // this.currentUser.tutoriel_step="1"
-            // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-        //'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign',
-        else if (this.currentUser['tutoriel_step'] === "2"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel',  'nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            // this.currentUser.tutoriel_step="3"
-            // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "4"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "6"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "8"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "10"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','stepButtonPanel','nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "12"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "14"){
-            this.joyrideService.startTour(
-                { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-        else if (this.currentUser['tutoriel_step'] === "16"){
-            this.joyrideService.startTour(
-                { steps: ['nextStep'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //this.globalService.update_user(true, '1421044', 'tutoriel_done', 'user') 
-            //currentUser.tutoriel_step="3"
-            //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                // this.currentUser.tutoriel_step="3"
+                // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "4"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "6"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "8"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "10"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','stepButtonPanel','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "12"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "14"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else if (this.currentUser['tutoriel_step'] === "16"){
+                this.joyrideService.startTour(
+                    { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            else{
+                
+                console.log("Unknown step")
+            }
         }
         else{
-
-        }
+            console.log("you have already done the Tutorial")
+        } 
             // if (this.vertices.length===0){
             //     this.joyrideService.startTour(
             //     { steps: ['step_add_first_investigation', 'step8', 'step8_1'], stepDefaultPosition: 'center'} // Your steps order
@@ -295,7 +316,6 @@ export class UserTreeComponent implements OnInit {
 
     }
     get_tutoriel_level(){
-        console.log(this.currentUser['tutoriel_step'])
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         return this.currentUser['tutoriel_step']
     }
@@ -411,24 +431,7 @@ export class UserTreeComponent implements OnInit {
         
     }
 
-    onDone(node: MiappeNode, node_type:string) {
-        console.log(node_type)
-        if (node_type==='Root'){
-            this.onClick(node)
-        }
-        if (node_type== "investigation"){
-            this.onClick(node)
-        }
-        if (node_type== "experimental_factor"){
-            this.onClick(node)
-        }
-        if (node_type== "observed_variable"){
-            this.onClick(node)
-        }
-        if (node_type== "biological_material"){
-            this.onClick(node)
-        }
-    }
+    
     start() {
         this.startTime = new Date();
     };
@@ -647,7 +650,9 @@ export class UserTreeComponent implements OnInit {
                         //this.reloadComponent(['/tree'])
                         window.location.reload();
                     }
+                    // All the other nodes type
                     else {
+                        // Remove only childs from the seleccted node
                         if (result.all_childs) {
                             this.globalService.remove_childs(this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
@@ -666,6 +671,8 @@ export class UserTreeComponent implements OnInit {
                             //this.reloadComponent(['/tree'])
                             window.location.reload();
                         }
+                        //Remove only observed variable or experimental factors
+                        // TODO add handler for observation units, biological materials, etc.
                         else if(result.only!=""){
                             console.log(result.only)
                             this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
@@ -704,32 +711,34 @@ export class UserTreeComponent implements OnInit {
                                         var message = this.active_node.id + " has been removed from your history !!"
                                         this.alertService.success(message)
                                         let new_step=0
-                                        if (this.active_node.id.split("/")[0] === "investigations") {
-                                            new_step=0
+                                        if (!this.currentUser.tutoriel_done){
+                                            if (this.active_node.id.split("/")[0] === "investigations") {
+                                                new_step=0
+                                            }
+                                            else if (this.active_node.id.split("/")[0] === "studies") {
+                                                new_step=2
+                                            }
+                                            else if(this.active_node.id.split("/")[0] ==="experimental_factors"){
+                                                new_step=4
+                                            }
+                                            else if(this.active_node.id.split("/")[0] ==="observed_variables"){
+                                                new_step=6
+                                            }
+                                            else if(this.active_node.id.split("/")[0] ==="biological_materials"){
+                                                new_step=8
+                                            }
+                                            else if(this.active_node.id.split("/")[0] ==="biological_materials"){
+                                                new_step=10
+                                            }
+                                            else if(this.active_node.id.split("/")[0] ==="data_files"){
+                                                new_step=12
+                                            }
+                                            else{
+                                                new_step=0
+                                            }
+                                            this.currentUser.tutoriel_step=new_step.toString()
+                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                                         }
-                                        else if (this.active_node.id.split("/")[0] === "studies") {
-                                            new_step=2
-                                        }
-                                        else if(this.active_node.id.split("/")[0] ==="experimental_factors"){
-                                            new_step=4
-                                        }
-                                        else if(this.active_node.id.split("/")[0] ==="observed_variables"){
-                                            new_step=6
-                                        }
-                                        else if(this.active_node.id.split("/")[0] ==="biological_materials"){
-                                            new_step=8
-                                        }
-                                        else if(this.active_node.id.split("/")[0] ==="biological_materials"){
-                                            new_step=10
-                                        }
-                                        else if(this.active_node.id.split("/")[0] ==="data_files"){
-                                            new_step=12
-                                        }
-                                        else{
-                                            new_step=0
-                                        }
-                                        this.currentUser.tutoriel_step=new_step.toString()
-                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                                         this.reloadComponent(['/tree'])
                                         //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
                                         //window.location.reload();
@@ -817,9 +826,16 @@ export class UserTreeComponent implements OnInit {
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
-            let new_step=13
-            this.currentUser.tutoriel_step=new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            if (!this.currentUser.tutoriel_done){
+                let new_step=13
+                if (this.currentUser.tutoriel_step==="12"){
+                    this.currentUser.tutoriel_step=new_step.toString()
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                }
+            }
             this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
         }
     }
@@ -845,9 +861,16 @@ export class UserTreeComponent implements OnInit {
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
             parent_id = this.active_node.id
-            let new_step=15
-            this.currentUser.tutoriel_step=new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            if (!this.currentUser.tutoriel_done){
+                let new_step=15
+                if (this.currentUser.tutoriel_step==="14"){
+                    this.currentUser.tutoriel_step=new_step.toString()
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                }
+            }
             this.router.navigate(['/extract'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
         }
     }
@@ -1001,41 +1024,86 @@ export class UserTreeComponent implements OnInit {
             
             else if (model_type === "biological_material") {
                 ///new_step=parseInt(this.currentUser.tutoriel_step)+1
-                new_step=9
-                this.currentUser.tutoriel_step=new_step.toString()
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                if (!this.currentUser.tutoriel_done){
+                    if (this.currentUser.tutoriel_step==="8"){
+                        new_step=9
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                    else{
+                        this.alertService.error("You are not in the right form as requested by the tutorial")
+                    }
+                }
                 this.router.navigate(['/generic2'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else if (model_type === "observation_unit") {
-                new_step=11
-                new_step=parseInt(this.currentUser.tutoriel_step)+1
-                this.currentUser.tutoriel_step=new_step.toString()
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                if (!this.currentUser.tutoriel_done){
+                    if (this.currentUser.tutoriel_step==="10"){
+                        new_step=11
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                    else{
+                        this.alertService.error("You are not in the right form as requested by the tutorial")
+                    }
+                }
                 this.router.navigate(['/generic3'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
             else {
-                if (model_type === "investigation") {
-                    new_step=1
+                if (model_type === "investigation" ){
+                    if (!this.currentUser.tutoriel_done){
+                        if (this.currentUser.tutoriel_step==="0"){
+                            new_step=1
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                        }
+                        else{
+                            this.alertService.error("You are not in the right form as requested by the tutorial")
+                        }
+                    }
                     //new_step=parseInt(this.currentUser.tutoriel_step)+1  
                 }
-                else if(model_type === "study"){
-                    new_step=3
+                if(model_type === "study" ){
+                    if (!this.currentUser.tutoriel_done ){
+                        if (this.currentUser.tutoriel_step==="2"){
+                        new_step=3
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                        }
+                        else{
+                            this.alertService.error("You are not in the right form as requested by the tutorial")
+                        }
+                    }
                     //new_step=parseInt(this.currentUser.tutoriel_step)+1
 
                 }
-                else if(model_type === "experimental_factor"){
-                    new_step=5
+                if(model_type === "experimental_factor" ){
+                    if (!this.currentUser.tutoriel_done ){
+                        if (this.currentUser.tutoriel_step==="4"){
+                            new_step=5
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                        }
+                        else{
+                            this.alertService.error("You are not in the right form as requested by the tutorial")
+                        }
+                    }
                     //new_step=parseInt(this.currentUser.tutoriel_step)+1
                 }
-                else if(model_type === "observed_variable"){
-                    new_step=7
+                if(model_type === "observed_variable"){
+                    if (!this.currentUser.tutoriel_done){
+                        if (this.currentUser.tutoriel_step==="6"){
+                            new_step=7
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                        }
+                        else{
+                            this.alertService.error("You are not in the right form as requested by the tutorial")
+                        }
+                        
+                    }
                     //new_step=parseInt(this.currentUser.tutoriel_step)+1
                 }
-                else{
-
-                }
-                this.currentUser.tutoriel_step=new_step.toString()
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
                 this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: parent_id, model_key: "", model_type: model_type, mode: "create" } });
             }
         }

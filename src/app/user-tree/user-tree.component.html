@@ -24,6 +24,7 @@
     joyrideStep="nextStep" title=""
     [stepContent]="nextSteps"
     [stepContentParams]="{'tuto_l':get_tutoriel_level()}"
+    (done)="onDone()"
     >
         <mat-card>
             <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
@@ -59,7 +60,7 @@
                             joyrideStep="stepNode" 
                             title=""
                             [stepContent]="nodecontent"
-                            [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}" 
+                            [stepContentParams]="{'model_n':get_model_type_for_wizard(node), 'tuto_n': get_tutoriel_level()}" 
                             [ngStyle]="getStyle(node)"
                             >
                                 <!-- use a disabled button to provide padding for tree leaf -->
@@ -85,7 +86,6 @@
                                     joyrideStep="stepButtonPanel"
                                     title=""
                                     (next)="onNext(node, get_model_type_for_wizard(node))"
-                                    (done)="onDone(node, get_model_type_for_wizard(node))"
                                     [stepContent]="LeafButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
                                 >
@@ -159,7 +159,7 @@
                                         title=""
                                         [stepContent]="InvestigationRemoveButtonContent"
                                         [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
-                                        (done)= "onDone(node, get_model_type_for_wizard(node))"
+                                       
                                     >
                                     <button title="Here is the button to remove a node (multiple options are availables)!! " style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
                                             (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o"
@@ -187,7 +187,7 @@
                                     title=""
                                     [stepContent]="InvestigationAddButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
-                                    (done)="onDone(node,get_model_type_for_wizard(node))"
+                                    
                                     >
                                         <a style="float: right;" *ngIf="node.id.includes('Investigations tree')">
                                             <button title="Here is the button to add a investigation node (multiple options are availables)!! " (click)="onClick(node)" [matMenuTriggerFor]="userMenu" class="btn btn-success btn-xs fa fa-plus"></button>
@@ -229,7 +229,7 @@
                                     title=""
                                     [stepContent]="InvestigationAssignButtonContent"
                                     [stepContentParams]="{'model_n':get_model_type_for_wizard(node)}"
-                                    (done)="onDone(node,get_model_type_for_wizard(node))"
+                                    
                                     >
                                     <a style="float: right;" *ngIf="node.id.includes('investigations')">
                                         <button title="Here is the button to assign MIAPPE component to observations units data file!! " (click)="onClick(node)" [matMenuTriggerFor]="investigationToolsMenu" class="btn btn-primary btn-xs fa fa-wrench" *ngIf="node.id.includes('investigations')"></button>
@@ -615,7 +615,7 @@
                                     </mat-expansion-panel>
                                 </mat-accordion>
                             </div>
-                            <ng-template #nodecontent let-nod="model_n">
+                            <ng-template #nodecontent let-nod="model_n" let-ttn="tuto_n">
                                 <div>
                                     <nav class="navbar navbar-expand-sm navbar-dark">
                                         <h3>
@@ -624,7 +624,7 @@
                                         </h3>
                                     </nav>
                                 </div>
-                                <div *ngIf="nod === 'Root'">
+                                <div *ngIf="ttn === '0'">
                                     <h2>Root node</h2>
                                     <mat-card class="menu_mat_card">
                                     <p>
@@ -633,73 +633,7 @@
                                     </p>
                                     </mat-card>
                                 </div>
-                                <div *ngIf="nod === 'experimental_factor'">
-                                    <h2>Experimental factors</h2>
-                                    <mat-card class="menu_mat_card">
-                                    <p>Congratulations you have created your first experimental factor <b>Watering</b>   !!! </p>
-                                    <p>The experimental factor type contains informations and details about the experimental factor used in your study. 
-                                    Multiple factors can be added either one by one or using data extractor from linda 
-                                    Experimental factor cannot have childs.
-                                    By clicking on the lower part of the Node, you will see details about it.</p>
-                                    </mat-card>
-                                </div>
-                                <div *ngIf="nod === 'observed_variable'">
-                                    <h2>Observed variables</h2>
-                                    <mat-card class="menu_mat_card">
-                                        <p>
-                                            Congratulations you have created your first observed variable <b>plant height</b>   !!! 
-                                        </p>
-                                        <h5>Observed variables details</h5>
-                                        <p>
-                                            The observed variable type contains informations and details about the observed variable used in your study. 
-                                            Multiple variables can be added either one by one or using data extractor from linda. <br>
-                                            Observed variable cannot have childs.
-                                            By clicking on the lower part of the Node, you will see details about it.
-                                        </p>
-                                    </mat-card>
-                                </div>
-                                <div *ngIf="nod === 'observation_unit'">
-                                    <h2>observation units</h2>
-                                    <mat-card class="menu_mat_card">
-                                        <p>
-                                            Congratulations you have created your first observation unit !!! 
-                                        </p>
-                                        <h5>Observation units details</h5>
-                                        <p>
-                                            The Observation units type contains informations and details about the type of observations and the material observed . 
-                                            Multiple observation units can be added either one by one or using data extractor from linda. <br>
-                                            Observed units cannot have child but are linked to experimantal factors, observed variables and biological materials .
-                                            By clicking on the lower part of the Node, you will see details about it.
-                                        </p>
-                                    </mat-card>
-                                </div>
-                                <div *ngIf="nod === 'study'">
-                                    <h2>Studies</h2>
-                                    <mat-card class="menu_mat_card">
-                                    <p>Congratulations you have created your first study <b>MaizeStudy1</b>!!! </p>
-                                    </mat-card>
-                                    <mat-card class="menu_mat_card">
-                                    <h5>Study details</h5>
-                                        <p>
-                                            By clicking on the lower part of the Node, you will see details about it. <br>
-                                        </p>
-                                   
-                                    
-                                        <p>
-                                            If Study node has at least one child node, click on the upper left to expand the node and reveal child node.<br>
-                                            This study does not have child component described yet <br>
-                                        </p>
-                                    </mat-card>
-                                    <mat-card class="menu_mat_card">
-                                    <h6>Notes:</h6>  
-                                        <p>
-                                            Remember that Study type could have many components as children (observed variable, biological material, etc.)
-                                        </p>
-                                    </mat-card>
-                                </div>
-                                <div *ngIf="nod === 'investigation'">
-                                    
-                                    
+                                <div *ngIf="ttn === '2'">
                                     <h2>Investigations</h2>
                                     <mat-card class="menu_mat_card">
                                         <p>Congratulations you have created your first investigation <b>maizes1</b>!!! </p>
@@ -731,6 +665,122 @@
                                         </p>
                                     </mat-card>
                                 </div>
+                                <div *ngIf="ttn === '4'">
+                                    <h2>Studies</h2>
+                                    <mat-card class="menu_mat_card">
+                                    <p>Congratulations you have created your first study <b>MaizeStudy1</b>!!! </p>
+                                    </mat-card>
+                                    <mat-card class="menu_mat_card">
+                                    <h5>Study details</h5>
+                                        <p>
+                                            By clicking on the lower part of the Node, you will see details about it. <br>
+                                        </p>
+                                   
+                                    
+                                        <p>
+                                            If Study node has at least one child node, click on the upper left to expand the node and reveal child node.<br>
+                                            This study does not have child component described yet <br>
+                                        </p>
+                                    </mat-card>
+                                    <mat-card class="menu_mat_card">
+                                    <h6>Notes:</h6>  
+                                        <p>
+                                            Remember that Study type could have many components as children (observed variable, biological material, etc.)
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '6'">
+                                    <h2>Experimental factors</h2>
+                                    <mat-card class="menu_mat_card">
+                                    <p>Congratulations you have created your first experimental factor <b>Watering</b>   !!! </p>
+                                    <p>The experimental factor type contains informations and details about the experimental factor used in your study. 
+                                    Multiple factors can be added either one by one or using data extractor from linda 
+                                    Experimental factor cannot have childs.
+                                    By clicking on the lower part of the Node, you will see details about it.</p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '8'">
+                                    <h2>Observed variables</h2>
+                                    <mat-card class="menu_mat_card">
+                                        <p>
+                                            Congratulations you have created your first observed variable <b>plant height</b>   !!! 
+                                        </p>
+                                        <h5>Observed variables details</h5>
+                                        <p>
+                                            The observed variable type contains informations and details about the observed variable used in your study. 
+                                            Multiple variables can be added either one by one or using data extractor from linda. <br>
+                                            Observed variable cannot have childs.
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '10'">
+                                    <h2>Biological material</h2>
+                                    <mat-card class="menu_mat_card">
+                                        <p>
+                                            Congratulations you have created your first biological materials <b>50 plants in total</b>   !!! 
+                                        </p>
+                                        <h5>Biological materials details</h5>
+                                        <p>
+                                            The biological material node contains informations and details about the biological materials used in your study. 
+                                            Multiple materials can be added either one by one or using data extractor from linda. <br>
+                                            The biological material node cannot have child node.
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '12'">
+                                    <h2>observation units</h2>
+                                    <mat-card class="menu_mat_card">
+                                        <p>
+                                            Congratulations you have created your first observation unit !!! 
+                                        </p>
+                                        <h5>Observation units details</h5>
+                                        <p>
+                                            The Observation units type contains informations and details about the type of observations and the material observed . 
+                                            Multiple observation units can be added either one by one or using data extractor from linda. <br>
+                                            Observed units cannot have child but are linked to experimantal factors, observed variables and biological materials .
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '14'">
+                                    <h2>Data files</h2>
+                                    <mat-card class="menu_mat_card">
+                                        <p>
+                                            Congratulations you have import your first data file and you assigned all the columns to a MIAPPE component !!! 
+                                        </p>
+                                        <h5>Data files details</h5>
+                                        <p>
+                                            The data file node contains informations and details about the data file and the component adsigned to columns.
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                            You can thus visualize data in a datatable using the show data button. 
+                                            By hovering the displayed assigned component, you will see that none of your investigation component are linked to these assigned components, only the header name is visible.
+
+                                            
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                <div *ngIf="ttn === '16'">
+                                    <h2>Visualization</h2>
+                                    <mat-card class="menu_mat_card">
+                                        <p>
+                                            Congratulations you have link your first data file column with an Observed variable component !!! 
+                                        </p>
+                                        <h5>Data files details</h5>
+                                        <p>
+                                            The data file node contains informations and details about the data file and the component adsigned to columns.
+                                            By clicking on the lower part of the Node, you will see details about it.
+                                            You can thus visualize data in a datatable using the show data button. 
+                                            By hovering the displayed assigned component, you will see that none of your investigation component are linked to these assigned components, only the header name is visible.
+
+                                            
+                                        </p>
+                                    </mat-card>
+                                </div>
+                                
+                                
+
                             </ng-template>
                         </mat-tree-node>
 

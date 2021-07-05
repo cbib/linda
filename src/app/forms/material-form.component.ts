@@ -107,17 +107,25 @@ export class MaterialFormComponent implements OnInit {
 
   }
   
-  onClickTour() {
-    console.log('start tour part 2')
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-        console.log(this.currentUser)
-        if (this.currentUser['tutoriel_step'] === "9"){
-            this.joyrideService.startTour(
-                { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //this.currentUser.tutoriel_step="2"
-            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
+  onClickTour(help_mode:boolean=false) {
+    if (help_mode){
+      this.joyrideService.startTour(
+        { steps: ['Step1_1', 'Step1_2', 'Step1_3'], stepDefaultPosition: 'center'} // Your steps order
+    );
+    }
+    else{
+      console.log('start tour part 2')
+      this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+      console.log(this.currentUser)
+      if (this.currentUser['tutoriel_step'] === "9"){
+          this.joyrideService.startTour(
+              { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+          );
+              //this.currentUser.tutoriel_step="2"
+              //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+    }
+
  }
   onTaskAdd(event) {
     this.startfilling = false;
@@ -142,7 +150,7 @@ export class MaterialFormComponent implements OnInit {
       generalRows.controls[0].patchValue({ "Genus": "Zea" })
       generalRows.controls[0].patchValue({ "Species": "mays" })
       generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
-      generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
+      //generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
       var cpt=0
       var gbl_cpt=0
       const MaterialControl = this.materialTable.get('materialRows') as FormArray;
@@ -152,9 +160,11 @@ export class MaterialFormComponent implements OnInit {
         console.log(species)
         
         MaterialControl.push(this.initiateMaterialForm('create', cpt));
-        var m_id='INRA:'+species
+        var m_id='INRA:' + species
         console.log(m_id)
+        console.log(MaterialControl.controls[cpt])
         MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
+        MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
         // TODO finish bm incorporation
         
         
@@ -304,7 +314,7 @@ export class MaterialFormComponent implements OnInit {
       
       this.validated_term[attr["key"]] = { selected: false, values: "" }
       if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-        if (attr["key"].includes("Material")) {
+        if (attr["key"].includes("Material") || attr["key"].includes("Infraspecific name")) {
           if (mode!=="create"){
             value=this.model_to_edit[attr["key"]][index]
           }
@@ -614,9 +624,11 @@ export class MaterialFormComponent implements OnInit {
             this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
-            let new_step=parseInt(this.currentUser.tutoriel_step)+1
-            this.currentUser.tutoriel_step=new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            if  (!this.currentUser.tutoriel_done){
+              let new_step=10
+              this.currentUser.tutoriel_step=new_step.toString()
+              localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
 
             return true;
           }
@@ -673,9 +685,11 @@ export class MaterialFormComponent implements OnInit {
     this.marked = e.target.checked;
   };
   cancel(form: any) {
-    let new_step=parseInt(this.currentUser.tutoriel_step)-1
-    this.currentUser.tutoriel_step=new_step.toString()
-    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    if  (!this.currentUser.tutoriel_done){
+        let new_step=8
+        this.currentUser.tutoriel_step=new_step.toString()
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    }
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
 
   };

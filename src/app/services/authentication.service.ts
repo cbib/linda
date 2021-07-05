@@ -25,11 +25,7 @@ export class AuthenticationService {
         return user || { };
     }
     login(username: string, password: string):Observable<any> {
-        
-        
-        
-        return this.http.post<any>(this.APIUrl+'authenticate/', { username: username, password: password })
-            .pipe(map(this.extractData));
+        return this.http.post<any>(this.APIUrl+'authenticate/', { username: username, password: password }).pipe(map(this.extractData));
     }
 
     logout() {

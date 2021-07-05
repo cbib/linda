@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+import { map} from 'rxjs/operators';
 import { User } from '../models/user';
 import {Constants} from "../constants";
 //import * as nodemailer from 'nodemailer'; 
@@ -27,6 +27,15 @@ export class UserService {
 //    getByUsername_password(_id: string) {
 //        return this.http.get(`${this.apiUrl}` + _id);
 //    }
+    private extractData(res: Response) {
+        let body = res;
+        return body || {};
+    }
+
+
+    get_user(username: string, password: string){
+        return this.http.get(this.APIUrl + "get_user/" + username + "/" + password).pipe(map(this.extractData));
+    }
 
     register(user: User) {
         console.log(user)

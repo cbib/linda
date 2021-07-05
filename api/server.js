@@ -267,6 +267,55 @@ router.get('/users/:username', function (req, res) {
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
+    // GET users by username
+router.get('/users/:username', function (req, res) {
+    //log(req);
+
+    try {
+        var name = req.pathParams.username;
+        //const data = users.byExample({username : name});
+        const data = users.firstExample('username', name);
+        //const data = users.properties();
+        res.send(data);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+})
+    .pathParam('username', joi.string().required(), 'username of the entry.')
+    .response(joi.object().required(), 'Entry stored in the collection.')
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
+// GET users by username
+router.get('/get_user/:username/:password', function (req, res) {
+    //log(req);
+
+    try {
+        var name = req.pathParams.username;
+        var pwd = req.pathParams.password;
+        //const data = users.byExample({username : name});
+        const data = users.byExample({'username': name, 'password':pwd});
+        //const data = users.properties();
+        res.send(data.toArray()[0]);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+})
+    .pathParam('username', joi.string().required(),'password', joi.string().required(), 'username of the entry.')
+    .response(joi.object().required(), 'Entry stored in the collection.')
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
 
 /*****************************************************************************************
  ******************************************************************************************
@@ -1623,16 +1672,16 @@ router.post('/update_user', function (req, res) {
             var _id = '';
             if (model_type === 'user') {
                 _id = 'users/' + _key;
-                update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW.${field}`).toArray();
+                update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
             }
             //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
             //Document has been updated
-            if (update[0] === value) {
-                res.send({ success: true, message: 'document has been updated ' });
+            if (update[0][field] === value) {
+                res.send({ success: true, message: 'document has been updated ', user: update[0] });
             }
             //No changes
             else {
-                res.send({ success: false, message: 'document cannot be updated' });
+                res.send({ success: false, message: 'document cannot be updated' , user: user });
             }
         };
 }).body(joi.object({
@@ -1645,7 +1694,8 @@ router.post('/update_user', function (req, res) {
 }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
-        message: joi.string().required()
+        message: joi.string().required(),
+        user:joi.object().required()
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
@@ -2067,7 +2117,7 @@ router.post('/remove', function (req, res) {
     else {
         var errors = [];
 
-        //Remove relation for parent of selected node parent in edge collection
+        //Remove relation to parent of selected node in edge collection
         var parent = db._query(aql`FOR v, e IN 1..1 INBOUND ${id} GRAPH 'global' RETURN {v_id:v._id,v_key:v._key,e_id:e._id,e_key:e._key}`).toArray();
         var parent_edge_coll = parent[0].e_id.split("/")[0];
         var parent_key = parent[0].e_key;

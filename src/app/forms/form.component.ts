@@ -630,23 +630,54 @@ export class FormComponent implements OnInit//, AfterViewInit
                             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
                             this.alertService.success(message)
                             let new_step=0
-                            if (this.model_type === "investigation") {
-                                new_step=2
-                            }
-                            else if (this.model_type === "study") {
-                                new_step=4
-                            }
-                            else if(this.model_type==="experimental_factor"){
-                                new_step=6
-                            }
-                            else if(this.model_type==="observed_variable"){
-                                new_step=8
-                            }
-                            else{
-                                new_step=4
-                            }
-                            this.currentUser.tutoriel_step=new_step.toString()
-                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                            if (!this.currentUser.tutoriel_done){
+                                if (this.currentUser.tutoriel_step==="1"){
+                                    if (this.model_type === "investigation") {
+                                        new_step=2
+                                        this.currentUser.tutoriel_step=new_step.toString()
+                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    }
+                                }
+                                else{
+                                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                }
+                                if (this.currentUser.tutoriel_step==="3"){
+                                    if (this.model_type === "study") {
+                                        new_step=4
+                                        this.currentUser.tutoriel_step=new_step.toString()
+                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    }
+                                }
+                                else{
+                                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                }
+                                if (this.currentUser.tutoriel_step==="5"){
+                                    if(this.model_type==="experimental_factor"){
+                                        new_step=6
+                                        this.currentUser.tutoriel_step=new_step.toString()
+                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    }
+                                }
+                                else{
+                                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                }
+                                if (this.currentUser.tutoriel_step==="7"){
+                                    if(this.model_type==="observed_variable"){
+                                        new_step=8
+                                        this.currentUser.tutoriel_step=new_step.toString()
+                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    }
+                                }
+                                else{
+                                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                }
+         
+                               
+                                }
                             this.router.navigate(['/tree']);
                             return true;
                         }
@@ -691,29 +722,57 @@ export class FormComponent implements OnInit//, AfterViewInit
         }
         else{
             let new_step=0
-            if (this.model_type==="investigation"){
-                new_step=0
+            if (!this.currentUser.tutoriel_done){
+                if (this.currentUser.tutoriel_step==="1"){
+                    if (this.model_type==="investigation"){
+                        new_step=0
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                }
+                if (this.currentUser.tutoriel_step==="3"){
+                    if(this.model_type==="study"){
+                        new_step=2
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                }
+                if (this.currentUser.tutoriel_step==="5"){
+                    if(this.model_type==="experimental_factor"){
+                        new_step=4
+                        this.currentUser.tutoriel_step=new_step.toString()
+                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                }
+                if (this.currentUser.tutoriel_step==="7"){
+                    if(this.model_type==="observed_variable"){
+                            new_step=6
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                    }
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                }
+            
+                //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                this.router.navigate(['/tree']);
             }
-            else if(this.model_type==="study"){
-                new_step=2
-            }
-            else if(this.model_type==="experimental_factor"){
-                new_step=4
-            }
-            else if(this.model_type==="observed_variable"){
-                new_step=6
-            }
-            else{
-                new_step=0
-            }
-            new_step=parseInt(this.currentUser.tutoriel_step)-1
-            this.currentUser.tutoriel_step=new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            this.router.navigate(['/tree']);
         }
 
-    };
+    }
 
     back(modelForm, level) {
         if (this.mode==="preprocess"){
