@@ -93,7 +93,7 @@ export class MaterialFormComponent implements OnInit {
     });
     //this.get_model()
     await this.get_model()
-    // console.log(this.cleaned_model)
+    // //console.log(this.cleaned_model)
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     this.onClickTour()
    ; 
@@ -114,9 +114,7 @@ export class MaterialFormComponent implements OnInit {
     );
     }
     else{
-      console.log('start tour part 2')
       this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-      console.log(this.currentUser)
       if (this.currentUser['tutoriel_step'] === "9"){
           this.joyrideService.startTour(
               { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
@@ -134,13 +132,13 @@ export class MaterialFormComponent implements OnInit {
         this.startfilling = true;
       }
     });
-    // console.log(this.startfilling)
-    // console.log(this.materialTable.value)
+    // //console.log(this.startfilling)
+    // //console.log(this.materialTable.value)
   }
   onDone(node_type:string) {
-    console.log(this.currentUser['tutoriel_step'])
-    console.log(this.materialTable.value)
-    console.log(this.materialTable.controls)
+    // //console.log(this.currentUser['tutoriel_step'])
+    // //console.log(this.materialTable.value)
+    // //console.log(this.materialTable.controls)
     //this.joyrideService.closeTour()
     
     //Biological  form template
@@ -157,12 +155,12 @@ export class MaterialFormComponent implements OnInit {
       const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
       species_list.forEach(species=>{
 
-        console.log(species)
+        //console.log(species)
         
         MaterialControl.push(this.initiateMaterialForm('create', cpt));
         var m_id='INRA:' + species
-        console.log(m_id)
-        console.log(MaterialControl.controls[cpt])
+        ////console.log(m_id)
+        ////console.log(MaterialControl.controls[cpt])
         MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
         MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
         // TODO finish bm incorporation
@@ -170,7 +168,7 @@ export class MaterialFormComponent implements OnInit {
         
         for (var i=1;i<11;i++){
           var bm_id=m_id+'_' + i
-          console.log(bm_id)
+          //console.log(bm_id)
           biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",cpt ,i-1));
           biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material ID": bm_id })
           biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material preprocessing": "PECO:0007210" })
@@ -187,7 +185,7 @@ export class MaterialFormComponent implements OnInit {
     //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
     this.globalService.get_model(this.model_type).toPromise().then(data => {
       this.model = data;
-      // console.log(this.model)
+      // //console.log(this.model)
       this.keys = Object.keys(this.model);
       this.cleaned_model = []
       for (var i = 0; i < this.keys.length; i++) {
@@ -210,8 +208,8 @@ export class MaterialFormComponent implements OnInit {
       //control.push(this.initiateForm());
       //this.addRow()
 
-      // console.log(this.cleaned_model)
-      // console.log(this.materialTable)
+      // //console.log(this.cleaned_model)
+      // //console.log(this.materialTable)
 
       // const generalControl = this.materialTable.get('generalRows') as FormArray;
       // generalControl.push(this.initiateGeneralForm());
@@ -255,17 +253,17 @@ export class MaterialFormComponent implements OnInit {
         }
       }
       //generalControl.push(this.formBuilder.group(attributeFilters))
-      // console.log(this.materialTable.value)
+      // //console.log(this.materialTable.value)
 
 
     });
   }
   get_model_by_key() {
-    console.log('test')
+    //console.log('test')
     this.model_to_edit = [];
     this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
       this.model_to_edit = data;
-      console.log(this.model_to_edit)
+      //console.log(this.model_to_edit)
       //this.modelForm.patchValue(this.model_to_edit);
     });
   }
@@ -273,13 +271,13 @@ export class MaterialFormComponent implements OnInit {
   isMaterialIDDuplicate(): ValidatorFn {
     return (c: AbstractControl): { [key: string]: boolean } | null => {
       // const userNames = this..get("credentials").value;
-      // console.log(userNames);
+      // //console.log(userNames);
       // const names = userNames.map(item=> item.username.trim());
       const materialControl = this.materialTable.get('materialRows') as FormArray;
       const names = materialControl.controls.map(item=> item.value['Material source ID (Holding institute/stock centre, accession)']);
       //test if this material id is in the material ids list
-      console.log(names)
-      console.log(c.value)
+      //console.log(names)
+      //console.log(c.value)
       //var hasDuplicate =false
       // if (this.used_mat_ids.includes(c.value)){
       //   hasDuplicate = true
@@ -291,13 +289,13 @@ export class MaterialFormComponent implements OnInit {
       
       
       for (var j = 0; j < materialControl.controls.length; j++) {
-        console.log(materialControl.controls[j].get('Material source ID (Holding institute/stock centre, accession)').value)
+        //console.log(materialControl.controls[j].get('Material source ID (Holding institute/stock centre, accession)').value)
       
       }
       const hasDuplicate = names.some((name, index) => names.indexOf(name, index + 1) != -1);
       
       if (hasDuplicate) {
-        console.log(hasDuplicate);
+        //console.log(hasDuplicate);
         return { duplicate: true };
       }
 
@@ -305,7 +303,7 @@ export class MaterialFormComponent implements OnInit {
     }
   } 
   initiateMaterialForm(mode:string="create", index:number=0): FormGroup {
-    // console.log(this.cleaned_model)
+    // //console.log(this.cleaned_model)
     
     
     let attributeFilters = {};
@@ -343,7 +341,7 @@ export class MaterialFormComponent implements OnInit {
   }
 
   initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0,): FormGroup {
-    //console.log(this.cleaned_model)
+    ////console.log(this.cleaned_model)
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
       var value=''
@@ -352,9 +350,9 @@ export class MaterialFormComponent implements OnInit {
       if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
         if (attr["key"].includes("Biological")) {
           if (mode!=="create"){
-            console.log(attr["key"])
-            console.log(this.model_to_edit[attr["key"]])
-            console.log(this.model_to_edit[attr["key"]][material_index][index])
+            //console.log(attr["key"])
+            //console.log(this.model_to_edit[attr["key"]])
+            //console.log(this.model_to_edit[attr["key"]][material_index][index])
             value=this.model_to_edit[attr["key"]][material_index][index]
           }
           if (attr["key"].includes("ID")) {
@@ -380,7 +378,7 @@ export class MaterialFormComponent implements OnInit {
   }
 
   initiateGeneralForm(): FormGroup {
-    console.log(this.cleaned_model)
+    //console.log(this.cleaned_model)
 
     let attributeFilters = {};
       this.cleaned_model.forEach(attr => {
@@ -413,24 +411,24 @@ export class MaterialFormComponent implements OnInit {
 
 
   RowSelected(i) {
-    //console.log(i)
+    ////console.log(i)
     this.index_row = i
 
     this.selectedRowIndex = i;
 
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     this.material_id = materialControl.controls[i].value['mat-id']
-    //console.log(control.controls[i].value)
+    ////console.log(control.controls[i].value)
   }
   addMaterialRow() {
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     materialControl.push(this.initiateMaterialForm());
     //this.index_row+=1
-    //console.log(this.material_id)
-    //console.log(this.index_row)
+    ////console.log(this.material_id)
+    ////console.log(this.index_row)
   }
   addBiologicalMaterialRow() {
-    //console.log(this.material_id)
+    ////console.log(this.material_id)
     if (this.material_id === "") {
       this.alertService.error("you need to select or create a material first !!!!")
     }
@@ -441,18 +439,18 @@ export class MaterialFormComponent implements OnInit {
   }
 
   deleteMaterialRow(index: number) {
-    //console.log(this.index_row)
-    //console.log(index)
+    ////console.log(this.index_row)
+    ////console.log(index)
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     this.material_id = materialControl.controls[index].value['mat-id']
     materialControl.removeAt(index);
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-    //console.log("biologicalMaterialControl.controls.length ",biologicalMaterialControl.controls.length)
+    ////console.log("biologicalMaterialControl.controls.length ",biologicalMaterialControl.controls.length)
     for (var i = 0; i < biologicalMaterialControl.controls.length; i++) {
-      //console.log("biologicalMaterialControl ", i )
-      //console.log(biologicalMaterialControl.controls[i].value['mat-id'])
+      ////console.log("biologicalMaterialControl ", i )
+      ////console.log(biologicalMaterialControl.controls[i].value['mat-id'])
 
-      //console.log(biologicalMaterialControl.controls[i].value.findIndex(image => image['mat-id'] === index))
+      ////console.log(biologicalMaterialControl.controls[i].value.findIndex(image => image['mat-id'] === index))
 
       if (biologicalMaterialControl.controls[i].value['mat-id'] === this.material_id) {
 
@@ -492,14 +490,14 @@ export class MaterialFormComponent implements OnInit {
   get getBiologicalMaterialFormControls() {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     // if (biologicalMaterialControl.controls.length>0){
-    //   console.log(biologicalMaterialControl.controls[0].value)
+    //   //console.log(biologicalMaterialControl.controls[0].value)
     // }
     return biologicalMaterialControl;
   }
   get getGeneralFormControls() {
     const generalControl = this.materialTable.get('generalRows') as FormArray;
     if (generalControl.controls.length > 0) {
-      // console.log(generalControl.controls[0].value)
+      // //console.log(generalControl.controls[0].value)
     }
     return generalControl;
 
@@ -532,7 +530,7 @@ export class MaterialFormComponent implements OnInit {
     return value + 'm';
   }
   formatLongitudeLabel(value: number) {
-    //console.log(value)
+    ////console.log(value)
     //east hemisphera
     if (value > 0) {
       var decimals = value - Math.floor(value);
@@ -562,8 +560,8 @@ export class MaterialFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.startfilling = true;
-        // console.log(multiple)
-        // console.log(key)
+        // //console.log(multiple)
+        // //console.log(key)
         this.ontology_type = result.ontology_type;
         this.selected_set = result.selected_set;
         if (this.selected_set !== undefined) {
@@ -579,14 +577,14 @@ export class MaterialFormComponent implements OnInit {
           else {
 
             if (this.selected_set.length > 0) {
-              // console.log(this.getBiologicalMaterialFormControls)
-              // console.log(this.getBiologicalMaterialFormControls.controls)
-              // console.log(this.getBiologicalMaterialFormControls.controls[index].value)
-              // console.log(this.getBiologicalMaterialFormControls.controls[index].value[key])
-              // console.log(this.selected_set)
-              // console.log(this.selected_set)
-              // console.log(this.getBiologicalMaterialFormControls)
-              // console.log(result.selected_set[0]['id'])
+              // //console.log(this.getBiologicalMaterialFormControls)
+              // //console.log(this.getBiologicalMaterialFormControls.controls)
+              // //console.log(this.getBiologicalMaterialFormControls.controls[index].value)
+              // //console.log(this.getBiologicalMaterialFormControls.controls[index].value[key])
+              // //console.log(this.selected_set)
+              // //console.log(this.selected_set)
+              // //console.log(this.getBiologicalMaterialFormControls)
+              // //console.log(result.selected_set[0]['id'])
               this.addBiologicalMaterialTerm(index, key, result.selected_set[0]['id'])
               //this.getBiologicalMaterialFormControls.controls[index].value[key].patchValue(result.selected_set[0]['id'])
               this.startfilling = true;
@@ -704,34 +702,34 @@ export class MaterialFormComponent implements OnInit {
     this.biologicalMaterialTouchedRows = biologicalMaterialControl.controls.filter(row => row.touched).map(row => row.value);
     this.generalTouchedRows = generalControl.controls.filter(row => row.touched).map(row => row.value);
 
-    // console.log(this.materialTouchedRows);
-    // console.log(this.biologicalMaterialTouchedRows);
-    // console.log(this.generalTouchedRows);
+    // //console.log(this.materialTouchedRows);
+    // //console.log(this.biologicalMaterialTouchedRows);
+    // //console.log(this.generalTouchedRows);
     // generalControl.controls.forEach(attr=>{
-    //   console.log(attr.value)
+    //   //console.log(attr.value)
     // });
-    // console.log(this.cleaned_model);
-    // console.log(generalControl.controls)
-    // console.log(materialControl.controls)
-    // console.log(biologicalMaterialControl.controls)
+    // //console.log(this.cleaned_model);
+    // //console.log(generalControl.controls)
+    // //console.log(materialControl.controls)
+    // //console.log(biologicalMaterialControl.controls)
     var return_data = {}
 
 
     generalControl.controls.forEach(general_attr => {
 
       return_data = general_attr.value
-      console.log(general_attr.value)
+      //console.log(general_attr.value)
     });
     var material_index = 0
     //this.materialTouchedRows.forEach(material_attr => {
     materialControl.controls.forEach(material_attr => {
-      console.log(material_attr)
+      //console.log(material_attr)
       var data=material_attr.value
       var material_attr_keys = Object.keys(data)
       var current_mat_id = ""
       for (var i = 0; i < material_attr_keys.length; i++) {
-        // console.log(material_attr_keys[i])
-        // console.log(material_attr[material_attr_keys[i]])
+        // //console.log(material_attr_keys[i])
+        // //console.log(material_attr[material_attr_keys[i]])
         if (material_attr_keys[i] === 'mat-id') {
           current_mat_id = data[material_attr_keys[i]]
 
@@ -757,13 +755,13 @@ export class MaterialFormComponent implements OnInit {
           }
         }
       });
-      console.log(return_data)
+      //console.log(return_data)
 
 
       biologicalMaterialControl.controls.forEach(biological_material_attr => {
 
         var data2=biological_material_attr.value
-        console.log(data2['mat-id'])
+        //console.log(data2['mat-id'])
 
 
         if (data2['mat-id'] === current_mat_id) {
@@ -790,7 +788,7 @@ export class MaterialFormComponent implements OnInit {
 
               // }
               // else{
-              //   console.log("attribute not already exist", biological_material_attr_keys[i])
+              //   //console.log("attribute not already exist", biological_material_attr_keys[i])
 
               //   return_data[biological_material_attr_keys[i]]=[[]]
               //   return_data[biological_material_attr_keys[i]][material_index].push(biological_material_attr[biological_material_attr_keys[i]])
@@ -809,28 +807,28 @@ export class MaterialFormComponent implements OnInit {
 
     // this.cleaned_model.forEach(attr => {
     //   if (attr["level"]==="1") {
-    //     console.log("level 1 attributes", attr)
-    //     console.log("level 1 attributes", attr)
+    //     //console.log("level 1 attributes", attr)
+    //     //console.log("level 1 attributes", attr)
     //     return_data[attr["key"]]= generalControl.controls[0].value[attr["key"]]
     //     // generalControl.controls.forEach(general_attr=>{
 
-    //     //   console.log(general_attr.value)
+    //     //   //console.log(general_attr.value)
     //     // });
     //   }
     //   else if (attr["level"]==="2") {
-    //     console.log("level 2 attributes", attr)
+    //     //console.log("level 2 attributes", attr)
     //     return_data[attr["key"]]=[]
 
     //   }
     //   else{
-    //     console.log("level 3 attributes", attr)
+    //     //console.log("level 3 attributes", attr)
     //     return_data[attr["key"]]=[[]]
 
     //   }
 
     // });
     this.save(return_data)
-    console.log(return_data)
+    //console.log(return_data)
   }
 
   toggleTheme() {

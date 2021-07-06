@@ -296,64 +296,68 @@ export class DownloadComponent implements OnInit, OnDestroy {
                     this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: component_model.key, value: "" })
                 }
             );
-            this.data_files[0].forEach(data_file => {
-                if (!this.filename_used.includes(data_file.filename)) {
-                    
-                    this.filename_used.push(data_file.filename)
-                    this.headers_by_filename[data_file.filename] = []
-                    this.associated_headers_by_filename[data_file.filename] = []
-                    //this.selectedStudy[data_file.filename]=[]
-                    //this.AttributesGroups[data_file.filename] = []
-                    this.options_components_by_filename[data_file.filename] = []
-                    this.options_fields_by_component_by_filename[data_file.filename] = []
-                    let tmpAttributesGroups = {}
-                    data_file.associated_headers.forEach(element => {
-                        if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
-                            ///if (!this.headers.includes(element.header)){
-                            var header = element.header
-                            let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component, associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
-                            if (element.associated_component != "") {
-                                ///let tmp = {}
-                                let tmp = { ...this.extract_component_options.options.filter(prop => prop.value === element.associated_component)[0] }
-                                tmp['header'] = element.header
-                                tmp['associated_linda_id'] = element.associated_linda_id
-                                this.options_components_by_filename[data_file.filename].push(tmp)
-                                
-                                if (element.associated_component_field != "") {
-                                    let tmp2 = { header: element.header, associated_linda_id: element.associated_linda_id, name: "Assign MIAPPE component name to add ", value: element.associated_component_field }
-                                    this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+            console.log(this.data_files)
+            if (this.data_files.length === 2) {
+                this.data_files[0].forEach(data_file => {
+                    if (!this.filename_used.includes(data_file.filename)) {
+                        this.filename_used.push(data_file.filename)
+                        this.headers_by_filename[data_file.filename] = []
+                        this.associated_headers_by_filename[data_file.filename] = []
+                        //this.selectedStudy[data_file.filename]=[]
+                        //this.AttributesGroups[data_file.filename] = []
+                        this.options_components_by_filename[data_file.filename] = []
+                        this.options_fields_by_component_by_filename[data_file.filename] = []
+                        let tmpAttributesGroups = {}
+                        data_file.associated_headers.forEach(element => {
+                            if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
+                                ///if (!this.headers.includes(element.header)){
+                                var header = element.header
+                                let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component, associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
+                                if (element.associated_component != "") {
+                                    ///let tmp = {}
+                                    let tmp = { ...this.extract_component_options.options.filter(prop => prop.value === element.associated_component)[0] }
+                                    tmp['header'] = element.header
+                                    tmp['associated_linda_id'] = element.associated_linda_id
+                                    this.options_components_by_filename[data_file.filename].push(tmp)
+                                    
+                                    if (element.associated_component_field != "") {
+                                        let tmp2 = { header: element.header, associated_linda_id: element.associated_linda_id, name: "Assign MIAPPE component name to add ", value: element.associated_component_field }
+                                        this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+                                    }
+                                    else {
+                                        let tmp2 = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE component fields", value: "" }
+                                        this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
+                                    }
                                 }
                                 else {
+                                    let tmp = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
+                                    this.options_components_by_filename[data_file.filename].push(tmp)
+                                    
                                     let tmp2 = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE component fields", value: "" }
                                     this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
                                 }
-                            }
-                            else {
-                                let tmp = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
-                                this.options_components_by_filename[data_file.filename].push(tmp)
                                 
-                                let tmp2 = { header: element.header, associated_linda_id: "", name: "Assign MIAPPE component fields", value: "" }
-                                this.options_fields_by_component_by_filename[data_file.filename].push(tmp2)
-                            }
-                            
 
-                            tmpAttributesGroups[header] = [header]
-                            //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
-                            this.headers.push(element.header)
-                            this.headers_by_filename[data_file.filename].push(element.header)
-                            this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
-                        }
-                    });
-                    //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
-                    this.dataFileComponentForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
-                    this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
-                    this.options_components_by_filename[data_file.filename].forEach(option => {
-                        //console.log(option.header)
-                        this.dataFileComponentForm[data_file.filename].get(option.header).setValue(option.value);
-                    });
-                }
-                
-            });
+                                tmpAttributesGroups[header] = [header]
+                                //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
+                                this.headers.push(element.header)
+                                this.headers_by_filename[data_file.filename].push(element.header)
+                                this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
+                            }
+                        });
+                        //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
+                        this.dataFileComponentForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                        this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                        this.options_components_by_filename[data_file.filename].forEach(option => {
+                            //console.log(option.header)
+                            this.dataFileComponentForm[data_file.filename].get(option.header).setValue(option.value);
+                        });
+                    }
+                    
+                });
+                this.selected_file = this.filename_used[0]
+
+            }
             //add corresponding component fields
             //this.options_fields_by_component_by_filename[this.model_type]=[]
             // this.extract_fields_options['options']=[]
@@ -363,7 +367,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             //     }
             // );
         
-            this.selected_file = this.filename_used[0]
+            //this.selected_file = this.filename_used[0]
             // console.log(this.options_components_by_filename)
             // console.log(this.extract_fields_options)
             // console.log(this.headers_by_filename)
@@ -934,10 +938,23 @@ export class DownloadComponent implements OnInit, OnDestroy {
         return this.selected_file
     }
     cancel(){
-        let new_step=12
-        this.currentUser.tutoriel_step=new_step.toString()
-        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        this.router.navigate(['/tree']) 
+        if (this.mode === 'create'){
+            this.router.navigate(['/tree']) 
+        }
+        else{
+            if (!this.currentUser.tutoriel_done){
+                if (this.currentUser.tutoriel_step==="13"){
+                    
+                    var new_step=12
+                    this.currentUser.tutoriel_step=new_step.toString()
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));      
+                }
+                else{
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                }
+            }
+            this.router.navigate(['/tree']) 
+        }
     }
     reloadComponent(path:[string]) {
         let currentUrl = this.router.url;
@@ -1040,6 +1057,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                             add_study_res => {
                                                 if (add_study_res["success"]) {
                                                     console.log(add_study_res["message"])
+                                                    this.router.navigate(['/tree']);
                                                 }
                                             });
                                         //this.router.navigate(['/tree']);
@@ -1049,6 +1067,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                             add_study_res => {
                                                 if (add_study_res["success"]) {
                                                     console.log(add_study_res["message"])
+                                                    this.router.navigate(['/tree']);
                                                 }
                                             }
                                         );
@@ -1056,7 +1075,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
 
                                     }
                                 }
-                                this.router.navigate(['/tree']);
+                                
                             }
                         }
                     });

@@ -85,54 +85,54 @@
         <div>
             <div *ngIf="nod==='investigation'">
                 <h2>Investigation Form</h2>
-                <mat-card class="menu_mat_card">
+                <!-- <mat-card class="menu_mat_card">
                 <h5>Definition</h5>
                 <p><b>Investigation</b> is the entry point of each MIAPPE dataset. It contains several general metadata fields 
                     (e.g. title, description, submission/publication dates), including some critical for FAIRness 
                     (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             <div *ngIf="nod==='study'">
-                <h2>Studies</h2>
+                <!-- <h2>Studies</h2>
                 <mat-card  class="menu_mat_card">
                 <h5>Definition</h5>
                 <p><b>Study</b> corresponds to one experiment and defines its location (which by definition must be single per study) 
                     and duration. It lists general fields documenting the experiment (e.g. experimental design, cultural practices, 
                     growth facility). Like the investigation, it contains a unique identifier field. An investigation must have one or more studies.  </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             
             <div *ngIf="nod==='experimental_factor'">
                 <h2>Experimental factors</h2>
-                <mat-card  class="menu_mat_card">
+                <!-- <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
                     <p>
                         An <b>Experimental factor</b>  is, by definition a condition that varies between observation units, which may be biotic (pest, disease interaction) or abiotic (treatment and cultural practice) in nature. 
                         Depending on the level of the data, an experimental factor can be either  \"what is the factor applied to the plant\" (i.e. Unwatered), or the \"environmental characterisation\" (i.e. if no rain on unwatered plant : Drought ;  if rain on unwatered plant: Irrigated).
                         The object of a study is to ascertain the impact of one or more factors on the biological material.
                     </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             <div *ngIf="nod==='observed_variable'">
                 <h2>Observed variables</h2>
-                <mat-card class="menu_mat_card">
+                <!-- <mat-card class="menu_mat_card">
                     <h5>Definition</h5>
                     <p> An <b>Observed variable</b> describes how a measurement has been made. It typically takes the form of a measured characteristic of the observation unit (plant or environmental trait), associated to the method and unit of measurement. </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             <div *ngIf="nod==='biological_material'">
                 <h2>Biological_materials</h2>
-                <mat-card  class="menu_mat_card">
+                <!-- <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
                     <p><b>Biological_material</b>  </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             <div *ngIf="nod==='observation_unit'">
                 <h2>Observation units</h2>
-                <mat-card  class="menu_mat_card">
+                <!-- <mat-card  class="menu_mat_card">
                     <h5>Definition</h5>
                     <p><b>Observation units</b>  </p>
-                </mat-card>
+                </mat-card> -->
             </div>
             
             <mat-card  class="menu_mat_card">

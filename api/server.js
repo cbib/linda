@@ -1845,7 +1845,7 @@ router.post('/remove_association', function (req, res) {
 }).body(joi.object({
     username: joi.string().required(),
     password: joi.string().required(),
-    id: joi.string().required(),
+    id: joi.object().required(),
     datafile_id:joi.string().required()
 }).required(), 'Values to check.')
     .response(joi.object({
@@ -1905,7 +1905,7 @@ router.post('/remove_childs_by_type_and_id', function (req, res) {
                 datafile_ids.push(childs[i].v_id)
 
             }
-            if (childs[i].v_id !== null && childs[i].v_id.split("/")[0] === datatype  && childs[i].v_id===model_id ) {
+            if (childs[i].v_id !== null && childs[i].v_id.split("/")[0] === datatype  && childs[i].v_id===model_id.id ) {
                 // If observed variable, reset all associated_linda_id
                 //Delete child vertice in collection
                 if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
@@ -1947,7 +1947,7 @@ router.post('/remove_childs_by_type_and_id', function (req, res) {
             res.send({ success: true, message: ["No errors detected"], datafile_ids: datafile_ids, removed_ids: removed_ids });
         }
         else {
-            res.send({ success: false, message: errors, datafile_ids: [], removed_ids: removed_ids });
+            res.send({ success: false, message: errors, datafile_ids: ["No datafiles detected"], removed_ids: removed_ids });
         }
     }
 })
@@ -1956,7 +1956,7 @@ router.post('/remove_childs_by_type_and_id', function (req, res) {
         password: joi.string().required(),
         id: joi.string().required(),
         model_type: joi.string().required(),
-        model_id: joi.string().required(),
+        model_id: joi.object().required(),
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
@@ -2135,25 +2135,39 @@ router.post('/remove', function (req, res) {
         //Remove all childs for selected node
         for (var i = 0; i < childs.length; i++) {
 
-            //Delete child vertice in collection
-            if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
-                var child_coll = childs[i].v_id.split("/")[0];
-                var child_vkey = childs[i].v_key;
-                try {
-                    db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
-                }
-                catch (e) {
-                    errors.push(e + " " + childs[i].v_id);
+            if (childs[i].e_id.includes("observation_units_edge")){
+                if ((childs[i].e_id !== null) || (childs[i].e_key !== null)) {
+                    var edge_coll = childs[i].e_id.split("/")[0];
+                    var child_ekey = childs[i].e_key;
+                    try {
+                        db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+                    }
+                    catch (e) {
+                        errors.push(e + " " + childs[i].e_id);
+                    }
                 }
             }
-            if ((childs[i].e_id !== null) || (childs[i].e_key !== null)) {
-                var edge_coll = childs[i].e_id.split("/")[0];
-                var child_ekey = childs[i].e_key;
-                try {
-                    db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+            else{
+                //Delete child vertice in collection
+                if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
+                    var child_coll = childs[i].v_id.split("/")[0];
+                    var child_vkey = childs[i].v_key;
+                    try {
+                        db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+                    }
+                    catch (e) {
+                        errors.push(e + " " + childs[i].v_id);
+                    }
                 }
-                catch (e) {
-                    errors.push(e + " " + childs[i].e_id);
+                if ((childs[i].e_id !== null) || (childs[i].e_key !== null)) {
+                    var edge_coll = childs[i].e_id.split("/")[0];
+                    var child_ekey = childs[i].e_key;
+                    try {
+                        db._query(`REMOVE "${child_ekey}" IN ${edge_coll}`);
+                    }
+                    catch (e) {
+                        errors.push(e + " " + childs[i].e_id);
+                    }
                 }
             }
 
@@ -2685,7 +2699,7 @@ router.post('/check_one_exists', function (req, res) {
         /////////////////////////////
         var check = [];
         check = db._query(aql` FOR entry IN ${coll} FILTER entry.${field} == ${value} RETURN entry`).toArray()
-        if (check.length === 1) {
+        if (check.length === 0) {
             res.send({
                 success: true,
                 message: 'data doesn\'t exists',
@@ -2711,7 +2725,7 @@ router.post('/check_one_exists', function (req, res) {
     .response(joi.object({
         success: true,
         message: joi.string().required(),
-        _id: ""
+        _id: joi.string().required()
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist.');

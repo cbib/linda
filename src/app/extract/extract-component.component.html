@@ -65,13 +65,21 @@
 
     <!-- <section *ngFor="let filename of filename_used ; let i=index"> -->
    
-    <mat-card joyrideStep="StepSelectFile" title="" [stepContent]="selectFile" [stepContentParams]="{'model_n':demo_subset}">
-      <h2>Select your data file </h2>
+
+    <mat-card  *ngIf="filename_used.length > 0"  joyrideStep="StepSelectFile" title="" [stepContent]="selectFile" [stepContentParams]="{'model_n':demo_subset}">
+
+        <h2>Select your data file </h2>
       <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
           <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
       </select> 
       <br>
     </mat-card>
+    <mat-card *ngIf="filename_used.length === 0" >
+      <h2>Select your data file </h2>
+      <mat-card style="background-color: blanchedalmond;">
+        <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+      </mat-card>
+    </mat-card> 
     <ng-template #selectFile let-nod="model_n">
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
@@ -92,7 +100,7 @@
 
     </ng-template>
     <br>
-    <mat-card joyrideStep="StepComponentTable" title="" [stepContent]="componentTable" [stepContentParams]="{'model_n':demo_subset}">
+    <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepComponentTable" title="" [stepContent]="componentTable" [stepContentParams]="{'model_n':demo_subset}">
       <h2><b>{{model_type_label}}</b> table</h2>
       <p>
           Once you have declared the <b>{{model_type_label}}</b> you need, select studies in which these components will be integrated by checking corresponding rows !! 
@@ -142,19 +150,17 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns[selected_file]"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns[selected_file];"></tr>
         </table>
-      </mat-card>
-      <ng-template #componentTable let-nod="model_n">
-        <div>
-          <nav class="navbar navbar-expand-sm navbar-dark">
-              <h3>
-                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-              </h3>
-
-          </nav>
-        </div>
-        
-        <h4>Detected <b>{{model_type_label}}</b></h4>
-        <mat-card>
+    </mat-card>
+    <ng-template #componentTable let-nod="model_n">
+      <div>
+        <nav class="navbar navbar-expand-sm navbar-dark">
+          <h3>
+            <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+          </h3>
+        </nav>
+      </div>
+      <h4>Detected <b>{{model_type_label}}</b></h4>
+       <mat-card>
             <h5> Component detection</h5>
             <p>
               Here are <b>{{model_type_label}}</b>(s) that you have assigned in your data file. As you can see, there is one column called <b>plant_height</b> that you have assigned as <b>{{model_type_label}}</b>.
@@ -162,22 +168,30 @@
 
             </p>
         </mat-card>
-      </ng-template>
+    </ng-template>
+    <mat-card *ngIf="filename_used.length === 0">
+        <h2><b>{{model_type_label}}</b> table</h2>
+        <mat-card style="background-color: blanchedalmond;">
+          <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+        </mat-card>    
+      </mat-card> 
       <br>
-    <mat-card joyrideStep="StepAddComponent" title="" [stepContent]="addComponent" [stepContentParams]="{'model_n':demo_subset}">
-    <h2>Link <b>{{model_type_label}} column from your data files</b></h2>
-    <p>
-        Here are <b>{{model_type_label}}</b> in your data file, click on it to fill the form and add in LINDA database as <b>{{model_type_label}}</b>!! 
-    </p>
-    <!-- <p *ngIf="displayedcomponentColumns[selected_file].lenght==0">
-      There are no <b>{{model_type_label}}</b> described in this datafile
-    </p> -->
-    <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
-      <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column]['state'])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
-        <span>{{column}}</span>
-      </mat-button-toggle> 
-    </mat-button-toggle-group>
-    <br>
+
+    <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepAddComponent" title="" [stepContent]="addComponent" [stepContentParams]="{'model_n':demo_subset}">
+      
+      <h2>Link <b>{{model_type_label}} column from your data files</b></h2>
+      <p>
+          Here are possible headers that you have assigned with <b>{{model_type_label}}</b> type in your data file, click on it to fill the corresponding form !! then submit to add it in LINDA database as a new <b>{{model_type_label}}</b>!! 
+      </p>
+      <!-- <p *ngIf="displayedcomponentColumns[selected_file].lenght==0">
+        There are no <b>{{model_type_label}}</b> described in this datafile
+      </p> -->
+      <mat-button-toggle-group *ngFor="let column of displayedcomponentColumns[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
+        <mat-button-toggle [ngStyle]="getToggleStyle(datasources[selected_file][0][column]['state'])" (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
+          <span>{{column}}</span>
+        </mat-button-toggle> 
+      </mat-button-toggle-group>
+      <br>
     </mat-card>
     <ng-template #addComponent let-nod="model_n">
       <div>
@@ -198,11 +212,19 @@
       </mat-card>
     </ng-template>
     <br>
-    <mat-card joyrideStep="StepLinkComponent" title="" [stepContent]="linkComponent" [stepContentParams]="{'model_n':demo_subset}">
-    <h2>Use a existing <b>{{model_type_label}}</b></h2>
-     We found a list of existing <b>{{model_type_label}}</b> described in these studies. Is this the one you want to link with ? 
+    <mat-card *ngIf="filename_used.length === 0">
+      <h2>Link <b>{{model_type_label}} column from your data files</b></h2>
+      <mat-card style="background-color: blanchedalmond;">
+        <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+      </mat-card>    
+    </mat-card> 
+
+
+    <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepLinkComponent" title="" [stepContent]="linkComponent" [stepContentParams]="{'model_n':demo_subset}">
+    <h2>Use a existing <b>{{model_type_label}}</b></h2>  
     <p>
-        Here are <b>{{model_type_label}}</b>(s) in your data file, click on it to fill the form and add in LINDA database as <b>{{model_type_label}}</b> !! 
+        <!-- Objectives: search for a list of existing <b>{{model_type_label}}</b> described in this investigation.  -->
+        Here are existing <b>{{model_type_label}}</b>(s) component in your investigation, click on it to associate the column to this <b>{{model_type_label}} component</b> !! 
     </p>
     <mat-button-toggle-group *ngFor="let observed_variable of ObservedVariables[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup">
       <mat-button-toggle  
@@ -251,8 +273,8 @@
       </ng-template>
     </mat-button-toggle-group>
     <br>
-  </mat-card>
-  <ng-template #linkComponent let-nod="model_n">
+    </mat-card>
+    <ng-template #linkComponent let-nod="model_n">
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
           <h3>
@@ -260,7 +282,7 @@
           </h3>
       </nav>
     </div>
-    
+  
     <h4>Cross Linking your data with MIAPPE</h4>
     <mat-card>
         
@@ -277,8 +299,14 @@
     </mat-card>
   </ng-template>
     <br>
+    <mat-card *ngIf="filename_used.length === 0">
+      <h2>Use a existing <b>{{model_type_label}}</b></h2> 
+      <mat-card style="background-color: blanchedalmond;">
+        <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+      </mat-card>    
+    </mat-card> 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <button class="btn btn-info" [disabled]="selection.selected.length===0" type="submit">Extract</button>
+        <button class="btn btn-info" type="submit">Extract</button>
         <button (click)="cancel()" class="btn btn-danger">Cancel</button>
     </form>
 </div>

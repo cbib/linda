@@ -760,7 +760,7 @@ export class FileService {
                             if (return_data[isa_file][index]["study_data"][isa_field]) {
                                 if (return_data[isa_file][index]["study_data"][isa_field]["data"]) {
                                     var data2;
-                                    if (keys[i].includes("Material")){
+                                    if (keys[i].includes("Material") || keys[i].includes("Infraspecific") ){
                                         data2=data[keys[i]][data_index]
                                         
                                     }

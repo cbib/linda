@@ -224,7 +224,18 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "remove_childs_by_type"}`, obj2send);
     }
-
+    check_one_exists(field:string, value:string, model_type:string){
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'field': field,
+            'value':value,
+            'model_type':model_type
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "check_one_exists"}`, obj2send);
+    }
     remove_association(id:string, datafile_id:string) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -233,6 +244,7 @@ export class GlobalService {
             'id': id,
             'datafile_id':datafile_id
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_association"}`, obj2send);
     }
 
@@ -245,6 +257,7 @@ export class GlobalService {
             'model_type':model_type,
             'model_id': model_id
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs_by_type_and_id"}`, obj2send);
     }
     

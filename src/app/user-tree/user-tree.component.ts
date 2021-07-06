@@ -36,6 +36,7 @@ export class UserTreeComponent implements OnInit {
     @Input() search_string: string;
     @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
+    @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
     
@@ -46,6 +47,7 @@ export class UserTreeComponent implements OnInit {
     userMenuPosition = { x: '0px', y: '0px' };
     userMenusecondPosition = { x: '0px', y: '0px' };
     investigationMenuPosition = { x: '0px', y: '0px' };
+    helpMenuPosition = { x: '0px', y: '0px' };
     private nodes: MiappeNode[]
     // public statistics: {};
     private displayed = false;
@@ -115,7 +117,7 @@ export class UserTreeComponent implements OnInit {
     // }
     // public get_statistics() {
 
-    //     console.log(this.statistics)
+    //     //console.log(this.statistics)
     //     //return this.statistics
     // }
     async ngOnInit() {
@@ -125,38 +127,38 @@ export class UserTreeComponent implements OnInit {
         this.nodes = []
         this.nodes = this.build_hierarchy(this.vertices)
 
-        console.log(this.nodes.length)
+        //console.log(this.nodes.length)
         //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
         this.sort_nodes(this.nodes[0])
         this.dataSource.data = this.nodes
-        //console.log(this.dataSource.data)
+        ////console.log(this.dataSource.data)
         //this.treeControl.expand()
         this.treeControl.expandAll();
 
-        //console.log(this.treeControl.dataNodes[4])
-        //console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
-        //console.log(this.treeControl.dataNodes)
+        ////console.log(this.treeControl.dataNodes[4])
+        ////console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
+        ////console.log(this.treeControl.dataNodes)
         //this.treeControl.expandDescendants(this.treeControl.dataNodes[4])
         var descendants = this.treeControl.getDescendants(this.treeControl.dataNodes[0])
         //this.treeControl.expandDescendants(this.treeControl.dataNodes[0])
         this.treeControl.expand(this.treeControl.dataNodes[0])
-        //console.log("searching for ", this.treeControl.dataNodes[12].name)
+        ////console.log("searching for ", this.treeControl.dataNodes[12].name)
         // for (var d in descendants) {
-        //     //console.log(this.treeControl.getLevel(descendants[d]))
+        //     ////console.log(this.treeControl.getLevel(descendants[d]))
 
         this.loaded=true
         
         
         //     if (this.treeControl.getLevel(descendants[d]) === 1) {
-        //         //console.log(descendants[d].name)
+        //         ////console.log(descendants[d].name)
         //         this.treeControl.expand(descendants[d])
         //         //this.treeControl.expandDescendants(descendants[d])
         //     }
         //     //   if (this.treeControl.getLevel(descendants[d])===2){
-        //     //     //console.log(descendants[d]['term']['children'])
+        //     //     ////console.log(descendants[d]['term']['children'])
         //     //     this.treeControl.expand(descendants[d])
         //     //     //descendants[d]['term']['children'].sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]));
-        //     //     //console.log(test)
+        //     //     ////console.log(test)
         //     //   }
 
 
@@ -165,10 +167,10 @@ export class UserTreeComponent implements OnInit {
         
 
         this.searchService.getData().subscribe(data => {
-            console.log(data);
+            //console.log(data);
             //this.search_string=data
         })
-        //console.log(localStorage)
+        ////console.log(localStorage)
         
           
         // if (currentUser['tutoriel_checked'] === false){
@@ -177,23 +179,84 @@ export class UserTreeComponent implements OnInit {
 
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         //var user = this.userService.get_user(this.currentUser['username'], this.currentUser['password'])
-        //console.log(user)
+        ////console.log(user)
         //localStorage.setItem('currentUser', JSON.stringify(user));
         
         this.onClickTour()
     }
 
-    onDone() {
-        if (this.currentUser['tutoriel_step'] === "16"){
-            this.globalService.update_user(true, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
-                data => {
-                    console.log(data['user'])
-                    localStorage.setItem('currentUser', JSON.stringify(data['user']));
-            });
-        }
-        
+    play_again(){
+        // delete all investigations
+        this.globalService.check_one_exists("Investigation unique ID", "Maizes1", "investigation").pipe(first()).toPromise().then(
+            result => {
+                console.log(result)
+                if (!result["success"]){
+                    this.globalService.remove(result["_id"]).pipe(first()).toPromise().then(
+                        data => {
+                            console.log(data)
+                            if (data["success"]) {
+                                console.log(data["message"])
+                                var message = result["_id"] + " has been removed from your history !!"
+                                this.alertService.success(message)
+                                if (!this.currentUser.tutoriel_done){
+                                    let new_step=0
+                                    this.currentUser.tutoriel_step=new_step.toString()
+                                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    
+                                    this.reloadComponent(['/tree'])
+                                }
+                                else{
+                                    this.globalService.update_user(false, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
+                                        data => {
+                                            console.log(data['user'])
+                                            localStorage.setItem('currentUser', JSON.stringify(data['user']));
+                                            this.reloadComponent(['/tree'])
+                                    });
+                                }
+                                   
+                                
+                            }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
+                                this.reloadComponent(['/tree'])  
+                                this.onDone(true)
+                            }
+                        }
+                    );
+                }
+                else{
+                    this.globalService.update_user(false, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
+                        data => {
+                            console.log(data['user'])
+                            localStorage.setItem('currentUser', JSON.stringify(data['user']));
+                            let new_step=0
+                            this.currentUser.tutoriel_step=new_step.toString()
+                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                            this.reloadComponent(['/tree'])
+                    });
+
+                }
+            }
+        );
+        //this.onClickTour()
     }
-    onClickTour() {
+
+    onDone(mode_replay=false) {
+        if (mode_replay){
+            console.log(this.currentUser)
+            this.onClickTour()
+        }
+        else{
+            if (this.currentUser['tutoriel_step'] === "16"){
+                this.globalService.update_user(true, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
+                    data => {
+                        //console.log(data['user'])
+                        localStorage.setItem('currentUser', JSON.stringify(data['user']));
+                });
+            }
+        }
+    }
+    onClickTour(replay:boolean=false, level:string="0") {
         
         console.log(this.currentUser)
         if (!this.currentUser['tutoriel_done']){
@@ -201,79 +264,145 @@ export class UserTreeComponent implements OnInit {
                 this.currentUser.tutoriel_step="0"
                 localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
-            console.log(this.currentUser)
+            //console.log(this.currentUser)
             if (this.currentUser['tutoriel_step'] === "0"){
-                console.log('start tour part 1 : Add an investigation')
+                //console.log('start tour part 1 : Add an investigation')
                 this.joyrideService.startTour(
-                    { steps: ['step_overview', 'stepNode', 'stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['step_overview', 'node_Root', 'pl_Root', 'nextStep', 'plus_Root'], stepDefaultPosition: 'center'} // Your steps order
                     );
                 // this.currentUser.tutoriel_step="1"
                 // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
             //'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign',
-            else if (this.currentUser['tutoriel_step'] === "2"){
+            if (this.currentUser['tutoriel_step'] === "2"){
                 this.joyrideService.startTour(
-                    { steps: ['stepNode','stepButtonPanel',  'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['node_investigation','pl_investigation',  'nextStep', 'plus_investigation'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 // this.currentUser.tutoriel_step="3"
                 // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "4"){
+            if (this.currentUser['tutoriel_step'] === "4"){
                 this.joyrideService.startTour(
-                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['node_study','pl_study', 'nextStep', 'plus_study'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 //currentUser.tutoriel_step="3"
                 //localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "6"){
+            if (this.currentUser['tutoriel_step'] === "6"){
                 this.joyrideService.startTour(
-                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['node_experimental_factor','pl_experimental_factor', 'nextStep', 'plus_study'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 //currentUser.tutoriel_step="3"
                 //localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "8"){
+            if (this.currentUser['tutoriel_step'] === "8"){
                 this.joyrideService.startTour(
-                    { steps: ['stepNode','stepButtonPanel', 'nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['node_observed_variable','pl_observed_variable', 'nextStep', 'plus_study'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 //currentUser.tutoriel_step="3"
                 //localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "10"){
+            if (this.currentUser['tutoriel_step'] === "10"){
                 this.joyrideService.startTour(
-                    { steps: ['stepNode','stepButtonPanel','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['node_biological_material','pl_biological_material','nextStep', 'plus_study'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 //currentUser.tutoriel_step="3"
                 //localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "12"){
+            if (this.currentUser['tutoriel_step'] === "12"){
+                this.joyrideService.startTour(
+                    { steps: ['node_observation_unit','nextStep', 'plus_investigation'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            if (this.currentUser['tutoriel_step'] === "14"){
+                this.joyrideService.startTour(
+                    { steps: ['node_data_file','nextStep', 'plus_investigation'], stepDefaultPosition: 'center'} // Your steps order
+                );
+                //currentUser.tutoriel_step="3"
+                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+            if (this.currentUser['tutoriel_step'] === "16"){
                 this.joyrideService.startTour(
                     { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
                 );
                 //currentUser.tutoriel_step="3"
                 //localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
-            else if (this.currentUser['tutoriel_step'] === "14"){
-                this.joyrideService.startTour(
-                    { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
-                );
-                //currentUser.tutoriel_step="3"
-                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            }
-            else if (this.currentUser['tutoriel_step'] === "16"){
-                this.joyrideService.startTour(
-                    { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
-                );
-                //currentUser.tutoriel_step="3"
-                //localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            }
-            else{
-                
-                console.log("Unknown step")
-            }
+
         }
         else{
-            console.log("you have already done the Tutorial")
+            if (replay){
+                //console.log(level)
+                if ( level === "0"){
+                    //console.log('start tour part 1 : Add an investigation')
+                    this.joyrideService.startTour(
+                        { steps: ['node_Root', 'pl_Root'], stepDefaultPosition: 'center'} // Your steps order
+                        );
+                    // this.currentUser.tutoriel_step="1"
+                    // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                }
+                //'stepButtonExportCSV', 'stepButtonEdit','stepButtonRemove', 'stepButtonAdd', 'stepButtonAssign',
+                if ( level === "2"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_investigation','pl_investigation'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    // this.currentUser.tutoriel_step="3"
+                    // localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                }
+                if ( level === "4"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_study','pl_study'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "6"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_experimental_factor','pl_experimental_factor'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "8"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_observed_variable','pl_observed_variable'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "10"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_biological_material','pl_biological_material'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "12"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_observation_unit'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "14"){
+                    this.joyrideService.startTour(
+                        { steps: ['node_data_file'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                if ( level === "16"){
+                    this.joyrideService.startTour(
+                        { steps: ['stepNode','nextStep'], stepDefaultPosition: 'center'} // Your steps order
+                    );
+                    //currentUser.tutoriel_step="3"
+                    //localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+            }
+            //console.log("you have already done the Tutorial")
+
         } 
             // if (this.vertices.length===0){
             //     this.joyrideService.startTour(
@@ -281,7 +410,7 @@ export class UserTreeComponent implements OnInit {
             //     );
             // }
             // else{
-            //     console.log(this.vertices)
+            //     //console.log(this.vertices)
             //     let lowest_node_type=this.vertices[this.vertices.length -1]["e"]["_to"].split("/")[0]
             
             //     if(lowest_node_type==="experimental_factors" || lowest_node_type==="observed_variables"){
@@ -315,13 +444,18 @@ export class UserTreeComponent implements OnInit {
         }
 
     }
+    get_tutorial_done(){
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        //console.log(this.currentUser['tutoriel_done'])
+        return this.currentUser['tutoriel_done']
+    }
     get_tutoriel_level(){
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         return this.currentUser['tutoriel_step']
     }
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        //console.log(user)
+        ////console.log(user)
         this.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
@@ -331,7 +465,7 @@ export class UserTreeComponent implements OnInit {
         )
     }
     build_hierarchy(edges: []): MiappeNode[] {
-        //console.log(edges)
+        ////console.log(edges)
         var cpt = 0;
         var tmp_nodes = []
         tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
@@ -401,7 +535,7 @@ export class UserTreeComponent implements OnInit {
         }
     }
     expandNode() {
-        console.log(this.treeControl.dataNodes[3])
+        //console.log(this.treeControl.dataNodes[3])
         this.treeControl.expand(this.treeControl.dataNodes[3]);
     }
     onContextMenu(event: MouseEvent, node: MiappeNode) {
@@ -415,11 +549,11 @@ export class UserTreeComponent implements OnInit {
     }
     onClick(node: MiappeNode) {
         this.active_node = node
-        console.log(node.id)
-        if (node.id == "Investigations tree"){
-            this.userMenu.openMenu();
-            this.userMenusecond.openMenu();
-        }
+        //console.log(node.id)
+        // if (node.id == "Investigations tree"){
+        //     this.userMenu.openMenu();
+        //     this.userMenusecond.openMenu();
+        // }
         //this.joyrideService.closeTour()
         // if (node.id.split('/')[0]== "investigations"){
         //     this.investigationMenu.openMenu();
@@ -427,7 +561,7 @@ export class UserTreeComponent implements OnInit {
         //this.userMenusecond.openMenu();
     }
     onNext(node:string) {
-        console.log(node)
+        //console.log(node)
         
     }
 
@@ -439,11 +573,11 @@ export class UserTreeComponent implements OnInit {
         this.endTime = new Date();
         this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
         this.timeDiff = this.timeDiff / 1000.0;
-        console.log("Elapsed time :" + this.timeDiff+ " seconds")
+        //console.log("Elapsed time :" + this.timeDiff+ " seconds")
     
         // get seconds 
         var seconds = Math.round(this.timeDiff);
-        console.log(seconds + " seconds");
+        //console.log(seconds + " seconds");
     } 
     onExport(node: MiappeNode) {
         var model_type = this.globalService.get_model_type(node.id)
@@ -475,7 +609,7 @@ export class UserTreeComponent implements OnInit {
         });
     }
     onExplore(node: MiappeNode){
-        console.log("you are gonna explore your data !!")
+        //console.log("you are gonna explore your data !!")
         this.router.navigate(['/explore'], { queryParams: {parent_id: node.id} })
     }
 
@@ -497,12 +631,12 @@ export class UserTreeComponent implements OnInit {
         });
     }
     onEdit(node: MiappeNode) {
-        //console.log(this.active_node.id);
+        ////console.log(this.active_node.id);
         this.active_node = node
         var model_key = this.active_node.id.split("/")[1];
         var model_coll = this.active_node.id.split("/")[0];
         var model_type = this.globalService.get_model_type(this.active_node.id)
-        //console.log(model_type)
+        ////console.log(model_type)
         if (model_type != "") {
             this.globalService.get_parent(this.active_node.id).toPromise().then(
                 data => {
@@ -534,12 +668,12 @@ export class UserTreeComponent implements OnInit {
 
 
         // if (model_type!="unknown"){
-        //     //console.log(model_type)
+        //     ////console.log(model_type)
         //     var parent_id=""
         //     this.globalService.get_parent(this.active_node.id).toPromise().then(
         //             data => {
         //                 //parent_id=data
-        //                 //console.log(data)
+        //                 ////console.log(data)
         //                 this.router.navigate(['/generic'],{ queryParams: {level:"1", parent_id:data._from, model_key:model_key,model_type:model_type,mode:"edit"}});
 
 
@@ -550,7 +684,7 @@ export class UserTreeComponent implements OnInit {
         //     this.globalService.get_parent(this.active_node.id).toPromise().then(
         //             data => {
         //                 //parent_id=data
-        //                 //console.log(data._from)
+        //                 ////console.log(data._from)
         //                     this.router.navigate(['/download'],{ queryParams: {parent_id: data._from, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
 
         //             }
@@ -563,30 +697,30 @@ export class UserTreeComponent implements OnInit {
 
     }
     remove_selected(node: ExampleFlatNode) {
-        //console.log(node)
+        ////console.log(node)
         //var descendants = this.treeControl.getDescendants(node);
         //var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));                                
         //var selected_set=this.checklistSelection._selection
         var selected_set = this.checklistSelection.selected
-        console.log(selected_set)
-        //        console.log(set.entries())
+        //console.log(selected_set)
+        //        //console.log(set.entries())
         var to_be_remove = []
         selected_set.forEach(function (value) {
 
             var test: MiappeNode = value["term"];
             //this.onRemove(test)
-            console.log(test)
+            //console.log(test)
             to_be_remove.push(test.id)
 
         });
-        console.log(to_be_remove)
+        //console.log(to_be_remove)
         for (var i = 0; i < to_be_remove.length; i++) {
-            console.log(to_be_remove[i].split("/")[0])
+            //console.log(to_be_remove[i].split("/")[0])
             if (to_be_remove[i].split("/")[0] === "observation_units") {
                 this.globalService.remove_observation_unit(to_be_remove[i]).pipe(first()).toPromise().then(
                     data => {
                         if (data["success"]) {
-                            console.log(data["message"])
+                            //console.log(data["message"])
                         }
                         else {
                             this.alertService.error("this form contains errors! " + data["message"]);
@@ -598,7 +732,7 @@ export class UserTreeComponent implements OnInit {
                 this.globalService.remove(to_be_remove[i]).pipe(first()).toPromise().then(
                     data => {
                         if (data["success"]) {
-                            console.log(data["message"])
+                            //console.log(data["message"])
                         }
                         else {
                             this.alertService.error("this form contains errors! " + data["message"]);
@@ -619,7 +753,7 @@ export class UserTreeComponent implements OnInit {
     }
     reloadComponent(path:[string]) {
         let currentUrl = this.router.url;
-        console.log(currentUrl)
+        //console.log(currentUrl)
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate(path);
@@ -630,12 +764,12 @@ export class UserTreeComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    console.log(this.active_node.id.split("/")[0])
+                    //console.log(this.active_node.id.split("/")[0])
                     if (this.active_node.id.split("/")[0] === "observation_units") {
                         this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
                             data => {
                                 if (data["success"]) {
-                                    console.log(data["message"])
+                                    //console.log(data["message"])
                                     var message = this.active_node.id + " has been removed from your history !!"
                                     this.alertService.success(message)
                                     
@@ -657,7 +791,7 @@ export class UserTreeComponent implements OnInit {
                             this.globalService.remove_childs(this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
-                                        console.log(data["message"])
+                                        //console.log(data["message"])
                                         var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
                                         this.alertService.success(message)
                                     }
@@ -674,20 +808,20 @@ export class UserTreeComponent implements OnInit {
                         //Remove only observed variable or experimental factors
                         // TODO add handler for observation units, biological materials, etc.
                         else if(result.only!=""){
-                            console.log(result.only)
+                            //console.log(result.only)
                             this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
-                                        console.log(data["message"])
+                                        //console.log(data["message"])
                                         var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
                                         //this.alertService.success(message)
                                         var datafile_ids=data["datafile_ids"]
                                         var removed_ids=data["removed_ids"]
                                         // datafile_ids.forEach(datafile_id => {
                                         //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-                                        //         data => { console.log(data); }
+                                        //         data => { //console.log(data); }
                                         //       )
-                                        // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {console.log(data);})
+                                        // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {//console.log(data);})
                                         // });
                                     }
                                     else {
@@ -702,12 +836,12 @@ export class UserTreeComponent implements OnInit {
 
                         }
                         else {
-                            console.log(this.active_node.id)
+                            //console.log(this.active_node.id)
                             this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
                                 data => {
-                                    console.log(data)
+                                    //console.log(data)
                                     if (data["success"]) {
-                                        console.log(data["message"])
+                                        //console.log(data["message"])
                                         var message = this.active_node.id + " has been removed from your history !!"
                                         this.alertService.success(message)
                                         let new_step=0
@@ -767,7 +901,7 @@ export class UserTreeComponent implements OnInit {
         });
     }
     onFileChange(event) {
-        console.log(this.active_node)
+        //console.log(this.active_node)
 
         //this.fileUploaded = <File>event.target.files[0];
         let uploadResponse = { status: '', message: 0, filePath: '' };
@@ -799,23 +933,23 @@ export class UserTreeComponent implements OnInit {
             var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
                 var files = zip['files'];
                 Object.keys(zip.files).forEach(function (filename) {
-                    console.log(zip.files)
+                    //console.log(zip.files)
 
-                    console.log(zip.files[filename]['dir'])
+                    //console.log(zip.files[filename]['dir'])
                     if (!zip.files[filename]['dir']) {
                         zip.files[filename].async('string').then(function (fileData) {
-                            console.log(filename)
-                            console.log(fileData) // These are your file contents      
+                            //console.log(filename)
+                            //console.log(fileData) // These are your file contents      
                         })
 
                     }
                 })
 
                 zip.forEach(function (relativePath, zipEntry) {
-                    console.log(zipEntry.name)
-                    console.log(zipEntry.dir)
-                    //console.log(zipEntry[relativePath]['dir'])
-                    console.log(relativePath)
+                    //console.log(zipEntry.name)
+                    //console.log(zipEntry.dir)
+                    ////console.log(zipEntry[relativePath]['dir'])
+                    //console.log(relativePath)
                     //for each filepath build the corresponding hierarchy in user tree
                 });
             });
@@ -856,7 +990,7 @@ export class UserTreeComponent implements OnInit {
         }
     }
     add_from_data_file(model_type: string) {
-        console.log(this.active_node.id)
+        //console.log(this.active_node.id)
         var model_key = this.active_node.id.split("/")[1]
         var parent_id = ""
         if (this.active_node.id != 'Investigations tree') {
@@ -876,20 +1010,20 @@ export class UserTreeComponent implements OnInit {
     }
     add(model_type: string, template: string) {
         var model_key = this.active_node.id.split("/")[1]
-        console.log(model_key)
-        console.log(template)
+        //console.log(model_key)
+        //console.log(template)
         var model_coll = this.active_node.id.split("/")[0];
         let user = JSON.parse(localStorage.getItem('currentUser'));
         if (template == 'saved') {
             //var model_type=this.globalService.get_model_type(this.active_node.id)
-            console.log(model_type)
+            //console.log(model_type)
             const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: model_type, values: {}, parent_id: this.active_node.id } });
             dialogRef.afterClosed().subscribe(result => {
                 
                 if (result) {
-                    console.log(result.values)
-                    //console.log(model_type)
-                    //console.log(this.active_node.id)
+                    //console.log(result.values)
+                    ////console.log(model_type)
+                    ////console.log(this.active_node.id)
                     parent_id = ""
                     if (this.active_node.id === 'Investigations tree') {
                         parent_id = user["_id"]
@@ -908,11 +1042,11 @@ export class UserTreeComponent implements OnInit {
                     }
                     var new_values = {}
                     keys.forEach(attr => { new_values[attr] = result.values[attr] })
-                    console.log(new_values)
+                    //console.log(new_values)
                     this.globalService.add(new_values, model_type, parent_id, false).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
-                                //console.log(data["message"])
+                                ////console.log(data["message"])
                                 //this.model_id=data["_id"];
                                 this.ngOnInit();
                                 //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
@@ -923,7 +1057,7 @@ export class UserTreeComponent implements OnInit {
                                 return true;
                             }
                             else {
-                                //console.log(data["message"])
+                                ////console.log(data["message"])
                                 this.alertService.error("this form contains errors! " + data["message"]);
                                 
                                 return false;
@@ -945,19 +1079,19 @@ export class UserTreeComponent implements OnInit {
 
         }
         else if (template == 'zip') {
-            console.log('add zip file');
+            //console.log('add zip file');
         }
         else if (template == 'parent') {
             //Here it is a special case for observation unit when you want to add
             //search for all biological_material in the parent study
-            console.log('add zip file');
+            //console.log('add zip file');
             var model_name = this.active_node.id.split("/")[0]
             var model_key = this.active_node.id.split("/")[1]
             var search_type = ""
             this.globalService.get_parent_id(model_name, model_key).toPromise().then(
                 data => {
                     var parent_id = data[0]["v_id"]
-                    console.log(parent_id)
+                    //console.log(parent_id)
                     // if (model_type==='observed_variable'){
                     //     search_type="Observed variable"
                     // }
@@ -971,7 +1105,7 @@ export class UserTreeComponent implements OnInit {
                     const dialogRef = this.dialog.open(TemplateSelectionDialogComponent, { width: '500px', data: { search_type: model_type, model_id: "", parent_id: parent_id, user_key: user._key, model_type: model_type, values: {} } });
                     dialogRef.afterClosed().subscribe(result => {
                         if (result) {
-                            console.log(result.values)
+                            //console.log(result.values)
                             var keys = Object.keys(result.values);
 
                             for (var i = 0; i < keys.length; i++) {
@@ -986,7 +1120,7 @@ export class UserTreeComponent implements OnInit {
                             this.globalService.add(new_values, model_type, this.active_node.id, false).pipe(first()).toPromise().then(
                                 data => {
                                     if (data["success"]) {
-                                        //console.log(data["message"])
+                                        ////console.log(data["message"])
                                         //this.model_id=data["_id"];
                                         this.ngOnInit();
                                         //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
@@ -997,7 +1131,7 @@ export class UserTreeComponent implements OnInit {
                                         return true;
                                     }
                                     else {
-                                        //console.log(data["message"])
+                                        ////console.log(data["message"])
                                         this.alertService.error("this form contains errors! " + data["message"]);
                                         return false;
                                         //this.router.navigate(['/studies']);
@@ -1110,19 +1244,19 @@ export class UserTreeComponent implements OnInit {
 
     }  
     identify() {
-        console.log('Hello, Im user tree!');
+        //console.log('Hello, Im user tree!');
     }
     isArray(obj : any ){
         return Array.isArray(obj)
     }
     ObservationTableRowSelected(i: number) {
         this.observation_id = this.obs_unit_data[i]['obsUUID']
-        console.log(this.observation_id)
+        //console.log(this.observation_id)
 
     }
     MaterialTableRowSelected(i) {
         this.biological_material_id = this.biological_materials[i]['bmUUID']
-        console.log(this.biological_material_id)
+        //console.log(this.biological_material_id)
     }
     get get_bm_field() {
         return Object.keys(this.biological_materials[0]);
@@ -1140,12 +1274,12 @@ export class UserTreeComponent implements OnInit {
         return Object.keys(this.obs_unit_data[0]);
     }
     get_ou_data(node: MiappeNode) {
-        //console.log(node["term"].get_current_observation_unit_data()['observation_units'])
+        ////console.log(node["term"].get_current_observation_unit_data()['observation_units'])
         return node["term"].get_current_observation_unit_data()['observation_units']
 
     }
     get_bm_data(node: MiappeNode): [] {
-        //console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
+        ////console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
         return node["term"].get_current_observation_unit_data()['biological_materials']
 
     }
@@ -1166,7 +1300,7 @@ export class UserTreeComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    console.log("hello")
+                    //console.log("hello")
                 }
             }
         });
@@ -1199,7 +1333,7 @@ export class UserTreeComponent implements OnInit {
             var return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
             this.globalService.get_elem(collection, key).toPromise().then(
                 data => {
-                    //console.log(data)
+                    ////console.log(data)
                     var obs_linda_id = data['_id']
 
 
@@ -1223,27 +1357,27 @@ export class UserTreeComponent implements OnInit {
                             //get all biological materials
                             for (var i = 0; i < observation_unit_childs_data.length; i++) {
                                 var child_id: string = observation_unit_childs_data[i]['e']['_to']
-                                //console.log(observation_unit_childs_data[i])
+                                ////console.log(observation_unit_childs_data[i])
 
                                 if (child_id.includes("biological_materials")) {
-                                    //console.log(child_id)
-                                    //console.log(observation_unit_childs_data[i]['e']['biological_materials'])
+                                    ////console.log(child_id)
+                                    ////console.log(observation_unit_childs_data[i]['e']['biological_materials'])
                                     var tmp_bm: [] = observation_unit_childs_data[i]['e']['biological_materials']
                                     this.biological_materials = this.biological_materials.concat(tmp_bm)
 
                                 }
                                 else if (child_id.includes("experimental_factors")) {
-                                    //console.log(child_id)
-                                    //console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
+                                    ////console.log(child_id)
+                                    ////console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
                                     var tmp_ef: [] = observation_unit_childs_data[i]['e']['experimental_factors']
                                     this.experimental_factors = this.experimental_factors.concat(tmp_ef)
                                 }
                                 //type sample childs
                                 else {
-                                    //console.log(child_id)
+                                    ////console.log(child_id)
 
                                     var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
-                                    //console.log(sample_data)
+                                    ////console.log(sample_data)
                                     var sample_keys = Object.keys(sample_data);
                                     var sample = {}
                                     sample_keys.forEach(key => {
@@ -1274,7 +1408,7 @@ export class UserTreeComponent implements OnInit {
                     //         i--;
                     //     }
                     // }
-                    // //console.log(this.current_data)
+                    // ////console.log(this.current_data)
                     // node["term"].set_current_data(this.current_data_keys)
                     // node["term"].set_model_key(node.id.split("/")[1])
                 }
@@ -1290,9 +1424,9 @@ export class UserTreeComponent implements OnInit {
                 data => {
                     this.current_data_keys = Object.keys(data);
                     this.current_data_array.push(data);
-                    console.log(this.current_data_array)
+                    //console.log(this.current_data_array)
                     for (var i = 0; i < this.current_data_array[0]['Biological material ID'].length; i++) {
-                        console.log(this.current_data_array[0]['Biological material ID'][i][0])
+                        //console.log(this.current_data_array[0]['Biological material ID'][i][0])
                     }
                         
                     node["term"].set_current_data_array(this.current_data_array)
@@ -1303,7 +1437,7 @@ export class UserTreeComponent implements OnInit {
                             i--;
                         }
                     }
-                    //console.log(this.current_data)
+                    ////console.log(this.current_data)
                     node["term"].set_current_data(this.current_data_keys)
                     node["term"].set_model_key(node.id.split("/")[1])
                 }
@@ -1327,7 +1461,7 @@ export class UserTreeComponent implements OnInit {
                             i--;
                         }
                     }
-                    //console.log(this.current_data)
+                    ////console.log(this.current_data)
                     node["term"].set_current_data(this.current_data_keys)
                     node["term"].set_model_key(node.id.split("/")[1])
                 }
@@ -1500,7 +1634,7 @@ export class UserTreeComponent implements OnInit {
             var i;
             var result = null;
             for (i = 0; result == null && i < term.get_children().length; i++) {
-                //console.log(term.children[i])
+                ////console.log(term.children[i])
                 result = this.searchTree(term.get_children()[i], term_id);
             }
             return result;
@@ -1514,7 +1648,7 @@ export class UserTreeComponent implements OnInit {
             t => {
                 if (t.id === term_id) {
                     term = t
-                    //console.log(term_id)
+                    ////console.log(term_id)
                 }
 
             })
@@ -1527,7 +1661,7 @@ export class UserTreeComponent implements OnInit {
     //          t=>{
     //              if (t.id===term_id){
     //                term=t
-    //                //console.log(term_id)
+    //                ////console.log(term_id)
     //              }
     //
     //          })
@@ -1539,7 +1673,7 @@ export class UserTreeComponent implements OnInit {
             t => {
                 if (t.id === term_id) {
                     term = t.get_children()
-                    //console.log(term_id)
+                    ////console.log(term_id)
                 }
 
             })

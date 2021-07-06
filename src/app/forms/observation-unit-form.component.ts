@@ -764,7 +764,7 @@ get_biological_material_list() {
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
       }
       else{
-        
+
       }
     }
     this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
@@ -876,8 +876,8 @@ get_biological_material_list() {
 
             this.model_id = data["id"];
             if  (!this.currentUser.tutoriel_done){
-              if (this.currentUser.tutoriel_step==="15"){
-                  let new_step=16
+              if (this.currentUser.tutoriel_step==="11"){
+                  let new_step=12
                   this.currentUser.tutoriel_step=new_step.toString()
                   localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
               }
