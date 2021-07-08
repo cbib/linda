@@ -2226,6 +2226,19 @@ router.post('/remove', function (req, res) {
                         errors.push(e + " " + childs[i].e_id);
                     }
                 }
+                if (childs[i].v_id.includes("samples")){
+                    if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
+                        var child_coll = childs[i].v_id.split("/")[0];
+                        var child_vkey = childs[i].v_key;
+                        try {
+                            db._query(`REMOVE "${child_vkey}" IN ${child_coll}`);
+                        }
+                        catch (e) {
+                            errors.push(e + " " + childs[i].v_id);
+                        }
+                    }
+
+                }
             }
             else{
                 //Delete child vertice in collection
