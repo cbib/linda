@@ -263,7 +263,7 @@ export class UserTreeComponent implements OnInit {
     }
     onClickTour(replay:boolean=false, level:string="0") {
         
-        console.log(this.currentUser)
+     // console.log(this.currentUser)
         if (!this.currentUser['tutoriel_done']){
             if (this.vertices.length===0){
                 this.currentUser.tutoriel_step="0"
