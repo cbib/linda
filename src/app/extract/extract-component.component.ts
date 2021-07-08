@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent } from '../dialog/form-dialog.component';
 import { first } from 'rxjs/operators';
 import {JoyrideService} from 'ngx-joyride';
+import { keyframes } from '@angular/animations';
 
 /*
  Maybe add data filename to investigation component when adding data files with studies in download_component.ts
@@ -48,7 +49,8 @@ export class ExtractComponentComponent implements OnInit {
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatButtonToggle, { static: false }) toggle: MatButtonToggle;
-
+  material_types: any[] = ["Material ID", "biological Material ID"];
+  material_type=""
   form: FormGroup;
   cleaned_model = []
   model_type_label = ""
@@ -56,6 +58,8 @@ export class ExtractComponentComponent implements OnInit {
   variable_array = []
   headers_form = {}
   global = {}
+  datafile_ids = {}
+  datafile_study_ids = {}
   ObservedVariables: {} = {};
   AllObservedVariables: {} = {};
   displayedColumns: {} = {};
@@ -112,8 +116,11 @@ export class ExtractComponentComponent implements OnInit {
     if (data.length > 0 && data[0] !== null) {
       data[0].forEach(
         data_file => {
+          console.log(data_file)
 
           if (!this.filename_used.includes(data_file.filename)) {
+            this.datafile_ids[data_file.filename] = data_file.eto
+            this.datafile_study_ids[data_file.filename] = data_file.efrom
             this.filename_used.push(data_file.filename)
             this.global[data_file.filename] = []
             this.displayedColumns[data_file.filename] = []
@@ -133,14 +140,27 @@ export class ExtractComponentComponent implements OnInit {
           my_dict['datafile ID'] = data_file.eto;
           this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], this.model_type+'s').toPromise().then(
           observed_variable_data => {
-            //console.log(observed_variable_data)
-            
+            console.log(observed_variable_data)
             observed_variable_data.forEach(observed_variable => {
+              console.log(observed_variable)
               var found=false
               this.AllObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
               this.ObservedVariables[data_file.filename].forEach(variable => {
-                if (variable['observed_variable']["Variable name"]===observed_variable["Variable name"]){
-                  found=true
+                console.log(variable)
+                if (this.model_type==='observed_variable'){
+                  if (variable['observed_variable']["Variable name"]===observed_variable["Variable name"]){
+                    found=true
+                  }
+                }
+                if (this.model_type==='experimental_factor'){
+                  if (variable['observed_variable']['Experimental Factor type']===observed_variable['Experimental Factor type']){
+                    found=true
+                  }
+                }
+                if (this.model_type==='biological_material'){
+                  if (variable['observed_variable']['_id']===observed_variable['_id']){
+                    found=true
+                  }
                 }
               });
               if (!found) {
@@ -149,7 +169,7 @@ export class ExtractComponentComponent implements OnInit {
               
              
             });
-            //console.log(this.ObservedVariables)
+            console.log(this.ObservedVariables)
       
             data_file.associated_headers.forEach(element => {
               if (element['associated_component'] === this.model_type) {
@@ -193,6 +213,9 @@ export class ExtractComponentComponent implements OnInit {
   get_model_type() {
     return this.model_type
   }
+  onTypeChange(values: string) {
+    this.material_type = values
+}
   cancel(){
     
     if (!this.currentUser.tutoriel_done){
@@ -312,20 +335,20 @@ export class ExtractComponentComponent implements OnInit {
             //console.log("you have confirmed new extraction of " + this.model_type_label + ": " + value)
             //first delete all component associated with this header 
             this.datasources[filename].forEach(element => {
-              this.globalService.remove_childs_by_type_and_id(this.parent_id, this.model_type, element[value]).pipe(first()).toPromise().then(
-                data => { 
-                  console.log(data)
+              // this.globalService.remove_childs_by_type_and_id(this.parent_id, this.model_type, element[value]).pipe(first()).toPromise().then(
+              //   data => { 
+                  console.log(element)
+
                   this.globalService.remove_association(element[value], element['datafile ID']).pipe(first()).toPromise().then(
                     association => { 
+                      console.log(association)
                       element[value]["state"]='unset';
                       element[value]["id"]='';
                       element[value]["already_there"]=false;
 
                     });
                   
-                }
-
-              )
+               // })
               
               
             });
@@ -369,6 +392,7 @@ export class ExtractComponentComponent implements OnInit {
               const formDialogRef = this.dialog.open(FormDialogComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
+                  console.log(result)
                   if (result.event == 'Confirmed') {
                     //console.log("You have described your " + this.model_type_label + " form !")
                     this.headers_form[value] = result["formData"]["form"]
@@ -376,6 +400,91 @@ export class ExtractComponentComponent implements OnInit {
                     // this.global[filename].forEach(element => {
                     //   element[value] = "ready"
                     // });
+                    
+                    if(this.model_type==="biological_material"){
+                      // need  to select which type of id are linked to each observation ?
+                      // is it material id or biological material ? 
+                      if (this.material_type==="Material ID"){
+                        // more complex create as many biological material 
+                        // but either the material is already defined or you have to created the corresponding materila to  receive the bm data
+                       
+                      }
+                      else{
+    
+                        // create as many material source id as unique ID in the column
+                        let groups_label = []
+                        console.log(this.headers_form[value])
+                        console.log("material ids required")
+                        this.globalService.get_data_from_datafiles(this.datafile_ids[filename].split('/')[1], value).toPromise().then(header_data => {
+                          console.log(header_data)
+                          //get unique study names
+                          let unique_component_set = new Set(header_data[0])
+                          console.log(unique_component_set)
+                          var unique_component_set_array = Array.from(unique_component_set);
+                                //foreach study identifier found other than Study unique ID
+                          this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"][0]=unique_component_set_array[0]
+                          for (var i = 1; i < unique_component_set_array.length; i++) {
+                            this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"].push(unique_component_set_array[i])
+                              console.log(this.headers_form[value]);   
+                          }
+                          Object.keys(this.headers_form[value]).forEach(key => {
+                            console.log(key);  
+                            if (key.includes("Biological") && key!=="Biological material ID"){
+                              for (var i = 1; i < unique_component_set_array.length; i++) {
+                                this.headers_form[value][key].push([""])
+                              }
+                            }
+                            if (key=="Biological material ID"){
+                              this.headers_form[value][key][0]=[unique_component_set_array[0]+'_1']
+                              for (var i = 1; i < unique_component_set_array.length; i++) {
+                                this.headers_form[value][key].push([unique_component_set_array[i]+'_1'])
+                              }
+                            }
+                            if (key=="Infraspecific name"){
+                              this.headers_form[value][key][0]=unique_component_set_array[0]
+                              for (var i = 1; i < unique_component_set_array.length; i++) {
+                                this.headers_form[value][key].push(unique_component_set_array[i])
+                              }
+                            }
+                            if (key.includes("Material") && key!=="Material source ID (Holding institute/stock centre, accession)"){
+                              for (var i = 1; i < unique_component_set_array.length; i++) {
+                                this.headers_form[value][key].push("")
+                              }
+                            }
+                          });
+                          console.log(this.headers_form[value]);  
+                          //submit the form
+                          //get study id
+                          // this.globalService.add(this.headers_form[value], this.model_type, this.datafile_study_ids[filename], false).pipe(first()).toPromise().then(
+                          //   data => {
+                          //     if (data["success"]) {
+                          //       //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                          //       var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                          //       this.alertService.success(message)
+                          //       return true;
+                          //     }
+                          //     else {
+                          //       this.alertService.error("this form contains errors! " + data["message"]);
+                          //       return false;
+                          //     }
+                          //   }
+                          // );
+
+
+
+                        });
+                        //search for column declared as study column
+                        // for (var i = 0; i < this.displayedColumns[filename].length; i++) {
+                        //     if (this.displayedColumns[filename][i] == this.data_to_extract['study']) {
+                        //         for (var j = 0; j < this.lines_arr.length; j++) {
+                        //             groups_label.push(this.lines_arr[j][i])
+                        //         }
+                        //     }
+                        // }
+                      }
+
+                    }
+
                     this.datasources[filename].forEach(
                       element => {
                         element[value]["state"] = "ready"

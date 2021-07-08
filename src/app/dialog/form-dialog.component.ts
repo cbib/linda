@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {GlobalService } from '../services';
 import { FormComponent } from '../forms/form.component';
-import { CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_FACTORY } from '@angular/cdk/overlay/typings/overlay-directives';
+
 
 
 
@@ -23,6 +23,7 @@ export class FormDialogComponent implements OnInit {
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<FormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
       this.model_type=this.data.model_type
+      
       this.mode="preprocess"
    }
 

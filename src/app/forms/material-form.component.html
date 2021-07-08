@@ -168,11 +168,13 @@
       </ng-template>
       <br>
       <div 
+      *ngIf="mode!=='preprocess'"
       joyrideStep="Step1_2"
       title=""
       [stepContent]="biologicalMaterialSourceContent"
       [stepPosition]="center"
       [stepContentParams]="{'model_n':model_type}">
+      <!-- <h3>Material information</h3> -->
       <mat-card>
         <mat-card-header>
             <mat-card-title>Material Source description</mat-card-title>
@@ -282,8 +284,8 @@
           </table>
         </mat-card-content>
       </mat-card>
-    </div >
-    <ng-template #biologicalMaterialSourceContent let-nod="model_n">
+      </div >
+      <ng-template #biologicalMaterialSourceContent let-nod="model_n">
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
@@ -309,9 +311,10 @@
         <li> Material source ID : INRA:B73</li>
       </ul>
       </ul> -->
-    </ng-template>
+      </ng-template>
       <br>
       <div 
+      *ngIf="mode!=='preprocess'"
       joyrideStep="Step1_3"
       title=""
       [stepContent]="biologicalMaterialContent"
@@ -436,7 +439,6 @@
           </mat-card-content>
         </mat-card>
       </div >
-
       <ng-template #biologicalMaterialContent let-nod="model_n">
       <div>
         <nav class="navbar navbar-expand-sm navbar-dark">

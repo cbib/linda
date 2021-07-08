@@ -11,8 +11,39 @@
 <div>
     Select by clicking which studies to explore then select group to compare and group by exp factor
 </div>
+<mat-card  *ngIf="filename_used.length > 0">
+
+    <h2>Select your data file </h2>
+  <select [ngModel]="selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
+      <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+  </select> 
+  <br>
+</mat-card>
+<mat-card *ngIf="filename_used.length === 0" >
+  <h2>Select your data file </h2>
+  <mat-card style="background-color: blanchedalmond;">
+    <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+  </mat-card>
+</mat-card> 
+
+<mat-card  *ngIf="filename_used.length > 0 && ObservedVariables[selected_file].length > 0">
+
+    <h2>Select your observed trait </h2>
+  <select [ngModel]="selected_observed_variable"  name="selected_ov" size="1" (change)="onVariableChange($event.target.value)" >
+      <option *ngFor="let ov of ObservedVariables[selected_file]" [value]="ov['observed_variable']['Trait']">{{ov['observed_variable']['Trait']}}</option>
+  </select> 
+  <br>
+</mat-card>
+<mat-card *ngIf="filename_used.length > 0 && ObservedVariables[selected_file].length === 0" >
+  <h2>Select your observed trait</h2>
+  <mat-card style="background-color: blanchedalmond;">
+    <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b> action from the investigation node !!! </p>
+  </mat-card>
+</mat-card> 
+
+
 <br>
-<section>
+<section *ngIf="filename_used.length > 0 && selected_observed_variable!==''">
     <!--The content below is only a placeholder and can be replaced.-->
     <div style="text-align:center">
         <!-- <h1 class="card-header bg-info">

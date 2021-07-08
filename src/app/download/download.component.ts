@@ -78,6 +78,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
         'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
     };
 
+    observation_unit_types: any[] = ["block", "sub-block","plot","plant","trial","pot","replicate","individual","virtual_trial","unit-parcel"];
+    observation_unit_type=""
     //Chart part
     view: any[] = [1500, 300];
     // options
@@ -179,6 +181,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     
     ngOnInit() {
+        this.observation_unit_type="select observation unit type"
         this.selected_file = ""
         if (this.mode.includes('edit')) {
             this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
@@ -206,7 +209,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
         }
         if (this.mode === 'extract-form'){ 
             this.cleaned_component_model = this.get_model(this.model_type);
-            console.log(this.cleaned_component_model)
             this.get_data()
         }
         //console.log(this.options_fields_by_component_by_filename)
@@ -223,7 +225,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         if (index=="load_csv"){
             console.log("step2")
             this.fileName="my_data.csv"
-            var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed, 23, B73\nMaizeStudy1,plot2,rainfed, 22, PH207\nMaizeStudy1,plot3,rainfed, 24, Oh43\nMaizeStudy1,plot4,rainfed, 21.8, W64A\nMaizeStudy1,plot5,rainfed, 23.4, EZ47\nMaizeStudy1,plot6,watered, 48.3, B73\nMaizeStudy1,plot7,watered, 49.5, PH207\nMaizeStudy1,plot8,watered, 52, Oh43\nMaizeStudy1,plot9,watered, 48, W64A\nMaizeStudy1,plot10,watered, 45, EZ47"
+            var csv_text="Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed,23,B73\nMaizeStudy1,plot2,rainfed,22,PH207\nMaizeStudy1,plot3,rainfed,24,Oh43\nMaizeStudy1,plot4,rainfed,21.8,W64A\nMaizeStudy1,plot5,rainfed,23.4,EZ47\nMaizeStudy1,plot6,watered,48.3,B73\nMaizeStudy1,plot7,watered,49.5,PH207\nMaizeStudy1,plot8,watered,52,Oh43\nMaizeStudy1,plot9,watered,48,W64A\nMaizeStudy1,plot10,watered,45,EZ47"
             this.load_csv(csv_text, 100, 100, ",")
         }
         if (index==0){
@@ -293,9 +295,16 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.extract_fields_options['options']=[] 
             this.cleaned_component_model.forEach(
                 component_model => {
-                    this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: component_model.key, value: "" })
+                    if (component_model.key!=="Observation unit type"){
+                        this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: component_model.key, value: "" })
+                    }
                 }
             );
+            if (this.model_type==="observation_unit" && this.mode==="extract-form"){
+                this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: "associated_material_id", value: "" })
+                this.extract_fields_options['options'].push({header: "", associated_linda_id: "", name: "associated_biological_material_id", value: "" })
+            }
+
             console.log(this.data_files)
             if (this.data_files.length === 2) {
                 this.data_files[0].forEach(data_file => {
@@ -486,6 +495,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
         });
     }
+    onTypeChange(values: string) {
+        this.observation_unit_type = values
+    }
     formatTime(val) {
         return val
     }
@@ -553,7 +565,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     onExtractField(values: string, key: string, filename: string){
         console.log(values)
-
     }
     onExtractStudy(values: string, key: string) {
         if (values === "time") {
@@ -941,6 +952,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
         if (this.mode === 'create'){
             this.router.navigate(['/tree']) 
         }
+        else if (this.mode === "extract-form"){
+            //this.router.navigate(['/tree']) 
+        }
         else{
             if (!this.currentUser.tutoriel_done){
                 if (this.currentUser.tutoriel_step==="13"){
@@ -1179,6 +1193,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 else {
                     this.alertService.error("you need to select a file")
                 }
+            }
+            ///observations unit mode
+            else if (this.mode === 'extract-form'){
+                console.log("extract observation units")
+
             }
             //mode extract-again
             else {

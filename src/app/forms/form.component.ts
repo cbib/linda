@@ -76,12 +76,12 @@ export class FormComponent implements OnInit//, AfterViewInit
         if (this.model_key != "") {
             this.get_model_by_key();
         }
-        //this.get_model();
     }
 
     ngOnInit() {
         ///const id = this.activatedRoute.snapshot.params.id;
 
+        console.log(this.mode)
         this.get_max_level();
         this.get_model();
          
@@ -91,34 +91,32 @@ export class FormComponent implements OnInit//, AfterViewInit
         this.onClickTour()
 
     };
-
-
     onClickTour(help_mode:boolean=false) {
         if(help_mode){
             this.help_mode=true
             if (this.model_type==='investigation'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
             if (this.model_type==='study'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField','StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
             if (this.model_type==='experimental_factor'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField','StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
             if (this.model_type==='observed_variable'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepMandatoryID', 'StepNormalField','StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
             if (this.model_type==='event'){
                 this.joyrideService.startTour(
-                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField'], stepDefaultPosition: 'center'} // Your steps order
+                    { steps: ['StepMenuForm', 'StepContentForm', 'StepOntologyField', 'StepNormalField','StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
                 );
             }
 
@@ -156,28 +154,8 @@ export class FormComponent implements OnInit//, AfterViewInit
 
             }
         }
-        // console.log('start tour part 2')
-        // if (this.model_type==="experimental_factor"){
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
-        // else{
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
+
     }
-    private formatDate(date) {
-        const d = new Date(date);
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
-        const year = d.getFullYear();
-        console.log(year + '/' + month + '/' + day)
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-        return [year, month, day].join('-');
-      }
     on_Next(node_type:string) {
         console.log(this.currentUser['tutoriel_step'])
         console.log(this.modelForm.value)
@@ -250,38 +228,6 @@ export class FormComponent implements OnInit//, AfterViewInit
     // <li> <p> Type of growth facility: CO_715:0000162</p></li>
     // <li> <p> Observation unit level hierarchy : block &gt; rep &gt; plot</p></li>
     }
-    
-
-    // addSellingPoint() {
-    //     this.sellingPoints.push(this.fb.group({point:''}));
-    //   }
-
-    // get modelForm() {
-    //     return this.modelForm.get('selling_points') as FormArray;
-    //   }
-
-    initiateForm(): FormGroup {
-        let attributeFilters = {};
-        this.cleaned_model.forEach(attr => {
-            this.validated_term[attr["key"]] = { selected: false, values: "" }
-            if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-                if (attr["key"].includes("ID")) {
-                    //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
-                }
-                else if (attr["key"].includes("Short title")) {
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
-                }
-                else {
-                    attributeFilters[attr["key"]] = [''];
-                }
-            }
-            /*  this.onClickTour()*/
-        });
-        return this.formBuilder.group(attributeFilters);
-    }
-
     get_message_guided_tour(){
         if (this.model_type==="study"){
             if (this.level<2){
@@ -299,6 +245,36 @@ export class FormComponent implements OnInit//, AfterViewInit
         }        
     }
 
+    private formatDate(date) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+        console.log(year + '/' + month + '/' + day)
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        return [year, month, day].join('-');
+    }
+    initiateForm(): FormGroup {
+        let attributeFilters = {};
+        this.cleaned_model.forEach(attr => {
+            this.validated_term[attr["key"]] = { selected: false, values: "" }
+            if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
+                if (attr["key"].includes("ID")) {
+                    //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
+                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                }
+                else if (attr["key"].includes("Short title")) {
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
+                }
+                else {
+                    attributeFilters[attr["key"]] = [''];
+                }
+            }
+        });
+        return this.formBuilder.group(attributeFilters);
+    }
     get_model() {
         this.modelForm = new FormGroup({});
         this.model = [];
@@ -327,10 +303,11 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
             //console.log(this.cleaned_model)
 
-            if (this.mode === "create") {
+            if (this.mode === "create" ) {
                 console.log(this.model_type)
                 this.modelForm = this.initiateForm()
                 console.log(this.modelForm.value)
+                // patcch value for mater
             }
             else {
                 let attributeFilters = [];
@@ -360,10 +337,10 @@ export class FormComponent implements OnInit//, AfterViewInit
 
                 for (let i = 0; i < this.disabled_id_keys.length; i++) {
                     let attr = this.disabled_id_keys[i]
-                    console.log(this.disabled_id_keys[i])
-                    console.log(this.modelForm.value)
-                    console.log(this.modelForm.get(this.disabled_id_keys[i]))
-                    console.log(this.modelForm.value[this.disabled_id_keys[i]])
+                    // console.log(this.disabled_id_keys[i])
+                    // console.log(this.modelForm.value)
+                    // console.log(this.modelForm.get(this.disabled_id_keys[i]))
+                    // console.log(this.modelForm.value[this.disabled_id_keys[i]])
                     if (this.disabled_id_keys[i].includes("ID")){
                         this.modelForm.get(this.disabled_id_keys[i]).disable();
                     }
@@ -374,10 +351,10 @@ export class FormComponent implements OnInit//, AfterViewInit
                     }            
     
                 }
+                console.log(this.modelForm.value)
             }
         });
     };
-
     formatLatitudeLabel(value: number) {
         //north hemisphera
         if (value > 0) {
@@ -417,7 +394,6 @@ export class FormComponent implements OnInit//, AfterViewInit
             return value;
         }
     }
-
     onOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
         //this.show_spinner = true;
         const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
@@ -527,7 +503,6 @@ export class FormComponent implements OnInit//, AfterViewInit
             }
         });
     }
-
     get_model_by_key() {
         this.model_to_edit = [];
         this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
@@ -555,13 +530,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.startfilling = true;
             }
         });
-        console.log(this.startfilling)
-        console.log(this.modelForm.value)
+        // console.log(this.startfilling)
+        // console.log(this.modelForm.value)
     }
 
     get_max_level() {
-        this.globalService.get_max_level(this.model_type).toPromise().then(data => {
-            this.max_level = data;
+        this.globalService.get_max_level(this.model_type).toPromise().then(max_level_data => {
+            console.log(max_level_data)
+            this.max_level = max_level_data;
             for (var i = 1; i < this.max_level + 1; i++) {
                 this.levels.push(i)
 
@@ -717,6 +693,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     };
 
     cancel(form: any) {
+        console.log(this.mode)
         if (this.mode==="preprocess"){
             this.notify.emit('cancel the form');
         }
@@ -777,6 +754,9 @@ export class FormComponent implements OnInit//, AfterViewInit
     back(modelForm, level) {
         if (this.mode==="preprocess"){
             this.level-=1
+            if (this.model_type==="biological_material"){
+                this.level=1
+            }
         }
         else{
             this.router.navigate(['/generic'], { queryParams: { level: parseInt(level) - 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
@@ -814,8 +794,13 @@ export class FormComponent implements OnInit//, AfterViewInit
         // Do something
     }
     goToNext(form: any, level) {
+        console.log(level)
+        console.log(this.mode)
         if (this.mode==="preprocess"){
             this.level+=1
+            if (this.model_type==="biological_material"){
+                this.level=1
+            }
         }
         else{
             ///console.log(typeof(this.level))

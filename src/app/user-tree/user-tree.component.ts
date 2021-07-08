@@ -226,13 +226,18 @@ export class UserTreeComponent implements OnInit {
                 }
                 else{
                     this.globalService.update_user(false, this.currentUser['_key'], 'tutoriel_done', 'user').toPromise().then(
-                        data => {
-                            console.log(data['user'])
-                            localStorage.setItem('currentUser', JSON.stringify(data['user']));
-                            let new_step=0
-                            this.currentUser.tutoriel_step=new_step.toString()
-                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                            this.reloadComponent(['/tree'])
+                        user_data => {
+                            this.globalService.update_step("0", this.currentUser['_key'], 'tutoriel_step', 'user').toPromise().then(
+                                data => {
+                                    console.log(data['user'])
+                                    localStorage.setItem('currentUser', JSON.stringify(data['user']));
+                                    //let new_step=0
+                                    //this.currentUser.tutoriel_step=new_step.toString()
+                                    //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                    this.reloadComponent(['/tree'])
+                                    this.onDone(true)
+                                }
+                            );
                     });
 
                 }

@@ -1560,8 +1560,7 @@
         <mat-menu #userMenusecond="matMenu">
             <button mat-menu-item (click)="add('investigation','original')">From original model template</button>
             <button mat-menu-item (click)="add('investigation','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label> </button>
+            <!-- <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label> </button> -->
         </mat-menu>
         <mat-menu #multipleMenu="matMenu">
             <button mat-menu-item (click)="activate_multiple_selection(false)">Deactivate</button>
@@ -1586,8 +1585,7 @@
         <mat-menu #investigationMenusecond="matMenu">
             <button mat-menu-item (click)="add('study','original')">From original model template</button>
             <button mat-menu-item (click)="add('study','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('study','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('study','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #investigationMenusecond_multi="matMenu">
             <button mat-menu-item (click)="add_from_file('study','multi')">From tabular files</button>
@@ -1596,7 +1594,9 @@
             <button mat-menu-item (click)="add_from_data_file('observed_variable')">From data files</button>
         </mat-menu>
         <mat-menu #investigationMenusecond_multi_OU="matMenu">
-            <button mat-menu-item (click)="add_form_from_file('observation_unit', 'multi')">From data files</button>
+            <!-- <button mat-menu-item (click)="add_form_from_file('observation_unit', 'multi')">From data files</button> -->
+            <button mat-menu-item (click)="add_from_data_file('observation_unit')">From data files</button>
+
         </mat-menu>
         <mat-menu #investigationMenusecond_multi_BM="matMenu">
             <button mat-menu-item (click)="add_from_data_file('biological_material')">From data files</button>
@@ -1626,40 +1626,32 @@
         <mat-menu #experimental_factorMenu="matMenu">
             <button mat-menu-item (click)="add('experimental_factor','original')">From original model template</button>
             <button mat-menu-item (click)="add('experimental_factor','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('experimental_factor','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #biological_materialMenu="matMenu">
             <button mat-menu-item (click)="add('biological_material','original')">From original model template</button>
             <button mat-menu-item (click)="add('biological_material','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('biological_material','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #data_fileMenu="matMenu">
             <button mat-menu-item (click)="add('data_file','original')">Add</button>
-            <button mat-menu-item (click)="add('data_file','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('data_file','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
             <!--<button mat-menu-item (click)="add('data_file',true)">From templates</button>-->
         </mat-menu>
         <mat-menu #observed_variableMenu="matMenu">
             <button mat-menu-item (click)="add('observed_variable','original')">From original model template</button>
             <button mat-menu-item (click)="add('observed_variable','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('observed_variable','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label>
-            </button>
+            <!-- <button mat-menu-item (click)="add('observed_variable','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #eventMenu="matMenu">
             <button mat-menu-item (click)="add('event','original')">From original model template</button>
             <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #environmentMenu="matMenu">
             <button mat-menu-item (click)="add('environment','original')">From original model template</button>
             <button mat-menu-item (click)="add('environment','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('environment','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label>
-            </button>
+            <!-- <button mat-menu-item (click)="add('environment','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
         <mat-menu #OUMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="eventMenu2">Event</button>
@@ -1668,8 +1660,7 @@
         <mat-menu #eventMenu2="matMenu">
             <button mat-menu-item (click)="add('event','original')">From original model template</button>
             <button mat-menu-item (click)="add('event','saved')">From saved templates</button>
-            <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file"
-                        style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button>
+            <!-- <button mat-menu-item (click)="add('event','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label></button> -->
         </mat-menu>
     </div>
     <ng-template style="width: 400px;" #nextSteps let-tutl="tuto_l">
@@ -1834,6 +1825,7 @@
             
             <mat-card>
                 <h5>Data exploration</h5>
+                <p>Once you have linked all columns in your data files except study column (observation unit, experimental factor and biological material columns), you can explore your data files</p>
                 <p>Click on <button class="btn btn-success btn-xs fa fa-bar-chart"></button> to open exploration mode
                     for investigation "maizes1" exploration !! </p>
             </mat-card>

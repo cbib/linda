@@ -1002,6 +1002,29 @@ router.get('/get_all_data_files/:investigation_key/', function (req, res) {
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
+
+router.get('/get_data_from_datafiles/:datafile_key/:header/', function (req, res) {
+
+    try {
+        var datafile_id = 'data_files/'+ req.pathParams.datafile_key;
+
+        var header = req.pathParams.header;
+        var get_data = db._query(aql`LET document = DOCUMENT(${datafile_id}) LET alteredList = (FOR element IN document.Data LET newItem = (element.${header}) RETURN newItem) RETURN alteredList`).toArray();
+        res.send(get_data);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+}).pathParam('datafile_key', joi.string().required(), 'datafile id requested.')
+.pathParam('header', joi.string().required(), 'header label requested.')
+.response(joi.array().items(joi.string().required()).required(), 'Entry stored in the collection.')
+.summary('Retrieve an entry')
+.description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+    
 router.get('/get_data_from_child_model/:parent_name/:parent_key/:child_type/', function (req, res) {
     try {
         var parent_name = req.pathParams.parent_name;
@@ -1645,6 +1668,63 @@ router.post('/update_field', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
+router.post('/update_step', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _key = req.body._key;
+        var field = req.body.field;
+        var value = req.body.value;
+        var model_type = req.body.model_type;
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+        `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            /////////////////////////////
+            //now check if investigation exists else modify field
+            /////////////////////////////
+            var update = [];
+            var _id = '';
+            if (model_type === 'user') {
+                _id = 'users/' + _key;
+                update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
+            }
+            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+            //Document has been updated
+            if (update[0][field] === value) {
+                res.send({ success: true, message: 'document has been updated ', user: update[0] });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated' , user: user });
+            }
+        };
+}).body(joi.object({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    _key: joi.string().required(),
+    field: joi.string().required(),
+    value: joi.string().required(),
+    model_type: joi.string().required()
+}).required(), 'Values to check.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required(),
+        user:joi.object().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('check if user exist and update specific field in MIAPPE model.');
+    
+
+
 router.post('/update_user', function (req, res) {
         var username = req.body.username;
         var password = req.body.password;
@@ -1824,7 +1904,7 @@ router.post('/remove_association', function (req, res) {
                         LET alteredList = (
                                 FOR element IN document.associated_headers
                                     LET newItem = (
-                                        element.associated_linda_id == ${id} ? MERGE(element, { associated_linda_id: "" }) : element
+                                        element.associated_linda_id == ${id['id']} ? MERGE(element, { associated_linda_id: "" }) : element
                                     )
                                     RETURN newItem
                             )

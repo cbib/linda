@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators,ValidatorFn, AbstractControl } from '@angular/forms';
 import { GlobalService, AlertService, OntologiesService } from '../services';
 import { first } from 'rxjs/operators';
@@ -21,6 +21,7 @@ export class MaterialFormComponent implements OnInit {
   @Input() model_key: string;
   @Input() model_type: string;
   @Input() mode: string;
+  @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
 
   materialTable: FormGroup;
   materialControl: FormArray;
@@ -93,7 +94,7 @@ export class MaterialFormComponent implements OnInit {
     });
     //this.get_model()
     await this.get_model()
-    // //console.log(this.cleaned_model)
+    console.log(this.mode)
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     this.onClickTour()
    ; 
@@ -110,7 +111,7 @@ export class MaterialFormComponent implements OnInit {
   onClickTour(help_mode:boolean=false) {
     if (help_mode){
       this.joyrideService.startTour(
-        { steps: ['Step1_1', 'Step1_2', 'Step1_3'], stepDefaultPosition: 'center'} // Your steps order
+        { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
     );
     }
     else{
@@ -142,7 +143,7 @@ export class MaterialFormComponent implements OnInit {
     //this.joyrideService.closeTour()
     
     //Biological  form template
-    if (this.currentUser['tutoriel_step']==="9"){
+    //if (this.currentUser['tutoriel_step']==="9"){
       var species_list=["B73", "PH207", "Oh43", "W64A", "EZ47"]
       const generalRows = this.materialTable.get('generalRows') as FormArray;
       generalRows.controls[0].patchValue({ "Genus": "Zea" })
@@ -176,7 +177,7 @@ export class MaterialFormComponent implements OnInit {
         }
         cpt+=1
       })
-    }  
+    //}  
     this.startfilling=true
   }
   get_model() {
@@ -241,7 +242,7 @@ export class MaterialFormComponent implements OnInit {
       const materialControl = this.materialTable.get('materialRows') as FormArray;
       const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
       generalControl.push(this.initiateGeneralForm());
-      if (this.mode!=="create"){
+      if (this.mode!=="create" && this.mode!=="preprocess"){
         for (var i = 0; i < this.model_to_edit["Material source ID (Holding institute/stock centre, accession)"].length; i++) {
           materialControl.push(this.initiateMaterialForm("",i));
           for (var j = 0; j < this.model_to_edit["Biological material ID"][i].length; j++) {
@@ -683,12 +684,17 @@ export class MaterialFormComponent implements OnInit {
     this.marked = e.target.checked;
   };
   cancel(form: any) {
-    if  (!this.currentUser.tutoriel_done){
-        let new_step=8
-        this.currentUser.tutoriel_step=new_step.toString()
-        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    if (this.mode==="preprocess"){
+      this.notify.emit('cancel the form');
     }
-    this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+    else{
+      if  (!this.currentUser.tutoriel_done){
+          let new_step=8
+          this.currentUser.tutoriel_step=new_step.toString()
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+      this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+    }
 
   };
 
@@ -697,6 +703,10 @@ export class MaterialFormComponent implements OnInit {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     const generalControl = this.materialTable.get('generalRows') as FormArray;
 
+    if (this.mode==='preprocess'){
+      materialControl.push(this.initiateMaterialForm());
+      biologicalMaterialControl.push(this.initiateBiologicalMaterialForm());
+    }
 
     this.materialTouchedRows = materialControl.controls.filter(row => row.touched).map(row => row.value);
     this.biologicalMaterialTouchedRows = biologicalMaterialControl.controls.filter(row => row.touched).map(row => row.value);
@@ -827,7 +837,17 @@ export class MaterialFormComponent implements OnInit {
     //   }
 
     // });
-    this.save(return_data)
+    if (this.mode==="preprocess"){
+      console.log("start to subbmit")
+      
+      var data={'form':return_data, 'template':this.marked}
+      this.notify.emit(data);
+      
+    }
+    else{
+      this.save(return_data)
+    }
+    
     //console.log(return_data)
   }
 

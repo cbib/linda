@@ -7,6 +7,7 @@ import { splitAtColon } from '@angular/compiler/src/util';
 export interface TemplateElement {
   id: string;
   model: number;
+  template:{}
 }
 
 @Component({
@@ -35,7 +36,7 @@ export class TemplatesComponent implements OnInit {
             let model=element['_id'].split('/')[0].slice(0, (element['_id'].split('/')[0].length-10)).replace("_", " ")
             //let model=element['_id'].split('/')[0].slice(0-10)
             console.log(model)
-            ELEMENT_DATA.push({'id':element['_id'], 'model': model })
+            ELEMENT_DATA.push({'id':element['_id'], 'model': model, 'template': element })
           });
           this.dataSource = ELEMENT_DATA;
 

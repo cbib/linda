@@ -22,6 +22,16 @@
       <th mat-header-cell *matHeaderCellDef> Model </th>
       <td mat-cell *matCellDef="let element"> {{element.model}} </td>
     </ng-container>
+
+    <!-- View Column -->
+    <ng-container matColumnDef="template">
+      <th mat-header-cell *matHeaderCellDef>
+         Visualize 
+        </th>
+      <td mat-cell *matCellDef="let row"> 
+        <button>Have a look</button> 
+      </td>
+    </ng-container>
   
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

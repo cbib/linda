@@ -104,6 +104,10 @@ export class GlobalService {
         return this.http.get(this.APIUrl + "get_data_filename/" + parent_key + "/" + model_type).pipe(map(this.extractData));
     }
 
+    get_data_from_datafiles(datafile_key:string, header:string){
+        return this.http.get(this.APIUrl + "get_data_from_datafiles/" + datafile_key + "/" + header).pipe(map(this.extractData));
+    }
+
 
     is_exist(field: string, value: string, model_type: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -179,6 +183,20 @@ export class GlobalService {
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
+    }
+    update_step(value: string, key: string, field: string, model_type: string) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_key': key,
+            'field': field,
+            'value': value,
+            'model_type': model_type
+
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "update_step"}`, obj2send);
     }
 
     update(key: string, values: {}, model_type: string) {
