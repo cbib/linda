@@ -42,6 +42,7 @@ export class ExplorationComponent implements OnInit {
   showYAxisLabel = true;
   yAxisLabel = 'Plant Height';
   timeline = true;
+  private factor_value_array=[]
   private associated_headers_by_filename = {}
   private headers_by_filename = {}
   colorScheme = {
@@ -65,6 +66,7 @@ export class ExplorationComponent implements OnInit {
       }
       
     );
+    this.factor_value_array=[]
 
   }
   onFilenameChange(values: string) {
@@ -85,7 +87,7 @@ export class ExplorationComponent implements OnInit {
     console.log(observation_unit['Observation Unit factor value'])
     
     var factor_value=new Set(observation_unit['Observation Unit factor value'])
-    var factor_value_array = Array.from(factor_value);
+    this.factor_value_array = Array.from(factor_value);
     console.log(factor_value)
     
     var biological_material= this.BiologicalMaterials[this.selected_file][0]['biological_material']
