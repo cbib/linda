@@ -94,7 +94,7 @@ export class OntologyTreeComponent {
         if (this.data.observed){
             this.observed=this.data.observed;
         }
-        console.log("multiple choice is activated: ", this.multiple)
+        //console.log("multiple choice is activated: ", this.multiple)
         this.ontology_tree = [];
         this.ontologyTerms = [];
         this.ontologyContext = [];
@@ -125,19 +125,19 @@ export class OntologyTreeComponent {
     private checklistSelection = new SelectionModel<ExampleFlatNode>(this.data.multiple, this.initialSelection /* multiple */);
 
     get_ontology() {
-        console.log(this.ontology_id)
+        //console.log(this.ontology_id)
         return this.ontologiesService.get_ontology(this.ontology_id).toPromise().then(data => {
             this.ontology = data;
             this.ontologyNode = []
             this.search_string = ""
             var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "CO_322 (Maize)", "CO_325", "CO_331", "Solanacae"]
-            console.log(this.ontology_id)
-            console.log(this.ontology)
+            //console.log(this.ontology_id)
+            //console.log(this.ontology)
             if (this.ontology_id === "XEO") {
                 this.ontologyNode = this.build_xeo_isa_hierarchy(this.ontology);
             }
             else if ((this.ontology_id === "CO_322 (Maize)") || (this.ontology_id === "CO_325")|| (this.ontology_id === "CO_331")) {
-                console.log(this.ontology)
+                //console.log(this.ontology)
                 this.ontologyNode = this.build_C0_hierarchy2(this.ontology);
 
             }
@@ -148,9 +148,9 @@ export class OntologyTreeComponent {
             }
 
             else {
-                console.log("no ontology defined")
+                //console.log("no ontology defined")
             }
-            console.log("after build hierarchy function")
+            //console.log("after build hierarchy function")
             //this.show_spinner = false
             this.dataSource.data = this.ontologyNode;
 
@@ -182,9 +182,9 @@ export class OntologyTreeComponent {
         // }
 
         // else {
-        //     console.log("no ontology defined")
+        //     //console.log("no ontology defined")
         // }
-        // console.log("after build hierarchy function")
+        // //console.log("after build hierarchy function")
         // //this.show_spinner = false
         // this.dataSource.data = this.ontologyNode;
     }
@@ -225,13 +225,13 @@ export class OntologyTreeComponent {
         this.dialogRef.close();
     }
     onOkClick() {
-        //console.log(this.selected_term)
-        console.log(this.selected_set)
+        ////console.log(this.selected_term)
+        //console.log(this.selected_set)
 
     }
 
     onValueAdd(event, node: OntologyTerm) {
-        console.log(event.target.value)
+        //console.log(event.target.value)
         node["term"].set_value(event.target.value)
     }
     onUnitSelect(value: string, node: OntologyTerm) {
@@ -243,9 +243,9 @@ export class OntologyTreeComponent {
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
     todoLeafItemSelectionToggle(term: OntologyTerm): void {
         this.checklistSelection.toggle(term);
-        console.log(this.checklistSelection)
-        console.log(this.checklistSelection.isSelected(term))
-        console.log(this.data.selected_set)
+        //console.log(this.checklistSelection)
+        //console.log(this.checklistSelection.isSelected(term))
+        //console.log(this.data.selected_set)
         if (this.checklistSelection.isSelected(term)) {
             if (this.multiple) {
                 this.data.selected_set.push(term)
@@ -255,7 +255,7 @@ export class OntologyTreeComponent {
                 this.data.selected_set.push(term)
             }
             this.context_term = term["term"].get_context()
-            console.log(this.context_term)
+            //console.log(this.context_term)
             for (var context in this.context_term) {
                 if (this.context_term[context].name === "Quantity") {
                     term["term"].set_unit(this.context_term[context]["instances"][0]._symbol)
@@ -275,7 +275,7 @@ export class OntologyTreeComponent {
             this.displayed = false;
             //this.context_term=term["term"].get_context()
         }
-        console.log(this.data.selected_set)
+        //console.log(this.data.selected_set)
     }
 
 
@@ -302,14 +302,14 @@ export class OntologyTreeComponent {
     }
 
     get_progress() {
-        console.log(this.ontology_tree_loading_progress_value)
+        //console.log(this.ontology_tree_loading_progress_value)
         return this.ontology_tree_loading_progress_value
     }
     build_eo_isa_hierarchy(ontology: {}): OntologyTerm[] {
 
         var cpt = 0;
         this.show_spinner = true;
-        console.log(this.show_spinner)
+        //console.log(this.show_spinner)
         //this.matSpinner.value= 0
         this.ontology_tree_loading_progress_value = 0
         var ontology_data: Array<{ is_obsolete: boolean; is_a: string; id: string; def: any; comment: any; name: any; relationship: string; }> = ontology["term"]
@@ -332,7 +332,7 @@ export class OntologyTreeComponent {
         //     term=>{
         //this.matSpinner.value= 30
         this.ontology_tree_loading_progress_value = 30
-        console.log(this.ontology_tree_loading_progress_value)
+        //console.log(this.ontology_tree_loading_progress_value)
         for (var i = 0, len = ontology_data.length; i < len; i++) {
             var term = ontology_data[i]
             if (!term.is_obsolete) {
@@ -366,7 +366,7 @@ export class OntologyTreeComponent {
         //)
         var cpt = 0
         this.ontology_tree_loading_progress_value = 60
-        console.log(this.ontology_tree_loading_progress_value)
+        //console.log(this.ontology_tree_loading_progress_value)
         //troisième passage pour créer les relations entre termes 
         for (var i = 0, len = this.ontologyTerms.length; i < len; i++) {
             var ontology_term = this.ontologyTerms[i]
@@ -380,7 +380,7 @@ export class OntologyTreeComponent {
             }
         }
         this.ontology_tree_loading_progress_value = 90
-        console.log(this.ontology_tree_loading_progress_value)
+        //console.log(this.ontology_tree_loading_progress_value)
         var cpt = 0
         var head_term: OntologyTerm[] = []
         this.ontologyTerms.forEach(
@@ -423,10 +423,10 @@ export class OntologyTreeComponent {
                 }
             }
         )
-        console.log("total nodes: ", cpt)
-        console.log(this.ontologyTerms)
+        //console.log("total nodes: ", cpt)
+        //console.log(this.ontologyTerms)
         var cpt = 0;
-        console.log("second loop")
+        //console.log("second loop")
         var start = new Date().getTime()
         for (var i = 0, len = ontology_data.length; i < len; i++) {
             var term = ontology_data[i]
@@ -456,19 +456,19 @@ export class OntologyTreeComponent {
                             this.get_term(term.id).add_relationship_type("part_of")
                         }
                         if (term.relationship.includes("scale_of")) {
-                            // console.log(term.relationship.split("scale_of ")[1])
+                            // //console.log(term.relationship.split("scale_of ")[1])
                             // this.get_term(term.id).set_CO_relationship(term.relationship.split("scale_of ")[1])
                             this.get_term(term.id).add_relationship(term.relationship.split("scale_of ")[1])
                             this.get_term(term.id).add_relationship_type("scale_of")
                         }
                         if (term.relationship.includes("method_of")) {
-                            //console.log(term.relationship.split("method_of ")[1])
+                            ////console.log(term.relationship.split("method_of ")[1])
                             // this.get_term(term.id).set_CO_relationship(term.relationship.split("method_of ")[1])
                             this.get_term(term.id).add_relationship(term.relationship.split("method_of ")[1])
                             this.get_term(term.id).add_relationship_type("method_of")
                         }
                         if (term.relationship.includes("variable_of")) {
-                            // console.log(term.relationship.split("variable_of ")[1])
+                            // //console.log(term.relationship.split("variable_of ")[1])
                             // this.get_term(term.id).set_CO_relationship(term.relationship.split("variable_of ")[1])
                             this.get_term(term.id).add_relationship(term.relationship.split("variable_of ")[1])
                             this.get_term(term.id).add_relationship_type("variable_of")
@@ -480,7 +480,7 @@ export class OntologyTreeComponent {
                         var arr = Array.from(term.relationship)
                         for (var j = 0; j < arr.length; j++) {
                             var relation = arr[j]
-                            //console.log(typeof arr[i])
+                            ////console.log(typeof arr[i])
                             if (typeof relation === 'string') {
                                 if (relation.includes("part_of")) {
                                     // this.get_term(term.id).set_isa(relation.split("part_of ")[1].split(" ! ")[0])
@@ -488,19 +488,19 @@ export class OntologyTreeComponent {
                                     this.get_term(term.id).add_relationship_type("part_of")
                                 }
                                 if (relation.includes("scale_of")) {
-                                    //console.log(relation.split("scale_of ")[1])
+                                    ////console.log(relation.split("scale_of ")[1])
                                     // this.get_term(term.id).set_CO_relationship(relation.split("scale_of ")[1])
                                     this.get_term(term.id).add_relationship(relation.split("scale_of ")[1])
                                     this.get_term(term.id).add_relationship_type("scale_of")
                                 }
                                 if (relation.includes("method_of")) {
-                                    //console.log(relation.split("method_of ")[1])
+                                    ////console.log(relation.split("method_of ")[1])
                                     // this.get_term(term.id).set_CO_relationship(relation.split("method_of ")[1])
                                     this.get_term(term.id).add_relationship(relation.split("method_of ")[1])
                                     this.get_term(term.id).add_relationship_type("method_of")
                                 }
                                 if (relation.includes("variable_of")) {
-                                    //console.log(relation.split("variable_of ")[1])
+                                    ////console.log(relation.split("variable_of ")[1])
                                     // this.get_term(term.id).set_CO_relationship(relation.split("variable_of ")[1])
                                     this.get_term(term.id).add_relationship(relation.split("variable_of ")[1])
                                     this.get_term(term.id).add_relationship_type("variable_of")
@@ -513,8 +513,8 @@ export class OntologyTreeComponent {
                 cpt += 1;
             }
         }
-        console.log(this.ontologyTerms)
-        console.log("third loop")
+        //console.log(this.ontologyTerms)
+        //console.log("third loop")
         var cpt = 0
         this.ontologyTerms.forEach(
             term => {
@@ -597,7 +597,7 @@ export class OntologyTreeComponent {
                                 t_parent_trait=t_parent.id
                             }
                             if (t_parent != null && t_parent.namespace.includes("Method") ) {
-                                //console.log(t_parent.relationships)
+                                ////console.log(t_parent.relationships)
                                 for (var k = 0; k < t_parent.relationships.length; k++) {
                                     if (t_parent.relationships[k]===t_parent_trait){
 
@@ -628,9 +628,9 @@ export class OntologyTreeComponent {
             }
         
         )
-        console.log(this.ontologyTerms)
+        //console.log(this.ontologyTerms)
 
-        console.log("last loop")
+        //console.log("last loop")
         var head_term: OntologyTerm[] = []
         this.ontologyTerms.forEach(
             term => {
@@ -652,7 +652,7 @@ export class OntologyTreeComponent {
             //this.ontologyNode[0].add_children(head_term[t])
         }
 
-        console.log(this.ontologyNode)
+        //console.log(this.ontologyNode)
         this.show_spinner = false;
         return this.ontologyNode;
     }
@@ -672,7 +672,7 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
     //second passage pour créer tous les termes 
     var cpt = 0;
     //var ontology_data:Array<{is_obsolete:boolean;is_a: string; id: string; def: any; comment: any;name: any; relationship: string; }>=ontology["term"]
-    console.log("second loop")
+    //console.log("second loop")
     var start = new Date().getTime()
     for (var i = 0, len = ontology_data.length; i < len; i++) {
         var term = ontology_data[i]
@@ -701,17 +701,17 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
                         this.get_term(term.id).add_relationship(term.relationship.split("part_of ")[1].split(" ! ")[0])
                     }
                     if (term.relationship.includes("scale_of")) {
-                        // console.log(term.relationship.split("scale_of ")[1])
+                        // //console.log(term.relationship.split("scale_of ")[1])
                         // this.get_term(term.id).set_CO_relationship(term.relationship.split("scale_of ")[1])
                         this.get_term(term.id).add_relationship(term.relationship.split("scale_of ")[1])
                     }
                     if (term.relationship.includes("method_of")) {
-                        //console.log(term.relationship.split("method_of ")[1])
+                        ////console.log(term.relationship.split("method_of ")[1])
                         // this.get_term(term.id).set_CO_relationship(term.relationship.split("method_of ")[1])
                         this.get_term(term.id).add_relationship(term.relationship.split("method_of ")[1])
                     }
                     if (term.relationship.includes("variable_of")) {
-                        // console.log(term.relationship.split("variable_of ")[1])
+                        // //console.log(term.relationship.split("variable_of ")[1])
                         // this.get_term(term.id).set_CO_relationship(term.relationship.split("variable_of ")[1])
                         this.get_term(term.id).add_relationship(term.relationship.split("variable_of ")[1])
                     }
@@ -722,24 +722,24 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
                     var arr = Array.from(term.relationship)
                     for (var j = 0; j < arr.length; j++) {
                         var relation = arr[j]
-                        //console.log(typeof arr[i])
+                        ////console.log(typeof arr[i])
                         if (typeof relation === 'string') {
                             if (relation.includes("part_of")) {
                                 // this.get_term(term.id).set_isa(relation.split("part_of ")[1].split(" ! ")[0])
                                 this.get_term(term.id).add_relationship(relation.split("part_of ")[1].split(" ! ")[0])
                             }
                             if (relation.includes("scale_of")) {
-                                //console.log(relation.split("scale_of ")[1])
+                                ////console.log(relation.split("scale_of ")[1])
                                 // this.get_term(term.id).set_CO_relationship(relation.split("scale_of ")[1])
                                 this.get_term(term.id).add_relationship(relation.split("scale_of ")[1])
                             }
                             if (relation.includes("method_of")) {
-                                //console.log(relation.split("method_of ")[1])
+                                ////console.log(relation.split("method_of ")[1])
                                 // this.get_term(term.id).set_CO_relationship(relation.split("method_of ")[1])
                                 this.get_term(term.id).add_relationship(relation.split("method_of ")[1])
                             }
                             if (relation.includes("variable_of")) {
-                                //console.log(relation.split("variable_of ")[1])
+                                ////console.log(relation.split("variable_of ")[1])
                                 // this.get_term(term.id).set_CO_relationship(relation.split("variable_of ")[1])
                                 this.get_term(term.id).add_relationship(relation.split("variable_of ")[1])
                             }
@@ -752,7 +752,7 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
         }
     }
 
-    console.log("third loop")
+    //console.log("third loop")
     var cpt = 0
     this.ontologyTerms.forEach(
         term => {
@@ -766,11 +766,11 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
             if (term.relationships.length > 0) {
                 var t = this.get_term(term.id)
                 for (var rs_term in term.relationships) {
-                    console.log(term.relationships[rs_term])
+                    //console.log(term.relationships[rs_term])
                     var t_parent = this.get_term(term.relationships[rs_term])
                     if (t_parent != null) {
                         if (t_parent.get_children().length > 0) {
-                            //console.log(term.id, t_parent.get_children())
+                            ////console.log(term.id, t_parent.get_children())
                             var found = false
                             for (var i = 0; i < t_parent.get_children().length; i++) {
                                 if (t_parent.get_children()[i].id === t.id) {
@@ -782,7 +782,7 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
                             }
                         }
                         else {
-                            console.log(t_parent)
+                            //console.log(t_parent)
                             //t_parent.add_children(t)
                         }
                     }
@@ -791,7 +791,7 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
             }
         }
     )
-    console.log("last loop")
+    //console.log("last loop")
     var head_term: OntologyTerm[] = []
     this.ontologyTerms.forEach(
         term => {
@@ -807,7 +807,7 @@ build_C0_hierarchy(ontology: {}): OntologyTerm[] {
     for (let t in head_term) {
         this.ontologyNode[0].add_children(head_term[t])
     }
-    console.log(this.ontologyNode)
+    //console.log(this.ontologyNode)
     this.show_spinner = false;
     return this.ontologyNode;
 }
@@ -859,7 +859,7 @@ build_xeo_isa_hierarchy(ontology: {}): OntologyTerm[] {
             }
             if (term.relationship) {
                 if (Array.isArray(term.relationship)) {
-                    //console.log(term.relationship)
+                    ////console.log(term.relationship)
                     for (var rel in term.relationship) {
                         if (term.relationship[rel].includes("has_context")) {
                             this.get_term(term.relationship[rel].split(" ")[1]).set_is_context(true)
@@ -941,7 +941,7 @@ build_xeo_isa_hierarchy(ontology: {}): OntologyTerm[] {
     )
     //Add instances for ontologyTerm
     if (this.ontology.instance) {
-        console.log(this.ontology)
+        //console.log(this.ontology)
         var ontology_instance_data: Array<{ name: string; instance_of: any; id: string; property_value: any; }> = this.ontology.instance
 
         ontology_instance_data.forEach(
