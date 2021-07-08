@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 // import { MatTableDataSource } from '@angular/material';
-import { GlobalService} from '../services';
+import { GlobalService, AlertService} from '../services';
 import { MatTableDataSource } from '@angular/material/table';
 import { splitAtColon } from '@angular/compiler/src/util';
+import { Router, ActivatedRoute } from '@angular/router';
 
 export interface TemplateElement {
   id: string;
   model: number;
-  template:{}
+  model_type:string;
+  edit:string;
+  key:string;
 }
 
 @Component({
@@ -17,27 +20,44 @@ export interface TemplateElement {
 })
 
 export class TemplatesComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'model'];
+  displayedColumns: string[] = ['id', 'model', 'edit'];
   dataSource
-  constructor(private globalService : GlobalService) { }
+  private currentUser
+  private selected_model_type=""
+  private key =""
+  constructor(private globalService : GlobalService,
+    private router: Router,
+    private alertService: AlertService,
+    private route: ActivatedRoute) 
+    { 
+
+    }
 
   async ngOnInit() {
-    let user = JSON.parse(localStorage.getItem('currentUser'));
-    await this.get_templates(user._key)
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    await this.get_templates(this.currentUser._key)
   }
   get_templates(user_key){
     const ELEMENT_DATA: TemplateElement[]=[]
     this.globalService.get_all_templates(user_key).toPromise().then(
       data => {
           data.forEach(element => {
+
             let model=element['_id'].split('/')[0].slice(0, (element['_id'].split('/')[0].length-10)).replace("_", " ")
+            this.selected_model_type=element['_id'].split('/')[0].slice(0, (element['_id'].split('/')[0].length-10))
+            this.key=element['_id'].split('/')[1]
             //let model=element['_id'].split('/')[0].slice(0-10)
-            ELEMENT_DATA.push({'id':element['_id'], 'model': model, 'template': element })
+            ELEMENT_DATA.push({'id':element['_id'], 'model': model, key: this.key, 'model_type': this.selected_model_type, 'edit': "test" })
           });
           this.dataSource = ELEMENT_DATA;
 
       }
   );
   }
+  edit_template(element){
+    console.log(element)
+    let model_type=
+    this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: element.key, model_type: element.model_type, mode: "edit_template" } });
 
+  }
 }

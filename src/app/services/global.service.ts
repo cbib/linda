@@ -199,7 +199,7 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "update_step"}`, obj2send);
     }
 
-    update(key: string, values: {}, model_type: string) {
+    update(key: string, values: {}, model_type: string, template:boolean=false) {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
             'username': user.username,
@@ -208,7 +208,12 @@ export class GlobalService {
             'values': values,
             'model_type': model_type
         };
-        return this.http.post(`${this.APIUrl + "update"}`, obj2send);
+        if (template){
+            return this.http.post(`${this.APIUrl + "update_template"}`, obj2send);
+        }
+        else{
+            return this.http.post(`${this.APIUrl + "update"}`, obj2send);
+        }
     }
 
 
@@ -492,6 +497,9 @@ export class GlobalService {
 
     get_by_key(key: string, model_type: string) {
         return this.http.get(this.APIUrl + '/get_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
+    }
+    get_template_by_key(key: string, model_type: string) {
+        return this.http.get(this.APIUrl + '/get_template_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
     }
 
 

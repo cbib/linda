@@ -76,6 +76,8 @@ export class FormComponent implements OnInit//, AfterViewInit
         if (this.model_key != "") {
             this.get_model_by_key();
         }
+        console.log(this.mode)
+        
     }
 
     ngOnInit() {
@@ -505,10 +507,22 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
     get_model_by_key() {
         this.model_to_edit = [];
-        this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
-            this.model_to_edit = data;
-            this.modelForm.patchValue(this.model_to_edit);
-        });
+        if( this.mode==="edit_template"){
+            this.globalService.get_template_by_key(this.model_key, this.model_type).toPromise().then(data => {
+                console.log(data)
+                this.model_to_edit = data;
+                this.modelForm.patchValue(this.model_to_edit);
+                this.startfilling = true;
+            });
+        }
+        else{
+            this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
+                console.log(data)
+                this.model_to_edit = data;
+                this.modelForm.patchValue(this.model_to_edit);
+                this.startfilling = true;
+            });
+        }
     };
     get_form_model_type(){
         return  this.model_type
@@ -667,24 +681,47 @@ export class FormComponent implements OnInit//, AfterViewInit
             else {
                 let element = event.target as HTMLInputElement;
                 let value_field = element.innerText;
-                this.globalService.update(this.model_key, this.modelForm.value, this.model_type,).pipe(first()).toPromise().then(
-                    data => {
-                        if (data["success"]) {
-                            var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
-                            this.alertService.success(message)
-                            //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-                            this.router.navigate(['/tree']);
-                            return true;
+                if (this.mode==="edit_template"){
+                    this.globalService.update(this.model_key, this.modelForm.value, this.model_type, true).pipe(first()).toPromise().then(
+                        data => {
+                            if (data["success"]) {
+                                var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+                                this.alertService.success(message)
+                                //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                                this.router.navigate(['/tree']);
+                                return true;
+                            }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
+
+                                return false;
+                            };
+
+
                         }
-                        else {
-                            this.alertService.error("this form contains errors! " + data["message"]);
+                    );
+                
+                }
+                else{
+                    this.globalService.update(this.model_key, this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
+                        data => {
+                            if (data["success"]) {
+                                var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+                                this.alertService.success(message)
+                                //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                                this.router.navigate(['/tree']);
+                                return true;
+                            }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
 
-                            return false;
-                        };
+                                return false;
+                            };
 
 
-                    }
-                );
+                        }
+                    );
+                }
             }
         }
         //Here register the form with the correct investigation id et study id

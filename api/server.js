@@ -952,6 +952,32 @@ router.get('/get_by_key/:model_type/:key', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
+router.get('/get_template_by_key/:model_type/:key', function (req, res) {
+        try {
+            var model_type = req.pathParams.model_type;
+            var key = req.pathParams.key;
+            var data = [];
+            var datatype = model_type + '_templates';
+            const coll = db._collection(datatype);
+            if (!coll) {
+                db._createDocumentCollection(datatype);
+            }
+            data = coll.firstExample('_key', key);
+            res.send(data);
+        }
+        catch (e) {
+            if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+                throw e;
+            }
+            res.throw(404, 'The entry does not exist', e);
+        }
+    
+    }).pathParam('model_type', joi.string().required(), 'model requested.')
+        .pathParam('key', joi.string().required(), 'unique key.')
+        .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
+        .summary('Retrieve an entry')
+        .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
 
 router.get('/get_data_filename/:parent_key/:model_type', function (req, res) {
     try {
@@ -1506,6 +1532,90 @@ router.post('/update_associated_headers', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
+
+
+
+router.post('/update_template', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _key = req.body._key;
+        var values = req.body.values;
+        var model_type = req.body.model_type;
+        var datatype = model_type + '_templates';
+        const coll = db._collection(datatype);
+        if (!coll) {
+            db._createDocumentCollection(datatype);
+        }
+        var _id = datatype + '/' + _key;
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+            FOR entry IN ${users}
+            FILTER entry.username == ${username}
+            FILTER entry.password == ${password}
+            RETURN entry
+        `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            /////////////////////////////
+            //now check if investigation exists else modify field
+            /////////////////////////////
+            var update = [];
+    
+            update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${coll} RETURN { before: OLD, after: NEW }`).toArray();
+    
+            //        if (model_type==='investigation'){
+            //            _id='investigations/'+_key;
+            //           // update=db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${investigations} RETURN UNSET(NEW, "_key", "_id", "_rev")`).toArray();
+            //            update=db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${investigations} RETURN { before: OLD, after: NEW }`).toArray();
+            //        
+            //        }
+            //        else if (model_type==='study'){
+            //            _id='studies/'+_key;
+            //            update=db._query(aql` FOR entry IN ${studies} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${studies} RETURN { before: OLD, after: NEW }`).toArray();
+            //        }
+            //        else if (model_type==='event'){
+            //            _id='events/'+_key;
+            //            update=db._query(aql` FOR entry IN ${events} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${events} RETURN { before: OLD, after: NEW }`).toArray();
+            //        }
+            //        else {
+            //            _id='observation_units/'+_key;
+            //            update=db._query(aql` FOR entry IN ${observation_units} FILTER entry._id == ${_id} UPDATE entry WITH ${values} IN ${observation_units} RETURN { before: OLD, after: NEW }`).toArray();
+            //
+            //        }
+    
+    
+    
+    
+            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+            //Document has been updated
+            if (update[0].before !== update[0].after) {
+                res.send({ success: true, message: 'document has been updated ' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            }
+        };
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            _key: joi.string().required(),
+            values: joi.object().required(),
+            model_type: joi.string().required()
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and update specific field in MIAPPE model.');
+    
+
 
 router.post('/update', function (req, res) {
     var username = req.body.username;
