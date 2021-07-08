@@ -1,0 +1,11 @@
+Study_ID,plotID,treatment,plant.height,code_ID
+maizeStudy2,plot11,rainfed,23,B73
+maizeStudy2,plot12,rainfed,23,PH207
+maizeStudy2,plot13,rainfed,34,Oh43
+maizeStudy2,plot14,rainfed,23,W64A
+maizeStudy2,plot15,rainfed,15,EZ47
+maizeStudy2,plot16,watered,50,B73
+maizeStudy2,plot17,watered,55,PH207
+maizeStudy2,plot18,watered,56,Oh43
+maizeStudy2,plot19,watered,67,W64A
+maizeStudy2,plot20,watered,53,EZ47
