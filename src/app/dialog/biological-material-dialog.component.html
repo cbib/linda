@@ -1,0 +1,25 @@
+<div class="border-head">
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </nav>
+</div>
+<h1 mat-dialog-title>Generate Biological Material ID</h1>
+
+<div mat-dialog-content>
+<h4>biological material identifiers </h4>
+<p *ngIf="material_type==='Material ID'">  
+    You have defined the selected column as Material source ID in the data file called <b>{{data_filename}}</b>. <br>
+    We have allready generated 1 biological material ID by default for each Material ID encountered.<br> 
+    Now but you probably want to add more than one biological material by Accession ID.
+    Select the number of plant by accession in your study ?  <br>
+    <select [ngModel]="biological_material_n"  name="select_num" size="1" (change)="onNumChange($event.target.value)" >
+        <option *ngFor="let number of numbers" [value]="number">{{number}}</option>
+    </select> 
+ </p> 
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="onOkClick()">Ok</button>
+  </div>
