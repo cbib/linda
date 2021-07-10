@@ -1202,7 +1202,7 @@ export class UserTreeComponent implements OnInit {
                     }
                     //new_step=parseInt(this.currentUser.tutoriel_step)+1  
                 }
-                if(model_type === "study" ){
+                if (model_type === "study" ){
                     if (!this.currentUser.tutoriel_done ){
                         if (this.currentUser.tutoriel_step==="2"){
                         new_step=3

@@ -13,7 +13,7 @@
       (change)="set_check_only($event.checked, 'experimental_factor')">Only Experimental Factors</mat-checkbox>
 
   </section>
-  <section *ngIf="mode.includes('extract_env_var')" class="format-section">
+  <section *ngIf="mode.includes('extract_env_var') && mode!=='extract_env_var_again'" class="format-section">
     <p> Do you want to use templates ? </p>
     <mat-checkbox class="example-margin" [checked]="use_template" (change)="set_check_template($event.checked)"> Use templates</mat-checkbox>
     <section *ngIf="use_template" class="format-section">

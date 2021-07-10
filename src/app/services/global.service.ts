@@ -226,6 +226,16 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "remove"}`, obj2send);
     }
+    remove_template(id) {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'id': id
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "remove_template"}`, obj2send);
+    }
     
     remove_childs(id) {
         let user = JSON.parse(localStorage.getItem('currentUser'));

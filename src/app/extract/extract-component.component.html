@@ -178,7 +178,18 @@
     <br>
 
     <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepAddComponent" title="" [stepContent]="addComponent" [stepContentParams]="{'model_n':demo_subset}">
-      
+      <div *ngIf="model_type === 'observation_unit'">
+        <h2>Select your observation unit type</h2>
+        <p>
+          Given that you can observed individual plants (identified by biological material ID) or groups of plants identified by the same material source ID, you need to select which type of IDs is contained in your data file column !! 
+        </p>
+            <!-- class="form-control"  -->
+            <select [ngModel]="observation_unit_type"  name="select_type" size="1" (change)="onOUTypeChange($event.target.value)" >
+                <option *ngFor="let type of observation_unit_types" [value]="type">{{type}}</option>
+            </select> 
+            <br>
+        <br>
+    </div>
       <div *ngIf="model_type === 'biological_material'">
         <h2> Select the type of materials</h2>
         <p>

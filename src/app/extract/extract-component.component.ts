@@ -9,9 +9,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormDialogComponent } from '../dialog/form-dialog.component';
+import { BiologicalMaterialDialogComponent } from '../dialog/biological-material-dialog.component';
 import { first } from 'rxjs/operators';
 import {JoyrideService} from 'ngx-joyride';
-import { keyframes } from '@angular/animations';
 
 /*
  Maybe add data filename to investigation component when adding data files with studies in download_component.ts
@@ -50,7 +50,9 @@ export class ExtractComponentComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatButtonToggle, { static: false }) toggle: MatButtonToggle;
   material_types: any[] = ["Material ID", "biological Material ID"];
-  material_type=""
+  material_type="Material ID"
+  observation_unit_types: any[] = ["block", "sub-block","plot","plant","trial","pot","replicate","individual","virtual_trial","unit-parcel"];
+    observation_unit_type=""
   form: FormGroup;
   cleaned_model = []
   model_type_label = ""
@@ -82,7 +84,8 @@ export class ExtractComponentComponent implements OnInit {
     private globalService: GlobalService,
     private readonly joyrideService: JoyrideService,
     private route: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    public dialog2: MatDialog) {
     //use this when you pass argument using this.router.navigate
     // else use @input if you pass argument in template html  
     this.route.queryParams.subscribe(
@@ -215,6 +218,9 @@ export class ExtractComponentComponent implements OnInit {
   }
   onTypeChange(values: string) {
     this.material_type = values
+}
+onOUTypeChange(values: string) {
+  this.observation_unit_type = values
 }
   cancel(){
     
@@ -392,19 +398,24 @@ export class ExtractComponentComponent implements OnInit {
               const formDialogRef = this.dialog.open(FormDialogComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
-                  console.log(result)
+                  
                   if (result.event == 'Confirmed') {
-                    //console.log("You have described your " + this.model_type_label + " form !")
+                    console.log("You have described your " + this.model_type_label + " form !")
                     this.headers_form[value] = result["formData"]["form"]
                     this.save_as_template = result["formData"]["template"]
                     // this.global[filename].forEach(element => {
                     //   element[value] = "ready"
                     // });
-                    
+                    if(this.model_type==="observation_unit"){
+                      console.log('observation unit form have been fullfilled')
+                      console.log(result)
+                    }
                     if(this.model_type==="biological_material"){
+                      console.log('biological material form have been fullfilled')
+                      console.log(result)
                       // need  to select which type of id are linked to each observation ?
                       // is it material id or biological material ? 
-                      if (this.material_type==="Material ID"){
+                      if (this.material_type==="biological Material ID"){
                         // more complex create as many biological material 
                         // but either the material is already defined or you have to created the corresponding materila to  receive the bm data
                        
@@ -419,16 +430,16 @@ export class ExtractComponentComponent implements OnInit {
                           console.log(header_data)
                           //get unique study names
                           let unique_component_set = new Set(header_data[0])
-                          console.log(unique_component_set)
+                          //console.log(unique_component_set)
                           var unique_component_set_array = Array.from(unique_component_set);
                                 //foreach study identifier found other than Study unique ID
                           this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"][0]=unique_component_set_array[0]
                           for (var i = 1; i < unique_component_set_array.length; i++) {
                             this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"].push(unique_component_set_array[i])
-                              console.log(this.headers_form[value]);   
+                              ///console.log(this.headers_form[value]);   
                           }
                           Object.keys(this.headers_form[value]).forEach(key => {
-                            console.log(key);  
+                            //console.log(key);  
                             if (key.includes("Biological") && key!=="Biological material ID"){
                               for (var i = 1; i < unique_component_set_array.length; i++) {
                                 this.headers_form[value][key].push([""])
@@ -452,27 +463,51 @@ export class ExtractComponentComponent implements OnInit {
                               }
                             }
                           });
-                          console.log(this.headers_form[value]);  
-                          //submit the form
-                          //get study id
-                          // this.globalService.add(this.headers_form[value], this.model_type, this.datafile_study_ids[filename], false).pipe(first()).toPromise().then(
-                          //   data => {
-                          //     if (data["success"]) {
-                          //       //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-                          //       var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
-                          //       this.alertService.success(message)
-                          //       return true;
-                          //     }
-                          //     else {
-                          //       this.alertService.error("this form contains errors! " + data["message"]);
-                          //       return false;
-                          //     }
-                          //   }
-                          // );
+                          console.log(this.headers_form[value]);
+                          let formDialogRef2 = this.dialog2.open(BiologicalMaterialDialogComponent, { width: '1200px', data: { material_type: this.material_type, data_filename:filename  } });
+                          formDialogRef2.afterClosed().subscribe((result2) => {
+                            if (result2) {
+                  
+                              if (result2.event == 'Confirmed') {
+                                let biological_material_n=result2.biological_material_n
+                                console.log(biological_material_n)
+                                Object.keys(this.headers_form[value]).forEach(key => {
+                                  console.log(key)
+                                  console.log(this.headers_form[value][key])
+                                  //console.log(unique_component_set_array)
+                                  if (key.includes("Biological") && key!=="Biological material ID"){
+                                    for (var i = 0; i < unique_component_set_array.length; i++) {
+                                      console.log(this.headers_form[value][key][i])
+                                      for (var j = 2; j <= biological_material_n; j++) {
+                                        console.log(j)
+                                        this.headers_form[value][key][i].push("")
+                                      }
+                                    }
+                                  }
+                                  if (key=="Biological material ID"){
+                                    for (var i = 0; i < unique_component_set_array.length; i++) {
+                                      console.log(this.headers_form[value][key][i])
+                                      this.headers_form[value][key][i][0]=unique_component_set_array[i]+'_1'
+                                      for (var j = 2; j <= biological_material_n; j++) {
+                                        console.log(j)
+                                        this.headers_form[value][key][i].push(unique_component_set_array[i]+'_'+j)
+                                      }
+                                    }
+                                  }
+                                });
+                                console.log(this.headers_form[value]); 
+                                
+                              }
+                            }
+                          });
+
+                          
+                          
 
 
 
                         });
+                        
                         //search for column declared as study column
                         // for (var i = 0; i < this.displayedColumns[filename].length; i++) {
                         //     if (this.displayedColumns[filename][i] == this.data_to_extract['study']) {
@@ -521,35 +556,63 @@ export class ExtractComponentComponent implements OnInit {
                 if (element[key]["already_there"]===true) {
                   let data_file_to_update = element['datafile ID']
                   this.globalService.update_associated_headers_linda_id(data_file_to_update, element[key]["id"], key, 'data_files').pipe(first()).toPromise().then(
-                    data => {}
+                    data => {
+                      console.log(data)
+                    }
                   )
                 }
                 else{
+
+
+
+
                   let modelForm = this.headers_form[key]
                   if (cnt > 0) {
                     this.save_as_template = false
                   }
-                  this.globalService.add(modelForm, this.model_type, element['study ID'], this.save_as_template).pipe(first()).toPromise().then(
-                    data => {
-                      if (data["success"]) {
-                        let added_model_id = data["_id"];
-                        let data_file_to_update = element['datafile ID']
-                        this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
-                          data => {}
-                        )
-                        // var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
-                        // this.alertService.success(message)
 
-                        return true;
+                  if (this.model_type==='biologial_material'){
+                    //submit the form
+                    //get study id
+                    this.globalService.add(this.headers_form[key], this.model_type, this.datafile_study_ids[this.selected_file], false).pipe(first()).toPromise().then(
+                      data => {
+                        if (data["success"]) {
+                          //this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                          var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                          this.alertService.success(message)
+                          return true;
+                        }
+                        else {
+                          this.alertService.error("this form contains errors! " + data["message"]);
+                          return false;
+                        }
                       }
-                      else {
-                        this.alertService.error("this form contains errors! " + data["message"]);
-                        return false;
-                      }
+                    );
+
+                  }
+                  else{
+
+                    this.globalService.add(modelForm, this.model_type, element['study ID'], this.save_as_template).pipe(first()).toPromise().then(
+                      data => {
+                        if (data["success"]) {
+                          let added_model_id = data["_id"];
+                          let data_file_to_update = element['datafile ID']
+                          this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
+                            data => {}
+                          )
+                          // var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                          // this.alertService.success(message)
+
+                          return true;
+                        }
+                        else {
+                          this.alertService.error("this form contains errors! " + data["message"]);
+                          return false;
+                        }
+                      });
                     }
-                  );
-                } 
-              }
+                  } 
+                }
             }
           )
           cnt += 1

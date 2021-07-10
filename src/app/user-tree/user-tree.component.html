@@ -1818,7 +1818,7 @@
         <div *ngIf="tutl==='16'">
             <h2>You've Done it</h2>
             <mat-card>
-                <h5>Data exploration and associated statistics</h5>
+                <h5>Tutoriel done</h5>
                 <p>
                     You have completed the LINDA tutorial successfully !!!!
                 </p>
@@ -1827,13 +1827,13 @@
             <mat-card>
                 <h5>Data exploration</h5>
                 <p>Once you have linked all columns in your data files except study column (observation unit, experimental factor and biological material columns), you can explore your data files</p>
-                <p>Click on <button class="btn btn-success btn-xs fa fa-bar-chart"></button> to open exploration mode
-                    for investigation "maizes1" exploration !! </p>
+                <p>Click on <button  class="btn btn-light btn-xs fa fa-bar-chart"></button> to open exploration mode
+                    for investigation "maizes1" !! </p>
             </mat-card>
             <mat-card>
                 <h5>Play again</h5>
-                <p>Click on <button class="btn btn-success btn-xs fa fa-refresh" (click)="play_again()"></button> to play this tutorial again !!<br>
-                    The investigation "Maizes1" will be erased from your history</p>
+                <p>Click on <button class="btn btn-success btn-xs fa fa-refresh" (click)="play_again()"><span style="margin-left: 5px;">Restart tutorial</span> </button> to play this tutorial again !!<br>
+                    The investigation "Maizes1" and all of its "child" components will be erased from your history</p>
             </mat-card>
         </div>
     </ng-template>

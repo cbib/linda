@@ -23,7 +23,7 @@ interface DialogData {
   styleUrls: ['./confirmation-dialog.component.css']
 })
 export class ConfirmationDialogComponent implements OnInit {
-  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " }, 'extract_existing_env_var':{'title': "Confirm new extraction", 'content': " Are you sure to link with this exisitng observed variable ?"}, 'extract_env_var_again': { 'title': "Confirm new extraction", 'content': " Are you sure to extract and replace this component ? This will delete corresponding components"}}
+  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " }, 'extract_existing_env_var':{'title': "Confirm new extraction", 'content': " Are you sure to link with this exisitng observed variable ?"}, 'extract_env_var_again': { 'title': "Confirm unlink component", 'content': " Are you sure to unlink this component ? This will unlink corresponding components"}}
   validated: boolean;
   all_childs: boolean = false
   use_template: boolean = false

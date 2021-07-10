@@ -4,7 +4,7 @@ import { GlobalService, AlertService} from '../services';
 import { MatTableDataSource } from '@angular/material/table';
 import { splitAtColon } from '@angular/compiler/src/util';
 import { Router, ActivatedRoute } from '@angular/router';
-
+import { first } from 'rxjs/operators';
 export interface TemplateElement {
   id: string;
   model: number;
@@ -56,8 +56,23 @@ export class TemplatesComponent implements OnInit {
   }
   edit_template(element){
     console.log(element)
-    let model_type=
+
     this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: element.key, model_type: element.model_type, mode: "edit_template" } });
 
+  }
+  remove_template(element){
+    console.log(element)
+    this.globalService.remove_template(element.id).pipe(first()).toPromise().then(
+      data => {
+          console.log(data)
+          if (data["success"]) {
+              console.log(data["message"])
+              this.alertService.success(data["message"])
+          }
+          else {
+              this.alertService.error("this form contains errors! " + data["message"]);
+          }
+      }
+  );
   }
 }

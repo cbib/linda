@@ -2290,6 +2290,68 @@ router.post('/remove_childs_by_type', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
+router.post('/remove_template', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var id = req.body.id;
+    
+        const user = db._query(aql`
+                FOR entry IN ${users}
+                FILTER entry.username == ${username}
+                FILTER entry.password == ${password}
+                RETURN entry
+              `).toArray();
+        if (user[0] === null) {
+            res.send({ success: false, message: ['Username ' + username + ' doesn\'t exists'] });
+        }
+        else {
+            var errors = [];
+            var template_edge_coll = 'templates_ege'
+            if (!db._collection(template_edge_coll)) {
+                db._createEdgeCollection(template_edge_coll);
+            }
+            //Remove relation to parent of selected node in edge collection
+
+            try {
+                var parent = db._query(aql`FOR u IN ${template_edge_coll} FILTER u._to==${id} REMOVE u IN ${template_edge_coll}`).toArray();
+
+            }
+            catch (e) {
+                errors.push(e + "refdvdrx " + id);
+            }
+    
+            
+            //Remove selected node
+            var key = id.split('/')[1];
+            var coll = id.split('/')[0];
+            try {
+                db._query(`REMOVE "${key}" IN ${coll}`);
+            }
+            catch (e) {
+                errors.push(e + " " + id);
+            }
+    
+            if (errors.length === 0) {
+                res.send({ success: true, message: ["No errors detected"] });
+            }
+            else {
+                res.send({ success: false, message: errors });
+            }
+        }
+    })
+        .body(joi.object({
+            username: joi.string().required(),
+            password: joi.string().required(),
+            id: joi.string().required(),
+        }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.array().items(joi.string().required()).required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('add MIAPPE description for given model.');
+
+
 router.post('/remove', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;

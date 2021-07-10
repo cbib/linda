@@ -109,6 +109,7 @@ import { FormDialogComponent } from './dialog/form-dialog.component';
 import { EditComponent } from './edition/edit.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { ExplorationComponent } from './statistics/exploration.component';
+import { BiologicalMaterialDialogComponent } from './dialog/biological-material-dialog.component';
 
 @NgModule({
   declarations: [
@@ -171,7 +172,8 @@ import { ExplorationComponent } from './statistics/exploration.component';
     FormDialogComponent,
     EditComponent,
     TemplatesComponent,
-    ExplorationComponent
+    ExplorationComponent,
+    BiologicalMaterialDialogComponent
         
     
 
@@ -247,7 +249,9 @@ import { ExplorationComponent } from './statistics/exploration.component';
                    SampleSelectionComponent,
                    DatatableDialogComponent,
                    HelpLoaderDialogComponent,
-                   FormDialogComponent
+                   FormDialogComponent,
+                   BiologicalMaterialDialogComponent
+                   
                    ],
   providers: [AuthGuard,
               AlertService,
