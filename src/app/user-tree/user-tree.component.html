@@ -546,8 +546,8 @@
                                             </table>
                                         </ng-container>
                                         <!--Biological material table-->
-                                        <ng-container *ngIf="node.id.includes('biological_materials')">
-                                            <app-biological-material-table [data]="get_bm_dataSource(node.id)"></app-biological-material-table>
+                                        <ng-container *ngIf="node.id.includes('biological_materials') ">
+                                            <app-biological-material-table [data]="get_bm_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-biological-material-table>
                                         <!-- <ul>
                                             <li>Genus: {{get_current_data_array(node)['Genus']}}</li>
                                             <li>Organism: {{get_current_data_array(node)['Organism']}}</li>

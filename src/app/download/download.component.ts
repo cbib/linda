@@ -533,6 +533,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
 
     onModify(values: string, key: string, filename: string) {
+        console.log(values)
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
@@ -546,7 +547,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 this.checklistSelection.toggle(key);
             });
         }
-        else if (values === "") {
+        else if (values === "" || values === undefined) {
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = false; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = "" });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = ""; });

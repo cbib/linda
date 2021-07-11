@@ -147,7 +147,7 @@
                                   <!-- <ng-container  *ngIf="ef['obsUUID']===observation_id"> -->
                                 <button  mat-menu-item [matMenuTriggerFor]="efMenu">{{ef['experimentalFactorType']}}</button>
                                 <mat-menu #efMenu="matMenu">
-                                  <button *ngFor="let value of ef['experimentalFactorValues'].split(';') ; let j=index" mat-menu-item (click)="addFactorValues(i, value, group.value['obsUUID'])">{{value}}</button>
+                                  <button *ngFor="let value of ef['experimentalFactorValues'] ; let j=index" mat-menu-item (click)="addFactorValues(i, value, group.value['obsUUID'])">{{value}}</button>
                                   <!-- <button *ngFor="let value of ef['experimentalFactorValues'].split(';') ; let j=index" mat-menu-item (click)="addFactorValues(i, value, group.value['obsUUID'])">{{value}}</button> -->
                                 </mat-menu>
                                 <!-- </ng-container> -->
