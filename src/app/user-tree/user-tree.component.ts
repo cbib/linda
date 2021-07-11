@@ -179,7 +179,7 @@ export class UserTreeComponent implements OnInit {
         this.dataSource.data = this.nodes
         ////console.log(this.dataSource.data)
         //this.treeControl.expand()
-        //this.treeControl.expandAll();
+        this.treeControl.expandAll();
 
         ////console.log(this.treeControl.dataNodes[4])
         ////console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
