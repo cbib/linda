@@ -110,6 +110,7 @@ import { EditComponent } from './edition/edit.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { ExplorationComponent } from './statistics/exploration.component';
 import { BiologicalMaterialDialogComponent } from './dialog/biological-material-dialog.component';
+import { BiologicalMaterialTableComponent } from './table/biological-material-table.component';
 
 @NgModule({
   declarations: [
@@ -173,7 +174,8 @@ import { BiologicalMaterialDialogComponent } from './dialog/biological-material-
     EditComponent,
     TemplatesComponent,
     ExplorationComponent,
-    BiologicalMaterialDialogComponent
+    BiologicalMaterialDialogComponent,
+    BiologicalMaterialTableComponent
         
     
 

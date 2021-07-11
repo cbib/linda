@@ -6,6 +6,7 @@ export class MiappeNode {
         private element_type:string
         public current_data=[]
         public current_data_array=[]
+        public bm_current_data_array=[]
         public current_observation_unit_data:{"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }={"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }
         public id:string;
         public expandable:boolean;
@@ -30,7 +31,12 @@ export class MiappeNode {
         public get_current_observation_unit_data(){
             return this.current_observation_unit_data
         }
-
+        public set_bm_current_data_array(bm_current_data_array:[]){
+            return this.bm_current_data_array=bm_current_data_array
+        }
+        public get_bm_current_data_array(){
+            return this.bm_current_data_array
+        }
         public set_current_data_array(current_data_array:[]){
             return this.current_data_array=current_data_array
         }
@@ -81,15 +87,16 @@ export class MiappeNode {
             this.children.push(term);
         }
 
-        constructor(id:string="", name:string="",def:string="",fill_percentage:number, parent_id:string="") {
+        constructor(id:string="", name:string="",def:string="",fill_percentage:number, parent_id:string="",current_data:string[]=[], current_data_array:[]=[], bm_current_data_array:{}[]=[] ) {
             this.id=id;
             this.parent_id=parent_id
             this.def=def
             this.name=name;
             this.children=[]
             this.fill_percentage=fill_percentage
-            this.current_data=[]
-            this.current_data_array=[]
+            this.current_data=current_data
+            this.current_data_array=current_data_array
+            this.bm_current_data_array=bm_current_data_array
             this.current_observation_unit_data={"observation_units":[],"biological_materials":[],"samples":[], "experimental_factors":[] }
             this.model_key=this.id.split("/")[1]
             

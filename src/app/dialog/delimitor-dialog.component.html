@@ -8,7 +8,7 @@
 </ul>-->
 <select name="select_template" size="1" (change)="onSelect($event.target.value)">
     <option value="" disabled>Select delimitors</option>
-    <option *ngFor="let d of get_delimitors()" value={{d}}>{{d}}</option>
+    <option *ngFor="let d of get_delimitors()" value="{{d}}">{{d}}</option>
 </select> 
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>

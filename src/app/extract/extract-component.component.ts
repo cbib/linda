@@ -103,7 +103,7 @@ export class ExtractComponentComponent implements OnInit {
   }
   onClickTour() {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-    //console.log(this.currentUser)
+    ////console.log(this.currentUser)
     if (this.currentUser['tutoriel_step'] === "15"){
       if (!this.part2){
           this.joyrideService.startTour(
@@ -119,7 +119,7 @@ export class ExtractComponentComponent implements OnInit {
     if (data.length > 0 && data[0] !== null) {
       data[0].forEach(
         data_file => {
-          console.log(data_file)
+          //console.log(data_file)
 
           if (!this.filename_used.includes(data_file.filename)) {
             this.datafile_ids[data_file.filename] = data_file.eto
@@ -143,13 +143,13 @@ export class ExtractComponentComponent implements OnInit {
           my_dict['datafile ID'] = data_file.eto;
           this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], this.model_type+'s').toPromise().then(
           observed_variable_data => {
-            console.log(observed_variable_data)
+            //console.log(observed_variable_data)
             observed_variable_data.forEach(observed_variable => {
-              console.log(observed_variable)
+              //console.log(observed_variable)
               var found=false
               this.AllObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
               this.ObservedVariables[data_file.filename].forEach(variable => {
-                console.log(variable)
+                //console.log(variable)
                 if (this.model_type==='observed_variable'){
                   if (variable['observed_variable']["Variable name"]===observed_variable["Variable name"]){
                     found=true
@@ -172,7 +172,7 @@ export class ExtractComponentComponent implements OnInit {
               
              
             });
-            console.log(this.ObservedVariables)
+            //console.log(this.ObservedVariables)
       
             data_file.associated_headers.forEach(element => {
               if (element['associated_component'] === this.model_type) {
@@ -204,13 +204,13 @@ export class ExtractComponentComponent implements OnInit {
 
             //   //Harmonize keys for non present/detected component 
             // var defaultObj = this.datasources[data_file.filename].reduce((m, o) => (Object.keys(o).forEach(key => m[key] = "notfound"), m), {});
-            // //console.log(defaultObj)
+            // ////console.log(defaultObj)
             // this.datasources[data_file.filename] = this.datasources[data_file.filename].map(e => Object.assign({}, defaultObj, e));
-            // //console.log(this.datasources[data_file.filename])
+            // ////console.log(this.datasources[data_file.filename])
           });
         }
       );
-      //console.log(this.datasources)
+      ////console.log(this.datasources)
     }
   }
   get_model_type() {
@@ -294,27 +294,27 @@ onOUTypeChange(values: string) {
 
   }
   clickToggleExisting(value: string, filename: string){
-    //console.log(value)
+    ////console.log(value)
     var variable_name=value['Variable name']
     let user = JSON.parse(localStorage.getItem('currentUser'));
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_existing_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file , header:value, headers:this.displayedcomponentColumns[filename]} });
     dialogRef.afterClosed().subscribe((confirmResult) => {
       if (confirmResult) {
         if (confirmResult.event == 'Confirmed') {
-          ////console.log(value)
-          ////console.log(filename)
-          //console.log(confirmResult)
-          ////console.log(confirmResult.selected_header)
-          //console.log(this.ObservedVariables[filename])
-          //console.log(this.AllObservedVariables[filename])
+          //////console.log(value)
+          //////console.log(filename)
+          ////console.log(confirmResult)
+          //////console.log(confirmResult.selected_header)
+          ////console.log(this.ObservedVariables[filename])
+          ////console.log(this.AllObservedVariables[filename])
           var test =this.AllObservedVariables[filename].filter(ov => ov['observed_variable']["Variable name"] == variable_name)
-          //console.log(test)
+          ////console.log(test)
           //this.headers_form[value] = this.ObservedVariables[filename]
           this.datasources[filename].forEach(
             element => {
-              //console.log(element["study ID"])
+              ////console.log(element["study ID"])
               let variable_id =test.filter(ov => ov["study_id"] == element["study ID"])[0]['observed_variable']['_id']
-              //console.log(variable_id)
+              ////console.log(variable_id)
               element[confirmResult.selected_header]["state"] = "ready"
               element[confirmResult.selected_header]["id"] = variable_id
               element[confirmResult.selected_header]["already_there"] = true
@@ -338,16 +338,16 @@ onOUTypeChange(values: string) {
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
-            //console.log("you have confirmed new extraction of " + this.model_type_label + ": " + value)
+            ////console.log("you have confirmed new extraction of " + this.model_type_label + ": " + value)
             //first delete all component associated with this header 
             this.datasources[filename].forEach(element => {
               // this.globalService.remove_childs_by_type_and_id(this.parent_id, this.model_type, element[value]).pipe(first()).toPromise().then(
               //   data => { 
-                  console.log(element)
+                  //console.log(element)
 
                   this.globalService.remove_association(element[value], element['datafile ID']).pipe(first()).toPromise().then(
                     association => { 
-                      console.log(association)
+                      //console.log(association)
                       element[value]["state"]='unset';
                       element[value]["id"]='';
                       element[value]["already_there"]=false;
@@ -369,7 +369,7 @@ onOUTypeChange(values: string) {
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
-            //console.log("you have confirmed linkage of " + this.model_type_label + ": " + value)
+            ////console.log("you have confirmed linkage of " + this.model_type_label + ": " + value)
             // Use template mode
             if (confirmResult.use_template) {
               let data_from_template = {}
@@ -390,7 +390,7 @@ onOUTypeChange(values: string) {
 
             }
             else if (confirmResult.use_existing) {
-              //console.log("You have confirmed extraction from already described " + this.model_type_label + 's')
+              ////console.log("You have confirmed extraction from already described " + this.model_type_label + 's')
               window.location.reload();            
               //open a dialog with model type already extracted in other file
             }
@@ -400,20 +400,20 @@ onOUTypeChange(values: string) {
                 if (result) {
                   
                   if (result.event == 'Confirmed') {
-                    console.log("You have described your " + this.model_type_label + " form !")
+                    //console.log("You have described your " + this.model_type_label + " form !")
                     this.headers_form[value] = result["formData"]["form"]
                     this.save_as_template = result["formData"]["template"]
                     // this.global[filename].forEach(element => {
                     //   element[value] = "ready"
                     // });
                     if(this.model_type==="observation_unit"){
-                      console.log('observation unit form have been fullfilled')
-                      console.log(result)
+                      //console.log('observation unit form have been fullfilled')
+                      //console.log(result)
                       //add observations units 
                     }
                     if(this.model_type==="biological_material"){
-                      console.log('biological material form have been fullfilled')
-                      console.log(result)
+                      //console.log('biological material form have been fullfilled')
+                      //console.log(result)
                       // need  to select which type of id are linked to each observation ?
                       // is it material id or biological material ? 
                       if (this.material_type==="biological Material ID"){
@@ -425,22 +425,22 @@ onOUTypeChange(values: string) {
     
                         // create as many material source id as unique ID in the column
                         let groups_label = []
-                        console.log(this.headers_form[value])
-                        console.log("material ids required")
+                        //console.log(this.headers_form[value])
+                        //console.log("material ids required")
                         this.globalService.get_data_from_datafiles(this.datafile_ids[filename].split('/')[1], value).toPromise().then(header_data => {
-                          console.log(header_data)
+                          //console.log(header_data)
                           //get unique study names
                           let unique_component_set = new Set(header_data[0])
-                          //console.log(unique_component_set)
+                          ////console.log(unique_component_set)
                           var unique_component_set_array = Array.from(unique_component_set);
                                 //foreach study identifier found other than Study unique ID
                           this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"][0]=unique_component_set_array[0]
                           for (var i = 1; i < unique_component_set_array.length; i++) {
                             this.headers_form[value]["Material source ID (Holding institute/stock centre, accession)"].push(unique_component_set_array[i])
-                              ///console.log(this.headers_form[value]);   
+                              /////console.log(this.headers_form[value]);   
                           }
                           Object.keys(this.headers_form[value]).forEach(key => {
-                            //console.log(key);  
+                            ////console.log(key);  
                             if (key.includes("Biological") && key!=="Biological material ID"){
                               for (var i = 1; i < unique_component_set_array.length; i++) {
                                 this.headers_form[value][key].push([""])
@@ -464,39 +464,39 @@ onOUTypeChange(values: string) {
                               }
                             }
                           });
-                          console.log(this.headers_form[value]);
+                          //console.log(this.headers_form[value]);
                           let formDialogRef2 = this.dialog2.open(BiologicalMaterialDialogComponent, { width: '1200px', data: { material_type: this.material_type, data_filename:filename  } });
                           formDialogRef2.afterClosed().subscribe((result2) => {
                             if (result2) {
                   
                               if (result2.event == 'Confirmed') {
                                 let biological_material_n=result2.biological_material_n
-                                console.log(biological_material_n)
+                                //console.log(biological_material_n)
                                 Object.keys(this.headers_form[value]).forEach(key => {
-                                  console.log(key)
-                                  console.log(this.headers_form[value][key])
-                                  //console.log(unique_component_set_array)
+                                  //console.log(key)
+                                  //console.log(this.headers_form[value][key])
+                                  ////console.log(unique_component_set_array)
                                   if (key.includes("Biological") && key!=="Biological material ID"){
                                     for (var i = 0; i < unique_component_set_array.length; i++) {
-                                      console.log(this.headers_form[value][key][i])
+                                      //console.log(this.headers_form[value][key][i])
                                       for (var j = 2; j <= biological_material_n; j++) {
-                                        console.log(j)
+                                        //console.log(j)
                                         this.headers_form[value][key][i].push("")
                                       }
                                     }
                                   }
                                   if (key=="Biological material ID"){
                                     for (var i = 0; i < unique_component_set_array.length; i++) {
-                                      console.log(this.headers_form[value][key][i])
+                                      //console.log(this.headers_form[value][key][i])
                                       this.headers_form[value][key][i][0]=unique_component_set_array[i]+'_1'
                                       for (var j = 2; j <= biological_material_n; j++) {
-                                        console.log(j)
+                                        //console.log(j)
                                         this.headers_form[value][key][i].push(unique_component_set_array[i]+'_'+j)
                                       }
                                     }
                                   }
                                 });
-                                console.log(this.headers_form[value]); 
+                                //console.log(this.headers_form[value]); 
                                 
                               }
                             }
@@ -527,7 +527,7 @@ onOUTypeChange(values: string) {
                     });
                   }
                   else {
-                    //console.log("you have cancelled your " + this.model_type_label + " form !")
+                    ////console.log("you have cancelled your " + this.model_type_label + " form !")
                   }
                 }
               });
@@ -546,11 +546,11 @@ onOUTypeChange(values: string) {
     }
     else{
 
-      //console.log("ready to extract !!!!! ")
+      ////console.log("ready to extract !!!!! ")
       var cnt = 0
       this.datasources[this.selected_file].forEach(
         element => {
-          //console.log(element)
+          ////console.log(element)
           Object.keys(element).forEach(
             key => {
               if (element[key]["state"] === 'ready') {
@@ -558,7 +558,7 @@ onOUTypeChange(values: string) {
                   let data_file_to_update = element['datafile ID']
                   this.globalService.update_associated_headers_linda_id(data_file_to_update, element[key]["id"], key, 'data_files').pipe(first()).toPromise().then(
                     data => {
-                      console.log(data)
+                      //console.log("passed")
                     }
                   )
                 }
@@ -729,12 +729,12 @@ onOUTypeChange(values: string) {
   }
 
   get_state(column: string, filename: string) {
-    //console.log(this.global[filename])
+    ////console.log(this.global[filename])
     var tmp_list = []
     let res = ""
     this.global[filename].forEach(
       element => {
-        //console.log(element)
+        ////console.log(element)
         if (element[column]['id'].includes(this.model_type + "s")) {
           //return "extracted"
           tmp_list.push("extracted")
@@ -759,9 +759,9 @@ onOUTypeChange(values: string) {
     else {
       res = 'some_extracted_some_unset'
     }
-    //console.log(this.global[filename].length)
-    //console.log(tmp_list.filter(component => component == 'extracted').length)
-    //console.log(res)
+    ////console.log(this.global[filename].length)
+    ////console.log(tmp_list.filter(component => component == 'extracted').length)
+    ////console.log(res)
     return res
   }
 

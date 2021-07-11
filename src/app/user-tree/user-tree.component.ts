@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren,QueryList, Output, Input, EventEmitter } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -12,19 +12,34 @@ import { ConfirmationDialogComponent } from '../dialog/confirmation-dialog.compo
 import { TemplateSelectionDialogComponent } from '../dialog/template-selection-dialog.component';
 import { ExportDialogComponent } from '../dialog/export-dialog.component';
 import { DatatableDialogComponent } from '../dialog/datatable-dialog.component';
+import { DataTablesModule } from 'angular-datatables';
 import * as JSZip from 'jszip';
 import { MediaObserver } from "@angular/flex-layout";
 import { FormControl } from '@angular/forms';
 import { JoyrideService } from 'ngx-joyride';
 import {MatChipsModule} from '@angular/material/chips'
 import { CdkConnectedOverlay } from '@angular/cdk/overlay';
-
+import {MatTableDataSource} from '@angular/material/table';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {BiologicalMaterialTableComponent} from '../table/biological-material-table.component'
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
     expandable: boolean;
     name: string;
     level: number;
 }
+export interface BiologicalMaterial {
+    'Biological material ID' : string;
+    'Biological material preprocessing': string
+    'Material source DOI':string;
+    'Material source ID (Holding institute/stock centre, accession)': string;
+    'Infraspecific name':string;
+    'Genus': string;
+    'Species': string;
+    'Organism':string
+  }
+
+const ELEMENT_BM_DATA: BiologicalMaterial[] = []
 
 @Component({
     selector: 'app-user-tree',
@@ -39,7 +54,9 @@ export class UserTreeComponent implements OnInit {
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    ///@ViewChildren(MatPaginator) paginators: QueryList<MatPaginator>
+    @ViewChild('biologicalMaterialDataTable', {static: false}) table;
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     disableSelect = new FormControl(false);
     panelOpenState = false;
@@ -69,11 +86,21 @@ export class UserTreeComponent implements OnInit {
     private experimental_factors = []
     private samples = []
     private obs_unit_data = []
+    private bm_datatables = {}
     private observation_id = ""
     private biological_material_id = ""
     startTime: Date;
     endTime: Date;
     timeDiff: number;
+
+    dataTable: any;
+    dtOptions: DataTables.Settings = {};
+    tableData = [];
+    private bm_datasources:{} = {}
+    bm_displayedColumns: string[] = ['Genus','Species','Organism','Biological material ID', 'Material source ID (Holding institute/stock centre, accession)','Infraspecific name'];
+    private datasources: BiologicalMaterial[] = []
+    
+
 
     constructor(
         private globalService: GlobalService,
@@ -111,7 +138,7 @@ export class UserTreeComponent implements OnInit {
     private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     private initialSelection = []
     private checklistSelection = new SelectionModel<ExampleFlatNode>(true, this.initialSelection /* multiple */);
-
+    //private bm_dataSource = new MatTableDataSource<BiologicalMaterial>(ELEMENT_BM_DATA);
     // async load(){
     //     await this.get_vertices()
     // }
@@ -120,10 +147,29 @@ export class UserTreeComponent implements OnInit {
     //     //console.log(this.statistics)
     //     //return this.statistics
     // }
+    ngAfterViewInit() {
+        Object.keys(this.bm_datasources).forEach(element => {
+            this.bm_datasources[element].paginator=this.paginator
+        });
+    } 
+    //     this.paginators.forEach(
+
+    //     )
+    //      this.bm_dataSource.paginator = this.paginator;
+    // }
+    public handlePageBottom(event: PageEvent) {
+        this.paginator.pageSize = event.pageSize;
+        this.paginator.pageIndex = event.pageIndex;
+        this.paginator.page.emit(event);
+    }
     async ngOnInit() {
         
         await this.get_vertices()
-        
+        this.dtOptions = {
+            pagingType: 'full_numbers',
+            pageLength: 5,
+            processing: true
+          };
         this.nodes = []
         this.nodes = this.build_hierarchy(this.vertices)
 
@@ -133,7 +179,7 @@ export class UserTreeComponent implements OnInit {
         this.dataSource.data = this.nodes
         ////console.log(this.dataSource.data)
         //this.treeControl.expand()
-        this.treeControl.expandAll();
+        //this.treeControl.expandAll();
 
         ////console.log(this.treeControl.dataNodes[4])
         ////console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
@@ -170,18 +216,7 @@ export class UserTreeComponent implements OnInit {
             //console.log(data);
             //this.search_string=data
         })
-        ////console.log(localStorage)
-        
-          
-        // if (currentUser['tutoriel_checked'] === false){
-        //     this.onClickTour()
-        // }
-
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        //var user = this.userService.get_user(this.currentUser['username'], this.currentUser['password'])
-        ////console.log(user)
-        //localStorage.setItem('currentUser', JSON.stringify(user));
-        
         this.onClickTour()
     }
 
@@ -245,7 +280,6 @@ export class UserTreeComponent implements OnInit {
         );
         //this.onClickTour()
     }
-
     onDone(mode_replay=false) {
         if (mode_replay){
             console.log(this.currentUser)
@@ -470,7 +504,7 @@ export class UserTreeComponent implements OnInit {
         )
     }
     build_hierarchy(edges: []): MiappeNode[] {
-        ////console.log(edges)
+        //console.log(edges)
         var cpt = 0;
         var tmp_nodes = []
         tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
@@ -481,13 +515,15 @@ export class UserTreeComponent implements OnInit {
 
                 _from = e["e"]["_from"]
                 _to = e["e"]["_to"]
+                
                 var vertices: [] = e["s"]["vertices"]
-                var parent_id = e["e"]["_from"]
+                
+                var parent_id:string = e["e"]["_from"]
                 var percent = 0.0
                 var short_name = ""
                 vertices.forEach(
                     vertice => {
-                        if (vertice['_id'] === e["e"]["_to"]) {
+                        if (vertice['_id'] === _to) {
                             var vertice_keys = Object.keys(vertice)
                             var total = 0
                             for (var i = 0; i < vertice_keys.length; i++) {
@@ -501,23 +537,42 @@ export class UserTreeComponent implements OnInit {
                     }
                 )
                 if (short_name === "" || short_name === undefined) {
-                    short_name = e["e"]["_to"]
+                    short_name = _to
                 }
-                if (_from.includes("users")) {
+
+                var vertice_data= vertices.filter(component => component['_id'] == _to)[0]
+                var vertice_data_keys = Object.keys(vertice_data).filter(component => !component.startsWith("_"))
+                var bm_vertice_data:{}[]=[]
+                if (_to.includes("biological_material")){
+                    // var bm_vertice= vertices.filter(component => component['_id'] == _to)
+                    // var bm_vertice_data_keys = Object.keys(bm_vertice).filter(component => !component.startsWith("_"))
+                    //console.log(bm_vertice)
+                    bm_vertice_data=this.prepare_bm_data(vertice_data, vertice_data_keys)
+                    vertice_data_keys=Object.keys(bm_vertice_data[0])
+                    //this.bm_datatables[_to]=bm_vertice
+                    //console.log(this.bm_datatables)
+                }
+                if (_to.includes("observation_unit")){
+                    this.prepare_ou_data(vertice_data)
+                }
+                //console.log(vertice_data)
+                //console.log(vertice_data_keys)
+                if (parent_id.includes("users")) {
 
                     if (cpt === 0) {
-                        tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+                        tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id,vertice_data_keys, vertice_data, bm_vertice_data))
                     }
                     else {
-                        tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+                        tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id,vertice_data_keys, vertice_data, bm_vertice_data))
                     }
                 }
                 else {
-                    this.searchTerm(tmp_nodes, e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+                    this.searchTerm(tmp_nodes, parent_id).add_children(new MiappeNode(_to, short_name, "", percent, parent_id,vertice_data_keys, vertice_data, bm_vertice_data))
                 }
                 cpt += 1
             }
         )
+        ///console.log(tmp_nodes)
         return tmp_nodes;
     }
     public get_dataSource() {
@@ -569,8 +624,6 @@ export class UserTreeComponent implements OnInit {
         //console.log(node)
         
     }
-
-    
     start() {
         this.startTime = new Date();
     };
@@ -1315,11 +1368,12 @@ export class UserTreeComponent implements OnInit {
         this.current_data_keys = []
         this.current_data_array = []
         this.active_node = node
-        this.displayed = true;
+        //this.displayed = true;
+
         if ((node["id"] === "Investigations tree")) {
             this.model_selected = 'Investigations tree';
         }
-        else if ((node["id"].includes("metadata_files"))) {
+        if ((node["id"].includes("metadata_files"))) {
             //get value for a given node
             this.model_selected = "metadata_files"
             this.model_key = node.id.split("/")[1]
@@ -1329,7 +1383,7 @@ export class UserTreeComponent implements OnInit {
                 }
             );
         }
-        else if ((node["id"].includes("observation_units"))) {
+        if ((node["id"].includes("observation_units"))) {
             this.model_selected = node["id"].split("/")[0]
             var key = node.id.split("/")[1]
             this.model_key = node.id.split("/")[1]
@@ -1340,8 +1394,6 @@ export class UserTreeComponent implements OnInit {
                 data => {
                     ////console.log(data)
                     var obs_linda_id = data['_id']
-
-
                     var obs_keys = Object.keys(data);
                     this.obs_unit_data = []
                     for (var i = 0; i < data["Observation unit ID"].length; i++) {
@@ -1419,82 +1471,174 @@ export class UserTreeComponent implements OnInit {
                 }
             );
         }
-        else if ((node["id"].includes("biological_materials"))) {
+        if ((node["id"].includes("biological_materials"))) {
             this.model_selected = node["id"].split("/")[0]
-            var key = node.id.split("/")[1]
+            // var key = node.id.split("/")[1]
             this.model_key = node.id.split("/")[1]
-            var collection = node.id.split("/")[0]
-            //get value for a given node
-            this.globalService.get_elem(collection, key).toPromise().then(
-                data => {
-                    this.current_data_keys = Object.keys(data);
-                    this.current_data_array.push(data);
-                    //console.log(this.current_data_array)
-                    for (var i = 0; i < this.current_data_array[0]['Biological material ID'].length; i++) {
-                        //console.log(this.current_data_array[0]['Biological material ID'][i][0])
-                    }
+            
+            
+        //     var collection = node.id.split("/")[0]
+        //     //get value for a given node
+        //     var data=this.bm_datatables[node["id"]]
+        //     // this.globalService.get_elem(collection, key).toPromise().then(
+        //     //     data => {
+        //             this.current_data_keys = Object.keys(data);
+        //             this.current_data_array.push(data);
+        //             //console.log(this.current_data_array)
+        //             // for (var i = 0; i < this.current_data_array[0]['Biological material ID'].length; i++) {
+        //             //     //console.log(this.current_data_array[0]['Biological material ID'][i][0])
+        //             // }
                         
-                    node["term"].set_current_data_array(this.current_data_array)
-
-                    for (var i = 0; i < this.current_data_keys.length; i++) {
-                        if (this.current_data_keys[i].startsWith("_")) {
-                            this.current_data_keys.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    ////console.log(this.current_data)
-                    node["term"].set_current_data(this.current_data_keys)
-                    node["term"].set_model_key(node.id.split("/")[1])
-                }
-            );
+        //             node["term"].set_current_data_array(this.current_data_array)
+        //             this.getBiologicalDataFromSource(data)
+        //             console.log(node["term"].get_current_data_array())
+        //             for (var i = 0; i < this.current_data_keys.length; i++) {
+        //                 if (this.current_data_keys[i].startsWith("_")) {
+        //                     this.current_data_keys.splice(i, 1);
+        //                     i--;
+        //                 }
+        //             }
+        //             // console.log(this.current_data)
+        //             node["term"].set_current_data(this.current_data_keys)
+        //             node["term"].set_model_key(node.id.split("/")[1])
+        //         //});
         }
         else if ((node.id.split("/")[0] === 'data_files')) {
-            this.model_selected = node["id"].split("/")[0]
-            var key = node.id.split("/")[1]
-            this.model_key = node.id.split("/")[1]
-            var collection = node.id.split("/")[0]
-            //get value for a given node
-            this.globalService.get_elem(collection, key).toPromise().then(
-                data => {
-                    this.current_data_keys = Object.keys(data);
-                    this.current_data_array.push(data);
-                    node["term"].set_current_data_array(this.current_data_array)
-
-                    for (var i = 0; i < this.current_data_keys.length; i++) {
-                        if (this.current_data_keys[i].startsWith("_")) {
-                            this.current_data_keys.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    ////console.log(this.current_data)
-                    node["term"].set_current_data(this.current_data_keys)
-                    node["term"].set_model_key(node.id.split("/")[1])
-                }
-            );
+             this.model_selected = node["id"].split("/")[0]
+        //     var key = node.id.split("/")[1]
+             this.model_key = node.id.split("/")[1]
+            
+        //     var collection = node.id.split("/")[0]
+        //     //get value for a given node
+        //     this.globalService.get_elem(collection, key).toPromise().then(
+        //         data => {
+        //             this.current_data_keys = Object.keys(data);
+        //             this.current_data_array.push(data);
+        //             node["term"].set_current_data_array(this.current_data_array)
+        //             for (var i = 0; i < this.current_data_keys.length; i++) {
+        //                 if (this.current_data_keys[i].startsWith("_")) {
+        //                     this.current_data_keys.splice(i, 1);
+        //                     i--;
+        //                 }
+        //             }
+        //             ////console.log(this.current_data)
+        //             node["term"].set_current_data(this.current_data_keys)
+        //             node["term"].set_model_key(node.id.split("/")[1])
+        //         }
+        //     );
         }
         else {
             this.model_selected = node["id"].split("/")[0]
-            var key = node.id.split("/")[1]
+        //     var key = node.id.split("/")[1]
             this.model_key = node.id.split("/")[1]
-            var collection = node.id.split("/")[0]
-            //get value for a given node
-            this.globalService.get_elem(collection, key).toPromise().then(
-                data => {
-                    this.current_data_keys = Object.keys(data);
-                    this.current_data_array.push(data);
-                    node["term"].set_current_data_array(this.current_data_array)
-
-                    for (var i = 0; i < this.current_data_keys.length; i++) {
-                        if (this.current_data_keys[i].startsWith("_")) {
-                            this.current_data_keys.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    node["term"].set_current_data(this.current_data_keys)
-                    node["term"].set_model_key(node.id.split("/")[1])
-                }
-            );
+        //     var collection = node.id.split("/")[0]
+        //     //get value for a given node
+        //     this.globalService.get_elem(collection, key).toPromise().then(
+        //         data => {
+        //             this.current_data_keys = Object.keys(data);
+        //             this.current_data_array.push(data);
+        //             node["term"].set_current_data_array(this.current_data_array)
+        //             for (var i = 0; i < this.current_data_keys.length; i++) {
+        //                 if (this.current_data_keys[i].startsWith("_")) {
+        //                     this.current_data_keys.splice(i, 1);
+        //                     i--;
+        //                 }
+        //             }
+        //             node["term"].set_current_data(this.current_data_keys)
+        //             node["term"].set_model_key(node.id.split("/")[1])
+        //         }
+        //     );
         }
+        this.displayed=true
+    }
+
+    getBiologicalDataFromSource(data) {
+        this.tableData = data;
+        var columns = []
+        var tableData_columns = Object.keys(this.tableData[0]);
+        var object_type={}
+        
+        tableData_columns.forEach(key => {
+          if (!key.startsWith('_') && !key.includes('source altitude') && !key.includes('source latitude') && !key.includes('source longitude')){
+            object_type[key]=""
+            columns.push({title: key, data: key})
+          }
+        });
+        ///console.log(object_type)
+        var cpt=0
+        var newTableData=[]
+        for (var i = 0; i < this.tableData[0]["Biological material ID"].length; i++) {
+        //this.tableData[0]["Biological material ID"].forEach(element => {
+            for (var j = 0; j < this.tableData[0]["Biological material ID"][i].length; j++) {
+            //element.forEach(bm_id => {
+                //console.log(this.tableData[0]["Biological material ID"][i][j])
+                let object_type_tmp=Object.assign(object_type)
+                //ELEMENT_BM_DATA.push({'biologicalMaterialId':this.tableData[0]["Biological material ID"][i][j]})
+                object_type_tmp["Biological material ID"]=this.tableData[0]["Biological material ID"][i][j]
+                object_type_tmp["Material source ID (Holding institute/stock centre, accession)"]=this.tableData[0]["Material source ID (Holding institute/stock centre, accession)"][i]
+                newTableData.push(object_type_tmp)
+            }//);
+            //cpt+=1
+        }//);
+        //console.log(newTableData)
+        this.dtOptions['data']=newTableData
+        this.dtOptions['columns']=columns
+        // this.dtOptions = {
+        //   data: newTableData,
+        //   columns: columns
+        // };  
+        this.dataTable = $(this.table.nativeElement);
+        this.dataTable.DataTable(this.dtOptions);
+    }
+      
+    prepare_ou_data(data){
+        console.log(data) 
+    } 
+    prepare_bm_data(node_vertice, vertice_keys){
+        var newTableData:{}[]=[]
+        this.datasources=[]
+        var data= node_vertice
+        var keys = vertice_keys
+        
+        for (var i = 0; i < data["Biological material ID"].length; i++) {
+            //this.tableData[0]["Biological material ID"].forEach(element => {
+            for (var j = 0; j < data["Biological material ID"][i].length; j++) {
+                let tmp_dict:BiologicalMaterial={"Species":"","Organism":"","Biological material ID":"","Biological material preprocessing":"", 'Material source DOI':"", 'Material source ID (Holding institute/stock centre, accession)':"", 'Infraspecific name':"", 'Genus':""};
+                for (var k = 0; k < keys.length; k++) {
+                    if (!keys[k].startsWith('_') && !keys[k].includes('altitude') && !keys[k].includes('latitude') && !keys[k].includes('longitude') && !keys[k].includes('coordinates uncertainty') && !keys[k].includes('description')){
+
+                        if (keys[k].includes("Biological material") ){
+                            tmp_dict[keys[k]]=data[keys[k]][i][j]
+                        }
+                        else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")){
+                            tmp_dict[keys[k]]=data[keys[k]][i]
+                        }
+                        
+                        else{
+                            tmp_dict[keys[k]]=data[keys[k]]
+                        }  
+                        
+                    }
+                    
+                }
+                newTableData.push(tmp_dict)
+                this.datasources.push(tmp_dict)
+                
+                
+            }
+        }
+        var dt_source=new MatTableDataSource<BiologicalMaterial>(this.datasources);
+        this.bm_datasources[data['_id']] = dt_source; 
+
+        console.log(newTableData)
+        //console.log(ELEMENT_BM_DATA)
+        return newTableData
+    }
+    get_bm_dataSource(node_id:string){
+        return this.bm_datasources[node_id]
+    }
+    get_bm_current_data_array(node: MiappeNode){
+        return node["term"].get_bm_current_data_array()
     }
     get_current_data(node: MiappeNode) {
         return node["term"].get_current_data()
@@ -1503,7 +1647,7 @@ export class UserTreeComponent implements OnInit {
         return node["term"].get_current_data_array()
     }
     get_current_data_file_headers(node: MiappeNode) {
-        let ass_headers=node["term"].get_current_data_array()[0]['associated_headers']
+        let ass_headers=node["term"].get_current_data_array()['associated_headers']
         var associated_component=[]
         ass_headers.forEach(element => {
             if (element.selected){

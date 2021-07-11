@@ -512,7 +512,7 @@
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
                                         <ng-container *ngIf="!node.id.includes('biological_materials') && !node.id.includes('observation_units')">
-                                            <table 
+                                            <table *ngIf="displayed"
                                                 class="table table-hover table-bordered  table-striped text-center">
                                                 <tbody>
                                                     <tr *ngFor="let key of get_current_data(node) ; index as j;">
@@ -520,82 +520,120 @@
                                                         </td>
                                                         <td *ngIf="key.includes('file link')"
                                                             style="font-size:14px;text-align: center; color: blue; "
-                                                            scope="row"><a href="{{get_current_data_array(node)[0][key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[0][key]}}</a>
+                                                            scope="row"><a href="{{get_current_data_array(node)[key]}}"
+                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
                                                         </td>
                                                         <td *ngIf="!key.includes('file link')"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[0][key])">
+                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
                                                                 <mat-chip-list>
                                                                     <mat-chip class="example-box"
-                                                                        *ngFor="let id of get_current_data_array(node)[0][key][0]">
+                                                                        *ngFor="let id of get_current_data_array(node)[key][0]">
                                                                         {{id}} </mat-chip>
                                                                 </mat-chip-list>
                                                             </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[0][key])">
-                                                                {{get_current_data_array(node)[0][key]}}
+                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
+                                                                {{get_current_data_array(node)[key]}}
                                                             </div>
-                                                            <!-- <div *ngIf="get_current_data_array(node)[0][key][0] && !isArray(get_current_data_array(node)[0][key][0])">
-                                                            {{get_current_data_array(node)[0][key][0]}}
+                                                            <!-- <div *ngIf="get_current_data_array(node)[key][0] && !isArray(get_current_data_array(node)[key][0])">
+                                                            {{get_current_data_array(node)[key][0]}}
                                                         </div> -->
     
-                                                            <!-- <mat-chip>{{get_current_data_array(node)[0][key]}}</mat-chip> -->
+                                                            <!-- <mat-chip>{{get_current_data_array(node)[key]}}</mat-chip> -->
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            </ng-container>
-                                    <!--Biological material table-->
-                                      <ng-container *ngIf="node.id.includes('biological_materials')">
+                                        </ng-container>
+                                        <!--Biological material table-->
+                                        <ng-container *ngIf="node.id.includes('biological_materials')">
+                                            <app-biological-material-table [data]="get_bm_dataSource(node.id)"></app-biological-material-table>
                                         <!-- <ul>
-                                            <li>Genus: {{get_current_data_array(node)[0]['Genus']}}</li>
-                                            <li>Organism: {{get_current_data_array(node)[0]['Organism']}}</li>
-                                            <li>Species: {{get_current_data_array(node)[0]['Species']}}</li>
+                                            <li>Genus: {{get_current_data_array(node)['Genus']}}</li>
+                                            <li>Organism: {{get_current_data_array(node)['Organism']}}</li>
+                                            <li>Species: {{get_current_data_array(node)['Species']}}</li>
                                         </ul> -->
-                                        <table 
-                                            class="table table-hover table-bordered  table-striped text-center">
-                                            <tbody>
-                                                <tr *ngFor="let key of get_current_data(node) ; index as j;">
-                                                    
-                                                    
-                                                        <td *ngIf="key !== 'Genus'  && key !== 'Organism'  && key !== 'Species'" style="font-size:14px;text-align: center; " scope="row">{{key}}
+                                            
+                                            <!-- <table #biologicalMaterialDataTable id="{{node.id}}"></table> --> 
+                                            
+                                            <!-- <table datatable class="table table-hover table-bordered table-striped text-center">
+                                                <thead>
+                                                    <ng-container *ngFor="let key of get_current_data(node) ; let i=index">
+                                                    <th class="text-center align-middle">
+                                                        <div>
+                                                        <label for="{{key}}">{{key}}</label>
+                                                        <span style="display:inline-block; margin-left: 10px;">
+                                                            <i style="color :lightblue" class="fa fa-info-circle" title="no title"></i>
+                                                        </span>
+                                                        </div>
+                                                    </th>
+                                                    </ng-container>
+                                                </thead>
+                                                <tbody>
+                                                    <ng-container *ngFor="let item of get_bm_current_data_array(node) ; let i=index">
+                                                        <tr>
+                                                            <ng-container *ngFor="let key of get_current_data(node) ; let i=index">
+                                                            <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
+                                                                <a href="{{item[key]}}"
+                                                                    target="_blank">{{item[key]}}</a>
+                                                            </td>
+                                                            <td *ngIf="!key.includes('file link')" scope="row">
+                                                                {{item[key]}}
+                                                            </td>
+                                                            </ng-container>
+                                                        </tr>
+                                                    </ng-container> -->
+                                            <!-- <div *ngFor="let item of get_current_data_array(node)['Infraspecific name']; let j=index">
+                                                <ng-container *ngFor="let item2 of get_current_data_array(node)['Biological material ID'][0]; let k=index">
+                                                    <tr> -->
+                                                      
+                                                    <!-- <td *ngIf="key !== 'Genus'  && key !== 'Organism'  && key !== 'Species'"
+                                                        style="font-size:14px;text-align: center; " scope="row">{{key}}
+                                                    </td> -->
+
+                                                        <!-- <div *ngFor="let item of get_current_data_array(node)['Infraspecific name'] ; index as k"> -->
+                                                        
+                                                        <!-- <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
+                                                            <a href="{{get_current_data_array(node)[key]}}"
+                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
                                                         </td>
-                                                        <div *ngFor="let item of get_current_data_array(node)[0]['Infraspecific name'] ; index as k;">
-                                                        <td *ngIf="key.includes('file link')"
-                                                            style="font-size:14px;text-align: center; color: blue; "
-                                                            scope="row"><a href="{{get_current_data_array(node)[0][key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[0][key]}}</a>
-                                                        </td>
-                                                        <td *ngIf="!key.includes('file link') && !key.includes('Biological material') && key !== 'Genus'  && key !== 'Organism'  && key !== 'Species'"
+
+                                                        <td *ngIf="!key.includes('file link') && !key.includes('Biological material') && key !== 'Genus'  && key !== 'Organism'  && key !== 'Species' && k < 20"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[0][key])">
+                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
                                                                 <mat-chip-list>
-                                                                    <mat-chip class="example-box" *ngFor="let id of get_current_data_array(node)[0][key]">
-                                                                        {{id}} 
+                                                                    <mat-chip class="example-box" *ngFor="let id of get_current_data_array(node)[key]">
+                                                                        {{get_current_data_array(node)[key]}}
                                                                     </mat-chip>
                                                                 </mat-chip-list>
                                                             </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[0][key])">
-                                                                {{get_current_data_array(node)[0][key]}}
+                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
+                                                                {{get_current_data_array(node)[key]}}
                                                             </div>
-                                                        </td>
-                                                        <td *ngIf="!key.includes('file link') && key.includes('Biological material')"
+                                                        </td> -->
+
+                                                        <!-- <td *ngIf="!key.includes('file link') && key.includes('Biological material') && k < 20"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[0][key])">
+                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
                                                                 <mat-chip-list>
                                                                     <mat-chip class="example-box"
-                                                                        *ngFor="let id of get_current_data_array(node)[0][key][k]">
-                                                                        {{id}} </mat-chip>
+                                                                        *ngFor="let id of get_current_data_array(node)[key][k];">
+                                                                        {{id}}
+                                                                    </mat-chip>
                                                                 </mat-chip-list>
                                                             </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[0][key])">
-                                                                {{get_current_data_array(node)[0][key]}}
+                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
+                                                                {{get_current_data_array(node)[key]}}
                                                             </div>
-                                                        </td>
-                                                    </div>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                                        </td> -->
+
+                                                        <!-- </div> -->
+                                                    <!-- </tr>
+                                                    </ng-container>
+                                                </div> -->
+                                            
+                                            <!-- </tbody>
+                                        </table> -->
                                         </ng-container>
                                         <ng-container *ngIf="node.id.includes('observation_units')">
                                             <!-- Here put Biological Material Table -->
@@ -614,7 +652,7 @@
                                                     </ng-container>
                                                 </thead>
                                                 <tbody>
-                                                    <ng-container *ngFor="let group of get_ou_data(node) ; let i=index">
+                                                    <ng-container *ngFor="let group of get_ou_data(node) ; let i=index;">
                                                         <tr (click)="ObservationTableRowSelected(i)">
                                                             <ng-container
                                                                 *ngFor="let field of get_ou_field ; let j=index">
@@ -643,7 +681,7 @@
                                                     </ng-container>
                                                 </thead>
                                                 <tbody>
-                                                    <ng-container *ngFor="let group of get_bm_data(node) ; let i=index">
+                                                    <ng-container *ngFor="let group of get_bm_data(node) ; let i=index;">
                                                         <tr (click)="MaterialTableRowSelected(i)"
                                                             *ngIf="group['obsUUID']===observation_id">
                                                             <ng-container
@@ -693,8 +731,8 @@
                                             <tbody >
                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a></td>
-                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[0][key]}}</td>
+                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a></td>
+                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[key]}}</td>
 
                                                 </tr>
                                             </tbody>
@@ -703,8 +741,8 @@
                                             <tbody >
                                                 <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
                                                 <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[0][key]}}" target="_blank">{{get_current_data_array(node)[0][key]}}</a></td>
-                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[0][key]}}</td>
+                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a></td>
+                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[key]}}</td>
 
                                                 </tr>
                                             </tbody>
@@ -756,13 +794,13 @@
                                                         <td *ngIf="key.includes('file link')"
                                                             style="font-size:14px;text-align: center; color: blue; "
                                                             scope="row"><a
-                                                                href="{{get_current_data_array(node)[0][key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[0][key]}}</a>
+                                                                href="{{get_current_data_array(node)[key]}}"
+                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
                                                         </td>
 
                                                         <td *ngIf="key.includes('file version') || key.includes('file description')"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            {{get_current_data_array(node)[0][key]}}
+                                                            {{get_current_data_array(node)[key]}}
                                                         </td>
                                                         <td *ngIf="key === 'Data'"
                                                             style="font-size:14px;text-align: center;" scope="row">
@@ -1382,14 +1420,14 @@
                                                 <!-- <mat-checkbox *ngIf="multiple_selection==true" [checked]="descendantsAllSelected(node)" [indeterminate]="descendantsPartiallySelected(node)" (change)="todoItemSelectionToggle(node)"><i *ngIf="multiple_selection===true">{{node.name}}</i></mat-checkbox> -->
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <table *ngIf="get_model_selected()!=='metadata_files'"
+                                        <table *ngIf="get_model_selected()!=='metadata_files' && displayed"
                                             class="table table-hover table-bordered  table-striped text-center">
                                             <tbody>
                                                 <tr *ngFor="let key of get_current_data(node) ; index as j;">
                                                     <td style="font-size:14px;text-align: center; " scope="row">{{key}}
                                                     </td>
                                                     <td style="font-size:14px;text-align: center; " scope="row">
-                                                        <mat-chip>{{get_current_data_array(node)[0][key]}}</mat-chip>
+                                                        <mat-chip>{{get_current_data_array(node)[key]}}</mat-chip>
                                                     </td>
                                                 </tr>
                                             </tbody>

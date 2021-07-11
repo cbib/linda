@@ -16,8 +16,7 @@ interface DialogData {
 export class DatatableDialogComponent implements OnInit {
 private collection:string=""
 private model_key:string=""
-private current_data_file_keys = []
-private current_data_file_array = []
+
 dataTable: any;
 dtOptions: any;
 tableData = [];
@@ -34,6 +33,7 @@ tableData = [];
   getDataFromSource() {
     this.globalService.get_data_file(this.model_key).subscribe(data => {
       this.tableData = data.data;
+      console.log(this.tableData)
       var columns = []
       var tableData_columns = Object.keys(this.tableData[0]);
       tableData_columns.forEach(key => {
