@@ -1,0 +1,55 @@
+<div class="border-head">
+    <h3>
+        <a href="index.html" class="logo">
+            <b>
+            P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+            </b>
+        </a>
+    </h3>
+</div>
+
+<table #dataTable class="table table-hover table-bordered table-striped text-center" id="datatable_form">
+    <thead>
+        <tr>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE form field</th>
+            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned MIAPPE form field</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let key of get_headers() ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+
+            <!-- Original headers column-->
+            <th scope="col" >
+                {{key}}
+            </th>
+            <!-- MIAPPE assignment-->
+            
+            <th>
+                <!-- <span style="display:inline-block; margin-left: 10px;"> 
+                    <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractField($event.target.value,get_headers_by_filename(selected_file)[i])" ngModel>
+                        <option *ngFor="let extract_option of extract_fields_options.options" [value]="extract_fields_options.value">{{extract_fields_options.name}}</option>
+                    </select> 
+                </span> -->
+                <form [formGroup]="dataFileComponentFieldForm">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Field Options" formControlName="{{key}}" (selectionChange)="onExtractField($event.value, key)">
+                            <mat-option>--</mat-option>
+                            <mat-option *ngFor="let extract_field_option of extract_fields_options.options" [value]="extract_field_option.value">
+                                {{extract_field_option.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>                    
+                </form>
+
+            </th>
+            <th>
+                <span *ngIf="get_extracted_field(key)" style="display:inline-block; margin-left: 10px;"> 
+                    {{data_to_extract[key]}} 
+                </span> 
+            </th>
+        </tr>
+    </tbody>
+</table>
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" ></mat-paginator>
+
