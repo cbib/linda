@@ -826,10 +826,12 @@ export class UserTreeComponent implements OnInit {
                     if (this.active_node.id.split("/")[0] === "observation_units") {
                         this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
                             data => {
+                                console.log(data)
                                 if (data["success"]) {
                                     ////console.log(data["message"])
                                     var message = this.active_node.id + " has been removed from your history !!"
                                     this.alertService.success(message)
+                                    
                                     
                                 }
                                 else {
@@ -837,10 +839,11 @@ export class UserTreeComponent implements OnInit {
                                 }
                             }
                         );
+                        this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
                         // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                        // this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                        
                         //this.reloadComponent(['/tree'])
-                        window.location.reload();
+                        //window.location.reload();
                     }
                     // All the other nodes type
                     else {

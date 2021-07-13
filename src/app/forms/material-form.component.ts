@@ -8,6 +8,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../ontology-tree/ontology-tree.component';
 import { OntologyTerm } from '../ontology/ontology-term';
 import * as uuid from 'uuid';
+import { DelimitorDialogComponent } from '../dialog/delimitor-dialog.component';
+import { CsvLoaderDialogComponent } from '../dialog/csv-loader-dialog.component';
+
+import * as XLSX from 'xlsx';
+
 import {JoyrideService} from 'ngx-joyride';
 @Component({
   selector: 'app-material-form',
@@ -55,13 +60,22 @@ export class MaterialFormComponent implements OnInit {
   used_mat_ids=[]
   selectedRowIndex = -1;
 
+
+  // I/O part
+  fileUploaded: File;
+  fileName: string = ""
+  fileUploadProgress: string = null;
+  uploadedFilePath: string = null;
+  uploadResponse = { status: '', message: 0, filePath: '' };
+
   constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
     public ontologiesService: OntologiesService,
 
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    public bmdialog: MatDialog) {
 
 
     this.route.queryParams.subscribe(
@@ -96,8 +110,7 @@ export class MaterialFormComponent implements OnInit {
     await this.get_model()
     console.log(this.mode)
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
-    this.onClickTour()
-   ; 
+    this.onClickTour(); 
 
   }
 
@@ -108,24 +121,7 @@ export class MaterialFormComponent implements OnInit {
 
   }
   
-  onClickTour(help_mode:boolean=false) {
-    if (help_mode){
-      this.joyrideService.startTour(
-        { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
-    );
-    }
-    else{
-      this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-      if (this.currentUser['tutoriel_step'] === "9"){
-          this.joyrideService.startTour(
-              { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
-          );
-              //this.currentUser.tutoriel_step="2"
-              //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-      }
-    }
-
- }
+  
   onTaskAdd(event) {
     this.startfilling = false;
     this.keys.forEach(attr => {
@@ -136,50 +132,7 @@ export class MaterialFormComponent implements OnInit {
     // //console.log(this.startfilling)
     // //console.log(this.materialTable.value)
   }
-  onDone(node_type:string) {
-    // //console.log(this.currentUser['tutoriel_step'])
-    // //console.log(this.materialTable.value)
-    // //console.log(this.materialTable.controls)
-    //this.joyrideService.closeTour()
-    
-    //Biological  form template
-    //if (this.currentUser['tutoriel_step']==="9"){
-      var species_list=["B73", "PH207", "Oh43", "W64A", "EZ47"]
-      const generalRows = this.materialTable.get('generalRows') as FormArray;
-      generalRows.controls[0].patchValue({ "Genus": "Zea" })
-      generalRows.controls[0].patchValue({ "Species": "mays" })
-      generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
-      //generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
-      var cpt=0
-      var gbl_cpt=0
-      const MaterialControl = this.materialTable.get('materialRows') as FormArray;
-      const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-      species_list.forEach(species=>{
-
-        //console.log(species)
-        
-        MaterialControl.push(this.initiateMaterialForm('create', cpt));
-        var m_id='INRA:' + species
-        ////console.log(m_id)
-        ////console.log(MaterialControl.controls[cpt])
-        MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
-        MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
-        // TODO finish bm incorporation
-        
-        
-        for (var i=1;i<11;i++){
-          var bm_id=m_id+'_' + i
-          //console.log(bm_id)
-          biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",cpt ,i-1));
-          biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material ID": bm_id })
-          biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material preprocessing": "PECO:0007210" })
-          gbl_cpt+=1
-        }
-        cpt+=1
-      })
-    //}  
-    this.startfilling=true
-  }
+  
   get_model() {
     this.model = [];
 
@@ -276,19 +229,6 @@ export class MaterialFormComponent implements OnInit {
       // const names = userNames.map(item=> item.username.trim());
       const materialControl = this.materialTable.get('materialRows') as FormArray;
       const names = materialControl.controls.map(item=> item.value['Material source ID (Holding institute/stock centre, accession)']);
-      //test if this material id is in the material ids list
-      //console.log(names)
-      //console.log(c.value)
-      //var hasDuplicate =false
-      // if (this.used_mat_ids.includes(c.value)){
-      //   hasDuplicate = true
-      // }
-      // else{
-
-      //   this.used_mat_ids.push(c.value)
-      // }
-      
-      
       for (var j = 0; j < materialControl.controls.length; j++) {
         //console.log(materialControl.controls[j].get('Material source ID (Holding institute/stock centre, accession)').value)
       
@@ -341,7 +281,7 @@ export class MaterialFormComponent implements OnInit {
     return this.fb.group(attributeFilters,{ updateOn: "blur" });
   }
 
-  initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0,): FormGroup {
+  initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0): FormGroup {
     ////console.log(this.cleaned_model)
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
@@ -428,6 +368,7 @@ export class MaterialFormComponent implements OnInit {
     ////console.log(this.material_id)
     ////console.log(this.index_row)
   }
+
   addBiologicalMaterialRow() {
     ////console.log(this.material_id)
     if (this.material_id === "") {
@@ -437,6 +378,74 @@ export class MaterialFormComponent implements OnInit {
       const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
       biologicalMaterialControl.push(this.initiateBiologicalMaterialForm());
     }
+  }
+
+  editBiologicalMaterial(index: number){
+    console.log("here  you have to open a new dialog component with the table for biologiccal material as in user tree")
+  }
+
+
+  
+  // I/O part
+  read_csv(delimitor: string) {
+    let fileReader = new FileReader();
+    fileReader.onload = (e) => {
+        var csv = fileReader.result;
+        this.load_csv(csv, e.loaded,e.total, delimitor)
+    }
+    fileReader.readAsText(this.fileUploaded);
+  }
+  readExcel() {
+    let fileReader = new FileReader();
+    fileReader.onload = (e) => {
+        var storeData:any = fileReader.result;
+        var data = new Uint8Array(storeData);
+        var arr = new Array();
+        for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+        var bstr = arr.join("");
+        var book = XLSX.read(bstr, { type: "binary" });
+        var first_sheet_name = book.SheetNames[0];
+        var worksheet = book.Sheets[first_sheet_name];
+        var csv = XLSX.utils.sheet_to_csv(worksheet);
+        this.load_csv(csv, e.loaded, e.total);
+    }
+    fileReader.readAsArrayBuffer(this.fileUploaded);
+    
+  }
+  onFileChange(event) {
+    if (event.target.files.length > 0) {
+        this.uploadResponse.status = 'progress'
+        this.fileUploaded = event.target.files[0];
+        //let fileReader = new FileReader();
+        this.fileName = this.fileUploaded.name
+        if (this.fileUploaded.type === "text/csv") {
+            const dialogRef = this.dialog.open(DelimitorDialogComponent, { width: '1000px', data: { delimitor: "" } });
+            dialogRef.afterClosed().subscribe(data => {
+                if (data !== undefined) {
+                    this.read_csv(data.delimitor)
+                };
+            });
+        }
+        else {
+            this.readExcel();
+        }
+        //this.loaded=true
+        //this.form.get('file').setValue(this.fileUploaded);
+
+    }
+  }
+  load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
+    console.log(csvData)
+    let allTextLines = csvData.split(/\r|\n|\r/);
+    const dialogRef = this.dialog.open(CsvLoaderDialogComponent, { width: '1200px', data: { material_data: allTextLines, delimitor:delimitor , cleaned_model:this.cleaned_model} });
+            dialogRef.afterClosed().subscribe(data => {
+                if (data !== undefined) {
+                    console.log(data)
+                };
+            });
+        ///console.log(allTextLines)
+    
+
   }
 
   deleteMaterialRow(index: number) {
@@ -812,31 +821,6 @@ export class MaterialFormComponent implements OnInit {
 
       material_index += 1
     });
-
-
-
-    // this.cleaned_model.forEach(attr => {
-    //   if (attr["level"]==="1") {
-    //     //console.log("level 1 attributes", attr)
-    //     //console.log("level 1 attributes", attr)
-    //     return_data[attr["key"]]= generalControl.controls[0].value[attr["key"]]
-    //     // generalControl.controls.forEach(general_attr=>{
-
-    //     //   //console.log(general_attr.value)
-    //     // });
-    //   }
-    //   else if (attr["level"]==="2") {
-    //     //console.log("level 2 attributes", attr)
-    //     return_data[attr["key"]]=[]
-
-    //   }
-    //   else{
-    //     //console.log("level 3 attributes", attr)
-    //     return_data[attr["key"]]=[[]]
-
-    //   }
-
-    // });
     if (this.mode==="preprocess"){
       console.log("start to subbmit")
       
@@ -854,6 +838,68 @@ export class MaterialFormComponent implements OnInit {
   toggleTheme() {
     this.mode_table = !this.mode_table;
   }
+  onClickTour(help_mode:boolean=false) {
+    if (help_mode){
+      this.joyrideService.startTour(
+        { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+    );
+    }
+    else{
+      this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+      if (this.currentUser['tutoriel_step'] === "9"){
+          this.joyrideService.startTour(
+              { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'StepDemoForm', 'StepSubmit'], stepDefaultPosition: 'center'} // Your steps order
+          );
+              //this.currentUser.tutoriel_step="2"
+              //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+    }
+
+ }
+ onDone(node_type:string) {
+  // //console.log(this.currentUser['tutoriel_step'])
+  // //console.log(this.materialTable.value)
+  // //console.log(this.materialTable.controls)
+  //this.joyrideService.closeTour()
+  
+  //Biological  form template
+  //if (this.currentUser['tutoriel_step']==="9"){
+    var species_list=["B73", "PH207", "Oh43", "W64A", "EZ47"]
+    const generalRows = this.materialTable.get('generalRows') as FormArray;
+    generalRows.controls[0].patchValue({ "Genus": "Zea" })
+    generalRows.controls[0].patchValue({ "Species": "mays" })
+    generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
+    //generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
+    var cpt=0
+    var gbl_cpt=0
+    const MaterialControl = this.materialTable.get('materialRows') as FormArray;
+    const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+    species_list.forEach(species=>{
+
+      //console.log(species)
+      
+      MaterialControl.push(this.initiateMaterialForm('create', cpt));
+      var m_id='INRA:' + species
+      ////console.log(m_id)
+      ////console.log(MaterialControl.controls[cpt])
+      MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
+      MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
+      // TODO finish bm incorporation
+      
+      
+      for (var i=1;i<11;i++){
+        var bm_id=m_id+'_' + i
+        //console.log(bm_id)
+        biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("create",cpt ,i-1));
+        biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material ID": bm_id })
+        biologicalMaterialControl.controls[gbl_cpt].patchValue({ "Biological material preprocessing": "PECO:0007210" })
+        gbl_cpt+=1
+      }
+      cpt+=1
+    })
+  //}  
+  this.startfilling=true
+}
 
 
   // submit(form: any) {

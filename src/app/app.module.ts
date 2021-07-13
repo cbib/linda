@@ -111,6 +111,7 @@ import { TemplatesComponent } from './templates/templates.component';
 import { ExplorationComponent } from './statistics/exploration.component';
 import { BiologicalMaterialDialogComponent } from './dialog/biological-material-dialog.component';
 import { BiologicalMaterialTableComponent } from './table/biological-material-table.component';
+import { CsvLoaderDialogComponent } from './dialog/csv-loader-dialog.component';
 
 @NgModule({
   declarations: [
@@ -175,7 +176,8 @@ import { BiologicalMaterialTableComponent } from './table/biological-material-ta
     TemplatesComponent,
     ExplorationComponent,
     BiologicalMaterialDialogComponent,
-    BiologicalMaterialTableComponent
+    BiologicalMaterialTableComponent,
+    CsvLoaderDialogComponent
         
     
 
@@ -252,7 +254,8 @@ import { BiologicalMaterialTableComponent } from './table/biological-material-ta
                    DatatableDialogComponent,
                    HelpLoaderDialogComponent,
                    FormDialogComponent,
-                   BiologicalMaterialDialogComponent
+                   BiologicalMaterialDialogComponent,
+                   CsvLoaderDialogComponent
                    
                    ],
   providers: [AuthGuard,

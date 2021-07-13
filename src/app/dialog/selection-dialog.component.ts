@@ -184,8 +184,8 @@ export class SelectionDialogComponent implements OnInit {
   }
   load_factor(attr: {}): ExperimentalFactor[] {
     var data = []
-    console.log(attr)
-    console.log(attr["_id"])
+    // console.log(attr)
+    // console.log(attr["_id"])
     var obj={}
     obj={
       experimentalFactorType: attr['Experimental Factor type'],
@@ -195,9 +195,9 @@ export class SelectionDialogComponent implements OnInit {
       lindaID: attr["_id"],
       obsUUID: this.observation_id
     }
-    console.log(obj)
+    // console.log(obj)
     data.push(obj)
-    console.log(data)
+    // console.log(data)
     return data
 
   }
@@ -245,38 +245,38 @@ export class SelectionDialogComponent implements OnInit {
             //this.sources[this.model_type].data=[];
             //this.load_material(attr)
             this.materialdataSource.data = this.load_material(attr)
-            console.log(this.sources[this.model_type].data)
-            console.log(this.ready_to_show)
+            //console.log(this.sources[this.model_type].data)
+            //console.log(this.ready_to_show)
             this.sources[this.model_type].data.forEach(row => {
-              console.log('check row: ', row)
+              //console.log('check row: ', row)
               this.bmselection.selected.forEach(selected_row => {
-                console.log('compare to row: ', selected_row)
+                //console.log('compare to row: ', selected_row)
                 if (this.shallowEqual(row, selected_row)) {
                   this.bmselection.select(row)
-                  console.log(row, ' equal to row: ', selected_row)
+                  //console.log(row, ' equal to row: ', selected_row)
                 }
                 else {
-                  console.log(row, ' not equal to row: ', selected_row)
+                  ///console.log(row, ' not equal to row: ', selected_row)
                 }
               });
             });
           }
           else if (this.model_type === "experimental_factor") {
             this.factordataSource.data = this.load_factor(attr)
-            console.log(this.sources[this.model_type].data)
-            console.log(this.ready_to_show)
+            //console.log(this.sources[this.model_type].data)
+            //console.log(this.ready_to_show)
 
             //When there are multiple element in select list, keep trace of selected element
             this.sources[this.model_type].data.forEach(row => {
-              console.log('check row: ', row)
+              //console.log('check row: ', row)
               this.efselection.selected.forEach(selected_row => {
-                console.log('compare to row: ', selected_row)
+                //console.log('compare to row: ', selected_row)
                 if (this.shallowEqual(row, selected_row)) {
                   this.efselection.select(row)
-                  console.log(row, ' equal to row: ', selected_row)
+                  //console.log(row, ' equal to row: ', selected_row)
                 }
                 else {
-                  console.log(row, ' not equal to row: ', selected_row)
+                  //console.log(row, ' not equal to row: ', selected_row)
                 }
               });
             });
@@ -295,10 +295,10 @@ export class SelectionDialogComponent implements OnInit {
 
   onOkClick(): void {
     //var return_data = { material_ids: [], biological_material_ids: [], data: this.data.values }
-    console.log(this.factordataSource.data)
-    console.log(this.data.values)
-    console.log(this.bmselection)
-    console.log(this.efselection)
+    // console.log(this.factordataSource.data)
+    // console.log(this.data.values)
+    // console.log(this.bmselection)
+    // console.log(this.efselection)
     if (this.model_type === "biological_material") {
       this.return_data[this.model_type].data = this.bmselection.selected
       // this.return_data[this.model_type].data = this.data.values
@@ -311,8 +311,8 @@ export class SelectionDialogComponent implements OnInit {
     }
     else if (this.model_type === "experimental_factor") {
       this.efselection.selected.forEach(element => {
-        console.log(this.efselection)
-        console.log(this.data.values)
+        // console.log(this.efselection)
+        // console.log(this.data.values)
         //this.return_data[this.model_type].data = this.data.values
         //it is better to use this.selection.selected than this.data.values to remove _id, _key attributes
         this.return_data[this.model_type].data = this.efselection.selected

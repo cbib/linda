@@ -182,7 +182,11 @@
         <mat-card-content>
           <div class="action-container">
 
-            <button class="btn btn-primary" mat-raised-button type="submit" (click)="addMaterialRow()">Add material</button>
+            <button class="btn btn-defaut btn-file" mat-raised-button type="submit" (click)="addMaterialRow()">Add material</button>
+            <!-- <button class="btn btn-primary" mat-raised-button (click)="addMaterialRowFromFile()">Add material from files</button> -->
+            <label class="btn btn-primary btn-file">Add material from files<input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+
+
           </div>
           <span style="display:inline-block; margin-left: 10px;"></span>
           <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
@@ -259,7 +263,7 @@
                           <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
                             <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
                               {{field['key']}} is required</div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                            <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">Minimum
                               length is required</div>
                             <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
                               required - already used !! </div>
@@ -277,6 +281,9 @@
                   </ng-container>
                   <td class="text-center align-middle">
                     <mat-icon class="delete" (click)="deleteMaterialRow(i)">delete_forever</mat-icon>
+                  </td>
+                  <td class="text-center align-middle">
+                    <mat-icon class="edit" (click)="editBiologicalMaterial(i)">edit_bm</mat-icon>
                   </td>
                 </tr>
               </ng-container>

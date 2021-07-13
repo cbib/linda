@@ -139,141 +139,7 @@ export class ObservationUnitFormComponent implements OnInit {
     this.onClickTour()
 
   }
-  onClickTour() {
-    console.log('start tour part 2')
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-    console.log(this.currentUser['tutoriel_step'])
-        console.log(this.currentUser)
-        if (this.currentUser['tutoriel_step'] === "11"){
-            this.joyrideService.startTour(
-                { steps: ['generalContent', 'addObservationUnit', 'associateBiologicalMAterial', 'addBiologicalSample', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
-            );
-            //this.currentUser.tutoriel_step="2"
-            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
- }
- onDone(node_type:string) {
-  console.log(this.currentUser['tutoriel_step'])
-
-  
-  if (this.currentUser['tutoriel_step']==="11"){
-    this.observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    //this.observationUnitControl.push(this.initiateObservationUnitForm("create", 0))
-    var parent_name = this.parent_id.split("/")[0]
-    var parent_key = this.parent_id.split("/")[1]
-    
-    this.globalService.get_type_child_from_parent(parent_name, parent_key, "experimental_factors")
-      .toPromise().then(
-        experimental_factor_data => {
-          this.globalService.get_type_child_from_parent(parent_name, parent_key, "biological_materials").toPromise().then(
-            biological_material_data => {
-              let cpt=1
-              var obs_cpt=0
-              var jmin=0
-              var jmax=0
-              var mode_ef=""
-              for (var i=0;i<10;i++){
-                var ef = {
-                  "experimentalFactorType": "Watering",
-                  "experimentalFactorDescription": "Daily watering 1L per plant",
-                  "experimentalFactorValues": [],
-                  "experimentalFactorAccessionNumber": "EFO:0000470",
-                  "lindaID":experimental_factor_data[0]._id,
-                  "obsUUID": "",
-                  "efUUID": ""
-                }
-                var ef_tmp: ExperimentalFactor
-                ef_tmp=ef
-          
-                ef_tmp.experimentalFactorValues.push("rainfed")
-                ef_tmp.experimentalFactorValues.push("watered")
-                ef_tmp.efUUID = uuid.v4()
-                
-                this.observationUnitControl.push(this.initiateObservationUnitForm("create", i))
-                //get obs uuid 
-                //console.log(this.observationUnitControl.controls[i].value["obsUUID"])
-                let obs_uuid=this.observationUnitControl.controls[i].value["obsUUID"]
-                ef_tmp.obsUUID=obs_uuid
-                console.log(ef_tmp)
-                this.ef_data.push(ef_tmp)
-
-
-
-                //get obs id 
-                let obs_id = 'plot' + (i+1)
-                let external_obs_id = 'BIOSAMPLES:plot' + (i+1)
-                this.observationUnitControl.controls[i].patchValue({ "Observation unit ID": obs_id })
-                this.observationUnitControl.controls[i].patchValue({ "External ID": external_obs_id })
-                this.observationUnitControl.controls[i].patchValue({ "Observation unit type": "plot" })
-                
-                
-                if (i<5){
-                  jmin=1
-                  jmax=6
-                  mode_ef="rainfed"
-                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })  
-                }
-                else if (i==5){
-                  jmin=6
-                  jmax=11
-                  mode_ef="watered"
-                  obs_cpt=0
-                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })
-                }
-                else{
-                  
-                  mode_ef="watered"
-                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })
-                }
-                console.log(mode_ef)
-                // this.globalService.get_type_child_from_parent(parent_name, parent_key, "biological_materials").toPromise().then(
-                //   biological_material_data => {
-                console.log(biological_material_data)
-                console.log(i)
-                console.log(obs_cpt)
-                console.log(jmin)   
-                console.log(jmax)
-                for (var j = jmin; j < jmax; j++) {
-                  var mat_id=biological_material_data[0]["Material source ID (Holding institute/stock centre, accession)"][obs_cpt]
-                  var id = mat_id +'_' + j
-                  var bm = {
-                    "biologicalMaterialId": id,
-                    "materialId": mat_id,
-                    "genus": "Zea",
-                    "species": "mays",
-                    "lindaID": biological_material_data[0]._id,
-                    "obsUUID": "",
-                    "bmUUID": ""
-                  }
-                  var bm_tmp: BiologicalMaterial
-                  bm_tmp = bm
-                  console.log(bm_tmp)
-                  bm_tmp.bmUUID = uuid.v4()
-                  bm.obsUUID = obs_uuid
-                  this.bm_data.push(bm_tmp)
-                  cpt += 1
-                }
-                obs_cpt+=1
-              }
-              console.log(this.ef_data)
-              console.log(this.bm_data)
-              this.startfilling=true
-            }
-          );
-          
-        }
-      );
-      
-    // var values=[]
-    // values.push("rainfed")
-    // values.push("watered")
-
-    
-    
-    
-  }
- }
-
+ 
   ngAfterOnInit() {
     this.ou_index_row = 0
     this.mat_index_row = 0
@@ -927,4 +793,137 @@ get_biological_material_list() {
   toggleTheme() {
     this.mode_table = !this.mode_table;
   }
+  onClickTour() {
+    console.log('start tour part 2')
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+    console.log(this.currentUser['tutoriel_step'])
+        console.log(this.currentUser)
+        if (this.currentUser['tutoriel_step'] === "11"){
+            this.joyrideService.startTour(
+                { steps: ['generalContent', 'addObservationUnit', 'associateBiologicalMAterial', 'addBiologicalSample', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
+            );
+            //this.currentUser.tutoriel_step="2"
+            //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+ }
+ onDone(node_type:string) {
+  console.log(this.currentUser['tutoriel_step'])
+  if (this.currentUser['tutoriel_step']==="11"){
+    this.observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    //this.observationUnitControl.push(this.initiateObservationUnitForm("create", 0))
+    var parent_name = this.parent_id.split("/")[0]
+    var parent_key = this.parent_id.split("/")[1]
+    
+    this.globalService.get_type_child_from_parent(parent_name, parent_key, "experimental_factors")
+      .toPromise().then(
+        experimental_factor_data => {
+          this.globalService.get_type_child_from_parent(parent_name, parent_key, "biological_materials").toPromise().then(
+            biological_material_data => {
+              let cpt=1
+              var obs_cpt=0
+              var jmin=0
+              var jmax=0
+              var mode_ef=""
+              for (var i=0;i<10;i++){
+                var ef = {
+                  "experimentalFactorType": "Watering",
+                  "experimentalFactorDescription": "Daily watering 1L per plant",
+                  "experimentalFactorValues": [],
+                  "experimentalFactorAccessionNumber": "EFO:0000470",
+                  "lindaID":experimental_factor_data[0]._id,
+                  "obsUUID": "",
+                  "efUUID": ""
+                }
+                var ef_tmp: ExperimentalFactor
+                ef_tmp=ef
+          
+                ef_tmp.experimentalFactorValues.push("rainfed")
+                ef_tmp.experimentalFactorValues.push("watered")
+                ef_tmp.efUUID = uuid.v4()
+                
+                this.observationUnitControl.push(this.initiateObservationUnitForm("create", i))
+                //get obs uuid 
+                //console.log(this.observationUnitControl.controls[i].value["obsUUID"])
+                let obs_uuid=this.observationUnitControl.controls[i].value["obsUUID"]
+                ef_tmp.obsUUID=obs_uuid
+                console.log(ef_tmp)
+                this.ef_data.push(ef_tmp)
+
+
+
+                //get obs id 
+                let obs_id = 'plot' + (i+1)
+                let external_obs_id = 'BIOSAMPLES:plot' + (i+1)
+                this.observationUnitControl.controls[i].patchValue({ "Observation unit ID": obs_id })
+                this.observationUnitControl.controls[i].patchValue({ "External ID": external_obs_id })
+                this.observationUnitControl.controls[i].patchValue({ "Observation unit type": "plot" })
+                
+                
+                if (i<5){
+                  jmin=1
+                  jmax=6
+                  mode_ef="rainfed"
+                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })  
+                }
+                else if (i==5){
+                  jmin=6
+                  jmax=11
+                  mode_ef="watered"
+                  obs_cpt=0
+                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })
+                }
+                else{
+                  
+                  mode_ef="watered"
+                  this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })
+                }
+                console.log(mode_ef)
+                // this.globalService.get_type_child_from_parent(parent_name, parent_key, "biological_materials").toPromise().then(
+                //   biological_material_data => {
+                console.log(biological_material_data)
+                console.log(i)
+                console.log(obs_cpt)
+                console.log(jmin)   
+                console.log(jmax)
+                for (var j = jmin; j < jmax; j++) {
+                  var mat_id=biological_material_data[0]["Material source ID (Holding institute/stock centre, accession)"][obs_cpt]
+                  var id = mat_id +'_' + j
+                  var bm = {
+                    "biologicalMaterialId": id,
+                    "materialId": mat_id,
+                    "genus": "Zea",
+                    "species": "mays",
+                    "lindaID": biological_material_data[0]._id,
+                    "obsUUID": "",
+                    "bmUUID": ""
+                  }
+                  var bm_tmp: BiologicalMaterial
+                  bm_tmp = bm
+                  console.log(bm_tmp)
+                  bm_tmp.bmUUID = uuid.v4()
+                  bm.obsUUID = obs_uuid
+                  this.bm_data.push(bm_tmp)
+                  cpt += 1
+                }
+                obs_cpt+=1
+              }
+              console.log(this.ef_data)
+              console.log(this.bm_data)
+              this.startfilling=true
+            }
+          );
+          
+        }
+      );
+      
+    // var values=[]
+    // values.push("rainfed")
+    // values.push("watered")
+
+    
+    
+    
+  }
+ }
+
 }

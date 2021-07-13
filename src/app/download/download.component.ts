@@ -33,6 +33,7 @@ export interface componentInterface {
     styleUrls: ['./download.component.css']
 })
 
+
 export class DownloadComponent implements OnInit, OnDestroy {
     // input part
     @Input() parent_id: string;
@@ -57,8 +58,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
 
 
     //parsing EXCEL
-    storeData: any;
-    worksheet: any;
     public modified: boolean = false;
 
 
@@ -273,18 +272,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
             //this.currentUser.tutoriel_step="2"
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         }
-        
-        // console.log('start tour part 2')
-        // if (this.model_type==="experimental_factor"){
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
-        // else{
-        //     this.joyrideService.startTour(
-        //         { steps: ['Step1_1', 'Step1_2', 'Step1_3', 'Step1_4', 'Step1_5'], stepDefaultPosition: 'center'} // Your steps order
-        //     );
-        // }
     }
     get_data() {
         this.data_files=[]
@@ -393,26 +380,24 @@ export class DownloadComponent implements OnInit, OnDestroy {
     read_csv(delimitor: string) {
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
-            this.csv = fileReader.result;
-            console.log(this.csv)
-            
-            this.load_csv(this.csv, e.loaded,e.total, delimitor)
+            var csv = fileReader.result;
+            this.load_csv(csv, e.loaded,e.total, delimitor)
         }
         fileReader.readAsText(this.fileUploaded);
     }
     readExcel() {
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
-            this.storeData = fileReader.result;
-            var data = new Uint8Array(this.storeData);
+            var storeData:any = fileReader.result;
+            var data = new Uint8Array(storeData);
             var arr = new Array();
             for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
             var bstr = arr.join("");
             var book = XLSX.read(bstr, { type: "binary" });
             var first_sheet_name = book.SheetNames[0];
-            this.worksheet = book.Sheets[first_sheet_name];
-            this.csv = XLSX.utils.sheet_to_csv(this.worksheet);
-            this.load_csv(this.csv, e.loaded, e.total);
+            var worksheet = book.Sheets[first_sheet_name];
+            var csv = XLSX.utils.sheet_to_csv(worksheet);
+            this.load_csv(csv, e.loaded, e.total);
         }
         fileReader.readAsArrayBuffer(this.fileUploaded);
     }
@@ -483,12 +468,12 @@ export class DownloadComponent implements OnInit, OnDestroy {
         });
 
     }
-    readAsCSV() {
-        var csvData = XLSX.utils.sheet_to_csv(this.worksheet);
-        const data: Blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    // readAsCSV() {
+    //     var csvData = XLSX.utils.sheet_to_csv(this.worksheet);
+    //     const data: Blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
 
-        //FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');  
-    }
+    //     //FileSaver.saveAs(data, "CSVFile" + new Date().getTime() + '.csv');  
+    // }
     onFilenameChange(values: string) {
         this.selected_file = values
         this.options_components_by_filename[this.selected_file].forEach(option => {

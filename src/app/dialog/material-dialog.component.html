@@ -1,7 +1,7 @@
 <h1 mat-dialog-title></h1>
 <!--<alert class="myalert"></alert>-->
 <div mat-dialog-content >
-    <p> Describe youtr material source and derived </p>
+    <p> Describe your material source and derived </p>
   
     <section *ngFor="let format of file_format;let i= index"  class="format-section">
         <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_format($event.checked, format)" >{{format}}</mat-checkbox>

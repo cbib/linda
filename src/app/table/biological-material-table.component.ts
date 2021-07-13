@@ -1,8 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import { param } from 'jquery';
 @Component({
   selector: 'app-biological-material-table',
   templateUrl: './biological-material-table.component.html',
@@ -21,7 +18,7 @@ export class BiologicalMaterialTableComponent implements OnInit {
     this.route.queryParams.subscribe(
       params => {
           this.data = params['data'];
-          this.vertice=params['data_vertice']
+          this.vertice = params['data_vertice']
           console.log(this.vertice)
       }
   );

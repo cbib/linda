@@ -107,6 +107,13 @@ export class GlobalService {
     get_data_from_datafiles(datafile_key:string, header:string){
         return this.http.get(this.APIUrl + "get_data_from_datafiles/" + datafile_key + "/" + header).pipe(map(this.extractData));
     }
+    get_multidata_from_datafiles(datafile_key:string, headers_linked:string){
+        return this.http.get(this.APIUrl + "get_multidata_from_datafiles/" + datafile_key + "/" + headers_linked).pipe(map(this.extractData));
+    }
+    get_associated_component_by_type_from_datafiles(datafile_key:string, type:string){
+        return this.http.get(this.APIUrl + "get_associated_component_by_type_from_datafiles/" + datafile_key + "/" + type).pipe(map(this.extractData));
+    }
+    
 
 
     is_exist(field: string, value: string, model_type: string): Observable<any> {

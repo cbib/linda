@@ -1028,6 +1028,33 @@ router.get('/get_all_data_files/:investigation_key/', function (req, res) {
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
+router.get('/get_multidata_from_datafiles/:datafile_key/:headers_linked/', function (req, res) {
+
+        try {
+            var datafile_id = 'data_files/'+ req.pathParams.datafile_key;
+            
+            var headers_linked = req.pathParams.headers_linked;
+            let headers= headers_linked.split("linda_separator")
+            var get_data=[]
+            headers.forEach(header=>{
+                let data = db._query(aql`LET document = DOCUMENT(${datafile_id}) LET alteredList = (FOR element IN document.Data LET newItem = (element.${header}) RETURN newItem) RETURN alteredList`).toArray();
+                get_data.push(data);
+            });
+            res.send(get_data);
+        }
+        catch (e) {
+            if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+                throw e;
+            }
+            res.throw(404, 'The entry does not exist', e);
+        }
+    }).pathParam('datafile_key', joi.string().required(), 'datafile id requested.')
+    .pathParam('headers_linked', joi.string().required(), 'header label to separate .')
+    .response(joi.array().items(joi.array().items(joi.string().required()).required()).required(), 'Entry stored in the collection.')
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+    
+    
 
 router.get('/get_data_from_datafiles/:datafile_key/:header/', function (req, res) {
 
@@ -1047,6 +1074,34 @@ router.get('/get_data_from_datafiles/:datafile_key/:header/', function (req, res
 }).pathParam('datafile_key', joi.string().required(), 'datafile id requested.')
 .pathParam('header', joi.string().required(), 'header label requested.')
 .response(joi.array().items(joi.string().required()).required(), 'Entry stored in the collection.')
+.summary('Retrieve an entry')
+.description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
+router.get('/get_associated_component_by_type_from_datafiles/:datafile_key/:type/', function (req, res) {
+
+    try {
+        var datafile_id = 'data_files/'+ req.pathParams.datafile_key;
+
+        var type = req.pathParams.type;
+        var get_data = db._query(aql`LET document = DOCUMENT(${datafile_id}) 
+            LET alteredList = (
+                FOR element IN document.associated_headers 
+                    FILTER element.associated_component == ${type} 
+                    LET newItem = ({id:element.associated_linda_id, header:element.header}) 
+                    RETURN newItem) 
+            RETURN alteredList`);
+        res.send(get_data);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+}).pathParam('datafile_key', joi.string().required(), 'datafile id requested.')
+.pathParam('type', joi.string().required(), 'model type label requested.')
+.response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
 .summary('Retrieve an entry')
 .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 

@@ -72,56 +72,63 @@ export class ExplorationComponent implements OnInit {
     console.log(this.ObservedVariables[this.selected_file])
     console.log(this.associated_headers_by_filename[this.selected_file])
     console.log(value)
-    var observation_unit= this.ObservationUnits[this.selected_file][0]['observation_unit']
-    console.log(observation_unit)
-    if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id).length === 0){
-      this.alertService.error("You do not have any observation units associated with any column of this data file ! You need to link a column with one of your observation units if exist else create one biological material and link it to the corresponding assigned column in your data file. \
-      Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
-    }
-    else{
-    
-      //var ou_header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id)[0]['header']
-      console.log(observation_unit['Observation Unit factor value'])
-      
-      var factor_value=new Set(observation_unit['Observation Unit factor value'])
-      this.factor_value_array = Array.from(factor_value);
-      console.log(factor_value)
-      
-      var biological_material= this.BiologicalMaterials[this.selected_file][0]['biological_material']
-      if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==biological_material._id).length === 0){
-        this.alertService.error("You do not have any biological material associated with any column of this data file ! You need to link a column with one of your biological materials if exist else create one biological material and link it to the corresponding assigned column in your data file. \
+
+    if(this.ObservationUnits[this.selected_file].length !== 0){
+      var observation_unit= this.ObservationUnits[this.selected_file][0]['observation_unit']
+      console.log(observation_unit)
+      if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id).length === 0){
+        this.alertService.error("You do not have any observation units associated with any column of this data file ! You need to link a column with one of your observation units if exist else create one biological material and link it to the corresponding assigned column in your data file. \
         Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
       }
       else{
-        var bm_header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==biological_material._id)[0]['header']
+      
+        //var ou_header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id)[0]['header']
+        console.log(observation_unit['Observation Unit factor value'])
         
-        //before to run this step, you need to have Biological material associated with your data files
-        this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], bm_header).toPromise().then(bm_data => {
-          console.log(bm_data)
-          var observed_variable= this.ObservedVariables[this.selected_file].filter(element=> element['observed_variable']['Trait']==value)[0]['observed_variable']
-          console.log(observed_variable._id)
-          var header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observed_variable._id)[0]['header']
-          this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], header).toPromise().then(observed_variable_data => {
-            console.log(observed_variable_data)
-            var bm_data_value=new Set(bm_data[0])
-            var bm_data_value_array = Array.from(bm_data_value);
-            var cpt=0
-            bm_data[0].forEach(val=>{
-              var obj_data={"name": "", "series": []}
-              if (this.my_data.filter(element=> element.name==val).length===0){
-                obj_data={"name": val, "series": []}
-                this.my_data.push(obj_data)
-              }
-              else{
-                obj_data=this.my_data.filter(element=> element.name==val)[0]
-              }
-              obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseFloat(observed_variable_data[0][cpt])})
-              cpt+=1
+        var factor_value=new Set(observation_unit['Observation Unit factor value'])
+        this.factor_value_array = Array.from(factor_value);
+        console.log(factor_value)
+        
+        var biological_material= this.BiologicalMaterials[this.selected_file][0]['biological_material']
+        if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==biological_material._id).length === 0){
+          this.alertService.error("You do not have any biological material associated with any column of this data file ! You need to link a column with one of your biological materials if exist else create one biological material and link it to the corresponding assigned column in your data file. \
+          Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
+        }
+        else{
+          var bm_header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==biological_material._id)[0]['header']
+          
+          //before to run this step, you need to have Biological material associated with your data files
+          this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], bm_header).toPromise().then(bm_data => {
+            console.log(bm_data)
+            var observed_variable= this.ObservedVariables[this.selected_file].filter(element=> element['observed_variable']['Trait']==value)[0]['observed_variable']
+            console.log(observed_variable._id)
+            var header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observed_variable._id)[0]['header']
+            this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], header).toPromise().then(observed_variable_data => {
+              console.log(observed_variable_data)
+              var bm_data_value=new Set(bm_data[0])
+              var bm_data_value_array = Array.from(bm_data_value);
+              var cpt=0
+              bm_data[0].forEach(val=>{
+                var obj_data={"name": "", "series": []}
+                if (this.my_data.filter(element=> element.name==val).length===0){
+                  obj_data={"name": val, "series": []}
+                  this.my_data.push(obj_data)
+                }
+                else{
+                  obj_data=this.my_data.filter(element=> element.name==val)[0]
+                }
+                obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseFloat(observed_variable_data[0][cpt])})
+                cpt+=1
+              })
+              console.log(this.my_data)
             })
-            console.log(this.my_data)
           })
-        })
+        }
       }
+    }
+    else{
+      this.alertService.error("You do not have any observation units associated with any column of this data file ! You need to link a column with one of your observation units if exist else create one biological material and link it to the corresponding assigned column in your data file. \
+      Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
     }
   }
   onSelect(event) {
