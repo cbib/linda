@@ -408,7 +408,7 @@ export class ExtractComponentComponent implements OnInit {
                                 "obsUUID": uuid.v4(),
                                 "External ID": "",
                                 "Observation unit type": this.observation_unit_type,
-                                "Observation Unit factor value": "",
+                                "Observation Unit factor value": headers_data[1][0][cpt],
                                 "Spatial distribution": ""
                               }
                               var bm = {
