@@ -141,6 +141,7 @@ export class ExplorationComponent implements OnInit {
 
   onVariableChange(value: string) {
     this.my_data=[]
+    this.my_displayed_data=[]
     this.selected_observed_variable = value
     console.log(this.ObservedVariables[this.selected_file])
     console.log(this.associated_headers_by_filename[this.selected_file])
@@ -193,7 +194,7 @@ export class ExplorationComponent implements OnInit {
                   else{
                     obj_data=this.my_data.filter(element=> element.name==val)[0]
                   }
-                  obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseFloat(observed_variable_data[0][cpt])})
+                  obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseInt(observed_variable_data[0][cpt])})
                 
                 cpt+=1
               });
