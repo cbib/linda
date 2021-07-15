@@ -623,7 +623,7 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
     //var data=[];
 
     var final_obj = { "models_data": [] }
-    var childs_data = db._query(aql`FOR v, e, s IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {e:e,s:s,v:v}`).toArray();
+    var childs_data = db._query(aql`FOR e,v IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {e:e,v:v}`).toArray();
     final_obj["models_data"] = childs_data
     //childs_model=[]
     childs_data.forEach(
@@ -638,7 +638,7 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
                 model = id.split("/")[0].slice(0, -1) + "/" + id.split("/")[0][0].toUpperCase() + id.split("/")[0].slice(1).slice(0, -1);
                 model_type = id.split("/")[0].slice(0, -1)
             }
-            console.log(model_type)
+            //console.log(model_type)
             var child_model = db._query(aql`RETURN DOCUMENT(${model})`).toArray();
             child_data["model"] = child_model[0]
 
@@ -2361,10 +2361,11 @@ router.post('/remove_template', function (req, res) {
         }
         else {
             var errors = [];
-            var template_edge_coll = 'templates_ege'
-            if (!db._collection(template_edge_coll)) {
-                db._createEdgeCollection(template_edge_coll);
+            //var template_edge_coll = 'templates_ege'
+            if (!db._collection('templates_edge')) {
+                db._createEdgeCollection('templates_edge');
             }
+            var template_edge_coll = db._collection('templates_edge')
             //Remove relation to parent of selected node in edge collection
 
             try {

@@ -55,22 +55,19 @@ export class TemplatesComponent implements OnInit {
   );
   }
   edit_template(element){
-    console.log(element)
-
     this.router.navigate(['/generic'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: element.key, model_type: element.model_type, mode: "edit_template" } });
 
   }
   remove_template(element){
-    console.log(element)
     this.globalService.remove_template(element.id).pipe(first()).toPromise().then(
       data => {
-          console.log(data)
           if (data["success"]) {
-              console.log(data["message"])
               this.alertService.success(data["message"])
+              this.router.navigate(['/tree'])
           }
           else {
               this.alertService.error("this form contains errors! " + data["message"]);
+              this.router.navigate(['/tree'])
           }
       }
   );

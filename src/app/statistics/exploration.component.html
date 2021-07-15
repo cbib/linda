@@ -34,6 +34,15 @@
   </select> 
   <br>
 </mat-card>
+<mat-card>
+    <h2>Select your biological material(s)</h2>
+    <mat-button-toggle-group *ngFor="let column of genotypes[selected_file] ; let i=index"
+      [multiple]="true" #group="matButtonToggleGroup">
+      <mat-button-toggle  (click)="$event ? clickToggle(column, selected_file) : null" value="{{column}}">
+        <span>{{column}}</span>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+</mat-card>
 <mat-card *ngIf="filename_used.length > 0 && ObservedVariables[selected_file].length === 0" >
   <h2>Select your observed trait</h2>
   <mat-card style="background-color: blanchedalmond;">
@@ -43,9 +52,32 @@
 
 
 <br>
-<section *ngIf="filename_used.length > 0 && selected_observed_variable!=='' &&  my_data.length>0">
+
+<section *ngIf="filename_used.length > 0 && selected_observed_variable!=='' &&  my_displayed_data.length>0">
     <!--The content below is only a placeholder and can be replaced.-->
-    <div style="text-align:center">
+    <div>
+            <h4>
+                Stacked {{selected_observed_variable}} by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
+            </h4>
+
+            <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="my_displayed_data"
+                [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+
+    </div>
+    <div>
+            <h4>
+                selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
+            </h4>
+
+            <ngx-charts-bar-vertical-2d [view]="view2" [scheme]="colorScheme" [results]="my_displayed_data" [gradient]="gradient"
+                [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-2d>
+    </div>
         <!-- <h1 class="card-header bg-info">
       Welcome to {{ title }}!
     </h1> -->
@@ -81,35 +113,7 @@
             </div>
         </div>
         <br> -->
-        <div class="row ml-5">
-            <div class="col">
-                <div class="row">
-                    <h4>
-                        Stacked {{selected_observed_variable}} by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
-                    </h4>
-                </div>
-                <div class="row">
-                    <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="my_data"
-                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
-                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
-                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
-                    </ngx-charts-bar-vertical-stacked>
-                </div>
-            </div>
-            <div class="col">
-                <div class="row">
-                    <h4>
-                        selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
-                    </h4>
-                </div>
-                <div class="row">
-                    <ngx-charts-bar-vertical-2d [view]="view2" [scheme]="colorScheme" [results]="my_data" [gradient]="gradient"
-                        [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel"
-                        [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
-                        (select)="onSelect($event)">
-                    </ngx-charts-bar-vertical-2d>
-                </div>
-            </div>
-        </div>
-    </div>
+        
+
+                   
 </section>
