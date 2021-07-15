@@ -636,7 +636,7 @@ export class ExtractComponentComponent implements OnInit {
                           let added_model_id = data["_id"];
                           let data_file_to_update = element['datafile ID']
                           this.globalService.update_associated_headers_linda_id(data_file_to_update, data["_id"], key, 'data_files').pipe(first()).toPromise().then(
-                            data => { }
+                            data_ou => { console.log(data_ou)}
                           )            
                           this.router.navigate(['/tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
                           var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
