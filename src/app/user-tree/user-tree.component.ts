@@ -22,6 +22,7 @@ import { CdkConnectedOverlay } from '@angular/cdk/overlay';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {BiologicalMaterialTableComponent} from '../table/biological-material-table.component'
+import {ObservationUnitTableComponent} from '../table/observation-unit-table.component'
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
     expandable: boolean;
@@ -37,6 +38,14 @@ export interface BiologicalMaterial {
     'Genus': string;
     'Species': string;
     'Organism':string
+  }
+
+  export interface ObservationUnit {
+    'Observation unit ID' : string;
+    'Observation unit factor value': string
+    'Observation unit type':string;
+    'External ID': string;
+    'Spatial distribution':string;
   }
 
 const ELEMENT_BM_DATA: BiologicalMaterial[] = []
@@ -97,8 +106,8 @@ export class UserTreeComponent implements OnInit {
     dtOptions: DataTables.Settings = {};
     tableData = [];
     private bm_datasources:{} = {}
-    bm_displayedColumns: string[] = ['Genus','Species','Organism','Biological material ID', 'Material source ID (Holding institute/stock centre, accession)','Infraspecific name'];
-    private datasources: BiologicalMaterial[] = []
+    private ou_datasources:{} = {}
+    
     
 
 
@@ -553,12 +562,11 @@ export class UserTreeComponent implements OnInit {
                     ////console.log(this.bm_datatables)
                 }
                 if (_to.includes("observation_unit")){
-                    this.prepare_ou_data(vertice_data)
+                    this.prepare_ou_data(vertice_data, vertice_data_keys)
                 }
                 ////console.log(vertice_data)
                 ////console.log(vertice_data_keys)
                 if (parent_id.includes("users")) {
-
                     if (cpt === 0) {
                         tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id,vertice_data_keys, vertice_data, bm_vertice_data))
                     }
@@ -1415,6 +1423,7 @@ export class UserTreeComponent implements OnInit {
                     this.globalService.get_all_observation_unit_childs(obs_linda_id.split("/")[1]).toPromise().then(
                         observation_unit_childs_data => {
                             //get all biological materials
+                            console.log(observation_unit_childs_data)
                             for (var i = 0; i < observation_unit_childs_data.length; i++) {
                                 var child_id: string = observation_unit_childs_data[i]['e']['_to']
                                 //////console.log(observation_unit_childs_data[i])
@@ -1468,7 +1477,7 @@ export class UserTreeComponent implements OnInit {
                     //         i--;
                     //     }
                     // }
-                    // //////console.log(this.current_data)
+                    console.log(return_data)
                     // node["term"].set_current_data(this.current_data_keys)
                     // node["term"].set_model_key(node.id.split("/")[1])
                 }
@@ -1594,18 +1603,31 @@ export class UserTreeComponent implements OnInit {
         this.dataTable.DataTable(this.dtOptions);
     }
       
-    prepare_ou_data(data){
-        //console.log(data) 
+    prepare_ou_data(node_vertice, vertice_keys){
+        var newTableData:{}[]=[]
+        let  datasources: ObservationUnit[] = []
+        var data= node_vertice
+        var keys = vertice_keys
+        for (var i = 0; i < data["Observation unit ID"].length; i++) {
+            //this.tableData[0]["Biological material ID"].forEach(element => {
+            let tmp_dict:ObservationUnit={"Observation unit ID":"","Observation unit factor value":"","Observation unit type":"", 'External ID':"", "Spatial distribution":""};
+            for (var k = 0; k < keys.length; k++) {
+                if (!keys[k].startsWith('_') && !keys[k].includes('altitude') && !keys[k].includes('latitude') && !keys[k].includes('longitude') && !keys[k].includes('coordinates uncertainty') && !keys[k].includes('description')){
+                    tmp_dict[keys[k]]=data[keys[k]][i] 
+                }
+                
+            } 
+            datasources.push(tmp_dict)
+        }
+        var dt_source=new MatTableDataSource<ObservationUnit>(datasources);
+        this.ou_datasources[data['_id']] = dt_source; 
+        
     } 
     prepare_bm_data(node_vertice, vertice_keys){
         var newTableData:{}[]=[]
-        this.datasources=[]
+        let datasources: BiologicalMaterial[] = []
         var data= node_vertice
         var keys = vertice_keys
-
-
-
-        
         for (var i = 0; i < data["Biological material ID"].length; i++) {
             //this.tableData[0]["Biological material ID"].forEach(element => {
             for (var j = 0; j < data["Biological material ID"][i].length; j++) {
@@ -1628,17 +1650,21 @@ export class UserTreeComponent implements OnInit {
                     
                 }
                 newTableData.push(tmp_dict)
-                this.datasources.push(tmp_dict)
+                datasources.push(tmp_dict)
                 
                 
             }
         }
-        var dt_source=new MatTableDataSource<BiologicalMaterial>(this.datasources);
+        var dt_source=new MatTableDataSource<BiologicalMaterial>(datasources);
         this.bm_datasources[data['_id']] = dt_source; 
 
         ////console.log(newTableData)
         ////console.log(ELEMENT_BM_DATA)
         return newTableData
+    }
+    get_ou_dataSource(node_id:string){
+        //console.log(node_id)
+        return this.ou_datasources[node_id]
     }
     get_bm_dataSource(node_id:string){
         return this.bm_datasources[node_id]

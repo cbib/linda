@@ -87,8 +87,7 @@ export class ExplorationComponent implements OnInit {
             this.ObservationUnits[data_file.filename] = []
             this.associated_headers_by_filename[data_file.filename] = []
             this.BiologicalMaterials[data_file.filename] = []
-            this.genotypes[data_file.filename]=[]
-            
+            this.genotypes[data_file.filename]=[]      
           }
           this.selected_file = this.filename_used[0]
           data_file.associated_headers.forEach(element => {
@@ -229,12 +228,28 @@ export class ExplorationComponent implements OnInit {
     
   }
   
-  clickToggle(column, selected_file){
+  clickToggle(event, column, selected_file){
     console.log(column)
     console.log(this.my_data.filter(element=> element.name===column))
-    this.my_displayed_data.push(this.my_data.filter(element=> element.name===column)[0])
+    console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
+    if (this.my_displayed_data.filter(element=> element.name===column)[0]){
+      console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
+      console.log(this.my_displayed_data)
+      this.my_displayed_data=this.my_displayed_data.filter(element=> element.name!==column)
+    }
+    else{
+      this.my_displayed_data.push(this.my_data.filter(element=> element.name===column)[0])
+    }
     this.my_displayed_data=[...this.my_displayed_data]
     console.log(this.my_displayed_data)
+    let toggle = event.source;
+    if (toggle) {
+        let group = toggle.buttonToggleGroup;
+        if (event.value.some(item => item == toggle.value)) {
+            group.value = [toggle.value];
+            console.log(group.value)
+        }
+    }
   }
 
   

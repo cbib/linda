@@ -548,100 +548,16 @@
                                         <!--Biological material table-->
                                         <ng-container *ngIf="node.id.includes('biological_materials') ">
                                             <app-biological-material-table [data]="get_bm_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-biological-material-table>
-                                        <!-- <ul>
-                                            <li>Genus: {{get_current_data_array(node)['Genus']}}</li>
-                                            <li>Organism: {{get_current_data_array(node)['Organism']}}</li>
-                                            <li>Species: {{get_current_data_array(node)['Species']}}</li>
-                                        </ul> -->
-                                            
-                                            <!-- <table #biologicalMaterialDataTable id="{{node.id}}"></table> --> 
-                                            
-                                            <!-- <table datatable class="table table-hover table-bordered table-striped text-center">
-                                                <thead>
-                                                    <ng-container *ngFor="let key of get_current_data(node) ; let i=index">
-                                                    <th class="text-center align-middle">
-                                                        <div>
-                                                        <label for="{{key}}">{{key}}</label>
-                                                        <span style="display:inline-block; margin-left: 10px;">
-                                                            <i style="color :lightblue" class="fa fa-info-circle" title="no title"></i>
-                                                        </span>
-                                                        </div>
-                                                    </th>
-                                                    </ng-container>
-                                                </thead>
-                                                <tbody>
-                                                    <ng-container *ngFor="let item of get_bm_current_data_array(node) ; let i=index">
-                                                        <tr>
-                                                            <ng-container *ngFor="let key of get_current_data(node) ; let i=index">
-                                                            <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
-                                                                <a href="{{item[key]}}"
-                                                                    target="_blank">{{item[key]}}</a>
-                                                            </td>
-                                                            <td *ngIf="!key.includes('file link')" scope="row">
-                                                                {{item[key]}}
-                                                            </td>
-                                                            </ng-container>
-                                                        </tr>
-                                                    </ng-container> -->
-                                            <!-- <div *ngFor="let item of get_current_data_array(node)['Infraspecific name']; let j=index">
-                                                <ng-container *ngFor="let item2 of get_current_data_array(node)['Biological material ID'][0]; let k=index">
-                                                    <tr> -->
-                                                      
-                                                    <!-- <td *ngIf="key !== 'Genus'  && key !== 'Organism'  && key !== 'Species'"
-                                                        style="font-size:14px;text-align: center; " scope="row">{{key}}
-                                                    </td> -->
-
-                                                        <!-- <div *ngFor="let item of get_current_data_array(node)['Infraspecific name'] ; index as k"> -->
-                                                        
-                                                        <!-- <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
-                                                            <a href="{{get_current_data_array(node)[key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
-                                                        </td>
-
-                                                        <td *ngIf="!key.includes('file link') && !key.includes('Biological material') && key !== 'Genus'  && key !== 'Organism'  && key !== 'Species' && k < 20"
-                                                            style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
-                                                                <mat-chip-list>
-                                                                    <mat-chip class="example-box" *ngFor="let id of get_current_data_array(node)[key]">
-                                                                        {{get_current_data_array(node)[key]}}
-                                                                    </mat-chip>
-                                                                </mat-chip-list>
-                                                            </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
-                                                                {{get_current_data_array(node)[key]}}
-                                                            </div>
-                                                        </td> -->
-
-                                                        <!-- <td *ngIf="!key.includes('file link') && key.includes('Biological material') && k < 20"
-                                                            style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
-                                                                <mat-chip-list>
-                                                                    <mat-chip class="example-box"
-                                                                        *ngFor="let id of get_current_data_array(node)[key][k];">
-                                                                        {{id}}
-                                                                    </mat-chip>
-                                                                </mat-chip-list>
-                                                            </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
-                                                                {{get_current_data_array(node)[key]}}
-                                                            </div>
-                                                        </td> -->
-
-                                                        <!-- </div> -->
-                                                    <!-- </tr>
-                                                    </ng-container>
-                                                </div> -->
-                                            
-                                            <!-- </tbody>
-                                        </table> -->
                                         </ng-container>
-                                        <ng-container *ngIf="node.id.includes('observation_units')">
-                                            <!-- Here put Biological Material Table -->
+                                        <ng-container *ngIf="node.id.includes('observation_units') ">
+                                            <app-observation-unit-table [data]="get_ou_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-observation-unit-table>
+                                        </ng-container>
+
+                                        <!-- <ng-container *ngIf="node.id.includes('observation_units')">
                                             <table *ngIf="obs_unit_data.length>0" cellpadding="0" cellspacing="0"
                                                 cellwidth="2" border="0"
                                                 class="display table table-bordered table-hover"
                                                 [ngClass]="{'table-dark': mode_table}">
-                                                <!-- <thead class="text-nowrap">   -->
                                                 <thead>
                                                     <ng-container *ngFor="let field of get_ou_field ; let i=index">
                                                         <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
@@ -670,7 +586,6 @@
                                                 cellwidth="2" border="0"
                                                 class="display table table-bordered table-hover"
                                                 [ngClass]="{'table-dark': mode_table}">
-                                                <!-- <thead class="text-nowrap">   -->
                                                 <thead>
                                                     <ng-container *ngFor="let field of get_bm_field ; let i=index">
                                                         <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
@@ -695,7 +610,7 @@
                                                     </ng-container>
                                                 </tbody>
                                             </table>
-                                        </ng-container>
+                                        </ng-container> -->
                                         <!-- <mat-card *ngIf="node.id.includes('observation_units')">
                                             <mat-card-header>
                                               <mat-card-title>Biological Materials</mat-card-title>
