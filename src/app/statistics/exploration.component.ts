@@ -23,8 +23,8 @@ export class ExplorationComponent implements OnInit {
   BiologicalMaterials: {} = {};
   title = 'Angular Charts';
 
-  view: any[] = [1200, 800];
-  view2: any[] = [1200, 800];
+  view: any[] = [2500, 800];
+  view2: any[] = [1500, 800];
 
   // options for the chart
   showXAxis = true;
@@ -49,6 +49,7 @@ export class ExplorationComponent implements OnInit {
   public single=single
   public my_data = []
   public my_displayed_data = []
+  selected : any =  'underline';
   constructor(private router: Router, 
               private statisticsService: StatisticsService, 
               private readonly joyrideService: JoyrideService,
@@ -193,15 +194,15 @@ export class ExplorationComponent implements OnInit {
                   else{
                     obj_data=this.my_data.filter(element=> element.name==val)[0]
                   }
-                  obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseInt(observed_variable_data[0][cpt])})
+                  if (observed_variable_data[0][cpt]!== "NA"){
+                    obj_data.series.push({'name':observation_unit['Observation Unit factor value'][cpt], 'value':parseInt(observed_variable_data[0][cpt])})
+                  }
                 
                 cpt+=1
               });
               var cpt=0
-              console.log(this.my_data)
               //console.log(this.my_data.filter(element=>{element}))
               this.my_data.forEach(element => {
-                console.log(element)
                 let condition1 = element['series'].filter(serie => serie.name === 'rainfed');
                 let average1 = condition1.reduce((total, next) => total + next.value, 0) / condition1.length;
                 let condition2 = element['series'].filter(serie => serie.name === 'watered');
@@ -222,13 +223,14 @@ export class ExplorationComponent implements OnInit {
       this.alertService.error("You do not have any observation units associated with any column of this data file ! You need to link a column with one of your observation units if exist else create one biological material and link it to the corresponding assigned column in your data file. \
       Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
     }
+    this.selected = 'underline';
   }
   onSelect(event) {
     console.log(event);
     
   }
-  
-  clickToggle(event, column, selected_file){
+
+  clickToggle(event, column){
     console.log(column)
     console.log(this.my_data.filter(element=> element.name===column))
     console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
@@ -241,13 +243,13 @@ export class ExplorationComponent implements OnInit {
       this.my_displayed_data.push(this.my_data.filter(element=> element.name===column)[0])
     }
     this.my_displayed_data=[...this.my_displayed_data]
-    console.log(this.my_displayed_data)
+    console.log(event)
     let toggle = event.source;
+    console.log(toggle)
     if (toggle) {
         let group = toggle.buttonToggleGroup;
         if (event.value.some(item => item == toggle.value)) {
             group.value = [toggle.value];
-            console.log(group.value)
         }
     }
   }

@@ -623,7 +623,7 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
     //var data=[];
 
     var final_obj = { "models_data": [] }
-    var childs_data = db._query(aql`FOR e,v IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {e:e,v:v}`).toArray();
+    var childs_data = db._query(aql`FOR v,e IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {v:v,e:e}`).toArray();
     final_obj["models_data"] = childs_data
     //childs_model=[]
     childs_data.forEach(

@@ -18,7 +18,6 @@ export class ObservationUnitTableComponent implements OnInit {
       params => {
           this.data = params['data'];
           this.vertice = params['data_vertice']
-          console.log(this.data)
       }
   );
    }

@@ -31,7 +31,7 @@ export class FormDialogComponent implements OnInit {
 
   }
   get_model_type(){
-    console.log(this.model_type)
+    ///console.log(this.model_type)
     return this.model_type
   }
   get_mode(){
@@ -43,7 +43,7 @@ export class FormDialogComponent implements OnInit {
       this.dialogRef.close({event:"Cancelled"});
     }
     else{
-      console.log(val)
+      //console.log(val)
       this.dialogRef.close({event:"Confirmed", model_type:this.model_type, formData:val});
     }
 

@@ -42,9 +42,8 @@
 <mat-card *ngIf="filename_used.length > 0 && selected_observed_variable !== ''">
     <h2>Select your biological material(s)</h2>
     <p>Here you can select which biological materials to display. Click on toggle button to on/off biologial material display</p>
-    <mat-button-toggle-group *ngFor="let column of genotypes[selected_file] ; let i=index" [multiple]="true"
-        #group="matButtonToggleGroup">
-        <mat-button-toggle (click)="$event ? clickToggle($event,column, selected_file) : null" value="{{column}}">
+    <mat-button-toggle-group *ngFor="let column of genotypes[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup" >
+        <mat-button-toggle (click)="$event ? clickToggle($event,column) : null" value="{{column}}">
             <span>{{column}}</span>
         </mat-button-toggle>
     </mat-button-toggle-group>
@@ -68,13 +67,14 @@
             Stacked {{selected_observed_variable}} by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}}
             conditions)
         </h4>
-        <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="my_displayed_data"
-            [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
-            [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
-            [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
-        </ngx-charts-bar-vertical-stacked>
+
+            <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="my_displayed_data"
+                [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
     </div>
-    <div>
+    <!-- <div>
         <h4>
             selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
         </h4>
@@ -83,7 +83,7 @@
             [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
             [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
         </ngx-charts-bar-vertical-2d>
-    </div>
+    </div> -->
     <!-- <h1 class="card-header bg-info">
       Welcome to {{ title }}!
     </h1> -->
