@@ -29,7 +29,7 @@
     "bootstrap": "^3.4.1",
     "core-js": "^3.6.5",
     "d3-scale": "^3.3.0",
-    "datatables.net": "^1.10.22",
+    "datatables.net": "^1.11.3",
     "datatables.net-dt": "^1.10.21",
     "file-saver": "^2.0.2",
     "flex-layout": "^1.0.1",
