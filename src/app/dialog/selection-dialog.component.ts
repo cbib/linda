@@ -14,6 +14,7 @@ interface DialogData {
   values: [];
   already_there: string[];
   observation_id: string;
+  bm_data:[];
 }
 export interface BiologicalMaterial {
   biologicalMaterialId: string;
@@ -46,6 +47,7 @@ export class SelectionDialogComponent implements OnInit {
 
   private model_id: string;
   private result: []
+  private bm_data: []
   model_type: string;
   private parent_id: string;
   observation_id: string = ""
@@ -81,6 +83,8 @@ export class SelectionDialogComponent implements OnInit {
     this.result = []
     this.already_there = this.data.already_there
     this.observation_id = this.data.observation_id
+    this.bm_data= this.data.bm_data
+
   }
 
   ngOnInit() {

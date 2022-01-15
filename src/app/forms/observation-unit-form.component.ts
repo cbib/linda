@@ -440,13 +440,9 @@ export class ObservationUnitFormComponent implements OnInit {
     const dialogRef = this.dialog.open(SelectionDialogComponent,
       { width: '1400px', autoFocus: true, disableClose: true, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: this.get_biological_material_list() } }
     );
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log(result)
-
-        let message = "biological_material selected! "
-        this.alertService.success(message);
         var biologicalMaterialData = result['data']
         for (var h = 0; h < biologicalMaterialData.length; h++) {
           var bm: BiologicalMaterial
@@ -457,6 +453,8 @@ export class ObservationUnitFormComponent implements OnInit {
           this.bm_data.push(bm)
 
         }
+      }
+    });
         // var material_ids=result['material_ids']
         // var biological_material_ids=result['biological_material_ids']
         // var mat_index=0
@@ -500,13 +498,11 @@ export class ObservationUnitFormComponent implements OnInit {
         //   }
         // }
 
-        console.log(this.bm_data)
 
 
 
 
-      }
-    });
+    
 
   }
 //return a list of secondary biological material id list

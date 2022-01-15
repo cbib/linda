@@ -118,7 +118,8 @@ export class ExplorationComponent implements OnInit {
                       console.log(biological_material_data)
                       biological_material_data.forEach(biological_material => {
                         this.BiologicalMaterials[data_file.filename].push({'biological_material':biological_material, 'study_id':data_file.efrom})
-                        this.genotypes[data_file.filename]=biological_material["Material source ID (Holding institute/stock centre, accession)"]
+                        //this.genotypes[data_file.filename]=biological_material["Material source ID (Holding institute/stock centre, accession)"]
+                        this.genotypes[data_file.filename]=biological_material["Infraspecific name"]
                       });
                     }
                   )
@@ -232,6 +233,7 @@ export class ExplorationComponent implements OnInit {
 
   clickToggle(event, column){
     console.log(column)
+    console.log(this.my_data)
     console.log(this.my_data.filter(element=> element.name===column))
     console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
     if (this.my_displayed_data.filter(element=> element.name===column)[0]){

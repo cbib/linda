@@ -64,6 +64,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     private options: componentInterface[];
     public selectedOption: componentInterface;
     private extract_fields_options = {}
+    private loaded:boolean=false
     private extract_component_options = {
         'options': [
             { header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '' },
@@ -105,7 +106,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     //radio button box
     checked = false;
     indeterminate = false;
-    labelPosition: 'all' | 'only_data' = 'only_data';
+    labelPosition: 'all' | 'only_data' | 'None'= 'only_data';
     disabled = false;
 
     //parsing CSV
@@ -177,6 +178,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             
             }
         });
+        this.loaded=false
     }
     
     ngOnInit() {
@@ -221,6 +223,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     onNext(index:any){
         // this.demo_subset+=1
         console.log(index)
+        console.log(this.loaded)
         if (index=="load_csv"){
             console.log("step2")
             this.fileName="my_data.csv"
@@ -457,6 +460,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
 
             }
         }
+        this.loaded=true
         // console.log(this.headers_by_filename[this.fileName])
         for (var i = 0; i < this.headers.length; i++) {
             this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
@@ -989,6 +993,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             if (Object.keys(this.data_to_extract).length === 0) {
                 this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
             }
+            console.log(this.data_to_extract)
             if (this.data_to_extract['study']) {
                 let groups_label = []
                 //search for column declared as study column

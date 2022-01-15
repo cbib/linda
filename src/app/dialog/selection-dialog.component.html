@@ -1,5 +1,9 @@
 <h1 mat-dialog-title>Select {{model_type}}</h1>
 
+<div *ngIf="bm_data.length >0" >
+  {{bm_data.length}}
+</div>
+
 <div *ngIf="get_result().length>0">
   <div mat-dialog-content>
     <p> Which {{model_type}}s do you plan to use ? </p>
@@ -7,11 +11,11 @@
   <select name="select_template" size="1" (change)="onSelect($event.target.value)">
     <option value="" disabled>Select {{model_type}}s</option>
     <ng-container *ngIf="model_type!=='biological_material'" matColumnDef="{{column}}">
-      <option [disabled]="already_there.includes(t._id)" *ngFor="let t of get_result()" value={{t._id}}>{{t._id}}
+      <option [disabled]="already_there.includes(t._id)" *ngFor="let t of get_result()" value="{{t._id}}">{{t._id}}
       </option>
     </ng-container>
     <ng-container *ngIf="model_type==='biological_material'" matColumnDef="{{column}}">
-      <option *ngFor="let t of get_result()" value={{t._id}}>{{t._id}}</option>
+      <option *ngFor="let t of get_result()" value="{{t._id}}">{{t._id}}</option>
     </ng-container>
   </select>
 

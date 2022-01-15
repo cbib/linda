@@ -395,10 +395,10 @@ export class FileService {
         //console.log(model)
         //console.log(isa_model)
         return_data = this.build_isa_model2(model_data, model, isa_model, return_data, model_type, filename, parent_id, parent_data)
-        //console.log(submodels)
+        console.log(submodels)
         submodels['models_data'].forEach(
             submodel => {
-                //console.log(submodel)
+                console.log(submodel)
                 var filename = ""
                 parent_id = submodel["e"]["_from"]
                 if (submodel["v"]["_id"].split('/')[0] === "studies") {

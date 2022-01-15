@@ -645,6 +645,9 @@ export class UserTreeComponent implements OnInit {
         var seconds = Math.round(this.timeDiff);
         ////console.log(seconds + " seconds");
     } 
+    onExperimental_design(node){
+        this.router.navigate(['/design'])
+    }
     onExport(node: MiappeNode) {
         var model_type = this.globalService.get_model_type(node.id)
         this.globalService.get_parent(node.id).toPromise().then(parent_data => {
@@ -696,6 +699,8 @@ export class UserTreeComponent implements OnInit {
             });
         });
     }
+    
+
     onEdit(node: MiappeNode) {
         //////console.log(this.active_node.id);
         this.active_node = node
@@ -839,15 +844,18 @@ export class UserTreeComponent implements OnInit {
                                     ////console.log(data["message"])
                                     var message = this.active_node.id + " has been removed from your history !!"
                                     this.alertService.success(message)
+                                    //setTimeout(() => {this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });},5000);
+                                    setTimeout(() => {this.reloadComponent(['/tree']);},5000);
+                                    
                                     
                                     
                                 }
                                 else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                    this.alertService.error("Cannot remove observation units node !! error message: " + data["message"]);
                                 }
                             }
                         );
-                        this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
+                        //this.router.navigate(['/tree'], { queryParams: { key: this.parent_key } });
                         // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                         
                         //this.reloadComponent(['/tree'])

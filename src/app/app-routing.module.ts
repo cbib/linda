@@ -36,6 +36,8 @@ import { PublicDataComponent } from './documentation/public-data.component';
 import { ExtractComponentComponent } from './extract/extract-component.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { ExplorationComponent } from './statistics/exploration.component';
+import { ExperimentalDesignComponent } from './design/experimental-design.component';
+
 
 
 const routes: Routes = [
@@ -57,6 +59,7 @@ const routes: Routes = [
   { path: 'observed_variable',component: ObservedVariableComponent},
   { path: 'experimental_factor',component: ExperimentalFactorComponent},
   { path: 'environmental_parameter',component: EnvironmentalParameterComponent},
+  { path: 'design',component: ExperimentalDesignComponent},
   { path: 'sample',component: SampleComponent},
   { path: 'navbars',component: NavbarComponent},
   //{ path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]},

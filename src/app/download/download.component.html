@@ -11,8 +11,7 @@
 
 <joyrideStep joyrideStep="StepExampleForm" title="" [stepContent]="ExampleForm" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
     <div joyrideStep="StepMenuForm" title="" [stepContent]="MenuForm" [stepContentParams]="{'model_n':demo_subset}" *ngIf= "mode==='extract'" >
-        <h4>Extract MIAPPE component from tabular file!</h4>
-        <p> Using a external tabular file, Users can easily export whole investigation structure into investigations tree. Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a full example </p>
+        
         <!--<app-upload-file ></app-upload-file>-->
         <div *ngIf="error">
             {{ error.message }}
@@ -28,13 +27,13 @@
         <div>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 
-                <label class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+                <label style="float: right;" class="btn btn-default btn-file">Browse <input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
                 <button 
                 joyrideStep="StepUpload3Form"
                 title=""
                 [stepContent]="Upload3Form"
                 [stepContentParams]="{'model_n':demo_subset}"
-                class="btn btn-default btn-info" type="submit">
+                class="btn btn-default btn-info" type="submit" style="float: right;">
                     Upload
                 </button>
                 <ng-template #Upload3Form let-nod="model_n">
@@ -55,46 +54,63 @@
                         </p> 
                     </mat-card>
                 </ng-template>
-                <button (click)="cancel()" class="btn btn-danger">Cancel</button>
-                <mat-radio-group 
+                <button (click)="cancel()" style="float: right;" class="btn btn-danger">Cancel
+
+                </button>
+                <br>
+                <mat-card class="description_mat_card">
+                <h4>Extract Data files from tabular file!</h4>
+                <p> Using a external tabular file, Users can easily import experimental and environmental data related to their studies. 
+                    he can also extract experimental design map (field, block, row, column, etc;) and correlate biological material location with this experimental design map. <br>
+                    Sometimes, data are study-specific, like data for a given observation under a given experimental factor condition in a given study. 
+                     Click <button mat-menu-item (click)="onShowHelp('loader')">HELP</button> to see a example of datafiles to import 
+                </p>
+                </mat-card>
+                <mat-card class="description_mat_card">
+                <h4>Case 1: One column for Study ID</h4>
                 
-                [(ngModel)]="labelPosition" 
-                [ngModelOptions]="{standalone: true}">
-                    <!-- <mat-radio-button 
-                    joyrideStep="StepUpload1Form"
-                    title=""
-                    [stepContent]="Upload1Form"
-                    [stepContentParams]="{'model_n':demo_subset}" 
-                    class="radio-margin" value="only_studies">
-                        Only Studies
-                    </mat-radio-button>
-                    <ng-template #Upload1Form let-nod="model_n">
-                        <div>
-                        <nav class="navbar navbar-expand-sm navbar-dark">
-                            <h3>
-                                <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-                            </h3>
-                        </nav>
-                        </div>
-                        
-                        <h4>Data files</h4>
-                        <br>
-                            <h5>Upload mode <mat-card>Only studies</mat-card></h5>
-                            <h6 style="margin-left: 10px;">Only studies</h6>
-                            <p>
-                                In the case, you had only created the investigation node, you could want to define automatically your studies (sometimes you could have a lot of studies)
-                            </p>
-                            <p> You could extract only studies backbone the same way by identifying and assigning the study unique identifier column. 
-                            In this case, only the studies will be created. No data files are imported</p>
-                            
-                    </ng-template> -->
+                <p>
+                Each row (identified by a given study ID column) of your datafile will be integrated in a new datafile, himself integrated in the corresponding study ID labelled study. 
+                You may also want to create study for each id found in your Study ID column if they are not in your investigation tree. Consequently, two options are available: 
+                </p>
+                <h5>Link with existing study(ies)</h5>
+                <p>
+                    If you want to link your data with to existing studies, your datafile must contain a column dedicated to study ID. 
+                    Study Ids must be the same as unique Study IDs in your investigation. 
+                    In this case, you should check <b>Datafiles</b> option !
+                </p>
+                <h5>create study(ies) at flight</h5>
+                <p>
                     
+                    If you want to create each study from your data file, your datafile must also contain a column dedicated to study ID.
+                    Each Study ID found in your dedicated column will be used to create the basic structure of your MIAPPE study component. 
+                    This time this column will be used to create study at flight based on their ID (assigned as study Unique ID); 
+                    Your data file will be splitted accordingly for each associated study ID rows.
+                    In this case, you should check <b>Datafiles + studies</b> option !
+                </p>
+                </mat-card>
+                <mat-card class="description_mat_card">
+                <h4>Case 2: No column for Study Id</h4>
+                <p>
+                    In some other cases, data are investigation-specific like global environmental conditions that take place in each study concomitantly. 
+                    Here, the whole datafile is integrated in each study found in your parent investigation.
+                    In this case, you should check <b> No Study ID </b> option !
+                </p>
+                </mat-card>
+                <br>
+                <mat-card class="description_mat_card">
+                <h5>Select extract mode</h5>
+                <p> 
+                    Depending on content of your datafile, you need to select the mode of extraction. 
+                </p>
+                <mat-radio-group  [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">       
+                    <mat-radio-button  class="radio-margin" value="None"> No Study ID </mat-radio-button>
                     <mat-radio-button 
-                    joyrideStep="StepUpload1Form"
-                    title=""
-                    [stepContent]="Upload1Form"
-                    [stepContentParams]="{'model_n':demo_subset}" 
-                    class="radio-margin" value="all">
+                        joyrideStep="StepUpload1Form"
+                        title=""
+                        [stepContent]="Upload1Form"
+                        [stepContentParams]="{'model_n':demo_subset}" 
+                        class="radio-margin" value="all">
                         Datafiles + Studies
                     </mat-radio-button>
                     <ng-template #Upload1Form let-nod="model_n">
@@ -123,6 +139,7 @@
                             You will be ask to fill some common field between each studies
                         </mat-card>
                     </ng-template>
+                    
                     <mat-radio-button 
                     joyrideStep="StepUpload2Form"
                     title=""
@@ -139,19 +156,16 @@
                             </h3>
                         </nav>
                         </div>
-                        
                         <h4>Data files</h4>
                         <mat-card>
                             <h6>Import data files only</h6>
                             <p> Given that you could have built your experimental design prior to import data files, you can, if you want, only load the data as data files in your investigations using the 
                                 <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button> radio button.
                             Data files must have a column assigned to study unique id in order to link data to corresponding studies. </p>
-                        </mat-card>
-                            
-                        
-                            
+                        </mat-card>     
                     </ng-template>
                 </mat-radio-group>
+                </mat-card>
             </form>
         </div>
     </div>
@@ -247,6 +261,9 @@
     (deactivate)="onDeactivate($event)"
     >
     </ngx-charts-line-chart>
+
+
+
     <!-- Specific table for metadata files -->
     <section *ngIf= "model_type==='metadata_file'">
         <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable1">
@@ -338,7 +355,6 @@
         </table>
     </section>
 
-
     <!-- Specific table for download datafiles and assign component -->
     <section *ngIf= "(model_type==='data_file' || model_type==='study') && (mode==='extract-again' || mode==='extract')">
     
@@ -360,7 +376,7 @@
     <br>
 
     <div>
-        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
+        <table  class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable3">
             <thead joyrideStep="StepTableForm" title="" [stepContent]="TableForm" [stepPosition]="center" [stepContentParams]="{'model_n':demo_subset}" (next)="onNext('load_csv')">
                 <tr>
                     <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
@@ -688,12 +704,6 @@
         </div>
 
     </section>
-
-
-
-
-
-
 </joyrideStep>
 <ng-template #ExampleForm let-nod="model_n">
     <div>

@@ -113,6 +113,7 @@ import { BiologicalMaterialDialogComponent } from './dialog/biological-material-
 import { BiologicalMaterialTableComponent } from './table/biological-material-table.component';
 import { CsvLoaderDialogComponent } from './dialog/csv-loader-dialog.component';
 import { ObservationUnitTableComponent } from './table/observation-unit-table.component';
+import { ExperimentalDesignComponent } from './design/experimental-design.component';
 
 @NgModule({
   declarations: [
@@ -179,7 +180,8 @@ import { ObservationUnitTableComponent } from './table/observation-unit-table.co
     BiologicalMaterialDialogComponent,
     BiologicalMaterialTableComponent,
     CsvLoaderDialogComponent,
-    ObservationUnitTableComponent
+    ObservationUnitTableComponent,
+    ExperimentalDesignComponent
         
     
 

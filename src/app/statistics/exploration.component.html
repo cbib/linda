@@ -62,7 +62,7 @@
 
 <section *ngIf="filename_used.length > 0 && selected_observed_variable!=='' &&  my_displayed_data.length>0">
     <!--The content below is only a placeholder and can be replaced.-->
-    <div>
+    <!-- <div>
         <h4>
             Stacked {{selected_observed_variable}} by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}}
             conditions)
@@ -73,8 +73,8 @@
                 [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
                 [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
             </ngx-charts-bar-vertical-stacked>
-    </div>
-    <!-- <div>
+    </div> -->
+    <div>
         <h4>
             selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
         </h4>
@@ -83,7 +83,7 @@
             [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
             [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
         </ngx-charts-bar-vertical-2d>
-    </div> -->
+    </div>
     <!-- <h1 class="card-header bg-info">
       Welcome to {{ title }}!
     </h1> -->

@@ -117,6 +117,11 @@
                                         childs components )!!
                                     </ng-template>
 
+                                     <!-- EXPERIMENTAL DESIGN-->
+                                    <button style="float: right;" *ngIf="node.id.includes('studies')"
+                                            (click)="onExperimental_design(node)" class="btn btn-light btn-xs fa fa-th">
+                                    </button>
+
                                     <!-- TABULAR AND JSON EXPORT BUTTON-->
                                     <div joyrideStep="stepButtonExportCSV" title=""
                                         [stepContent]="InvestigationCSVButtonContent"
@@ -1029,7 +1034,10 @@
 
                                     <button style="float: right;" *ngIf="(node.id.includes('investigations'))"
                                         (click)="onExplore(node)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
-
+                                    <!-- EXPERIMENTAL DESIGN-->
+                                    <button style="float: right;" *ngIf="node.id.includes('studies')"
+                                    (click)="onExperimental_design(node)" class="btn btn-light btn-xs fa fa-th">
+                                    </button>
                                     <button style="float: right;" *ngIf="node.id.includes('investigations')"
                                         (click)="onExportIsa(node)" class="btn btn-light btn-xs fa "><i
                                             class="icon-play"></i></button>
