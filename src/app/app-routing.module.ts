@@ -1,89 +1,165 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { FormComponent } from './forms';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { DownloadComponent } from './download/download.component';
 import { AuthGuard } from './guards/auth.guards';
-import { NavbarComponent } from './navbar/navbar.component';
-import { OntologyTreeComponent } from './ontology-tree/ontology-tree.component';
-//import { DialogComponent } from './dialog/dialog.component';
-import { UserTreeComponent } from './user-tree/user-tree.component';
-import { AdminComponent } from './admin/admin.component';
-import { HelpComponent } from './help/help.component';
-//import { SendmailComponent } from './forms/sendmail.component';
+import { Routes, RouterModule } from '@angular/router';
+
+// Home and Admin Component (no module)
+import { HomeComponent } from './modules/general/home/home.component';
+import { AdminComponent } from './components/admin/admin.component'
+
+//Documentation Components
 import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
 import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
 import { ReleasesComponent } from './documentation/releases.component';
-import { MaterialFormComponent } from './forms/material-form.component';
-import { ObservationUnitFormComponent } from './forms/observation-unit-form.component';
-import { MaterialForm2Component } from './forms/material-form2.component';
-import { MaterialForm3Component } from './forms/material-form3.component';
 import { DataExplorationComponent } from './documentation/data-exploration.component';
 import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
 import { ProjectExampleComponent } from './documentation/project-example.component';
 import { StudyComponent } from './documentation/miappe_components/study.component';
 import { EventComponent } from './documentation/miappe_components/event.component';
-import { BiologicalMaterialComponent } from './documentation/miappe_components/biological-material.component';
+import { BiologicalMaterialMiappeComponent } from './documentation/miappe_components/biological-material-miappe.component';
 import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
 import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
 import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
 import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
 import { SampleComponent } from './documentation/miappe_components/sample.component';
-//import { GanttComponent } from './test_component/gantt.component'
-import { PublicDataComponent } from './documentation/public-data.component';
-import { ExtractComponentComponent } from './extract/extract-component.component';
-import { TemplatesComponent } from './templates/templates.component';
-import { ExplorationComponent } from './statistics/exploration.component';
-import { ExperimentalDesignComponent } from './design/experimental-design.component';
 
+
+//import { GanttComponent } from './modules/application/gantt/gantt.component'
+import { PublicDataComponent } from './documentation/public-data.component';
+import { HomeNewComponent } from './modules/general/home/home-new.component';
+import { NotFoundComponent } from './modules/general/not-found/not-found.component';
 
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'trees',component: OntologyTreeComponent,canActivate: [AuthGuard]},
-  { path: 'tree',component: UserTreeComponent,canActivate: [AuthGuard]},
-  { path: 'download',component: DownloadComponent,canActivate: [AuthGuard]},
-  { path: 'extract',component: ExtractComponentComponent,canActivate: [AuthGuard]},
-  { path: 'home',component: HomeComponent},
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {
+    path: 'login',
+    loadChildren: () => import('./modules/general/login/login.module')
+      .then(mod => mod.LoginModule)
+  },
+  {
+    path: 'signup',
+    loadChildren: () => import('./modules/general/signup/signup.module')
+      .then(mod => mod.SignupModule)
+  },
+  {
+    path: 'about',
+    loadChildren: () => import('./modules/general/about/about.module')
+      .then(mod => mod.AboutModule)
+  },
+  //FORMS
+  {
+    path: 'generic_form',
+    loadChildren: () => import('./modules/application/forms/form.module')
+      .then(mod => mod.FormModule)
+  },
+  // { path: 'materialform', redirectTo: '/materialform', pathMatch: 'full' },
+  {
+    path: 'materialform',
+    loadChildren: () => import('./modules/application/material-forms/material-form.module')
+      .then(mod => mod.MaterialFormModule)
+  },
+  {
+    path: 'Observationunitform',
+    loadChildren: () => import('./modules/application/observation-unit-forms/observation-unit-form.module')
+      .then(mod => mod.ObservationUnitFormModule)
+  },
+  { 
+    path: 'explore', 
+    loadChildren: () => import('./modules/application/statistics/exploration.module')
+      .then(m => m.ExplorationModule) 
+  },
+  { 
+    path: 'download', 
+    loadChildren: () => import('./modules/application/file_handlers/download.module')
+      .then(m => m.DownloadModule) 
+  },
+  { path: 'templates', 
+    loadChildren: () => import('./modules/application/templates/templates.module')
+      .then(m => m.TemplatesModule) 
+  },
+  { 
+    path: 'profile', 
+    loadChildren: () => import('./modules/application/user/profile.module')
+      .then(m => m.ProfileModule) 
+  },
+  { 
+    path: 'user', 
+    loadChildren: () => import('./modules/application/user/profile.module')
+      .then(m => m.ProfileModule) 
+  },
+  { 
+    path: 'help', 
+    loadChildren: () => import('./modules/general/help/help.module')
+      .then(m => m.HelpModule) 
+  },
+  { 
+    path: 'experimental_design', 
+    loadChildren: () => import('./modules/application/experimental-design/experimental-design.module')
+      .then(m => m.ExperimentalDesignModule) 
+  },
+  { 
+    path: 'extract', 
+    loadChildren: () => import('./modules/application/extract/extract.module')
+      .then(m => m.ExtractModule) 
+  },  
+  { 
+    path: 'projects_tree', 
+    loadChildren: () => import('./modules/application/projects/tree/projects-tree.module')
+      .then(m => m.ProjectsTreeModule) 
+  },
+  { 
+    path: 'projects_page', 
+    loadChildren: () => import('./modules/application/projects/pages/projects-page.module')
+      .then(m => m.ProjectsPageModule) 
+  },
+  { 
+    path: 'gantt', 
+    loadChildren: () => import('./modules/application/gantt/gantt.module')
+      .then(m => m.GanttModule) 
+  },
+
+
+
+
+  
+  
+  { path: 'home2',component: HomeNewComponent},
+  
+  // UNUSED ?
+  { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
+  
+  // MIAPPE COMPONENT
   { path: 'investigation',component: InvestigationComponent},
   { path: 'study',component: StudyComponent},
   { path: 'event',component: EventComponent},
-  { path: 'templates',component: TemplatesComponent},
-  { path: 'explore', component:ExplorationComponent},
   { path: 'observation_unit',component: ObservationUnitComponent},
-  { path: 'biological_material',component: BiologicalMaterialComponent},
+  { path: 'biological_material',component: BiologicalMaterialMiappeComponent},
   { path: 'observed_variable',component: ObservedVariableComponent},
   { path: 'experimental_factor',component: ExperimentalFactorComponent},
   { path: 'environmental_parameter',component: EnvironmentalParameterComponent},
-  { path: 'design',component: ExperimentalDesignComponent},
   { path: 'sample',component: SampleComponent},
-  { path: 'navbars',component: NavbarComponent},
+
+  //MISCELLANOUS EXTRA
   //{ path: 'gantt',component: GanttComponent,canActivate: [AuthGuard]},
-  { path: 'generic',component: FormComponent},
-  { path: 'generic2',component: MaterialFormComponent},
-  { path: 'generic4',component: MaterialForm2Component},
-  { path: 'generic5',component: MaterialForm3Component},
-  { path: 'generic3',component: ObservationUnitFormComponent},
   { path: 'ontologies',component: OntologyDescriptionComponent},
   { path: 'admin',component: AdminComponent, canActivate: [AuthGuard]},
-  { path: 'help',component: HelpComponent, canActivate: [AuthGuard]},
   { path: 'public_data',component: PublicDataComponent, canActivate: [AuthGuard]},
   { path: 'data_exploration',component: DataExplorationComponent, canActivate: [AuthGuard]},
   { path: 'project_example',component: ProjectExampleComponent, canActivate: [AuthGuard]},
-  { path: 'releases',component: ReleasesComponent, canActivate: [AuthGuard]},
-  //{ path: 'mail',component: SendmailComponent,canActivate: [AuthGuard]},
-  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]}
-  ];
+  { path: 'miappe',component: MiappeDescriptionComponent,canActivate: [AuthGuard]},
+  { path: '**', component: NotFoundComponent }  
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
+    initialNavigation: 'enabled',
     onSameUrlNavigation: 'reload',
     scrollPositionRestoration: 'enabled'
-  })],
+    ///enableTracing: true
+  }),
+
+],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

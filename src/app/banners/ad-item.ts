@@ -1,7 +1,8 @@
 import { Type } from '@angular/core';
 
 export class AdItem {
+  private _data:any;
   constructor(public component: Type<any>, public data: any) {
-      console.log(data)
+    this._data=data
   }
 }

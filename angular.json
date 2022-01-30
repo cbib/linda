@@ -5,7 +5,11 @@
   "projects": {
     "linda": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -26,7 +30,8 @@
                 "glob": "cbib.jpg",
                 "input": "src/assets/images",
                 "output": "."
-                }              
+                },
+              "src/manifest.webmanifest"              
             ],
             "styles": [
               "src/styles.css",
@@ -47,13 +52,13 @@
                 }
               ],
               "optimization": true,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": false,
               "extractCss": true,
-              "namedChunks": false,
+              "namedChunks": true,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "budgets": [
                 {
@@ -61,20 +66,40 @@
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json"
+            },
+            "development": {
+              "outputHashing": "none",
+              "buildOptimizer": true,
+              "optimization": true,
+              "vendorChunk": true,
+              "aot": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "namedChunks": true
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "linda:build"
+            "browserTarget": "linda:build",
           },
           "configurations": {
             "production": {
               "browserTarget": "linda:build:production"
+            },
+            "development": {
+              "optimization": true,
+              "vendorChunk": true,
+              "aot": true,
+              "sourceMap": false,
+              "browserTarget": "linda:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -91,7 +116,8 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.css",

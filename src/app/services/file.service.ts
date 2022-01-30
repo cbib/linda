@@ -569,6 +569,30 @@ export class FileService {
         zipFile = this.build_zip(paths, zipFile)
         zipFile.generateAsync({ type: "blob" }).then(function (blob) { saveAs(blob, dir_root_id + ".zip"); });
     }
+    public add_multiple_model(fileReader: FileReader, parent_id:string) {
+        fileReader.onload = function (e) {
+            var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
+                var files = zip['files'];
+                Object.keys(zip.files).forEach(function (filename) {
+                    ////console.log(zip.files)
+                    ////console.log(zip.files[filename]['dir'])
+                    if (!zip.files[filename]['dir']) {
+                        zip.files[filename].async('string').then(function (fileData) {
+                            ////console.log(filename)
+                            ////console.log(fileData) // These are your file contents      
+                        })
+                    }
+                })
+                zip.forEach(function (relativePath, zipEntry) {
+                    ////console.log(zipEntry.name)
+                    ////console.log(zipEntry.dir)
+                    //////console.log(zipEntry[relativePath]['dir'])
+                    ////console.log(relativePath)
+                    //for each filepath build the corresponding hierarchy in user tree
+                });
+            });
+        }
+    }
 
     public build_isa_model2(data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, edge={}) {
 

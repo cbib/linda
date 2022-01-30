@@ -350,7 +350,7 @@ router.post('/register', function (req, res) {
     const data = req.body;
     //var username=req.body.username;
     var searchExpression = { "username": req.body.username, "password": req.body.password };
-    var data_to_insert = { "username": req.body.username, "password": req.body.password, "firstName": req.body.firstName, "lastName": req.body.lastName, "email": req.body.email, "tutoriel_step": 0, "tutoriel_done": false };
+    var data_to_insert = { "username": req.body.username, "password": req.body.password, "firstName": req.body.firstName, "lastName": req.body.lastName, "email": req.body.email, "tutoriel_step": 0, "tutoriel_done": false, "treeview": false };
 
     //alert(username);
     //var password=req.body.password;

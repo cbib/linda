@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {OntologyTerm} from '../ontology/ontology-term'
+import {OntologyTerm } from '../models/ontology/ontology-term'
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { map, catchError, tap  } from 'rxjs/operators';

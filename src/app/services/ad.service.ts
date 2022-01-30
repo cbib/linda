@@ -3,7 +3,9 @@ import { PubAdComponent }   from '../banners/pub-ad.component';
 import { AdItem }               from '../banners/ad-item';
 import { Location } from "@angular/common";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AdService {
   getAds() {
     

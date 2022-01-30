@@ -3,9 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { map} from 'rxjs/operators';
 import { User } from '../models/user';
 import {Constants} from "../constants";
-//import * as nodemailer from 'nodemailer'; 
+//import * as nodemailer from 'nodemailer';
+import {Md5} from 'ts-md5/dist/md5'; 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class UserService {
     private APIUrl:string;
     //private apiUrl='http://127.0.0.1:8529/_db/MIAPPE_GRAPH/xeml'
@@ -39,6 +42,8 @@ export class UserService {
 
     register(user: User) {
         console.log(user)
+        //user['password']=Md5.hashStr(user.password)
+        //return null
         return this.http.post(`${this.APIUrl}/register`, user);
     }
 
