@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Select delimitor</h1>
+<div mat-dialog-content >
+    <p> Which delimitors do you plan to use ? </p>
+</div>
+<!--<ul *ngFor="let t of result">
+    <li>{{t._id}}</li>
+    
+</ul>-->
+<select name="select_template" size="1" (change)="onSelect($event.target.value)">
+    <option value="" disabled>Select delimitors</option>
+    <option *ngFor="let d of get_delimitors()" value="{{d}}">{{d}}</option>
+</select> 
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button  (click)="onOkClick()">Ok</button>
+</div>

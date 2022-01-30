@@ -1,0 +1,127 @@
+<h1 mat-dialog-title>
+    <div class="border-head">
+        <nav class="navbar navbar-expand-sm navbar-dark">
+            <h3>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+            </h3>
+        </nav>
+    </div>
+
+</h1>
+
+<div mat-dialog-content >
+    <div *ngIf="help_page==='loader'">
+        <p> Supposed you have a file called my_data.csv with given data:</p>
+        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center" id="datatable" >
+            <thead>
+                <tr>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Site</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Experiment</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Harvesting date</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Silking</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Soil temperature</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail12</th>
+                    <th scope="col" >12-06-2012</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail12</th>
+                    <th scope="col" >13-06-2012</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail12</th>
+                    <th scope="col" >14-06-2012</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr><tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail13</th>
+                    <th scope="col" >12-06-2013</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail13</th>
+                    <th scope="col" >13-06-2013</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail13</th>
+                    <th scope="col" >14-06-2013</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail14</th>
+                    <th scope="col" >12-06-2014</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr><tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail12</th>
+                    <th scope="col" >13-06-2014</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+                <tr style="font-size:10px;text-align: center; cursor: move;">
+                    <th scope="col" >Gaillac</th>
+                    <th scope="col" >Gail12</th>
+                    <th scope="col" >14-06-2014</th>
+                    <th scope="col" >23.34</th>
+                    <th scope="col" >26.45</th>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <h3>Steps to follow</h3>
+        <hr style="margin-left: 400px;margin-right: 400px;">
+        <p> 1 - Select a file on your local system using the browse button and select the right field delimitor in the list. </p>
+        <hr style="margin-left: 400px;margin-right: 400px;">
+        <p> 2 - Once you have clicked on OK button, your dataset has been loaded and only columns headers are shown. </p>
+            <img src="assets/images/loader_data_header.png" class="img-responsive" style="width:75%" alt="Image">
+        <hr style="margin-left: 400px;margin-right: 400px;">
+        <p> 3 - Assign a column as study column in order to create the backbone of your investigation by select 'Extract Study label from column' to assign this column to the study label. 
+            (you can visualize the data related to one column header by clicking on display button)</p>
+            <img src="assets/images/study_assigned.png" class="img-responsive" style="width:75%" alt="Image">
+        <hr style="margin-left: 400px;margin-right: 400px;">
+    
+        <p> 4 - There are three options to import data. </p>
+        <ul>
+            <li> - You could import only study ("Only Studies") and build the simple study components corresponding to the unique study labels found in the seleted column</li>
+            <li> - You have checked the import data option ("Studies + associated data"), consequently all data related to each study will be upload and attached to their parent studies as data files</li>
+            <li> - If your studies are already imported from previous extracction step, you may want to import only related data or metadata. 
+              your data files need to contain a column with study labels  corresponding to the studies labels in your investigation.
+              To do that, select option "Only Data", it will attached each studies's related data.</li>
+    
+        </ul>
+        <hr style="margin-left: 400px;margin-right: 400px;">
+        <p>
+            Once MIAPPE components assignment is done, check boxes for each component other than study component (observed variables, experimental factors, material sources can be imported this way), 
+            you want to be incorporated in your investigation and click on upload button 
+            For each study created, each line of your data that matches Study Label will be add as a MIAPPE study component
+            data file extracted and linked to the corresponding study in the investigation tree
+        </p>
+    </div>  
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button  (click)="onOkClick()">Ok</button>
+</div>
+
+
+

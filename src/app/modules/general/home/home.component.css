@@ -1,0 +1,42 @@
+
+.joyride-step__container{
+    border-radius: 10px;
+}
+
+::ng-deep .mat-stepper-horizontal {
+    margin-top: 8px;
+    
+    position: inherit;
+}
+  
+.mat-form-field {
+    margin-top: 16px;
+}
+  
+::ng-deep .mat-horizontal-stepper-header-container {
+      position: inherit;
+    }
+
+.chips{
+    width: 24%;
+    height: 200px;
+    padding: 100px;
+    justify-content: center;
+    border: 1.0rem;
+    border-color: black;
+    /*border-width: 10px;*/
+    
+}
+
+.mat-chip-list-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    height: 220px;
+    min-width: 100%;
+    margin: 4px;
+}
+
+#home_container {
+    min-width: 90%;
+}
+  

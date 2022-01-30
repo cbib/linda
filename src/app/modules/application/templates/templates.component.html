@@ -1,0 +1,38 @@
+<div class="border-head">
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </nav>
+</div>
+<h3>Your template forms</h3>
+<p>Here you can find all your templates forms ready to reuse</p>
+<table mat-table [dataSource]="get_data_source" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Position Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Id. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="model">
+      <th mat-header-cell *matHeaderCellDef> Model </th>
+      <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+    </ng-container>
+
+    <!-- View Column -->
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef>actions </th>
+      <td mat-cell *matCellDef="let element"> <button (click)="edit_template(element)" class="btn btn-primary btn-xs fa fa-pencil"></button> <button (click)="remove_template(element)" class="btn btn-primary btn-xs fa fa-trash"></button> </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+  </table>
+
+
+

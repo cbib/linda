@@ -1,0 +1,121 @@
+<div class="border-head">
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <h3>
+            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                    meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </nav>
+</div>
+<h4>Investigation exploration </h4>
+<p>You're about to mine your data with Linda.
+    You can visualize easily your observations and correlate them with experimental factors and environmental
+    conditions. </p>
+<div>
+    Select by clicking which studies to explore then select group to compare and group by exp factor
+</div>
+<mat-card *ngIf="filename_used.length > 0">
+
+    <h2>Select your data file </h2>
+    <select [ngModel]="selected_file" name="select_filename" size="1" (change)="onFilenameChange($event.target.value)">
+        <option *ngFor="let filename of filename_used" [value]="filename">{{filename}}</option>
+    </select>
+    <br>
+</mat-card>
+<mat-card *ngIf="filename_used.length === 0">
+    <h2>Select your data file </h2>
+    <mat-card style="background-color: blanchedalmond;">
+        <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b>
+            action from the investigation node !!! </p>
+    </mat-card>
+</mat-card>
+
+<mat-card *ngIf="filename_used.length > 0 && ObservedVariables[selected_file].length > 0">
+    <h2>Select your observed trait </h2>
+    <select [ngModel]="selected_observed_variable" name="selected_ov" size="1"
+        (change)="onVariableChange($event.target.value)">
+        <option *ngFor="let ov of ObservedVariables[selected_file]" [value]="ov['observed_variable']['Trait']">
+            {{ov['observed_variable']['Trait']}}</option>
+    </select>
+    <br>
+</mat-card>
+
+<mat-card *ngIf="filename_used.length > 0 && selected_observed_variable !== ''">
+    <h2>Select your biological material(s)</h2>
+    <p>Here you can select which biological materials to display. Click on toggle button to on/off biologial material display</p>
+    <mat-button-toggle-group *ngFor="let column of genotypes[selected_file] ; let i=index" [multiple]="true" #group="matButtonToggleGroup" >
+        <mat-button-toggle (click)="$event ? clickToggle($event,column) : null" value="{{column}}">
+            <span>{{column}}</span>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+</mat-card>
+
+<mat-card *ngIf="filename_used.length > 0 && ObservedVariables[selected_file].length === 0">
+    <h2>Select your observed trait</h2>
+    <mat-card style="background-color: blanchedalmond;">
+        <p>You do not have data file in your investigation, please add one with <b>Datafiles from tabular files</b>
+            action from the investigation node !!! </p>
+    </mat-card>
+</mat-card>
+
+
+<br>
+
+<section *ngIf="filename_used.length > 0 && selected_observed_variable!=='' &&  my_displayed_data.length>0">
+    <!--The content below is only a placeholder and can be replaced.-->
+    <!-- <div>
+        <h4>
+            Stacked {{selected_observed_variable}} by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}}
+            conditions)
+        </h4>
+
+            <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="my_displayed_data"
+                [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+            </ngx-charts-bar-vertical-stacked>
+    </div> -->
+    <div>
+        <h4>
+            selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
+        </h4>
+        <ngx-charts-bar-vertical-2d [view]="view2" [scheme]="colorScheme" [results]="my_displayed_data"
+            [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+            [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+        </ngx-charts-bar-vertical-2d>
+    </div>
+    <!-- <h1 class="card-header bg-info">
+      Welcome to {{ title }}!
+    </h1> -->
+    <!-- <div class="row ml-5">
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Vertical Bar Chart
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical [view]="view" [scheme]="colorScheme" [results]="single"
+                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <h4>
+                        Vertical Bar Chart Normalized
+                    </h4>
+                </div>
+                <div class="row">
+                    <ngx-charts-bar-vertical-normalized [view]="view" [scheme]="colorScheme" [results]="my_data"
+                        [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
+                        [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+                        [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical-normalized>
+                </div>
+            </div>
+        </div>
+        <br> -->
+</section>

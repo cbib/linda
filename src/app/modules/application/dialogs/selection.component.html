@@ -1,0 +1,112 @@
+<h1 mat-dialog-title>Select {{model_type}}</h1>
+
+<div *ngIf="get_bm_data.length >0" >
+  {{get_bm_data.length}}
+</div>
+
+<div *ngIf="get_result.length>0">
+  <div mat-dialog-content>
+    <p> Which {{model_type}}s do you plan to use ? </p>
+  </div>
+  <select name="select_template" size="1" (change)="onSelect($event.target.value)">
+    <option value="" disabled>Select {{model_type}}s</option>
+    <ng-container *ngIf="model_type!=='biological_material'" matColumnDef="{{column}}">
+      <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}
+      </option>
+    </ng-container>
+    <ng-container *ngIf="model_type==='biological_material'" matColumnDef="{{column}}">
+      <option *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}</option>
+    </ng-container>
+  </select>
+
+
+  <ng-container *ngIf="model_type==='biological_material'">
+    <table style="width: 1200px;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
+
+      <!--- Note that these columns can be defined in any order.
+                  The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container *ngFor="let column of get_columns[model_type] ; let i=index">
+        <!-- {{column}} -->
+        <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{get_columns_label[model_type][i]}} </th>
+          <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+        </ng-container>
+      </ng-container>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterBmToggle() : null"
+            [checked]="get_bmselection.hasValue() && isAllBmSelected()"
+            [indeterminate]="get_bmselection.hasValue() && !isAllBmSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell class="flex-stretch" *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? get_bmselection.toggle(row) : null"
+            [checked]="get_bmselection.isSelected(row)"
+            [disabled]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId)">
+          </mat-checkbox>
+        </td>
+
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="get_columns[model_type]"></tr>
+      <tr mat-row *matRowDef="let row; columns: get_columns[model_type];"
+        (click)="!get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && get_bmselection.toggle(row)"
+        [ngStyle]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && {'background-color': 'lightgrey'}">
+      </tr>
+    </table>
+  </ng-container>
+
+
+  <ng-container *ngIf="model_type==='experimental_factor'">
+    <table style="width: 1200px;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
+
+      <!--- Note that these columns can be defined in any order.
+                  The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container *ngFor="let column of get_columns[model_type] ; let i=index">
+        <!-- {{column}} -->
+        <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{get_columns_label[model_type][i]}} </th>
+          <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+        </ng-container>
+      </ng-container>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterEfToggle() : null"
+            [checked]="get_efselection.hasValue() && isAllEfSelected()"
+            [indeterminate]="get_efselection.hasValue() && !isAllEfSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell class="flex-stretch" *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? get_efselection.toggle(row) : null"
+            [checked]="get_efselection.isSelected(row)" [disabled]="get_already_there.includes(row.experimentalFactorType)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="get_columns[model_type]"></tr>
+      <tr mat-row *matRowDef="let row; columns: get_columns[model_type];"
+        (click)="!get_already_there.includes(row.experimentalFactorType) && get_efselection.toggle(row)"
+        [ngStyle]="get_already_there.includes(row.experimentalFactorType) && {'background-color': 'lightgrey'}"></tr>
+
+    </table>
+  </ng-container>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button *ngIf="model_type==='experimental_factor'" mat-button [disabled]="!get_efselection.hasValue()"
+      (click)="onOkClick()">Ok</button>
+    <button *ngIf="model_type==='biological_material'" mat-button [disabled]="!get_bmselection.hasValue()"
+      (click)="onOkClick()">Ok</button>
+  </div>
+</div>
+
+<div *ngIf="get_result.length===0">
+  <div mat-dialog-content>
+    <p> There is no {{model_type.replace('_', ' ')}}s to use... Please add one to {{get_parent_id}} </p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">OK</button>
+  </div>
+</div>

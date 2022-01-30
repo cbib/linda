@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>Select {{search_type}}</h1>
+
+<div *ngIf="get_result.length>0">
+    <div mat-dialog-content >
+        <p> Which {{search_type}}s do you plan to use ? </p>
+    </div>
+    <select name="select_template" size="1" (change)="onSelect($event.target.value)">
+        <option value="" disabled>Select {{search_type}}s</option>
+        <option *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}</option>
+    </select> 
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">Cancel</button>
+        <button mat-button  (click)="onOkClick()">Ok</button>
+    </div>
+</div>
+
+<div *ngIf="get_result.length===0">
+    <div mat-dialog-content >
+        <p> There is no {{search_type}} to use... Please add one to {{get_parent_id}} </p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">OK</button>
+    </div>
+ </div>   
+    
