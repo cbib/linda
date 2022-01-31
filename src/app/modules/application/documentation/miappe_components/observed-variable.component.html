@@ -1,0 +1,34 @@
+<div class="border-head">
+    <h3>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div>
+<p>
+    Linda uses the MIAPPE model to structure the information. The figure below represents the MIAPPE diagram with each of the elements composing it. Each component of the MIAPPE model contains several fields helping to describe your whole investigation
+  </p>
+  <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
+
+<h2>Observed variable</h2>
+  <p>An observed variable describes how a measurement has been made. It typically takes the form of a measured characteristic of the observation unit (plant or environmental trait), associated to the method and unit of measurement.</p>
+  <p>1+ per study</p>
+<table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
+[ngClass]="{'table-dark': mode_table}">
+    <caption style="font-weight: bold">Observed variable MIAPPE components</caption>  
+    <thead>
+        <th>MIAPPE Check list</th><th>Definition</th><th>Example</th><th>Format</th><th>Cardinality</th>
+    </thead>
+    <tbody>
+        <tr><td>Variable ID</td><td>Code used to identify the variable in the data file. We recommend using a variable definition from the Crop Ontology where possible. Otherwise, the Crop Ontology naming convention is recommended: "trait abbreviation"_"method abbreviation"_"scale abbreviation"). A variable ID must be unique within a given investigation.</td><td>Ant_Cmp_Cday</td><td>Unique identifier</td><td>1</td></tr>
+        <tr><td>Variable name</td><td>Name of the variable.</td><td>Anthesis computed in growing degree days</td><td>Free text</td><td>0-1</td></tr>
+        <tr><td>Variable accession number</td><td>Accession number of the variable in the Crop Ontology</td><td>CO_322:0000794</td><td>Crop Ontology term</td><td>0-1</td></tr>
+        <tr><td>Trait</td><td>Name of the (plant or environmental) trait under observation</td><td>"Anthesis time Reproductive growth time"</td><td>Free text</td><td>1</td></tr>
+        <tr><td>Trait accession number</td><td>Accession number of the trait in a suitable controlled vocabulary (Crop Ontology, Trait Ontology).</td><td>"CO_322:0000030TO:0000366"</td><td>Term from Plant Trait Ontology, Crop Ontology, or XML Environment Ontology</td><td>0-1</td></tr>
+        <tr><td>Method</td><td>Name of the method of observation</td><td>Growing degree days to anthesis</td><td>Free text</td><td>1</td></tr>
+        <tr><td>Method accession number</td><td>Accession number of the method in a suitable controlled vocabulary (Crop Ontology, Trait Ontology).</td><td>CO_322:0000189</td><td>Term from Plant Trait Ontology, Crop Ontology, or XML Environment Ontology</td><td>0-1</td></tr>
+        <tr><td>Method description</td><td>Textual description of the method, which may extend a method defined in an external reference with specific parameters, e.g. growth stage, inoculation precise organ (leaf number)</td><td>"Days to anthesis for male flowering was measured in thermal time (GDD: growing degree-days) according to Ritchie J, NeSmith D (1991;Temperature and crop development. Modeling plant and soil systems American Society of Agronomy Madison, Wisconsin USA) with TBASE=8°C and T0=30°C.Plant height was measured at 5 years with a ruler, one year after Botritis inoculation."</td><td>Free text</td><td>0-1</td></tr>
+        <tr><td>Reference associated to the method</td><td>URI/DOI of reference describing the method.</td><td>http://doi.org/10.2134/agronmonogr31.c2</td><td>URI or DOI</td><td>0-1</td></tr>
+        <tr><td>Scale</td><td>Name of the scale associated with the variable</td><td>C° day</td><td>Unique identifier</td><td>1</td></tr>
+        <tr><td>Scale accession number</td><td>Accession number of the scale in a suitable controlled vocabulary (Crop Ontology).</td><td>CO_322:0000510</td><td>Crop Ontology term</td><td>0-1</td></tr>
+        <tr><td>Time scale</td><td>Name of the scale or unit of time with which observations of this type were recorded in the data file (for time series studies).</td><td>"Growing degree day (GDD)Date/Time"</td><td>Free text</td><td>0</td></tr>
+    </tbody>
+</table>

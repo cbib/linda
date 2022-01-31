@@ -1,0 +1,36 @@
+<div class="border-head">
+    <h3>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div>
+<h2>MIAPPE: Minimum Information About a Plant Phenotyping Experiment</h2>
+<p>
+    Linda uses the MIAPPE model to structure the information. 
+    MIAPPE is an open, community driven project to harmonize data from plant phenotyping experiments. 
+    MIAPPE comprises a conceptual checklist of metadata required to adequately describe a plant phenotyping experiment.
+    The figure below represents the MIAPPE diagram with each of the elements composing it. 
+    Each component of the MIAPPE model contains several fields helping to describe your whole investigation
+  </p>
+  <a><img src="assets/images/MIAPPE_Checklist-Data-Model-v1.1.png" style="width:400px;height:300px;" ></a> 
+
+<h2>Investigation</h2>
+  <p>Investigations are research programmes with defined aims.They can exist at various scales (for example, they could encompass a grant-funded programme of work, the various components comprising a peer-reviewed publication, or a single experiment).			1 per MIAPPE submission</p>
+<table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
+[ngClass]="{'table-dark': mode_table}">
+    <caption style="font-weight: bold">Investigation MIAPPE components</caption>  
+    <thead>
+        <th>MIAPPE Check list</th><th>Definition</th><th>Example</th><th>Format</th><th>Cardinality</th></thead>
+    <tbody>
+<tr><td>Investigation</td><td>Investigations are research programmes with defined aims. They can exist at various scales (for example, they could encompass a grant-funded programme of work, the various components comprising a peer-reviewed publication, or a single experiment).</td><td></td><td></td><td>1 per MIAPPE submission</td></tr>  
+<tr><td>Investigation unique ID</td><td>Identifier comprising the unique name of the institution/database hosting the submission of the investigation data, and the accession number of the investigation in that institution.</td><td>EBI:12345678</td><td>Unique identifier</td><td>0-1</td></tr>  
+<tr><td>Investigation title</td><td>Human-readable string summarising the investigation.</td><td>Adaptation of Maize to Temperate Climates: Mid-Density Genome-Wide Association Genetics and Diversity Patterns Reveal Key Genomic Regions, with a Major Contribution of the Vgt2 (ZCN8) Locus.</td><td>Free text (short)</td><td>1</td></tr>  
+<tr><td>Investigation description</td><td>Human-readable text describing the investigation in more detail.</td><td>The migration of maize from tropical to temperate climates was accompanied by a dramatic evolution in flowering time. To gain insight into the genetic architecture of this adaptive trait, we conducted a 50K SNP-based genome-wide association and diversity investigation on a panel of tropical and temperate American and European representatives.</td><td>Free text</td><td>0-1</td></tr>  
+<tr><td>Submission date</td><td>Date of submission of the dataset presently being described to a host repository.</td><td>2012-12-17</td><td>Date/Time (ISO 8601, optional time zone)</td><td>0-1</td></tr>  
+<tr><td>Public release date</td><td>Date of first public release of the dataset presently being described.</td><td>2013-02-25</td><td>Date/Time (ISO 8601, optional time zone)</td><td>0-1</td></tr>  
+<tr><td>License</td><td>License for the reuse of the data associated with this investigation. The Creative Commons licenses cover most use cases and are recommended.</td><td>CC BY-SA 4.0, Unreported</td><td>Unique identifier</td><td>0-1</td></tr>  
+<tr><td>MIAPPE version</td><td>The version of MIAPPE used.</td><td>1.1</td><td>Version number</td><td>1</td></tr>  
+<tr><td>Associated publication</td><td>An identifier for a literature publication where the investigation is described. Use of DOIs is recommended.</td><td>doi:10.1371/journal.pone.0071377</td><td>DOI</td><td>0</td></tr>  
+    </tbody>
+</table>
+
+    
