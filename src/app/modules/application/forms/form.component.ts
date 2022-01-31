@@ -3,7 +3,7 @@ import { GlobalService, AlertService, OntologiesService } from '../../../service
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UniqueIDValidatorComponent } from '../../../validators';
+import { UniqueIDValidatorComponent } from '../validators/unique-id-validator.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
@@ -46,7 +46,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']
     model_id: string;
     max_level = 1;
-    model: {} ={}
+    model: {"Definition":string} ={"Definition":""}
     model_to_edit: any = [];
     levels = []
     cleaned_model: any = [];

@@ -7,7 +7,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UniqueIDValidatorComponent } from '../../../validators';
+import { UniqueIDValidatorComponent } from '../validators/unique-id-validator.component';
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
 import * as uuid from 'uuid';

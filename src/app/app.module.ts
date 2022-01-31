@@ -1,11 +1,9 @@
 // MODULES AND SERVICES
-// import {GuidedTourModule, GuidedTourService} from 'ngx-guided-tour';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-//import { NgGanttEditorModule } from 'ng-gantt';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GlobalService, AlertService, UserService, AdService, SearchService} from './services';
 import { ReactiveFormsModule,FormsModule }    from '@angular/forms';
@@ -34,35 +32,13 @@ import { ProjectsTreeModule } from './modules/application/projects/tree/projects
 import { ProjectsPageModule} from './modules/application/projects/pages/projects-page.module'
 import { DialogModule } from './modules/application/dialogs/dialog.module';
 import { GanttModule } from './modules/application/gantt/gantt.module';
+import { ValidatorModule } from './modules/application/validators/validator.module'
+//import { DocumentationModule } from './modules/application/documentation/documentation.module'
 
 // MATERIAL MODULES 
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSortModule } from '@angular/material/sort';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTreeModule } from '@angular/material/tree';
-
+import { MatDividerModule} from '@angular/material/divider';
 
 // DIRECTIVES
 import { AdDirective } from './directives/ad.directive';
@@ -73,29 +49,13 @@ import { AlertComponent } from './directives/alert.component';
 import { AppComponent } from './app.component';
 import { JwtInterceptor, ErrorInterceptor } from './helpers';
 import { AuthGuard } from './guards/auth.guards';
-import { DateValidatorComponent } from './validators/date-validator.component';
-import { UniqueIDValidatorComponent } from './validators/unique-id-validator.component';
-import { EmailvalidatorComponent } from './validators/emailvalidator.component';
 import { AdBannerComponent } from './banners/ad-banner.component';
 import { PubAdComponent } from './banners/pub-ad.component';
 
-//DOCUMENTATION COMPONENTS
-import { PublicationsComponent } from './documentation/publications.component';
-import { ReleasesComponent } from './documentation/releases.component';
-import { DataExplorationComponent } from './documentation/data-exploration.component';
-import { InvestigationComponent } from './documentation/miappe_components/investigation.component';
-import { ProjectExampleComponent } from './documentation/project-example.component';
-import { StudyComponent } from './documentation/miappe_components/study.component';
-import { EventComponent } from './documentation/miappe_components/event.component';
-import { BiologicalMaterialMiappeComponent } from './documentation/miappe_components/biological-material-miappe.component';
-import { ObservationUnitComponent } from './documentation/miappe_components/observation-unit.component';
-import { ObservedVariableComponent } from './documentation/miappe_components/observed-variable.component';
-import { ExperimentalFactorComponent } from './documentation/miappe_components/experimental-factor.component';
-import { EnvironmentalParameterComponent } from './documentation/miappe_components/environmental-parameter.component';
-import { SampleComponent } from './documentation/miappe_components/sample.component';
-import { PublicDataComponent } from './documentation/public-data.component';
-import { OntologyDescriptionComponent } from './documentation/ontology-description.component';
-import { MiappeDescriptionComponent } from './documentation/miappe-description.component';
+import { PublicationsComponent } from './modules/application/documentation/publications.component';
+//import { ReleasesComponent } from './modules/application/documentation/releases.component';
+//import { ProjectExampleComponent } from './modules/application/documentation/project-example.component';
+//import { PublicDataComponent } from './modules/application/documentation/public-data.component';
 
 // PAGES COMPONENTS 
 import { AdminComponent } from './components/admin/admin.component';
@@ -110,30 +70,15 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     AppComponent,
     AlertComponent,
     HomeComponent,
-    DateValidatorComponent,
-    EmailvalidatorComponent,
-    UniqueIDValidatorComponent,
     AdminComponent,
-    OntologyDescriptionComponent,
-    MiappeDescriptionComponent,
     AdBannerComponent,
     PubAdComponent,
     AdDirective,
     DragDropDirective,
     PublicationsComponent,
-    ReleasesComponent,
-    DataExplorationComponent,
-    InvestigationComponent,
-    ProjectExampleComponent,
-    StudyComponent,
-    EventComponent,
-    BiologicalMaterialMiappeComponent,
-    ObservationUnitComponent,
-    ObservedVariableComponent,
-    ExperimentalFactorComponent,
-    EnvironmentalParameterComponent,
-    SampleComponent,
-    PublicDataComponent,
+    //ReleasesComponent,
+    //ProjectExampleComponent,
+    //PublicDataComponent,
     HomeNewComponent,
     NotFoundComponent
   ],
@@ -143,48 +88,26 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatProgressSpinnerModule,
-    MatRadioModule,
-    MatRippleModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatSnackBarModule,
-    MatSortModule,
-    MatStepperModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTreeModule,
     BrowserAnimationsModule,
+    // Material modules
+    MatChipsModule,
+    MatDividerModule,
+    MatCardModule,
+
     NgxJsonViewerModule,
     ScrollingModule,
     DataTablesModule,
     DragDropModule,
     JoyrideModule.forRoot(),
-    //NgGanttEditorModule,
-    //GuidedTourModule,
     NgxChartsModule,
+    
+    //My lazy modules
     HeaderModule,
+    FooterModule,
+    SiderModule,
     FormModule,
     MaterialFormModule,
     ObservationUnitFormModule,
-    FooterModule,
-    SiderModule,
     TableModule,
     ExplorationModule,
     DownloadModule,
@@ -196,7 +119,9 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     ProjectsTreeModule,
     ProjectsPageModule,
     DialogModule,
-    GanttModule
+    GanttModule,
+    ValidatorModule,
+    //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],
   entryComponents:[PubAdComponent],

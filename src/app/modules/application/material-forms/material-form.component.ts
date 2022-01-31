@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators,ValidatorFn, AbstractCont
 import { GlobalService, AlertService, OntologiesService } from '../../../services';
 import { first } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UniqueIDValidatorComponent } from '../../../validators';
+import { UniqueIDValidatorComponent } from '../validators/unique-id-validator.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';

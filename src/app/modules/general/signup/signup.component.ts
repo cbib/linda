@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, UserService } from '../../../services';
-import {Md5} from 'ts-md5/dist/md5'
+import { Md5 } from 'ts-md5/dist/md5'
 
 export function MustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {

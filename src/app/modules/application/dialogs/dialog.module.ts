@@ -12,6 +12,8 @@ import { ExportComponent } from './export.component'
 import { SelectionComponent } from './selection.component';
 import { FormGenericComponent } from './form-generic.component';
 import  {BiologicalMaterialComponent } from './biological-material.component'
+import { SampleSelectionComponent } from './sample-selection.component'
+import { HelpLoaderComponent } from './help-loader.component'
 
 import { GlobalService} from '../../../services';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,7 +30,9 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import {TextFieldModule} from '@angular/cdk/text-field';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSliderModule } from '@angular/material/slider'
+import { TextFieldModule} from '@angular/cdk/text-field';
 import { ScrollingModule} from '@angular/cdk/scrolling';
 import { FormModule } from '../forms/form.module';
 import { MaterialFormModule } from '../material-forms/material-form.module'
@@ -47,7 +51,9 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     ExportComponent,
     SelectionComponent,
     FormGenericComponent,
-    BiologicalMaterialComponent],
+    BiologicalMaterialComponent,
+    SampleSelectionComponent,
+    HelpLoaderComponent],
   imports: [
     CommonModule,
     MatDialogModule,
@@ -64,6 +70,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     MatTreeModule,
     MatCardModule,
     MatIconModule,
+    MatSlideToggleModule,
+    MatSliderModule,
     TextFieldModule,
     ScrollingModule,
     MatTableModule,
@@ -87,7 +95,9 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     ExportComponent,
     SelectionComponent,
     FormGenericComponent,
-    BiologicalMaterialComponent
+    BiologicalMaterialComponent,
+    SampleSelectionComponent,
+    HelpLoaderComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -101,7 +111,9 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     ExportComponent,
     SelectionComponent,
     FormGenericComponent,
-    BiologicalMaterialComponent
+    BiologicalMaterialComponent,
+    SampleSelectionComponent,
+    HelpLoaderComponent
   ]
 })
 export class DialogModule { }
