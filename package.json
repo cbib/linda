@@ -52,6 +52,7 @@
     "ngx-json-viewer": "^2.4.0",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.2",
+    "socket.io": "^2.4.0",
     "terser": "^3.17.0",
     "ts-md5": "^1.2.10",
     "tslib": "^1.13.0",
