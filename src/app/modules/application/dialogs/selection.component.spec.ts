@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BiologicalMaterialSelectionComponent } from './biological-material-selection-dialog.component';
+import { SelectionComponent } from './selection.component';
 
-describe('BiologicalMaterialSelectionComponent', () => {
-  let component: BiologicalMaterialSelectionComponent;
-  let fixture: ComponentFixture<BiologicalMaterialSelectionComponent>;
+describe('SelectionComponent', () => {
+  let component: SelectionComponent;
+  let fixture: ComponentFixture<SelectionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BiologicalMaterialSelectionComponent ]
+      declarations: [ SelectionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BiologicalMaterialSelectionComponent);
+    fixture = TestBed.createComponent(SelectionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

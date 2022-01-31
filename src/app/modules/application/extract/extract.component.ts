@@ -4,7 +4,7 @@ import { GlobalService, AlertService } from '../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatButtonToggle } from '@angular/material';
+import { MatButtonToggle } from '@angular/material/button-toggle';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ConfirmationComponent } from '../dialogs/confirmation.component'
 import { MatDialog } from '@angular/material/dialog';

@@ -7,10 +7,10 @@ import { Instance } from '../../../models/ontology/instance';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatProgressSpinner } from '@angular/material';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+
 //MODELS
 import { OntologyFlatNode } from '../../../models/ontology_flat_node'
-
 
 interface DialogData {
     ontology_id: string;

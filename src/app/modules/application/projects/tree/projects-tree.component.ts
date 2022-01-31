@@ -7,7 +7,7 @@ import { WizardService } from '../services/wizard.service';
 import { MiappeNode } from '../../../../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { first } from 'rxjs/operators';
 import { MediaObserver } from "@angular/flex-layout";
 import { MatTableDataSource} from '@angular/material/table';

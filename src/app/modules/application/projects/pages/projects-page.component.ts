@@ -5,7 +5,8 @@ import { Component, OnInit, ViewChild, ViewChildren, QueryList, Output, Input, E
   import { MiappeNode } from '../../../../models';
   import { Router, ActivatedRoute } from '@angular/router';
   import { MatDialog } from '@angular/material/dialog';
-  import { MatChip, MatMenuTrigger } from '@angular/material';
+  import { MatChip } from '@angular/material/chips';
+  import { MatMenuTrigger } from '@angular/material/menu';
   import { MediaObserver } from "@angular/flex-layout";
   import {MatPaginator, PageEvent} from '@angular/material/paginator';
   

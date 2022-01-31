@@ -53,9 +53,6 @@ import { AdBannerComponent } from './banners/ad-banner.component';
 import { PubAdComponent } from './banners/pub-ad.component';
 
 import { PublicationsComponent } from './modules/application/documentation/publications.component';
-//import { ReleasesComponent } from './modules/application/documentation/releases.component';
-//import { ProjectExampleComponent } from './modules/application/documentation/project-example.component';
-//import { PublicDataComponent } from './modules/application/documentation/public-data.component';
 
 // PAGES COMPONENTS 
 import { AdminComponent } from './components/admin/admin.component';
@@ -76,9 +73,6 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     AdDirective,
     DragDropDirective,
     PublicationsComponent,
-    //ReleasesComponent,
-    //ProjectExampleComponent,
-    //PublicDataComponent,
     HomeNewComponent,
     NotFoundComponent
   ],
@@ -93,7 +87,6 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     MatChipsModule,
     MatDividerModule,
     MatCardModule,
-
     NgxJsonViewerModule,
     ScrollingModule,
     DataTablesModule,

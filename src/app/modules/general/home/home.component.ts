@@ -7,7 +7,7 @@ import {AdItem } from '../../../banners/ad-item';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {JoyrideService} from 'ngx-joyride';
 import {MatChipsModule} from '@angular/material/chips'
-import { MatChipList } from '@angular/material';
+import { MatChipList } from '@angular/material/chips';
 
 @Component({templateUrl: './home.component.html',
 styleUrls: ['./home.component.css']})
