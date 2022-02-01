@@ -1,0 +1,12 @@
+<div id="project-page">
+    <div class="border-head">
+        <h3>
+            <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
+                    exper<span>I</span>me<span>N</span>tal
+                    meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </div>
+</div>
+<mat-card>
+<app-form (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-form>
+</mat-card>
