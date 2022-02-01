@@ -1,6 +1,4 @@
-<!--<alert></alert>-->
-
-<div id="user-tree">
+<div id="projects-page">
     <div class="border-head">
         <h3>
             <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
@@ -25,7 +23,8 @@
     <button class="btn btn-success btn-xs fa fa-refresh" (click)="turn_off()"><span style="margin-left: 5px;">Turn off tutorial</span></button>
     <button title="Here is the button for help " [matMenuTriggerFor]="helpMenu" class="btn btn-light fa fa-question-circle"></button>
     <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
-        [matMenuTriggerFor]="helpMenu"> </div>
+        [matMenuTriggerFor]="helpMenu">
+     </div>
     <mat-menu #helpMenu="matMenu">
         <button style="float: right;" class="btn btn-light" mat-menu-item
             [matMenuTriggerFor]="HelpSubMenu">Help</button>
@@ -49,20 +48,46 @@
                 You can remove more than one node at the time if you use the right click button on Investigations tree
                 node and choose remove selected option.
             </p>
+        <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
+
+        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+            [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+        </div>
+        <mat-menu #contextMenu="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+        </mat-menu>
+        
+        <mat-menu #contextSubMenu="matMenu">
+            <button mat-menu-item (click)="add()">from original model template</button>
+            <button mat-menu-item (click)="add(template=true)">from saved templates</button>
+        </mat-menu>
+        
         <h2>My investigations</h2>
+       
+        
         <div class="mat-chip-list-wrapper text-center">
-            <!-- <mat-chip-list aria-label="Fish selection">
-              <mat-chip class="chips" color="warn" selected><h3 style="height: 180px; width: 200px;"><b>Guest user</b><br>Je suis de passage... </h3> </mat-chip>
-              <mat-chip class="chips" color="warn" selected><h3 style="height: 180px; width: 200px;"><b>Lab user</b><br>Je suis INRA... </h3> </mat-chip>
-              <mat-chip class="chips" color="warn" selected><h3 style="height: 180px; width: 200px;"><b>Consortium user</b><br>Je suis ELIXIR...</h3> </mat-chip>
-              <mat-chip class="chips" color="warn" selected><h3 style="height: 180px; width: 200px;"><b>Admin user </b><br>Je suis admin...</h3> </mat-chip>
-            </mat-chip-list> -->
             <mat-chip-list #chipsList aria-orientation="vertical">
-              <mat-chip class="chips"  (click)="selectedProjectChip(elm)" color="accent" [selected]="index === 0" *ngFor="let elm of projects; let index = index" [value]="elm.project_id">
+              <mat-chip class="chips"  (click)="selectedProjectChip(elm)" [matMenuTriggerFor]="userMenu" color="accent" [selected]="index === 0" *ngFor="let elm of projects; let index = index" [value]="elm.project_id">
                 {{elm.project_short_name}}
               </mat-chip>
             </mat-chip-list>
+            <div style="visibility: hidden; position: fixed" [style.left]="userMenuPosition.x"
+            [style.top]="userMenuPosition.y" [matMenuTriggerFor]="userMenu">
+            </div>
+            
+            <mat-menu #userMenu="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="userMenusecond">Investigation</button>
+            </mat-menu>
+            <mat-menu #userMenusecond="matMenu">
+                <button mat-menu-item (click)="onEdit()">Edit</button>
+                <button mat-menu-item (click)="onRemove()" confirm="Are you sure?">Remove</button>
+                    <!-- <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label> </button> -->
+            </mat-menu>
+            
+            
         </div>
+        <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
+        
         </mat-card>
     </div>
 </div>

@@ -16,7 +16,7 @@
 /*@import '~bootstrap/dist/css/bootstrap.min.css';*/
 
 @import "~jsgantt-improved/dist/jsgantt.css";
-      
+/* @import '../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css' */
 
 
 
@@ -278,7 +278,7 @@ a[data-toggle="collapse"] {
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #6d7fcc;
+    /* background: #6d7fcc; */
 }
 
 .mat-drawer-container {

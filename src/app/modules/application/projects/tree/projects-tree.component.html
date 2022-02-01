@@ -58,15 +58,13 @@
                             <span class="sr-only" id="loading"></span>
                         </div>
                     </div>
-                    <mat-tree #tree [dataSource]="get_dataSource" [treeControl]="get_treeControl"
-                        class="col-md-12 panel">
+                    <mat-tree #tree [dataSource]="get_dataSource" [treeControl]="get_treeControl" class="col-md-12 panel">
 
                         <!--#############@######################################-->
                         <!-- This is the tree node template for leaf nodes -->
                         <!--#############@######################################-->
 
-                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding
-                            title="{{node.def}}">
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node" matTreeNodePadding title="{{node.def}}">
                             <div joyrideStep="node_{{get_model_type_for_wizard(node)}}" title=""
                                 [stepContent]="nodecontent"
                                 [stepContentParams]="{'model_n':get_model_type_for_wizard(node), 'tuto_n': get_tutoriel_level, 'tuto_d': get_tutorial_done}"
@@ -488,26 +486,7 @@
                                     </div>
                                 </ng-template>
                                 <mat-accordion>
-                                    <!-- <mat-expansion-panel *ngIf="get_model_selected==='Investigations tree'"
-                                                         (opened)="panelOpenState = true" (click)="show_info(node)"
-                                                         (closed)="panelOpenState = false">
-                                        <mat-expansion-panel-header>
-                                            <mat-panel-title>
-                                                <mat-checkbox *ngIf=" multiple_selection===true"
-                                                              class="checklist-leaf-node"
-                                                              [checked]="checklistSelection.isSelected(node)"
-                                                              (change)="todoLeafItemSelectionToggle(node)"><i
-                                                        *ngIf="multiple_selection===true">{{node.id}}</i></mat-checkbox>
-                                            </mat-panel-title>
-                                        </mat-expansion-panel-header>
-                                        <div>
-                                            <mat-card>You have {{ this.statistics['investigations'] }} investigations in
-                                                your history
-                                            </mat-card>
-                                        </div>
-                                    </mat-expansion-panel> -->
-                                    <mat-expansion-panel
-                                        *ngIf="!node.id.includes('Investigations tree') && !node.id.includes('data_files')"
+                                    <mat-expansion-panel *ngIf="!node.id.includes('Investigations tree') && !node.id.includes('data_files')"
                                         (opened)="panelOpenState = true" (click)="show_info(node)"
                                         (closed)="panelOpenState = false">
                                         <mat-expansion-panel-header>
@@ -558,116 +537,6 @@
                                         <ng-container *ngIf="node.id.includes('observation_units') ">
                                             <app-observation-unit-table [data]="get_ou_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-observation-unit-table>
                                         </ng-container>
-
-                                        <!-- <ng-container *ngIf="node.id.includes('observation_units')">
-                                            <table *ngIf="obs_unit_data.length>0" cellpadding="0" cellspacing="0"
-                                                cellwidth="2" border="0"
-                                                class="display table table-bordered table-hover"
-                                                [ngClass]="{'table-dark': mode_table}">
-                                                <thead>
-                                                    <ng-container *ngFor="let field of get_ou_field ; let i=index">
-                                                        <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                                                            <div>
-                                                                <label for="{{field}}">{{field}}</label>
-                                                            </div>
-                                                        </th>
-                                                    </ng-container>
-                                                </thead>
-                                                <tbody>
-                                                    <ng-container *ngFor="let group of get_ou_data(node) ; let i=index;">
-                                                        <tr (click)="ObservationTableRowSelected(i)">
-                                                            <ng-container
-                                                                *ngFor="let field of get_ou_field ; let j=index">
-                                                                <td *ngIf="field!=='obsUUID'"
-                                                                    class="text-center align-middle">
-                                                                    {{group[field]}}
-                                                                </td>
-                                                            </ng-container>
-                                                        </tr>
-                                                    </ng-container>
-                                                </tbody>
-                                            </table>
-
-                                            <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0"
-                                                cellwidth="2" border="0"
-                                                class="display table table-bordered table-hover"
-                                                [ngClass]="{'table-dark': mode_table}">
-                                                <thead>
-                                                    <ng-container *ngFor="let field of get_bm_field ; let i=index">
-                                                        <th *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                                                            <div>
-                                                                <label for="{{field}}">{{field}}</label>
-                                                            </div>
-                                                        </th>
-                                                    </ng-container>
-                                                </thead>
-                                                <tbody>
-                                                    <ng-container *ngFor="let group of get_bm_data(node) ; let i=index;">
-                                                        <tr (click)="MaterialTableRowSelected(i)"
-                                                            *ngIf="group['obsUUID']===observation_id">
-                                                            <ng-container
-                                                                *ngFor="let field of get_bm_field ; let j=index">
-                                                                <td *ngIf="field!=='obsUUID'"
-                                                                    class="text-center align-middle">
-                                                                    {{group[field]}}
-                                                                </td>
-                                                            </ng-container>
-                                                        </tr>
-                                                    </ng-container>
-                                                </tbody>
-                                            </table>
-                                        </ng-container> -->
-                                        <!-- <mat-card *ngIf="node.id.includes('observation_units')">
-                                            <mat-card-header>
-                                              <mat-card-title>Biological Materials</mat-card-title>
-                                            </mat-card-header>
-                                            <mat-card-content>
-                                              <table *ngIf="biological_materials.length>0" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
-                                                class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
-                                                <thead>
-                                                  <ng-container *ngFor="let field of get_bm_field ; let i=index">
-                                                    <th *ngIf="field!=='obsUUID'"  class="text-center align-middle">
-                                                      <div>
-                                                        <label for="{{field}}">{{field}}</label>
-                                                      </div>
-                                                    </th>
-                                                  </ng-container>
-                                                </thead>
-                                                <tbody>
-                                                  <ng-container *ngFor="let group of get_bm_data ; let i=index">
-                                                    <tr (click)="MaterialTableRowSelected(i)" *ngIf="group['obsUUID']===observation_id">
-                                                      <ng-container *ngFor="let field of get_bm_field ; let j=index">
-                                                        <td *ngIf="field!=='obsUUID'" class="text-center align-middle">
-                                                          {{group[field]}}
-                                                        </td>
-                                                      </ng-container>
-                                                    </tr>
-                                                  </ng-container>
-                                                </tbody>
-                                              </table>
-
-                                            </mat-card-content>
-                                          </mat-card> -->
-                                        <!-- <table *ngIf="node.id.includes('observation_units')"  class="table table-hover table-bordered  table-striped text-center" >
-                                            <tbody >
-                                                <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
-                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a></td>
-                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[key]}}</td>
-
-                                                </tr>
-                                            </tbody>
-                                        </table> -->
-                                        <!-- <table *ngIf="node.id.includes('experimental_factors')"  class="table table-hover table-bordered  table-striped text-center" >
-                                            <tbody >
-                                                <tr  *ngFor="let key of get_current_data(node) ; index as j;" >
-                                                <td style="font-size:14px;text-align: center; " scope="row">{{key}}</td>
-                                                <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row"><a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a></td>
-                                                <td *ngIf="!key.includes('file link')" style="font-size:14px;text-align: center;" scope="row">{{get_current_data_array(node)[key]}}</td>
-
-                                                </tr>
-                                            </tbody>
-                                        </table> -->
                                     </mat-expansion-panel>
                                     <mat-expansion-panel *ngIf="node.id.includes('metadata_files')"
                                         (opened)="panelOpenState = true" (click)="show_info(node)"
@@ -988,8 +857,7 @@
                         <!-- This is the tree node template for expandable nodes (nodes with childs)-->
                         <!--#############@######################################-->
 
-                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild"
-                            matTreeNodePadding>
+                        <mat-tree-node style="margin: 14px;" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding title="{{node.def}}" >
                             <div joyrideStep="node_{{get_model_type_for_wizard(node)}}" title=""
                                 [stepContent]="genericnodecontent"
                                 [stepContentParams]="{'model_n':get_model_type_for_wizard(node), 'tuto_n': get_tutoriel_level, 'tuto_d': get_tutorial_done}"
@@ -1332,7 +1200,7 @@
                                 </ng-template>
                                 <mat-accordion *ngIf="!node.id.includes('Investigations tree')">
                                     <mat-expansion-panel (opened)="panelOpenState = true" (click)="show_info(node)"
-                                        (closed)="panelOpenState = false" [expanded]="'isFirst'">
+                                        (closed)="panelOpenState = false" >
                                         <mat-expansion-panel-header>
                                             <mat-panel-title>
                                                 <mat-progress-bar mode="determinate" value="{{node.fill_percentage}}">
@@ -1467,7 +1335,6 @@
                             <p>Remember that Study component is the only possible child for an investigation</p>
                     </div> -->
                 </ng-template>
-
             </mat-drawer-container>
         </mat-card>
         <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
@@ -1480,7 +1347,8 @@
             [style.top]="userMenusecondPosition.y" [matMenuTriggerFor]="userMenusecond">
         </div>
         <div style="visibility: hidden; position: fixed" [style.left]="investigationMenuPosition.x"
-            [style.top]="investigationMenuPosition.y" [matMenuTriggerFor]="investigationMenu"></div>
+            [style.top]="investigationMenuPosition.y" [matMenuTriggerFor]="investigationMenu">
+        </div>
         <!-- <mat-menu #globalmenu="matMenu">
             <ng-template matMenuContent let-node="node">
                 <button mat-menu-item [matMenuTriggerFor]="multipleMenu">

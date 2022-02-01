@@ -3,4 +3,6 @@ export interface MiappeFlatNode {
     expandable: boolean;
     name: string;
     level: number;
+    def: string;
+    id: string;
 }

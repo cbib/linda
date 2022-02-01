@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4201 --host localhost --base-href /linda/ --deploy-url /linda/",
+    "startbis": "ng serve --port 4202 --host localhost --base-href /linda/ --deploy-url /linda/",
     "build": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --aot",
     "test": "jest",
     "lint": "ng lint",
@@ -52,7 +53,6 @@
     "ngx-json-viewer": "^2.4.0",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.2",
-    "socket.io": "^2.4.1",
     "terser": "^3.17.0",
     "ts-md5": "^1.2.10",
     "tslib": "^1.13.0",

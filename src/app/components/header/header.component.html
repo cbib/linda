@@ -49,7 +49,7 @@
                 </a>
               </li>
               <li>
-                <p class="green">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
+                <p class="green" style="font-size: 14px;">You have {{stats_advanced['studies'].length}} pending studies tasks</p>
               </li>
               <li *ngFor="let obj of stats_advanced['studies'] ; index as j;" >
                 <a href="index.html#" [ngStyle]="set_pending_task_background_color(obj['id'])">

@@ -117,22 +117,22 @@ set_pending_task_background_color(id: any): Object {
     }
     else if (id.includes('studies')){
         
-       return {backgroundColor: 'Gainsboro'}
+       return {backgroundColor: 'white'}
     }
     else if(id.includes('investigations')){
         
-        return {backgroundColor: 'lightblue'}
+        return {backgroundColor: 'white'}
     }
     else if(id.includes('events')){
         
-        return {backgroundColor: 'lightyellow'}
+        return {backgroundColor: 'white'}
     }
     else if(id.includes('metadata')){
         
-        return {backgroundColor: 'OldLace'}
+        return {backgroundColor: 'white'}
     }
     else{
-        return {backgroundColor: 'LightSteelBlue'}
+        return {backgroundColor: 'white'}
     } 
 }
 

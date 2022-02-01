@@ -321,7 +321,7 @@ ul.top-menu > li > .logout {
 #sidebar {
     width: 210px;
     height: 100%;
-    position: fixed;
+    position:fixed;
     background: #2f323a;
 }
 

@@ -91,7 +91,7 @@ const routes: Routes = [
     canActivate: [AuthGuard] 
   },
   { 
-    path: 'projects_page', 
+    path: '', 
     loadChildren: () => import('./modules/application/projects/pages/projects-page.module')
       .then(m => m.ProjectsPageModule),
       canActivate: [AuthGuard]  

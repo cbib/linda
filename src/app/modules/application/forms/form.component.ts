@@ -379,8 +379,6 @@ export class FormComponent implements OnInit//, AfterViewInit
         else {
             return value;
         }
-
-
     }
     formatLabel(value: number) {
 
@@ -398,7 +396,6 @@ export class FormComponent implements OnInit//, AfterViewInit
             var decimals = value - Math.floor(value);
             return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
         }
-
         else {
             return value;
         }
