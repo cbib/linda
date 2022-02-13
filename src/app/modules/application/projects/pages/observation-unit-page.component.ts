@@ -28,7 +28,7 @@ export class ObservationUnitPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ObservationUnitInterface>;
-  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'edit'];
+  private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
