@@ -283,9 +283,12 @@ export class ObservationUnitFormComponent implements OnInit {
           //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
         }
-        else if (attr["key"].includes("Short title")) {
+        else if (attr["key"].includes("Project Name")) {
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
         }
+        else if (attr["key"].includes("Study Name")) {
+          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+      }
         else {
           attributeFilters[attr["key"]] = [value];
         }

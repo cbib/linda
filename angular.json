@@ -56,6 +56,7 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": true,
+              "commonChunk": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": true,
@@ -63,7 +64,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "4mb",
+                  "maximumWarning": "5mb",
                   "maximumError": "5mb"
                 }
               ],

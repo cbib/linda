@@ -44,7 +44,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
     @Input() model_key: string;
     @Input() model_type: string;
     @Input() mode: string;
-
     //@ViewChild('chart') chart: LineChartComponent;
     @ViewChild(LineChartComponent, { static: false }) chart: LineChartComponent;
     form: FormGroup;
@@ -58,32 +57,29 @@ export class DownloadComponent implements OnInit, OnDestroy {
     fileUploadProgress: string = null;
     uploadedFilePath: string = null;
     userId: number = 1;
-
-
     //parsing EXCEL
     public modified: boolean = false;
-
-
     private options: componentInterface[];
     public selectedOption: componentInterface;
     private extract_fields_options = {}
     private loaded:boolean=false
-    private extract_component_options = {
-        'options': [
+    private extract_component_options = {'options': [
             { header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '' },
             { header: "", associated_linda_id: "", name: 'Assign Study Identifiers from column', value: 'study' },
             { header: "", associated_linda_id: "", name: 'Assign Experimental Factors', value: 'experimental_factor' },
             { header: "", associated_linda_id: "", name: 'Assign Material Sources', value: 'biological_material' },
             { header: "", associated_linda_id: "", name: 'Assign Observation Units', value: 'observation_unit' },
             { header: "", associated_linda_id: "", name: 'Assign Observed variables', value: 'observed_variable' },
-            { header: "", associated_linda_id: "", name: 'Assign Timeline', value: 'time' }
-        ],
-        'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
+            { header: "", associated_linda_id: "", name: 'Assign Timeline', value: 'time' }],
+                                        'defaut': 
+                                        { name: 'Assing MIAPPE components', value: '', label: 'test' }
     };
 
     observation_unit_types: any[] = ["block", "sub-block","plot","plant","trial","pot","replicate","individual","virtual_trial","unit-parcel"];
     observation_unit_type=""
-    //Chart part
+
+
+    ///////// //////// ///////// ////////// Chart part
     view: any[] = [1500, 300];
     // options
     legend: boolean = true;
@@ -112,7 +108,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     labelPosition: 'all' | 'only_data' | 'None'= 'only_data';
     disabled = false;
 
-    //parsing CSV
+    ///////// //////// ///////// ////////// parsing CSV
     private data_to_extract = {}
     private lines_dict = []
     private time_set: boolean = false
@@ -121,9 +117,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
     private cleaned_data_file_model = []
     private cleaned_study_model = []
     private cleaned_component_model =[]
-    // data to be send
+    ///////// //////// ///////// ////////// data to be send
     private headers = [];
-    //private headers_select = [];
+    ///////// //////// ///////// ////////// private headers_select = [];
     private associated_headers = [];
     private lines_arr = [];
     private filename_used = []
@@ -139,7 +135,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     private currentUser
     private mySubscription
 
-    //private loaded:boolean=false;
+    ///////// //////// ///////// //////////  private loaded:boolean=false;
     ontology_type: string
     selected_term: OntologyTerm
     selected_set: []
@@ -258,7 +254,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             //assign study to row 0
         }
     }
-    //Set default values and re-fetch any data you need.
+    ///////// //////// ///////// //////////  Set default values and re-fetch any data you need.
     initializeInvites(){
         this.joyrideService.closeTour()
     }
@@ -382,9 +378,41 @@ export class DownloadComponent implements OnInit, OnDestroy {
         
         //console.log(this.associated_headers_by_filename)
     }
-
     // I/O part
+    onFileChange(event) {
+        this.headers = [];
+        // this.headers_select = [];
+        this.associated_headers = [];
+        this.lines_arr = [];
+        this.lines_dict = [];
+        //this.fileUploaded = <File>event.target.files[0];
+        if (event.target.files.length > 0) {
+            this.uploadResponse.status = 'progress'
+            this.fileUploaded = event.target.files[0];
+            //let fileReader = new FileReader();
+            this.fileName = this.fileUploaded.name
+            if (this.fileUploaded.type === "text/csv") {
+                const dialogRef = this.dialog.open(DelimitorComponent, { width: '1000px', data: { delimitor: "" } });
+                dialogRef.afterClosed().subscribe(data => {
+                    if (data !== undefined) {
+                        this.delimitor = data.delimitor;
+                        this.read_csv(this.delimitor)
+                    };
+                });
+
+            }
+            else {
+                this.readExcel();
+            }
+            //this.loaded=true
+            this.form.get('file').setValue(this.fileUploaded);
+
+        }
+        this.error.message="no errors"
+    }
     read_csv(delimitor: string) {
+        //let allTextLines= this.fileService.read_csv(this.fileUploaded)
+        //this.load_csv2(allTextLines, delimitor)
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
             var csv = fileReader.result;
@@ -393,6 +421,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
         fileReader.readAsText(this.fileUploaded);
     }
     readExcel() {
+        //let allTextLines= this.fileService.readExcel(this.fileUploaded)
+        //this.load_csv2(allTextLines)
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
             var storeData:any = fileReader.result;
@@ -410,6 +440,66 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    load_csv2(allTextLines: any, delimitor:string=",") {
+        this.lines_arr = [];
+        this.lines_dict = []
+        this.associated_headers = []
+        this.associated_headers_by_filename[this.fileName] = []
+        this.options_components_by_filename[this.fileName] = []
+        this.headers_by_filename[this.fileName]= []
+        this.headers = allTextLines[0].split(delimitor)
+        ///console.log(this.headers )
+        for (let i = 0; i < this.headers.length; i++) {
+           
+            this.headers[i] = this.headers[i].replace(/['"]+/g, '').replace(/\./g, '_')
+            this.headers_by_filename[this.fileName].push(this.headers[i])
+        }
+        let type_dict = {}
+        for (let i = 1; i < allTextLines.length; i++) {
+            let csv_dict = {}
+            this.uploadResponse.message = Math.round(100 * (e_loaded / e_total))
+            // split content based on separator
+            let line = allTextLines[i].split(delimitor);
+
+            if (line.length === this.headers.length) {
+                let csv_arr = [];
+                let tmpAttributesGroups = {}
+                for (let j = 0; j < this.headers.length; j++) {
+                    
+                    tmpAttributesGroups[this.headers[j]] = [this.headers[j]]
+                    let tmp = { header: "", associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
+                    tmp['header'] = this.headers[j]
+                    this.options_components_by_filename[this.fileName].push(tmp)
+
+                    csv_arr.push(line[j].replace(/['"]+/g, ''));
+                    csv_dict[this.headers[j]] = line[j].replace(/['"]+/g, '')
+                    if (i === 1) {
+                        if (this.isNumeric(csv_dict[this.headers[j]])) {
+                            type_dict[this.headers[j]] = true
+                        }
+                        else {
+                            type_dict[this.headers[j]] = false
+                        }
+                    }
+                }
+                this.dataFileComponentForm[this.fileName] = this.formBuilder.group(tmpAttributesGroups)
+                this.lines_arr.push(csv_arr);
+                this.lines_dict.push(csv_dict)
+
+            }
+        }
+        this.loaded=true
+        // console.log(this.headers_by_filename[this.fileName])
+        for (var i = 0; i < this.headers.length; i++) {
+            this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
+            this.associated_headers_by_filename[this.fileName].push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_linda_id: "", is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
+        }
+        this.selected_file = this.fileName
+        this.options_components_by_filename[this.selected_file].forEach(option => {
+            this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
+        });
+
     }
     load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
 
@@ -494,38 +584,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
     formatTime(val) {
         return val
     }
-    onFileChange(event) {
-        this.headers = [];
-        // this.headers_select = [];
-        this.associated_headers = [];
-        this.lines_arr = [];
-        this.lines_dict = [];
-        //this.fileUploaded = <File>event.target.files[0];
-        if (event.target.files.length > 0) {
-            this.uploadResponse.status = 'progress'
-            this.fileUploaded = event.target.files[0];
-            //let fileReader = new FileReader();
-            this.fileName = this.fileUploaded.name
-            if (this.fileUploaded.type === "text/csv") {
-                const dialogRef = this.dialog.open(DelimitorComponent, { width: '1000px', data: { delimitor: "" } });
-                dialogRef.afterClosed().subscribe(data => {
-                    if (data !== undefined) {
-                        this.delimitor = data.delimitor;
-                        this.read_csv(this.delimitor)
-                    };
-                });
-
-            }
-            else {
-                this.readExcel();
-            }
-            //this.loaded=true
-            this.form.get('file').setValue(this.fileUploaded);
-
-        }
-        this.error.message="no errors"
-    }
-
     onModify(values: string, key: string, filename: string) {
         console.log(values)
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
@@ -595,9 +653,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
             //console.log(this.associated_headers)
         }
 
-    }
-    get get_ontology_selected(){
-      return this.ontology_type
     }
     onSelectOntology(values: string, key: string) {
         // if (values === "study"){
@@ -763,7 +818,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
     get_selected_option(header, filename) {
         return this.dataFileComponentForm[filename].get(header).value;
     }
-    
     get_model(model_type: string) {
         let cleaned_model = [];
 
@@ -899,9 +953,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     get_lines_dict() {
         return this.lines_dict
     }
-    get get_time_set() {
-        return this.time_set
-    }
+
     get_delimitor() {
         return this.delimitor
     }
@@ -917,23 +969,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
     get_lines_arr() {
         return this.lines_arr
     }
-    get get_filename_used() {
-        return this.filename_used
-    }
-    get get_extract_component_options(){
-      return this.extract_component_options
-    }
-    get get_multi(){
-      return this.multi
-    }
     get_initialSelection() {
         return this.initialSelection
-    }
-    get get_checklistSelection() {
-        return this.checklistSelection
-    }
-    get get_extract_fields_options(){
-      return this.extract_fields_options
     }
     get_associated_headers_by_filename() {
         return this.associated_headers_by_filename
@@ -949,9 +986,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     get_options_components_by_filename() {
         return this.options_components_by_filename
-    }
-    get get_selected_file() {
-        return this.selected_file
     }
     reloadComponent(path:[string]) {
         let currentUrl = this.router.url;
@@ -1024,7 +1058,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                 for (var i = 0; i < study_component_set_array.length; i++) {
                                     //console.log(study_component_set_array[i])
                                     study_model["Study unique ID"] = study_component_set_array[i]
-                                    study_model["Short title"] = study_component_set_array[i]
+                                    study_model["Study Name"] = study_component_set_array[i]
                                     let unique_study_label = study_component_set_array[i]
                                     //get the header label for study column in the csv file
                                     var study_column_name = this.data_to_extract['study']
@@ -1238,8 +1272,32 @@ export class DownloadComponent implements OnInit, OnDestroy {
                   this.alertService.error("You are not in the right form as requested by the tutorial")
               }
           }
-          this.router.navigate(['/projects_tree']) 
-      }
-  }
+          this.router.navigate(['/projects_page']) 
+        }
+    }
+    get get_selected_file() {
+        return this.selected_file
+    }
+    get get_checklistSelection() {
+        return this.checklistSelection
+    }
+    get get_extract_fields_options(){
+      return this.extract_fields_options
+    }
+    get get_filename_used() {
+        return this.filename_used
+    }
+    get get_extract_component_options(){
+      return this.extract_component_options
+    }
+    get get_multi(){
+      return this.multi
+    }
+    get get_time_set() {
+        return this.time_set
+    }
+    get get_ontology_selected(){
+        return this.ontology_type
+    }
 
 }

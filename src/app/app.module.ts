@@ -33,6 +33,7 @@ import { ProjectsPageModule} from './modules/application/projects/pages/projects
 import { DialogModule } from './modules/application/dialogs/dialog.module';
 import { GanttModule } from './modules/application/gantt/gantt.module';
 import { ValidatorModule } from './modules/application/validators/validator.module'
+import { AlertModule } from './modules/application/alert/alert.module'
 //import { DocumentationModule } from './modules/application/documentation/documentation.module'
 
 // MATERIAL MODULES 
@@ -43,7 +44,7 @@ import { MatDividerModule} from '@angular/material/divider';
 // DIRECTIVES
 import { AdDirective } from './directives/ad.directive';
 import { DragDropDirective } from './directives/drag-drop.directive';
-import { AlertComponent } from './directives/alert.component';
+//import { AlertComponent } from './directives/alert.component';
 
 // COMPONENTS
 import { AppComponent } from './app.component';
@@ -65,7 +66,7 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
 @NgModule({
   declarations: [
     AppComponent,
-    AlertComponent,
+    ///AlertComponent,
     HomeComponent,
     AdminComponent,
     AdBannerComponent,
@@ -114,6 +115,7 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     DialogModule,
     GanttModule,
     ValidatorModule,
+    AlertModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],

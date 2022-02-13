@@ -21,7 +21,7 @@
 
 
   <ng-container *ngIf="model_type==='biological_material'">
-    <table style="width: 1200px;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
+    <table style="width: 100%;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
 
       <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->

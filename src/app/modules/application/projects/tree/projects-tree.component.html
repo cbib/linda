@@ -50,6 +50,7 @@
                 You can remove more than one node at the time if you use the right click button on Investigations tree
                 node and choose remove selected option.
             </p>
+        </mat-card>
             <mat-drawer-container class="example-container">
                 <div class="example-sidenav-content" joyrideStep="step_overview" title=""
                     [stepContent]="overviewcontent" [stepContentParams]="{'tuto_l':get_tutoriel_level}">
@@ -898,14 +899,16 @@
                                     <!--<button style="float: right;" *ngIf="!node.id.includes('Investigations tree')" (click)="show_info(node); drawer.toggle()" class="btn btn-success btn-xs fa fa-eye" title="{{node.def}}"></button>-->
 
                                     <button style="float: right;" *ngIf="(node.id.includes('investigations'))"
-                                        (click)="onExplore(node)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
+                                        (click)="onExplore(node)" class="btn btn-light btn-xs fa fa-bar-chart">
+                                    </button>
                                     <!-- EXPERIMENTAL DESIGN-->
                                     <button style="float: right;" *ngIf="node.id.includes('studies')"
                                     (click)="onExperimental_design(node)" class="btn btn-light btn-xs fa fa-th">
                                     </button>
                                     <button style="float: right;" *ngIf="node.id.includes('investigations')"
                                         (click)="onExportIsa(node)" class="btn btn-light btn-xs fa "><i
-                                            class="icon-play"></i></button>
+                                            class="icon-play"></i>
+                                    </button>
                                     <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
                                         (click)="onExport(node)" class="btn btn-light btn-xs fa fa-upload"></button>
                                     <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
@@ -913,10 +916,12 @@
                                         title="{{node.def}}"></button>
                                     <button style="float: right;" *ngIf="!node.id.includes('Investigations tree')"
                                         (click)="onRemove(node)" class="btn btn-danger btn-xs fa fa-trash-o"
-                                        confirm="Are you sure?"></button>
+                                        confirm="Are you sure?">
+                                    </button>
                                         <a style="float: right;" *ngIf="node.id.includes('investigations')">
                                             <button (click)="onClick(node)" [matMenuTriggerFor]="investigationToolsMenu"
-                                                class="btn btn-primary btn-xs fa fa-wrench"></button>
+                                                class="btn btn-primary btn-xs fa fa-wrench">
+                                            </button>
                                         </a>
                                     <div
                                     joyrideStep="plus_{{get_model_type_for_wizard(node)}}" title=""
@@ -1336,7 +1341,7 @@
                     </div> -->
                 </ng-template>
             </mat-drawer-container>
-        </mat-card>
+        
         <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
             [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
         </div>

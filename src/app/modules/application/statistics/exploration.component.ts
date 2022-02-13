@@ -12,10 +12,10 @@ import { multi, single } from './data/data';
   styleUrls: ['./exploration.component.css']
 })
 export class ExplorationComponent implements OnInit {
-  parent_id=""
+  @Input() parent_id: string;
+  @Input() investigation_key: string;
   selected_file: string = ""
   selected_observed_variable:string = ""
-  investigation_key:string= ""
   filename_used = []
   datafile_ids = {}
   datafile_study_ids = {}
@@ -37,7 +37,7 @@ export class ExplorationComponent implements OnInit {
   showYAxisLabel = true;
   yAxisLabel = 'Plant Height';
   timeline = true;
-  private factor_value_array=[]
+  private factor_value_array: string[]=[]
   private associated_headers_by_filename = {}
   private headers_by_filename = {}
   public genotypes = {}
@@ -79,7 +79,7 @@ export class ExplorationComponent implements OnInit {
     if (data.length > 0 && data[0] !== null) {
       data[0].forEach(
         data_file => {
-          console.log(data_file)
+          //console.log(data_file)
           if (!this.filename_used.includes(data_file.filename)) {
             this.datafile_ids[data_file.filename] = data_file.eto
             this.headers_by_filename[data_file.filename] = []
@@ -104,19 +104,19 @@ export class ExplorationComponent implements OnInit {
           );
           this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'observed_variables').toPromise().then(
             observed_variable_data => {
-              console.log(observed_variable_data)
+              //console.log(observed_variable_data)
               observed_variable_data.forEach(observed_variable => {
                 this.ObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
               });
               this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'observation_units').toPromise().then(
                 observation_unit_data => {
-                  console.log(observation_unit_data)
+                  //console.log(observation_unit_data)
                   observation_unit_data.forEach(observation_unit => {
                     this.ObservationUnits[data_file.filename].push({'observation_unit':observation_unit, 'study_id':data_file.efrom})
                   });
                   this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'biological_materials').toPromise().then(
                     biological_material_data => {
-                      console.log(biological_material_data)
+                      //console.log(biological_material_data)
                       biological_material_data.forEach(biological_material => {
                         this.BiologicalMaterials[data_file.filename].push({'biological_material':biological_material, 'study_id':data_file.efrom})
                         //this.genotypes[data_file.filename]=biological_material["Material source ID (Holding institute/stock centre, accession)"]
@@ -145,13 +145,14 @@ export class ExplorationComponent implements OnInit {
     this.my_data=[]
     this.my_displayed_data=[]
     this.selected_observed_variable = value
-    console.log(this.ObservedVariables[this.selected_file])
-    console.log(this.associated_headers_by_filename[this.selected_file])
-    console.log(value)
+    //console.log(this.selected_observed_variable)
+    //console.log(this.ObservedVariables[this.selected_file])
+    //console.log(this.associated_headers_by_filename[this.selected_file])
+    //console.log(value)
 
     if(this.ObservationUnits[this.selected_file].length !== 0){
       var observation_unit= this.ObservationUnits[this.selected_file][0]['observation_unit']
-      console.log(observation_unit)
+      //console.log(observation_unit)
       if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id).length === 0){
         this.alertService.error("You do not have any observation units associated with any column of this data file ! You need to link a column with one of your observation units if exist else create one biological material and link it to the corresponding assigned column in your data file. \
         Remember before linking a column to a linda component , you must assign the right type to your column. (i.e. Is this an esperimental factor column , an observed variable, etc.. ? ")
@@ -159,11 +160,11 @@ export class ExplorationComponent implements OnInit {
       else{
       
         //var ou_header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observation_unit._id)[0]['header']
-        console.log(observation_unit['Observation Unit factor value'])
+        //console.log(observation_unit['Observation Unit factor value'])
         
-        var factor_value=new Set(observation_unit['Observation Unit factor value'])
+        var factor_value: Set<string>=new Set(observation_unit['Observation Unit factor value'])
         this.factor_value_array = Array.from(factor_value);
-        console.log(factor_value)
+        //console.log(factor_value)
         
         var biological_material= this.BiologicalMaterials[this.selected_file][0]['biological_material']
         if(this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==biological_material._id).length === 0){
@@ -175,16 +176,16 @@ export class ExplorationComponent implements OnInit {
           
           //before to run this step, you need to have Biological material associated with your data files
           this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], bm_header).toPromise().then(bm_data => {
-            console.log(bm_data)
+            //console.log(bm_data)
             var observed_variable= this.ObservedVariables[this.selected_file].filter(element=> element['observed_variable']['Trait']==value)[0]['observed_variable']
-            console.log(observed_variable._id)
+            //console.log(observed_variable._id)
             var header= this.associated_headers_by_filename[this.selected_file].filter(element=> element.associated_linda_id==observed_variable._id)[0]['header']
             this.yAxisLabel= header
             this.globalService.get_data_from_datafiles(this.datafile_ids[this.selected_file].split('/')[1], header).toPromise().then(observed_variable_data => {
-              console.log(observed_variable_data)
+              //console.log(observed_variable_data)
               var bm_data_value=new Set(bm_data[0])
               var bm_data_value_array = Array.from(bm_data_value);
-              console.log(bm_data[0])
+              //console.log(bm_data[0])
               var cpt=0
               bm_data[0].forEach(val=>{
                 
@@ -203,7 +204,7 @@ export class ExplorationComponent implements OnInit {
                 cpt+=1
               });
               var cpt=0
-              //console.log(this.my_data.filter(element=>{element}))
+              ////console.log(this.my_data.filter(element=>{element}))
               this.my_data.forEach(element => {
                 let condition1 = element['series'].filter(serie => serie.name === 'rainfed');
                 let average1 = condition1.reduce((total, next) => total + next.value, 0) / condition1.length;
@@ -215,7 +216,7 @@ export class ExplorationComponent implements OnInit {
                 cpt += 1
               })
               //this.my_data=this.my_data.splice(200,this.my_data.length-30)
-              console.log(this.my_data)
+              //console.log(this.my_data)
             });    
           })
         }
@@ -228,33 +229,36 @@ export class ExplorationComponent implements OnInit {
     this.selected = 'underline';
   }
   onSelect(event) {
-    console.log(event);
+    //console.log(event);
     
   }
 
   clickToggle(event, column){
-    console.log(column)
-    console.log(this.my_data)
-    console.log(this.my_data.filter(element=> element.name===column))
-    console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
+    //console.log(column)
+    //console.log(this.my_data)
+    //console.log(this.my_data.filter(element=> element.name===column))
+    //console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
     if (this.my_displayed_data.filter(element=> element.name===column)[0]){
-      console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
-      console.log(this.my_displayed_data)
+      //console.log(this.my_displayed_data.filter(element=> element.name===column)[0])
+      //console.log(this.my_displayed_data)
       this.my_displayed_data=this.my_displayed_data.filter(element=> element.name!==column)
     }
     else{
       this.my_displayed_data.push(this.my_data.filter(element=> element.name===column)[0])
     }
     this.my_displayed_data=[...this.my_displayed_data]
-    console.log(event)
+    //console.log(event)
     let toggle = event.source;
-    console.log(toggle)
+    //console.log(toggle)
     if (toggle) {
         let group = toggle.buttonToggleGroup;
         if (event.value.some(item => item == toggle.value)) {
             group.value = [toggle.value];
         }
     }
+  }
+  get get_factor_value_array():string[]{
+    return this.factor_value_array
   }
 
   

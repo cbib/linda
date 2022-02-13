@@ -1,12 +1,94 @@
+
 <div id="project-page">
-    <div class="border-head">
+  <alert></alert>
+    <!-- <div class="border-head">
         <h3>
             <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
                     exper<span>I</span>me<span>N</span>tal
                     meta<span>D</span>at<span>A</span></b></a>
-        </h3>
+        </h3>           
+            <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
+    </div> -->
+    <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Cancel Project</button>
+
+<!-- Nav pills -->
+<ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link active" [ngClass]="{ 'active':activeTab==='identifiers'}" (click)="changeTab('identifiers')" aria-controls="identifiers" role="tab" data-toggle="tab" href="#identifiers">1. Administrative informations</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='assStud'}" href="#assStud" (click)="changeTab('assStud')" aria-controls="assStud" role="tab" data-toggle="tab">2. Associated Study(ies)</a>
+    </li>
+    <!-- <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='ExpSite'}" href="#ExpSite" (click)="changeTab('ExpSite')" aria-controls="ExpSite" role="tab" data-toggle="tab">3. Experimental site</a>
+    </li> -->
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Data'}" href="#Data" (click)="changeTab('Data')" aria-controls="Data" role="tab" data-toggle="tab">4. Data</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Assign'}" href="#Assign" (click)="changeTab('Assign')" aria-controls="Assign" role="tab" data-toggle="tab">5. Assign</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Extract'}" href="#Extract" (click)="changeTab('Extract')" aria-controls="Extract" role="tab" data-toggle="tab">6. Extract</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Explore'}" href="#Explore" (click)="changeTab('Explore')" aria-controls="Explore" role="tab" data-toggle="tab">7. Explore</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" [ngClass]="{ 'active':activeTab==='Download'}" href="#Download" (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">8. Download</a>
+      </li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div [ngClass]="{ 'active':activeTab==='identifiers'}"  role="tabpanel" class="tab-pane active" id="identifiers">
+      <h3>Describe your project</h3>
+            <mat-card style="width: 80%;">
+            <app-form *ngIf="activeTab==='identifiers'" (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="model_key" [mode]="get_mode" inline="true"></app-form>
+            </mat-card>
     </div>
+    <!-- <div [ngClass]="{ 'active':activeTab==='ExpSite'}"  role="tabpanel" class="tab-pane" id="ExpSite">
+      <h3>Describe experimental site</h3>
+            <mat-card style="width: 80%;">
+              <app-form *ngIf="activeTab==='ExpSite'" (notify)="get_output_from_child($event)" model_type="study" [level]="2" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode"></app-form>
+              </mat-card>
+    </div> -->
+    <div [ngClass]="{ 'active':activeTab==='Data'}"  role="tabpanel" class="tab-pane" id="Data">
+      <h3>Download experimental data files</h3>
+          <mat-card style="width: 80%;">
+          <app-download *ngIf="activeTab==='Data'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract"></app-download>
+          </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='Assign'}"  role="tabpanel" class="tab-pane" id="Assign">
+      <h3>Define experimental data files columns</h3>
+          <mat-card style="width: 80%;">
+          <app-download *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-download>
+          </mat-card>
+    </div>
+
+    <div [ngClass]="{ 'active':activeTab==='Extract'}"  role="tabpanel" class="tab-pane" id="Extract">
+      <h3>Extract</h3>
+          <mat-card style="width: 80%;">
+            <app-extract *ngIf="activeTab==='Extract'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="experimental_factor" mode="extract"></app-extract>
+          </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='Explore'}"  role="tabpanel" class="tab-pane" id="Explore">
+      <h3>Extract</h3>
+          <mat-card style="width: 80%;">
+            <app-exploration *ngIf="activeTab==='Explore'"  [parent_id]="get_model_id" [investigation_key]="get_model_key"></app-exploration>
+          </mat-card>
+    </div>
+    
+
+    <div [ngClass]="{ 'active':activeTab==='assStud'}"  role="tabpanel" class="tab-pane" id="assStud">
+        <h3>Project associated studies</h3>
+              <app-studies-page *ngIf="activeTab==='assStud'" (notify)="get_output_from_child($event)" [parent_id]="get_model_id" ></app-studies-page>
+              <!--<app-study-page *ngIf="get_selected_study && activeTab==='assStud'" (notify)="get_output_from_child($event)" [level]="1" [model_key]="get_selected_study._key" [parent_id]="get_model_id" model_type="study" [model_id]="get_selected_study._id" [mode]="'edit'" ></app-study-page> -->   
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='Download'}"  role="tabpanel" class="tab-pane" id="Download">
+      <h3>Download project metadata files</h3>
+          <app-download  *ngIf="activeTab==='Download'"   [parent_id]="get_model_id" [model_key]="get_model_key" model_type="metadata_file" mode="create"></app-download>
+  </div>
+  
+  </div>
 </div>
-<mat-card>
-<app-form (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-form>
-</mat-card>

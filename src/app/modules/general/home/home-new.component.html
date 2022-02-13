@@ -4,24 +4,20 @@
         <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
           <div class="text-center">
             <!-- <h1 class="mt-2 display-4 fw-bold">Linda</h1> -->
-              <h3>
-                  <a href="index.html" class="logo mt-2 display-4 fw-bold" style="color: black;"><b>P<span>L</span>ant
-                          exper<span>I</span>me<span>N</span>tal
-                          meta<span>D</span>at<span>A</span></b></a>
-              </h3>
-            <h2 class="h3">Web Application</h2>
+            <h2 class="h3">LINDA Web Application</h2>
             <hr>
             <h2 class="h5 mt-4">{{ 'Experimental metadata' }}</h2>
-          <h2 class="h5">{{ 'MIAPPE convention' }}</h2>
+            <h2 class="h5">{{ 'MIAPPE convention' }}</h2>
             <h2 class="h5">{{ 'FAIR'  }}</h2>
             <div class="col-lg-12 mx-auto mt-4">
               <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a class="nga-btn-home" routerLink="/angular">Get Started</a>
               </div>
             </div>
+            
           </div>
         </div>
-        <div class="col-lg-4 offset-lg-1 p-0">
+        <!-- <div class="col-lg-4 offset-lg-1 p-0"> -->
           <!-- <div class="position-lg-absolute top-0 left-0 overflow-hidden">
             <img src="./assets/images/arangodb.png" srcset="./assets/images/arangodb.png" alt="Getting started with Angular" width="360" height="350">
           </div> -->
@@ -31,7 +27,7 @@
                     <img style="width:50%;height:50%;" class="d-block w-100" src="assets/images/inrae.png" alt="First slide">
                 </div>
                 <div class="carousel-item">
-                    <img style="width:50%;height:50%; position: relative;" class="d-block w-100" src="assets/images/Logo_CBiB_2020_lowcase_highres.jpg" alt="Second slide">
+                    <img style="width:50%;height:50%;" class="d-block w-100" src="assets/images/Logo_CBiB_2020_lowcase_highres.jpg" alt="Second slide">
                 </div>
             </div>
             <br>
@@ -44,79 +40,122 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="sr-only">Next</span>
             </a>
-        </div>
-        </div>
+          </div>
+        <!-- </div> -->
       </div>
     </div>
   </section>
   
   <div class="container px-4 py-5">
-    <h2 class="display-6 fw-bold pb-2 text-center">Features</h2>
+    <h2 class="display-6 fw-bold pb-8 text-center">Features</h2>
     <hr>
-    <div class="row g-4 py-2 row-cols-1 row-cols-md-2 row-cols-lg-4">
-      <div class="col">
-        <div class="nga-card-step p-4">
-          <a routerLink="/bootstrap">
-            <i class="text-primary fab fa-bootstrap fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">Bootstrap</h3>
-            <p>How to use Buttons, Alerts, Pagination, Tables, Collapses</p>
-          </a>
-        </div>
-      </div>
-      <div class="col">
-        <div class="nga-card-step p-4">
-          <a routerLink="/services">
-            <i class="text-primary fas fa-handshake fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">Services</h3>
-            <p>Use services to view a playlist and a youtube player</p>
-          </a>
-        </div>
-      </div>
+    <div class="row g-4 py-2 row-cols-1 row-cols-md-2 row-cols-lg-3">
       <div class="col">
         <div class="nga-card-step p-4">
           <a routerLink="/components">
-            <i class="text-primary fa fa-clone fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">Components</h3>
-            <p>Channel component with Input, Output and Event Emitter</p>
+            <h3 class="h4 text-primary fw-bold">Preserve and store environmental metadata</h3>
+            <ul style="list-style-type:square; text-align: justify;">
+              <li>Insert metadata respecting the MIAPPE model (https://www.miappe.org/) </li>   
+              <li>Use the associated ontologies (Plantontology, XEO, ENVo, etc.)</li>   
+              <li>Data from sensors files can be import as tabular and json files</li>
+            </ul> 
+            <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+              <img src="assets/images/crops_conditions.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+            </a> 
+          </a>
+        </div>
+      </div>
+    
+      
+      <div class="col">
+        <div class="nga-card-step p-4">
+          <a routerLink="/forms">
+            <h3 class="h4 text-primary fw-bold">Integrate experimental downstream data from external database (PLATO)</h3>
+            <ul style="list-style-type:square; text-align: justify;">
+              <li id="home_li1">Import whole PLATO analysis (PLATO is designed to capture and store experimental data from metabolites, enzymes profiling)</li>
+              <li id="home_li2">Build aggregated tables</li>
+              <li id="home_li3">Extract knowleddge using statisticals tools</li>
+              <li id="home_li4">And many more …</li>
+          </ul>
+          <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+            <img src="assets/images/miappe.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+          </a>
+          </a>
+        </div>
+      </div>
+      
+      
+      <div class="col">
+        <div class="nga-card-step p-4">
+          <a routerLink="/components">
+            <h3 class="h4 text-primary fw-bold">Preserve and store environmental metadata</h3>
+            <ul style="list-style-type:square; text-align: justify;">
+              <li>Export projects in various formats:  csv, tsv, excel, json, isa-tab </li>
+              <li>Correlate your metadata measurement with experimental design and growth protocol</li>
+              <li>Assign ontology term to your measurment</li>
+              <li>Describes observation unit and climatic events using ontology</li>
+            </ul> 
+            <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+              <img src="assets/images/crops_conditions.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+            </a> 
           </a>
         </div>
       </div>
       <div class="col">
         <div class="nga-card-step p-4">
           <a routerLink="/httpclient">
-            <i class="text-primary fas fa-network-wired  fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">HttpClient</h3>
-            <p>Use an external API with HttpClient Module</p>
+            <h3 class="h4 text-primary fw-bold">Save your work in linda Database</h3>
+            <ul style="list-style-type:square; text-align: justify;">
+              <li>Export import whole investigation in json, tsv, zip format</li>
+              <li>Export investigation in iSA tab format</li>
+              <li>Share investigation with other users</li>
+              <li>Save Experimental design informations and environmental metadata in Linda DB</li>
+              <li>Facilitate a standardized exchange of information</li>
+          </ul>
+          <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+            <img src="assets/images/arangodb.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+          </a>
           </a>
         </div>
       </div>
       <div class="col">
         <div class="nga-card-step p-4">
-          <a routerLink="/forms">
-            <i class="text-primary far fa-file-alt fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">Forms</h3>
-            <p>Select Template Driven Forms or Reactive Forms</p>
+          <a routerLink="/bootstrap">
+            <h3 class="h4 text-primary fw-bold">Design your experiment in a simple way</h3>
+
+                <ul style="list-style-type:square; text-align: justify;">
+                  <li>Duration, start and end date</li>
+                  <li>Biological Materials and material sources</li>
+                  <li>Experimental factors and observed variables</li>
+                  <li>Describes observation units and climatic events</li>
+                  <li>And many more …</li>
+                </ul>
+              <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+              <img src="assets/images/miappe.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+            </a>
+
           </a>
         </div>
       </div>
       <div class="col">
         <div class="nga-card-step p-4">
-          <a routerLink="/modal">
-            <i class="text-primary fab fa-angular fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">Modal</h3>
-            <p>Create Modal with service and without jquery</p>
+          <a routerLink="/services">
+            <h3 class="h4 text-primary fw-bold">Use collections on ontologies ready to used</h3>
+            <ul style="list-style-type:square; text-align: justify;">
+              <li>CROP ontology</li>   
+              <li>Plant ontology</li>
+              <li>XEO ontology </li>
+              <li>ENVo ontology</li>
+              <li>PECO ontology</li>
+              <li>and various other ontologies</li>
+            </ul>
+            <a href="https://www.miappe.org/" style="vertical-align: middle; display: table-cell;">
+              <img src="assets/images/bioportal.png" class="img-responsive" style="width:100%;height: auto; display: block;" alt="Image">
+            </a>
           </a>
         </div>
       </div>
-      <div class="col">
-        <div class="nga-card-step p-4">
-          <a routerLink="/crud">
-            <i class="text-primary fab fa-node-js fa-2x mb-2"></i>
-            <h3 class="h4 text-primary fw-bold">CRUD</h3>
-            <p>Create and Use API Rest</p>
-          </a>
-        </div>
-      </div>
+      
     </div>
   </div>
   <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel">

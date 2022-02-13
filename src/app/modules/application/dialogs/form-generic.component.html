@@ -1,6 +1,6 @@
 
 <mat-dialog-content *ngIf="get_model_type!=='biological_material' && get_model_type!=='observation_unit'">
-<app-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-form>
+<app-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode" inline="false"></app-form>
 </mat-dialog-content>
 <mat-dialog-content *ngIf="get_model_type==='biological_material'">
     <app-material-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-material-form>

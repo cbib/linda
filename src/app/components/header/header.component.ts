@@ -76,7 +76,7 @@ export class HeaderComponent implements OnInit{
                           else{
                               model_type=model_type.slice(0, -1)
                           }    
-                          this.router.navigate(['/generic_form'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit"}});
+                          this.router.navigate(['/generic_form'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit", inline:"false", asTemplate:false, onlyTemplate:false}, skipLocationChange: true});
                       }
                   }
               });

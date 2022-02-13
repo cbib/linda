@@ -26,8 +26,11 @@ export class FormComponent implements OnInit//, AfterViewInit
     @Input('model_key') model_key: string;
     @Input('model_type') model_type: string;
     @Input('mode') mode: string;
+    @Input('inline') inline: string;
+    @Input('asTemplate') asTemplate: boolean;
+    @Input('onlyTemplate') onlyTemplate: boolean;
+    
     @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
-
     public guided_tour_messages: any = {
         level1: { heading: 'Level 1', message: 'At stage 1, you will see ontology form field for two important Study features' },
         level2: { heading: 'Level 2', message: 'At stage 2, you will see ontology form field for two important Study features' },
@@ -35,26 +38,26 @@ export class FormComponent implements OnInit//, AfterViewInit
       }
     private startfilling: boolean = false;
     private currentUser
-    ontology_type: string;
-    show_spinner: boolean = false;
-    Checked = false
-    selected_term: OntologyTerm
-    selected_set: []
-    validated_term = {}
-    marked = false;
-    modelForm: FormGroup;
-    ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']
-    model_id: string;
-    max_level = 1;
-    model: {"Definition":string} ={"Definition":""}
-    model_to_edit: any = [];
-    levels = []
-    cleaned_model: any = [];
-    keys: any = [];
-    disabled_id_keys = []
-    help_mode=false
-    left="left"
-    center="center"
+    private ontology_type: string;
+    private show_spinner: boolean = false;
+    private Checked = false
+    private selected_term: OntologyTerm
+    private selected_set: []
+    private validated_term = {}
+    //private asTemplate = false;
+    private modelForm: FormGroup;
+    private ontologies = ['XEO', 'EO', 'EnvO', 'PO_Structure', 'PO_Development']
+    private model_id: string;
+    private max_level = 1;
+    private model: {} ={}
+    private model_to_edit: any = [];
+    private levels = []
+    private cleaned_model: {}[] = [];
+    private keys: any = [];
+    private disabled_id_keys = []
+    private help_mode=false
+    private left="left"
+    private center="center"
 
     constructor(
         public globalService: GlobalService,
@@ -78,9 +81,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.model_key = params['model_key'];
                 this.mode = params['mode'];
                 this.parent_id = params['parent_id']
+                this.inline=params['inline']
+                this.asTemplate=params['asTemplate']
+                this.onlyTemplate=params['onlyTemplate']
+
             }
         );
         if (this.model_key != "") {
+            console.log(this.model_key)
             this.get_model_by_key();
         }
         console.log(this.mode)
@@ -91,8 +99,8 @@ export class FormComponent implements OnInit//, AfterViewInit
         ///const id = this.activatedRoute.snapshot.params.id;
 
         //console.log(this.mode)
-        this.get_max_level();
-        this.get_model();
+        this.set_max_level();
+        this.set_model();
          
         // if (currentUser['tutoriel_checked'] === false){
         //     this.onClickTour()
@@ -284,12 +292,11 @@ export class FormComponent implements OnInit//, AfterViewInit
         });
         return this.formBuilder.group(attributeFilters);
     }
-    get_model() {
+    set_model() {
         this.modelForm = new FormGroup({});
         
         //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
         this.globalService.get_model(this.model_type).toPromise().then(data => {
-            console.log(data)
             this.model = data;
             console.log(this.model)
             this.keys = Object.keys(this.model);
@@ -309,7 +316,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                     this.cleaned_model.push(dict)
                 }
             }
-            this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
+            this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a['pos'] - b['pos']; });
             console.log(this.cleaned_model)
 
             if (this.mode === "create" ) {
@@ -552,7 +559,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         // //console.log(this.modelForm.value)
     }
 
-    get_max_level() {
+    set_max_level() {
         this.globalService.get_max_level(this.model_type).toPromise().then(max_level_data => {
             //console.log(max_level_data)
             this.max_level = max_level_data;
@@ -570,10 +577,38 @@ export class FormComponent implements OnInit//, AfterViewInit
         return this.modelForm.controls;
     }
 
+    get get_modelForm() : FormGroup{
+        return this.modelForm
+    }
     get diagnostic() {
         return JSON.stringify(this.modelForm);
     };
+    get get_left(): string{
+        return this.left
+    }
 
+    get get_cleaned_model() :{}[]{
+        return this.cleaned_model
+    }
+    get get_max_level() : number{
+        return this.max_level
+    }
+    get get_help_mode()
+    {
+        return this.help_mode
+    }
+    get get_model():{}{
+        return this.model
+    }
+    get get_level(): number{
+        return this.level
+    }
+    get get_validated_term(){
+        return this.validated_term
+    } 
+    get getChecked(){
+        return this.Checked
+    }
     get_startfilling() {
         return this.startfilling;
     };
@@ -587,7 +622,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
 
     toggleVisibility(e) {
-        this.marked = e.target.checked;
+        this.asTemplate = e.target.checked;
     };
 
     save(form: any): boolean {
@@ -598,7 +633,7 @@ export class FormComponent implements OnInit//, AfterViewInit
             return false;
         }
         else {
-            // if (this.marked) {
+            // if (this.asTemplate) {
             //     this.globalService.saveTemplate(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
             //         data => {
             //             if (data["success"]) {
@@ -613,74 +648,97 @@ export class FormComponent implements OnInit//, AfterViewInit
             //     );
             // }
             if (this.mode === "create") {
-                //console.log(this.marked)
-                this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(
-                    data => {
-                        if (data["success"]) {
-                            this.model_id = data["_id"];
-                            //console.log(data["res_obj"])
-                            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-                            
-                            var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
-                            this.alertService.success(message)
-                            let new_step=0
-                            if (!this.currentUser.tutoriel_done){
-                                if (this.currentUser.tutoriel_step==="1"){
-                                    if (this.model_type === "investigation") {
-                                        new_step=2
-                                        this.currentUser.tutoriel_step=new_step.toString()
-                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                                    }
-                                }
-                                else{
-                                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                if (this.onlyTemplate){
+                    this.globalService.add_template(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
+                        data => {
+                            if (data["success"]) {
+                                this.model_id = data["_id"];
+                                //console.log(data["res_obj"])
+                                //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                                
+                                var message = "A new template " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                                this.alertService.success(message)
 
-                                }
-                                if (this.currentUser.tutoriel_step==="3"){
-                                    if (this.model_type === "study") {
-                                        new_step=4
-                                        this.currentUser.tutoriel_step=new_step.toString()
-                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                                    }
-                                }
-                                else{
-                                    this.alertService.error("You are not in the right form as requested by the tutorial")
-
-                                }
-                                if (this.currentUser.tutoriel_step==="5"){
-                                    if(this.model_type==="experimental_factor"){
-                                        new_step=6
-                                        this.currentUser.tutoriel_step=new_step.toString()
-                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                                    }
-                                }
-                                else{
-                                    this.alertService.error("You are not in the right form as requested by the tutorial")
-
-                                }
-                                if (this.currentUser.tutoriel_step==="7"){
-                                    if(this.model_type==="observed_variable"){
-                                        new_step=8
-                                        this.currentUser.tutoriel_step=new_step.toString()
-                                        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                                    }
-                                }
-                                else{
-                                    this.alertService.error("You are not in the right form as requested by the tutorial")
-
-                                }
-         
-                               
-                                }
-                            this.router.navigate(['/projects_tree']);
-                            return true;
+                                this.router.navigate(['/templates']);
+                                return true;
+                            }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
+                                return false;
+                            }
                         }
-                        else {
-                            this.alertService.error("this form contains errors! " + data["message"]);
-                            return false;
+                    );
+                }
+                else{
+                //console.log(this.asTemplate)
+                    this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.asTemplate).pipe(first()).toPromise().then(
+                        data => {
+                            if (data["success"]) {
+                                this.model_id = data["_id"];
+                                //console.log(data["res_obj"])
+                                //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                                
+                                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+                                this.alertService.success(message)
+                                let new_step=0
+                                if (!this.currentUser.tutoriel_done){
+                                    if (this.currentUser.tutoriel_step==="1"){
+                                        if (this.model_type === "investigation") {
+                                            new_step=2
+                                            this.currentUser.tutoriel_step=new_step.toString()
+                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                        }
+                                    }
+                                    else{
+                                        this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                    }
+                                    if (this.currentUser.tutoriel_step==="3"){
+                                        if (this.model_type === "study") {
+                                            new_step=4
+                                            this.currentUser.tutoriel_step=new_step.toString()
+                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                        }
+                                    }
+                                    else{
+                                        this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                    }
+                                    if (this.currentUser.tutoriel_step==="5"){
+                                        if(this.model_type==="experimental_factor"){
+                                            new_step=6
+                                            this.currentUser.tutoriel_step=new_step.toString()
+                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                        }
+                                    }
+                                    else{
+                                        this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                    }
+                                    if (this.currentUser.tutoriel_step==="7"){
+                                        if(this.model_type==="observed_variable"){
+                                            new_step=8
+                                            this.currentUser.tutoriel_step=new_step.toString()
+                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                        }
+                                    }
+                                    else{
+                                        this.alertService.error("You are not in the right form as requested by the tutorial")
+
+                                    }
+            
+                                
+                                    }
+                                this.router.navigate(['/projects_tree']);
+                                return true;
+                            }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
+                                return false;
+                            }
                         }
-                    }
-                );
+                    );
+                }
             }
             else {
                 let element = event.target as HTMLInputElement;
@@ -692,6 +750,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
                                 this.alertService.success(message)
                                 //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                                
                                 this.router.navigate(['/projects_tree']);
                                 return true;
                             }
@@ -713,7 +772,10 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
                                 this.alertService.success(message)
                                 //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-                                this.router.navigate(['/projects_tree']);
+                                this.notify.emit(this.modelForm.value);
+                                if (this.inline==="false"){
+                                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'] , model_type: this.model_type, model_key: this.model_key , mode: "edit", activeTab: 'identifiers' } });
+                                }
                                 return true;
                             }
                             else {
@@ -800,7 +862,7 @@ export class FormComponent implements OnInit//, AfterViewInit
             }
         }
         else{
-            this.router.navigate(['/generic_form'], { queryParams: { level: parseInt(level) - 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
+            this.router.navigate(['/generic_form'], { queryParams: { level: parseInt(level) - 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode, inline:this.inline, asTemplate:this.asTemplate , onlyTemplate:this.onlyTemplate}, skipLocationChange: true });
         }
 
     };
@@ -818,14 +880,17 @@ export class FormComponent implements OnInit//, AfterViewInit
                     //console.log("invalid  form")
                     let message = "this form contains errors! "
                     this.alertService.error(message);
+                    this.notify.emit('error in the form');
                     return false;
                 }
                 else {
-                    var data={'form':this.modelForm.value, 'template':this.marked}
+                    var data={'form':this.modelForm.value, 'template':this.asTemplate}
                     this.notify.emit(data);
                 }
             }
             else{
+                var data={'form':this.modelForm.value, 'template':this.asTemplate}
+                this.notify.emit(data);
                 this.save(form)
             }
             
@@ -848,12 +913,8 @@ export class FormComponent implements OnInit//, AfterViewInit
             //parseInt(this.level)+=1
             //this.level=parseInt(this.level)+1
             //parseInt(level) + 1
-            this.router.navigate(['/generic_form'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode } });
+            this.router.navigate(['/generic_form'], { queryParams: { level: parseInt(level) + 1, parent_id: this.parent_id, model_key: this.model_key, model_type: this.model_type, mode: this.mode , inline:this.inline, asTemplate:this.asTemplate, onlyTemplate:this.onlyTemplate}, skipLocationChange: true });
         }
 
     };
 }
-
-
-
-

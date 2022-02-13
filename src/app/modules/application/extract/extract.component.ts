@@ -70,9 +70,11 @@ export class ExtractComponent implements OnInit {
   datasources: {} = {};
   data_ready: boolean = false
   filename_used = []
+  model_types = ["experimental_factor","observation_unit","biological_material", "observed_variable"]
   initialSelection = []
   selection = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
   selected_file: string = ""
+  selected_model_type:string=""
   save_as_template: boolean = false
   private currentUser
   private demo_subset = 0
@@ -112,6 +114,16 @@ export class ExtractComponent implements OnInit {
   onFilenameChange(values: string) {
     this.selected_file = values
   }
+  
+  onModelChange(values: string) {
+
+    this.selected_model_type = values
+    this.model_type=this.selected_model_type
+    this.model_type_label = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ")
+    console.log(this.model_type)
+    this.get_data()
+  }
+
   get get_demo_subset(){
     return this.demo_subset
   }
@@ -507,6 +519,7 @@ export class ExtractComponent implements OnInit {
 
                                 if (result2.event == 'Confirmed') {
                                   let biological_material_n = result2.biological_material_n
+                                  console.log(biological_material_n)
                                   for (var d = 0; d < this.global[filename].length; d++) {
                                     
                                     let d_cpt=d
@@ -540,6 +553,7 @@ export class ExtractComponent implements OnInit {
                                           }
                                         }
                                         if (key == "Biological material ID") {
+                                          console.log(tmp_headers_form[key])
                                           tmp_headers_form[key][0] = [unique_component_set_array[0] + '_1']
                                           for (var i = 1; i < unique_component_set_array.length; i++) {
                                             tmp_headers_form[key].push([unique_component_set_array[i] + '_1'])
@@ -562,6 +576,7 @@ export class ExtractComponent implements OnInit {
                                           }
                                         }
                                       });
+                                      this.headers_form[value]=tmp_headers_form
                                       console.log(tmp_headers_form);
                                     });
 
@@ -625,6 +640,7 @@ export class ExtractComponent implements OnInit {
                 }
                 else {
                   let modelForm = this.headers_form[key]
+                  console.log(modelForm)
                   if (cnt > 0) {
                     this.save_as_template = false
                   }

@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { TableModule } from '../../tables/table.module'
 import { DownloadModule } from '../../file_handlers/download.module';
 
+//import { AlertComponent } from '../../../../directives/alert.component';
 @NgModule({
   declarations: [ProjectsTreeComponent],
   imports: [

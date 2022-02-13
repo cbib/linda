@@ -1,12 +1,4 @@
-<div class="border-head">
-    <h3>
-      <a href="index.html" class="logo">
-        <b>
-          P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
-        </b>
-      </a>
-    </h3>
-  </div>
+
   <joyrideStep joyrideStep="StepCheck" title="" [stepContent]="checkAndUpload"
     [stepContentParams]="{'model_n':get_demo_subset}" stepPosition="center">
   </joyrideStep>
@@ -78,6 +70,15 @@
     <!-- <section *ngFor="let filename of filename_used ; let i=index"> -->
   
   
+    <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepSelectFile" title="" [stepContent]="selectFile"
+        [stepContentParams]="{'model_n':get_demo_subset}">
+    
+        <h2>Select your Standard Term </h2>
+        <select [ngModel]="selected_model_type" name="select_model" size="1" (change)="onModelChange($event.target.value)">
+          <option *ngFor="let md of model_types" [value]="md">{{md}}</option>
+        </select>
+        <br>
+    </mat-card>
     <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepSelectFile" title="" [stepContent]="selectFile"
       [stepContentParams]="{'model_n':get_demo_subset}">
   
@@ -280,7 +281,7 @@
   
     <mat-card *ngIf="filename_used.length > 0" joyrideStep="StepLinkComponent" title="" [stepContent]="linkComponent"
       [stepContentParams]="{'model_n':get_demo_subset}">
-      <h2>Link with a existing <b>{{model_type_label}}</b></h2>
+      <h2>Link with a existing(s) <b>{{model_type_label}}(s)</b></h2>
       <p>
         <!-- Objectives: search for a list of existing <b>{{model_type_label}}</b> described in this investigation.  -->
         Here are existing <b>{{model_type_label}}</b>(s) component in your investigation, click on it to associate the
@@ -292,10 +293,8 @@
           [stepContentParams]="{'model_n':get_demo_subset}" [ngStyle]="getToggleStyle('')"
           (click)="$event ? clickToggleExisting(observed_variable['observed_variable'], selected_file) : null"
           value="{{observed_variable['observed_variable']['Trait']}}">
-          <span
-            *ngIf="model_type==='observed_variable'">{{observed_variable['observed_variable']['Variable name']}}</span>
-          <span
-            *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
+          <span *ngIf="model_type==='observed_variable'">{{observed_variable['observed_variable']['Variable name']}}</span>
+          <span *ngIf="model_type==='experimental_factor'">{{observed_variable['observed_variable']['Experimental Factor type']}}</span>
           <span *ngIf="model_type==='biological_material'">{{observed_variable['observed_variable']['_id']}}</span>
           <span *ngIf="model_type==='observation_unit'">{{observed_variable['observed_variable']['_id']}}</span>
           <!-- <span *ngIf="model_type==observed_variable">{{observed_variable['observed_variable']['Variable name']}}</span>

@@ -10,7 +10,7 @@
     <option value="" disabled>Select {{model_type}}s</option>
     <option *ngFor="let t of get_result()" value={{t._id}}>{{t._id}}</option>
   </select> -->
-  <table style="width: 1200px;" mat-table matSort [dataSource]="materialdataSource">
+  <table style="width: 100%;" mat-table matSort [dataSource]="materialdataSource">
     <ng-container *ngFor="let column of displayedMaterialColumns ; let i=index">
       <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedMaterialColumns[i]}} </th>

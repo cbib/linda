@@ -198,3 +198,9 @@ ul {
 .menu_mat_card{
   max-width: 1000px;
 }
+.asterick.imp{
+  color: red;
+}
+.asterick.warn{
+  color: yellowgreen;
+}

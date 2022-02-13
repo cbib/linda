@@ -5,6 +5,13 @@ import { map, catchError, retry} from 'rxjs/operators';
 import {ResDataModal} from '../models/datatable_model';
 import { Constants } from "../constants";
 import { Investigation } from '../models/json/investigation';
+import { InvestigationInterface } from '../models/miappe/investigation'; 
+import {StudyInterface} from '../models/miappe/study'
+import { BiologicalMaterialInterface } from '../models/miappe/biological-material'
+import { ExperimentalFactorInterface } from '../models/miappe/experimental_factor'; 
+import { ObservationUnitInterface } from '../models/miappe/observation-unit';
+import { DataFileInterface } from '../models/miappe/data_files'
+import { ObservedVariableInterface } from '../models/miappe/observed-variable';
 import { User } from '../models';
 @Injectable({
     providedIn: 'root'
@@ -86,6 +93,7 @@ export class GlobalService {
     get_max_level(model_type: string): Observable<any> {
         return this.http.get(this.APIUrl + "get_max_level/" + model_type).pipe(catchError(this.handleError));
     }
+    //Get all data files by investigation
     get_all_data_files(model_key:string): Observable<any> {
         return this.http.get(this.APIUrl + "get_all_data_files/" + model_key).pipe(catchError(this.handleError));
     }
@@ -103,6 +111,27 @@ export class GlobalService {
     }
     get_all_vertices(user_key: string) {
         return this.http.get(this.APIUrl + "get_vertices/" + user_key).pipe(catchError(this.handleError));
+    }
+    get_all_projects(user_key: string) : Observable<InvestigationInterface[]>{
+        return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + user_key).pipe(catchError(this.handleError));
+    }
+    get_all_studies(investigation_key: string) : Observable<StudyInterface[]>{
+        return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key).pipe(catchError(this.handleError));
+    }
+    get_all_biological_materials(study_key: string) : Observable<BiologicalMaterialInterface[]>{
+        return this.http.get<BiologicalMaterialInterface[]>(this.APIUrl + "get_all_biological_materials/" + study_key).pipe(catchError(this.handleError));
+    }
+    get_all_observed_variables(study_key: string) : Observable<ObservedVariableInterface[]>{
+        return this.http.get<ObservedVariableInterface[]>(this.APIUrl + "get_all_observed_variables/" + study_key).pipe(catchError(this.handleError));
+    }
+    get_all_experimental_factors(study_key: string) : Observable<ExperimentalFactorInterface[]>{
+        return this.http.get<ExperimentalFactorInterface[]>(this.APIUrl + "get_all_experimental_factors/" + study_key).pipe(catchError(this.handleError));
+    }
+    get_all_observation_units(study_key: string) : Observable<ObservationUnitInterface[]>{
+        return this.http.get<ObservationUnitInterface[]>(this.APIUrl + "get_all_observation_units/" + study_key).pipe(catchError(this.handleError));
+    }
+    get_data_files(study_key: string): Observable<DataFileInterface[]>{
+        return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + study_key).pipe(catchError(this.handleError));
     }
     get_all_observation_unit_childs(observation_unit_key: string) {
         return this.http.get<[]>(this.APIUrl + "get_observation_unit_childs/" + observation_unit_key);
@@ -250,6 +279,7 @@ export class GlobalService {
             'values': values,
             'model_type': model_type
         };
+        console.log(obj2send)
         if (template){
             return this.http.post(`${this.APIUrl + "update_template"}`, obj2send);
         }
@@ -447,6 +477,20 @@ export class GlobalService {
     
 
     // ADD REQUESTS 
+    // return object like that
+    // {
+    //     "success": true,
+    //     "message": "Everything is good ",
+    //     "res_obj": [
+    //       {
+    //         "success": true,
+    //         "message": "Everything is good for adding false",
+    //         "_id": "investigations/31262022"
+    //       }
+    //     ],
+    //     "template_id": null,
+    //     "_id": "investigations/31262022"
+    //   }
     add(values: {}, model_type: string, parent_id: string, as_template:boolean) {
         let user = this.get_user();
         let obj2send = {
@@ -457,7 +501,19 @@ export class GlobalService {
             'model_type': model_type,
             'as_template': as_template
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
+    }
+    add_template(values: {}, model_type: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'values': values,
+            'model_type': model_type,
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_template"}`, obj2send);
     }
     add_parent_and_childs(parent_model: {}, child_values: {}, model_type_parent: string, parent_id: string, model_type_child: string) {
         let user = this.get_user();

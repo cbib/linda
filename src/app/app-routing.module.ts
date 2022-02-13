@@ -10,8 +10,8 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
 
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  { path: '', redirectTo: 'home2', pathMatch: 'full' },
+  //{ path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'home2',component: HomeNewComponent, canActivate: [AuthGuard]},
   {
     path: 'login',

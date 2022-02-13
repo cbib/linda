@@ -179,7 +179,7 @@ export class MaterialFormComponent implements OnInit {
       //         //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
       //         attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
       //       }
-      //       else if (attr["key"].includes("Short title")) {
+      //       else if (attr["key"].includes("Project Name")) {
       //         attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
       //       }
       //       else {
@@ -266,7 +266,10 @@ export class MaterialFormComponent implements OnInit {
             //attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4), this.isMaterialIDDuplicate()], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
 
           }
-          else if (attr["key"].includes("Short title")) {
+          else if (attr["key"].includes("Project Name")) {
+            attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+          }
+          else if (attr["key"].includes("Study Name")) {
             attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
           }
           else {
@@ -302,9 +305,12 @@ export class MaterialFormComponent implements OnInit {
             //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
             attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
           }
-          else if (attr["key"].includes("Short title")) {
+          else if (attr["key"].includes("Project Name")) {
             attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
           }
+          else if (attr["key"].includes("Study Name")) {
+            attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+        }
           else {
             attributeFilters[attr["key"]] = [value];
           }
@@ -337,9 +343,12 @@ export class MaterialFormComponent implements OnInit {
               
               attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
             }
-            else if (attr["key"].includes("Short title")) {
+            else if (attr["key"].includes("Project Name")) {
               attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
             }
+            else if (attr["key"].includes("Study Name")) {
+              attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+          }
             else {
               attributeFilters[attr["key"]] = [value];
             }
@@ -740,15 +749,16 @@ export class MaterialFormComponent implements OnInit {
       return_data = general_attr.value
       //console.log(general_attr.value)
     });
+    console.log(return_data)
     var material_index = 0
     //this.materialTouchedRows.forEach(material_attr => {
     materialControl.controls.forEach(material_attr => {
-      //console.log(material_attr)
+      console.log(material_attr)
       var data=material_attr.value
       var material_attr_keys = Object.keys(data)
       var current_mat_id = ""
       for (var i = 0; i < material_attr_keys.length; i++) {
-        // //console.log(material_attr_keys[i])
+        console.log(material_attr_keys[i])
         // //console.log(material_attr[material_attr_keys[i]])
         if (material_attr_keys[i] === 'mat-id') {
           current_mat_id = data[material_attr_keys[i]]
@@ -787,6 +797,7 @@ export class MaterialFormComponent implements OnInit {
         if (data2['mat-id'] === current_mat_id) {
 
           var biological_material_attr_keys = Object.keys(data2)
+          console.log(biological_material_attr_keys.length)
           for (var i = 0; i < biological_material_attr_keys.length; i++) {
             if (biological_material_attr_keys[i] !== 'mat-id') {
               return_data[biological_material_attr_keys[i]][material_index].push(data2[biological_material_attr_keys[i]])

@@ -1,14 +1,4 @@
 
-<div class="border-head">
-    <h3>
-        <a href="index.html" class="logo">
-            <b>
-            P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
-            </b>
-        </a>
-    </h3>
-</div>
-
 <joyrideStep joyrideStep="StepExampleForm" title="" [stepContent]="ExampleForm" [stepContentParams]="{'model_n':demo_subset}" stepPosition="center">  
     <div joyrideStep="StepMenuForm" title="" [stepContent]="MenuForm" [stepContentParams]="{'model_n':demo_subset}" *ngIf= "mode==='extract'" >
         
@@ -59,6 +49,74 @@
                 </button>
                 <br>
                 <mat-card class="description_mat_card">
+                    <h5>Select extract mode</h5>
+                    <p> 
+                        Depending on content of your datafile, you need to select the mode of extraction. 
+                    </p>
+                    <mat-radio-group  [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">       
+                        <mat-radio-button  class="radio-margin" value="None"> No Study ID </mat-radio-button>
+                        <mat-radio-button 
+                            joyrideStep="StepUpload1Form"
+                            title=""
+                            [stepContent]="Upload1Form"
+                            [stepContentParams]="{'model_n':demo_subset}" 
+                            class="radio-margin" value="all">
+                            Datafiles + Studies
+                        </mat-radio-button>
+                        <ng-template #Upload1Form let-nod="model_n">
+                            <div>
+                            <nav class="navbar navbar-expand-sm navbar-dark">
+                                <h3>
+                                    <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                                </h3>
+                            </nav>
+                            </div>
+                            
+                            <h4>Data files</h4>
+                            <p>Before to upload datafiles in LINDA, you need to select the import mode :</p>
+                            <mat-card>
+                                
+                                <h5>Import data files and create studies inplace</h5>
+                                <p>
+                                    In the case, you had only created the investigation node, you could want to define your studies
+                                    automatically(sometimes you could have a lot of studies).
+                                    If you select to import data and studies, as indicated both will be imported (studies are not created again if
+                                    they already exist)
+                                </p>
+                            </mat-card>
+                            <mat-card>
+                                <h6>Notes</h6>
+                                You will be ask to fill some common field between each studies
+                            </mat-card>
+                        </ng-template>
+                        
+                        <mat-radio-button 
+                        joyrideStep="StepUpload2Form"
+                        title=""
+                        [stepContent]="Upload2Form"
+                        [stepContentParams]="{'model_n':demo_subset}" 
+                        class="radio-margin" value="only_data">
+                            Datafiles
+                        </mat-radio-button>
+                        <ng-template #Upload2Form let-nod="model_n">
+                            <div>
+                            <nav class="navbar navbar-expand-sm navbar-dark">
+                                <h3>
+                                    <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                                </h3>
+                            </nav>
+                            </div>
+                            <h4>Data files</h4>
+                            <mat-card>
+                                <h6>Import data files only</h6>
+                                <p> Given that you could have built your experimental design prior to import data files, you can, if you want, only load the data as data files in your investigations using the 
+                                    <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button> radio button.
+                                Data files must have a column assigned to study unique id in order to link data to corresponding studies. </p>
+                            </mat-card>     
+                        </ng-template>
+                    </mat-radio-group>
+                </mat-card>
+                <mat-card class="description_mat_card">
                 <h4>Extract Data files from tabular file!</h4>
                 <p> Using a external tabular file, Users can easily import experimental and environmental data related to their studies. 
                     he can also extract experimental design map (field, block, row, column, etc;) and correlate biological material location with this experimental design map. <br>
@@ -97,75 +155,9 @@
                     In this case, you should check <b> No Study ID </b> option !
                 </p>
                 </mat-card>
+                
                 <br>
-                <mat-card class="description_mat_card">
-                <h5>Select extract mode</h5>
-                <p> 
-                    Depending on content of your datafile, you need to select the mode of extraction. 
-                </p>
-                <mat-radio-group  [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">       
-                    <mat-radio-button  class="radio-margin" value="None"> No Study ID </mat-radio-button>
-                    <mat-radio-button 
-                        joyrideStep="StepUpload1Form"
-                        title=""
-                        [stepContent]="Upload1Form"
-                        [stepContentParams]="{'model_n':demo_subset}" 
-                        class="radio-margin" value="all">
-                        Datafiles + Studies
-                    </mat-radio-button>
-                    <ng-template #Upload1Form let-nod="model_n">
-                        <div>
-                        <nav class="navbar navbar-expand-sm navbar-dark">
-                            <h3>
-                                <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-                            </h3>
-                        </nav>
-                        </div>
-                        
-                        <h4>Data files</h4>
-                        <p>Before to upload datafiles in LINDA, you need to select the import mode :</p>
-                        <mat-card>
-                            
-                            <h5>Import data files and create studies inplace</h5>
-                            <p>
-                                In the case, you had only created the investigation node, you could want to define your studies
-                                automatically(sometimes you could have a lot of studies).
-                                If you select to import data and studies, as indicated both will be imported (studies are not created again if
-                                they already exist)
-                            </p>
-                        </mat-card>
-                        <mat-card>
-                            <h6>Notes</h6>
-                            You will be ask to fill some common field between each studies
-                        </mat-card>
-                    </ng-template>
-                    
-                    <mat-radio-button 
-                    joyrideStep="StepUpload2Form"
-                    title=""
-                    [stepContent]="Upload2Form"
-                    [stepContentParams]="{'model_n':demo_subset}" 
-                    class="radio-margin" value="only_data">
-                        Datafiles
-                    </mat-radio-button>
-                    <ng-template #Upload2Form let-nod="model_n">
-                        <div>
-                        <nav class="navbar navbar-expand-sm navbar-dark">
-                            <h3>
-                                <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-                            </h3>
-                        </nav>
-                        </div>
-                        <h4>Data files</h4>
-                        <mat-card>
-                            <h6>Import data files only</h6>
-                            <p> Given that you could have built your experimental design prior to import data files, you can, if you want, only load the data as data files in your investigations using the 
-                                <mat-radio-button class="radio-margin" value="only_data">Only data</mat-radio-button> radio button.
-                            Data files must have a column assigned to study unique id in order to link data to corresponding studies. </p>
-                        </mat-card>     
-                    </ng-template>
-                </mat-radio-group>
-                </mat-card>
+               
             </form>
         </div>
     </div>
@@ -197,7 +189,6 @@
     </mat-card>
     </ng-template>
     <div *ngIf= "mode==='create'" >
-        <h1>CSV Data Loader</h1>
         <!--<app-upload-file ></app-upload-file>-->
         <div *ngIf="error">
             {{ error.message }}
@@ -216,10 +207,10 @@
             <button (click)="cancel()" class="btn btn-danger">Cancel</button>
         </form>
     </div>
-    <div *ngIf= "mode.includes('edit') || mode.includes('extract-again')" >
+    <div *ngIf= "mode.includes('edit')" >
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <button class="btn btn-outline-rounded btn-info" type="submit">Save</button>
-    </form>
+        </form>
     </div>
     <!-- <div *ngIf= "mode.includes('extract-again')" >
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -366,6 +357,9 @@
         <select [ngModel]="get_selected_file"  name="select_filename" size="1" (change)="onFilenameChange($event.target.value)" >
             <option *ngFor="let filename of get_filename_used" [value]="filename">{{filename}}</option>
         </select> 
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <button style="float: right;" class="btn btn-outline-rounded btn-info" type="submit">Save</button>
+        </form>
         <br>
     </div>
     <div  *ngIf= "mode==='extract-again' && get_filename_used.length === 0">

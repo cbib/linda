@@ -202,26 +202,25 @@ export class SampleSelectionComponent implements OnInit {
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
       var value = ''
-
       this.validated_term[attr["key"]] = { selected: false, values: "" }
       if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-
         if (attr["key"].includes("ID")) {
           //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
           //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
         }
-        else if (attr["key"].includes("Short title")) {
+        else if (attr["key"].includes("Project Name")) {
+          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+        }
+        else if (attr["key"].includes("Study Name")) {
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
         }
         else {
           attributeFilters[attr["key"]] = [value];
         }
         //attributeFilters['sampleUUID'] = uuid.v4()
-
         attributeFilters['bmUUID'] = bm_id
         attributeFilters['obsUUID'] = this.observation_id
-
         //this.sample_id = attributeFilters['sampleUUID']
       }
 

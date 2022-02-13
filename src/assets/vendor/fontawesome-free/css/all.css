@@ -160,7 +160,7 @@
 :root .fa-flip-vertical,
 :root .fa-flip-both {
   -webkit-filter: none;
-          filter: none; }
+  filter: none; }
 
 .fa-stack {
   display: inline-block;

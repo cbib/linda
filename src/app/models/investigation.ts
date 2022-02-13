@@ -22,7 +22,7 @@ export interface InvestigationForm
         "BrAPI Field(s)": "publicationPUI"
       }
     },
-    "Short title": {
+    "Project Name": {
       "Example": "FRIM01",
       "Level": "1",
       "Format": "Free text (short)",

@@ -1,11 +1,4 @@
 <div id="projects-page">
-    <div class="border-head">
-        <h3>
-            <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
-                    exper<span>I</span>me<span>N</span>tal
-                    meta<span>D</span>at<span>A</span></b></a>
-        </h3>
-    </div>
     <!-- <div>
         <mat-card>
             <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
@@ -19,55 +12,20 @@
         </mat-card>
     </div> -->
     <!-- <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button> -->
-    <button class="btn btn-success btn-xs fa fa-refresh" (click)="play_again()"><span style="margin-left: 5px;">Restart tutorial</span></button>
-    <button class="btn btn-success btn-xs fa fa-refresh" (click)="turn_off()"><span style="margin-left: 5px;">Turn off tutorial</span></button>
-    <button title="Here is the button for help " [matMenuTriggerFor]="helpMenu" class="btn btn-light fa fa-question-circle"></button>
-    <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
-        [matMenuTriggerFor]="helpMenu">
-     </div>
-    <mat-menu #helpMenu="matMenu">
-        <button style="float: right;" class="btn btn-light" mat-menu-item
-            [matMenuTriggerFor]="HelpSubMenu">Help</button>
-    </mat-menu>
-    <mat-menu #HelpSubMenu="matMenu">
-        <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
-        <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
-        <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
-        <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
-        <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
-        <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
-        <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button>
-    </mat-menu>
+    <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="play_again()"><span style="margin-left: 5px;">Restart tutorial</span></button> -->
+    <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="turn_off()"><span style="margin-left: 5px;">Turn off tutorial</span></button> -->
+    
+
     <div style="overflow: auto">
-        <mat-card>
-            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
-                Once you first logged, you will see nothing except the add investigation button.
-
-                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID
-                are mandatory to register your investigation in the database.
-                You can remove more than one node at the time if you use the right click button on Investigations tree
-                node and choose remove selected option.
-            </p>
-        <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
-
-        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-            [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
-        </div>
-        <mat-menu #contextMenu="matMenu">
-            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
-        </mat-menu>
-        
-        <mat-menu #contextSubMenu="matMenu">
-            <button mat-menu-item (click)="add()">from original model template</button>
-            <button mat-menu-item (click)="add(template=true)">from saved templates</button>
-        </mat-menu>
-        
-        <h2>My investigations</h2>
        
         
-        <div class="mat-chip-list-wrapper text-center">
+        
+        
+       
+        
+        <!-- <div class="mat-chip-list-wrapper text-center">
             <mat-chip-list #chipsList aria-orientation="vertical">
-              <mat-chip class="chips"  (click)="selectedProjectChip(elm)" [matMenuTriggerFor]="userMenu" color="accent" [selected]="index === 0" *ngFor="let elm of projects; let index = index" [value]="elm.project_id">
+              <mat-chip class="chips"  (click)="onEdit(elm)" [matMenuTriggerFor]="userMenu" color="accent" [selected]="index === 0" *ngFor="let elm of projects; let index = index" [value]="elm.project_id">
                 {{elm.project_short_name}}
               </mat-chip>
             </mat-chip-list>
@@ -79,16 +37,117 @@
                 <button mat-menu-item [matMenuTriggerFor]="userMenusecond">Investigation</button>
             </mat-menu>
             <mat-menu #userMenusecond="matMenu">
-                <button mat-menu-item (click)="onEdit()">Edit</button>
                 <button mat-menu-item (click)="onRemove()" confirm="Are you sure?">Remove</button>
-                    <!-- <button mat-menu-item (click)="add('investigation','zip')"><label>From zip file<input type="file" style="display: none;" accept=".zip" (change)="onFileChange($event)"></label> </button> -->
-            </mat-menu>
-            
-            
-        </div>
+            </mat-menu>  
+        </div> -->
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link active" aria-controls="guest" role="tab" data-toggle="tab" href="#guest">Guest User</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#BFP" aria-controls="BFP" role="tab" data-toggle="tab">BFP User</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#consort" aria-controls="consort" role="tab" data-toggle="tab">Consortium User</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Adminitrator User</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="guest">
+                <h2>My current projects</h2>
+                <mat-divider></mat-divider>
+                    <mat-card style="width: 95%;">
+                        <div>
+                            <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+                            <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
+                            <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+                                [matMenuTriggerFor]="helpMenu">
+                            </div>
+                            <mat-menu #helpMenu="matMenu">
+                                <button style="float: right;" class="btn btn-light" mat-menu-item
+                                    [matMenuTriggerFor]="HelpSubMenu">Help</button>
+                            </mat-menu>
+                            <mat-menu #HelpSubMenu="matMenu">
+                                <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
+<!--                                 <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+                                <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
+                                <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
+                                <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
+                                <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
+                                <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+                            </mat-menu>
+                            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+                            </div>
+                            <mat-menu #contextMenu="matMenu">
+                                <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+                            </mat-menu>
+                            
+                            <mat-menu #contextSubMenu="matMenu">
+                                <button mat-menu-item (click)="add(false)">from original model template</button>
+                                <button mat-menu-item (click)="add(true)">from saved templates</button>
+                            </mat-menu>
+                            <span class="span-project"></span>
+                            <mat-form-field appearance="standard">
+                                <mat-label>Filter</mat-label>
+                                <input matInput (keyup)="applyFilter($event)" placeholder="PROJECT 101" #input>
+                            </mat-form-field>
+                            
+                            <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+                                
+                                <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                                    <ng-container *ngIf="column!=='edit'">
+                                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                    <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                    </ng-container>
+                                    <ng-container  *ngIf="column==='edit'">
+                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                        <td mat-cell *matCellDef="let element"> 
+                                            <div class="btn-group" style="float: right;">
+                                                <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                                <button title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                                                <button title="Explore project" (click)="onExplore(element)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
+                                                <button title="Export project as ISA-Tab" (click)="onExportIsa(element)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
+                                                <button title="Export project as json, tsv, csv" (click)="onExport(element)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+                                </ng-container>
+                                
+                                <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+                                <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+                            </table>
+                            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                        </div>
+                    </mat-card>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="BFP">
+                <h2>BFP projects</h2>
+                <mat-divider></mat-divider>
+                <!--Add button ask for BFP account-->
+                    <mat-card style="width: 80%;">
+                    </mat-card>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="consort">
+                <h2>My current projects</h2>
+                <!-- Which consortium, add a select tag -->
+                <mat-divider></mat-divider>
+                    <mat-card style="width: 80%;">
+                    </mat-card>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="admin">
+                <h2>Admin projects</h2>
+                <mat-divider></mat-divider>
+                    <mat-card style="width: 80%;">
+                    </mat-card>
+            </div>
+        
         <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
         
-        </mat-card>
-    </div>
+        
+        </div>
+        
 </div>
 

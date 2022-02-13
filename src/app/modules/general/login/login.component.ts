@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
     submitted = false;
     returnUrl: string;
     encrypted_password:string=""
-
+    error = '';
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -58,30 +58,28 @@ export class LoginComponent implements OnInit {
             return;
         }
         console.log(Md5.hashStr(this.f.password.value))
-        this.loginForm.get('password').setValue(Md5.hashStr(this.f.password.value))
+        //this.loginForm.get('password').setValue(Md5.hashStr(this.f.password.value))
         //const md5 = new Md5();
         //var encrypted_password=md5.appendStr(this.f.password.value).end();
-        //this.loading = true;
+        this.loading = true;
 
-        this.authenticationService.login(this.f.username.value, this.f.password.value)
+        this.authenticationService.login(this.f.username.value, Md5.hashStr(this.f.password.value))
             .pipe(first())
             .subscribe(
             //.toPromise().then(
-                data => {
+                ( data )=> {
+                  
                     console.log(data)
                     console.log(this.returnUrl)
                     this.router.navigate([this.returnUrl]);
-                    /* if (data.length===0){
-                        console.log("incorrect password or username");
-                        this.alertService.error("incorrect password or username");
-                    } */
-                  
                 },
                 error => {
+                    this.error = error
                     console.log(this.f.username.value)
                     console.log(this.f.password.value)
                     console.log("incorrect password or username");
                     this.alertService.error(error);
+                    this.authenticationService.logout()
                     this.loading = false;
                 }
                 );

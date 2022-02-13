@@ -19,7 +19,7 @@ export interface Investigation {
     "_rev": string;
     "Definition": string;
     "Associated publication":Commons;
-    "Short title": Commons;
+    "Project Name": Commons;
     "Investigation unique ID": Commons;
     "License": Commons;
     "Submission date": Commons;

@@ -7,7 +7,7 @@ import { saveAs } from 'file-saver';
 import * as JSZip from 'jszip';
 import * as fs from 'fs';
 import { element } from 'protractor';
-
+import * as XLSX from 'xlsx';
 
 
 @Injectable({
@@ -15,6 +15,8 @@ import { element } from 'protractor';
 })
 export class FileService {
     private APIUrl: string;
+    fileUploaded: File;
+
 
     constructor(private httpClient: HttpClient) {
         this.APIUrl = Constants.APIConfig.APIUrl;
@@ -101,6 +103,37 @@ export class FileService {
             }
         })
         );
+    }
+    read_csv(fileUploaded:File) {
+        let fileReader = new FileReader();
+        var csv:string|ArrayBuffer=""
+        fileReader.onload = (e) => {
+            csv = fileReader.result;
+        }
+        fileReader.readAsText(fileUploaded);
+        return this.get_csv(csv) 
+    }
+    readExcel(fileUploaded:File) {
+        let fileReader = new FileReader();
+        fileReader.onload = (e) => {
+            var storeData:any = fileReader.result;
+            var data = new Uint8Array(storeData);
+            var arr = new Array();
+            for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            var bstr = arr.join("");
+            var book = XLSX.read(bstr, { type: "binary" });
+            var first_sheet_name = book.SheetNames[0];
+            var worksheet = book.Sheets[first_sheet_name];
+            var csv = XLSX.utils.sheet_to_csv(worksheet);
+            return this.get_csv(csv);
+            
+            
+        }
+        fileReader.readAsArrayBuffer(fileUploaded);
+        
+    }
+    get_csv(csvData: any) {
+        return csvData.split(/\r|\n|\r/);
     }
 
     public build_path(root_id, models, selected_format) {

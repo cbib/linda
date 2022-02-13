@@ -86,7 +86,7 @@
                       <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
                     </span>
                     <div *ngIf="model[field['key']].Format.includes('Ontology')">
-                      <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group">
+                      <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as k;" class="btn-group">
                         <button class="btn btn-success btn-xs fa fa-plus"
                           (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
                           {{ont}}
@@ -102,7 +102,7 @@
                         style="display:inline-block; margin-left: 10px;">
                         <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
                           formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
-                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                          [ngClass]="{ 'is-invalid': group[field['key']].errors }" />
                       </span>
                     </div>
                     <div *ngIf="!model[field['key']].Format.includes('Ontology')">
@@ -110,17 +110,17 @@
                         <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
-                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                          [ngClass]="{ 'is-invalid': group[field['key']].errors }" />
                         <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
-                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
-                        <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.required">{{field['key']}} is
+                          [ngClass]="{ 'is-invalid': group[field['key']].errors}"></textarea>
+                        <div *ngIf="group[field['key']].errors" class="invalid-feedback">
+                          <div style="color :red" *ngIf="group[field['key']].errors.required">{{field['key']}} is
                             required</div>
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum length is
+                          <div style="color :red" *ngIf="group[field['key']].errors.minlength">minimum length is
                             required</div>
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is required -
+                          <div style="color :red" *ngIf="group[field['key']].errors.create">Unique ID is required -
                             already used !! </div>
 
                         </div>
@@ -234,7 +234,7 @@
                           <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
                             mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                             formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                            [ngClass]="{ 'is-invalid': group[field['key']].errors }" />
 
                           <!-- <mat-slider formControlName="{{field['key']}}"
                             *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
@@ -259,15 +259,15 @@
                             *ngIf="model[field['key']].Format.includes('Free text') || model[field['key']].Format.includes('DOI')"
                             mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                             formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
-                          <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                            [ngClass]="{ 'is-invalid': group[field['key']].errors}"></textarea>
+                          <div *ngIf="group[field['key']].errors" class="invalid-feedback">
+                            <div style="color :red" *ngIf="group[field['key']].errors.required">
                               {{field['key']}} is required</div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">Minimum
+                            <div style="color :red" *ngIf="group[field['key']].errors.minlength">Minimum
                               length is required</div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                            <div style="color :red" *ngIf="group[field['key']].errors.create">Unique ID is
                               required - already used !! </div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.duplicate">duplicate ID in table unique ID is required -
+                            <div style="color :red" *ngIf="group[field['key']].errors.duplicate">duplicate ID in table unique ID is required -
                                 already used !! </div>
                           </div>
                         </div>
@@ -395,7 +395,7 @@
                             <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
                               mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                               formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
-                              [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                              [ngClass]="{ 'is-invalid': group[field['key']].errors }" />
                             <!-- <mat-slider formControlName="{{field['key']}}"
                               *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
                               [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
@@ -418,13 +418,13 @@
                             <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                               placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                               (keyup)="onTaskAdd($event)"
-                              [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
-                            <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                              [ngClass]="{ 'is-invalid': group[field['key']].errors}"></textarea>
+                            <div *ngIf="group[field['key']].errors" class="invalid-feedback">
+                              <div style="color :red" *ngIf="group[field['key']].errors.required">
                                 {{field['key']}} is required</div>
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                              <div style="color :red" *ngIf="group[field['key']].errors.minlength">minimum
                                 length is required</div>
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                              <div style="color :red" *ngIf="group[field['key']].errors.create">Unique ID is
                                 required - already used !! </div>
                             </div>
                           </div>

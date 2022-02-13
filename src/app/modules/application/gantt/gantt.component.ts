@@ -2,26 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GanttEditorComponent, GanttEditorOptions } from "ng-gantt/";
 import { GlobalService} from '../../../services';
 import { MiappeNode } from '../../../models';
+import { GantElement } from './GantElement';
+import { ModelGant } from './GantElement';
 
-// to create call var mg: ModelGant, then assign the corresponding object
-export interface ModelGant {
-  pID: number;
-  pName: string;
-  pStart: string;
-  pEnd: string;
-  pClass: string;
-  pLink: string;
-  pMile: number;
-  pRes: string;
-  pComp: number;
-  pGroup: number;
-  pParent: number;
-  pOpen: number;
-  pDepend: string;
-  pCaption: string;
-  pNotes: string;
-
-}
 
 @Component({
   selector: 'app-gantt',
@@ -37,6 +20,7 @@ export class GanttComponent implements OnInit {
   public statistics: {};
   private nodes: MiappeNode[]
   private  myListmg = [] as Array<ModelGant>
+  private  mylistobjmg = [] as Array<GantElement>
   constructor(private globalService: GlobalService) { }
 
   async ngOnInit() {
@@ -44,8 +28,8 @@ export class GanttComponent implements OnInit {
     console.log(this.vertices)
     this.nodes = this.build_hierarchy(this.vertices)
     console.log(this.nodes)
-    //this.data = this.build_gantt(this.nodes)
-    this.data = this.initialData();
+    this.data = this.build_gantt(this.nodes)
+    //this.data = this.initialData();
     console.log(this.data)
 
     //this.data = this.nodes
@@ -77,6 +61,19 @@ export class GanttComponent implements OnInit {
     pCaption: "",
     pNotes: "Some Notes text"
   }, */
+  build_gantt2(_nodes: MiappeNode[]){
+    this.mylistobjmg
+    _nodes.forEach(
+      n => {
+        let investigations = n.children
+        investigations.forEach(
+          i=> {
+            //var mgi= new GantElement(_pID=parseInt(i.model_key),_pName=i.name)
+            console.log(i)
+          });
+      }
+    )
+  }
   build_gantt(_nodes: MiappeNode[]){
     let mymgs = [] as Array<ModelGant>
     _nodes.forEach(
@@ -104,8 +101,11 @@ export class GanttComponent implements OnInit {
             mymgs.push(mgi)
             
             let studies = i.children
+            console.log(studies)
+            let cpt=0
             studies.forEach(
               s=> {
+
                 var mgs = {} as ModelGant
                 mgs.pID=parseInt(s.model_key)
                 mgs.pName=s.name
@@ -123,7 +123,28 @@ export class GanttComponent implements OnInit {
                 mgs.pCaption= ""
                 
                 mymgs.push(mgs)
+                //test observation unit
+                /* var mgou = {} as ModelGant
+                let pname= "obsunit_" + s.model_key
+                mgou.pID=cpt
+                mgou.pName=pname
+                mgou.pStart="2017-02-21"
+                mgou.pEnd="2017-03-09"
+                mgou.pClass= "gtaskblue",
+                mgou.pLink= ""
+                mgou.pMile= 1
+                mgou.pRes="fgvedwv"
+                mgou.pComp=34
+                mgou.pGroup= 1
+                mgou.pParent=parseInt(s.model_key)
+                mgou.pOpen= 1
+                mgou.pDepend= ""
+                mgou.pCaption= ""
+                
+                mymgs.push(mgou) */
               });
+              cpt+=1
+            
           });
           console.log(mymgs)
       });
@@ -153,7 +174,12 @@ export class GanttComponent implements OnInit {
                 }
               }
               percent = Math.round(100 * ((total - 3) / (vertice_keys.length - 3)))
-              short_name = vertice['Short title']
+              if (parent_id.includes('investigation')){
+                short_name = vertice['Project Name']
+              }
+              else{
+                short_name = vertice['Study Name']
+              }
             }
           }
         )

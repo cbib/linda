@@ -53,11 +53,9 @@ tableData = [];
     this.dialogRef.close({event:"Cancelled"});
   }
 
-onOkClick(): void {
-
-  this.dialogRef.close({event:"Confirmed"});
-
-}
+  onOkClick(): void {
+    this.dialogRef.close({event:"Confirmed"});
+  }
 
 
 }

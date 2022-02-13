@@ -20,6 +20,8 @@ export class TemplatesComponent implements OnInit {
   private currentUser
   private selected_model_type=""
   private key =""
+  private selected_model:string=""
+  private model_types :{}[]= [{"investigation":"Investigation"}, {"study":"Study"}, {"event":"Event"}, {"experimental_factor":"Experimental factor"},{"observation_unit":"Observation unit"},{"biological_material":"Biological material"},{"observed_variable":"Observed variable"}]
 
   constructor(private globalService : GlobalService,
     private router: Router,
@@ -33,6 +35,21 @@ export class TemplatesComponent implements OnInit {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     await this.get_templates(this.currentUser._key)
   }
+  get get_model_types() : {}[]{
+    return this.model_types
+  }
+  get get_selected_model(){
+    return this.selected_model
+  }
+
+  get_key(model:{}){
+    return Object.keys(model)[0];
+  }
+  get_value(model:{}){
+    return model[Object.keys(model)[0]];
+  }
+
+
   get_templates(user_key){
     const ELEMENT_DATA: TemplateElement[]=[]
     this.globalService.get_all_templates(user_key).toPromise().then(
@@ -56,7 +73,7 @@ export class TemplatesComponent implements OnInit {
     return this.dataSource
   }
   edit_template(element){
-    this.router.navigate(['/generic_form'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: element.key, model_type: element.model_type, mode: "edit_template" } });
+    this.router.navigate(['/generic_form'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: element.key, model_type: element.model_type, mode: "edit_template" , inline:"false", asTemplate:false, onlyTemplate:true}, skipLocationChange: true });
 
   }
   reloadComponent(path:[string]) {
@@ -79,5 +96,17 @@ export class TemplatesComponent implements OnInit {
           }
       }
   );
+  }
+  onModelChange(values: string) {
+
+    this.selected_model = values
+  }
+  onAdd(){
+    if (! this.selected_model){
+      this.alertService.error("You need to select a model first !! ")
+    }else{
+      this.router.navigate(['/generic_form'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: "", model_type: this.selected_model, mode: "create" , inline:"false", asTemplate:true, onlyTemplate:true}, skipLocationChange: true}); //replaceUrl: false
+
+    }
   }
 }

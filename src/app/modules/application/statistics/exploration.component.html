@@ -1,11 +1,4 @@
-<div class="border-head">
-    <nav class="navbar navbar-expand-sm navbar-dark">
-        <h3>
-            <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
-                    meta<span>D</span>at<span>A</span></b></a>
-        </h3>
-    </nav>
-</div>
+<div id="explore_page">
 <h4>Investigation exploration </h4>
 <p>You're about to mine your data with Linda.
     You can visualize easily your observations and correlate them with experimental factors and environmental
@@ -76,7 +69,7 @@
     </div> -->
     <div>
         <h4>
-            selected_observed_variable by genotype ({{factor_value_array[0]}} vs {{factor_value_array[1]}} conditions)
+            {{selected_observed_variable}} by genotype ({{get_factor_value_array[0]}} vs {{get_factor_value_array[1]}} conditions)
         </h4>
         <ngx-charts-bar-vertical-2d [view]="view2" [scheme]="colorScheme" [results]="my_displayed_data"
             [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
@@ -119,3 +112,4 @@
         </div>
         <br> -->
 </section>
+</div>

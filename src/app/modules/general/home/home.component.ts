@@ -56,8 +56,10 @@ export class HomeComponent implements OnInit {
         this.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
+                console.log(data)
                 this.end()
                 this.vertices = data;
+                
             }
         )
     }
@@ -121,7 +123,12 @@ export class HomeComponent implements OnInit {
                                 }
                             }
                             percent = Math.round(100 * ((total - 3) / (vertice_keys.length - 3)))
-                            short_name = vertice['Short title']
+                            if (parent_id.includes('investigation')){
+                                short_name = vertice['Project Name']
+                            }
+                            else{
+                                short_name = vertice['Study Name']
+                            }
                         }
                     }
                 )

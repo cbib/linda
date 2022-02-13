@@ -11,6 +11,7 @@ export class TableComponent implements OnInit {
   tableData = [];
   @Input() data:{};
   @Input() vertice:{}
+  @Input() data_columns:[]
   @ViewChild('dataTable', {static: true}) table;
 
   constructor(private router: Router,private route: ActivatedRoute) {
@@ -18,6 +19,7 @@ export class TableComponent implements OnInit {
       params => {
           this.data = params['data'];
           this.vertice = params['data_vertice']
+          this.data_columns = params['data_columns']
       }
   );
    }
@@ -27,11 +29,11 @@ export class TableComponent implements OnInit {
     this.getDataFromSource()
   }
   getDataFromSource() {
-    let tableData_columns=["Observation unit ID","Observation Unit factor value","Observation unit type", "External ID","Spatial distribution"]
+    //let tableData_columns=["Observation unit ID","Observation Unit factor value","Observation unit type", "External ID","Spatial distribution"]
     this.tableData = this.data['filteredData'];
     var columns = []
     //var tableData_columns = Object.keys(this.tableData[0]);
-    tableData_columns.forEach(key => {
+    this.data_columns.forEach(key => {
         columns.push({title: key, data: key})
     });
     this.dtOptions = {

@@ -6,6 +6,7 @@ import { FormRoutingModule } from './form-routing.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
+import {MatBadgeModule} from '@angular/material/badge';
 import { JoyrideModule, JoyrideService } from 'ngx-joyride';
 import { GlobalService, AlertService, UserService} from '../../../services';
 
@@ -23,6 +24,7 @@ import { AuthGuard } from '../../../guards/auth.guards';
     MatIconModule,
     MatMenuModule,
     MatCardModule,
+    MatBadgeModule,
     JoyrideModule.forChild()
   ],
   exports: [
