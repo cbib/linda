@@ -1,0 +1,139 @@
+<div id="study-page">
+  <!-- <div class="border-head">
+        <h3>
+            <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
+                    exper<span>I</span>me<span>N</span>tal
+                    meta<span>D</span>at<span>A</span></b></a>
+        </h3>           
+            <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
+    </div> -->
+  <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save
+    Changes</button>
+  <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close
+    Study</button>
+
+  <!-- Nav pills -->
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studyinfo'}" (click)="changeTab('studyinfo')"
+        aria-controls="studyinfo" role="tab" data-toggle="tab" href="#studyinfo">1. Administrative informations</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='biomat'}" (click)="changeTab('biomat')" href="#biomat"
+        aria-controls="biomat" role="tab" data-toggle="tab">2. Biological materials</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsunit'}" (click)="changeTab('obsunit')" href="#obsunit"
+        aria-controls="obsunit" role="tab" data-toggle="tab">3. Observations Units</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='expfac'}" (click)="changeTab('expfac')" href="#expfac"
+        aria-controls="expfac" role="tab" data-toggle="tab">4. Experimental Factors</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsvar'}" (click)="changeTab('obsvar')" href="#obsvar"
+        aria-controls="obsvar" role="tab" data-toggle="tab">4. Observed variables</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='data_files'}" (click)="changeTab('data_files')" href="#data_files"
+        aria-controls="expfac" role="tab" data-toggle="tab">5. Data files</a>
+    </li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div [ngClass]="{ 'active':activeTab==='studyinfo'}" role="tabpanel" class="tab-pane active" id="studyinfo">
+      <h3>Describe your study</h3>
+      <mat-card style="width: 80%;">
+        <app-form *ngIf="activeTab==='studyinfo'" id="study_form" (notify)="get_output_from_child($event)"
+          [model_type]="'study'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+          inline="true"></app-form>
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='biomat'}" role="tabpanel" class="tab-pane" id="biomat">
+      <h3>Describe biological materials</h3>
+      <mat-card style="width: 80%;">
+        <app-biological-material-page *ngIf="activeTab==='biomat'" (notify)="get_output_from_child($event)"
+          [model_type]="'biological_material'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-biological-material-page>
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='obsunit'}" role="tabpanel" class="tab-pane" id="obsunit">
+      <h3>Describe observation units</h3>
+      <mat-card style="width: 80%;">
+        <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
+          [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-observation-unit-page>
+        <!-- observation unit form -->
+      </mat-card>
+    </div>
+
+    <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
+      <h3>Observed variables</h3>
+      <mat-card style="width: 80%;">
+        <app-observed-variable-page *ngIf="activeTab==='obsvar'" (notify)="get_output_from_child($event)"
+          [model_type]="'observed_variable'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-observed-variable-page>
+        <!-- observation unit form -->
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='expfac'}" role="tabpanel" class="tab-pane" id="expfac">
+      <h3>Describe experimental factors</h3>
+      <mat-card style="width: 80%;">
+        <app-experimental-factor-page *ngIf="activeTab==='expfac'" (notify)="get_output_from_child($event)"
+          [model_type]="'experimental_factor'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-experimental-factor-page>
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='data_files'}" role="tabpanel" class="tab-pane" id="data_files">
+      <h3>Explore associated data</h3>
+      <app-data-files-page *ngIf="activeTab==='data_files'" (notify)="get_output_from_child($event)"
+          [model_type]="'data_files'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+      </app-data-files-page>
+      <mat-card style="width: 80%;">
+      
+<!--       <table  class="table table-hover table-bordered  table-striped text-center">
+        <tbody>
+          <tr *ngFor="let key of get_data() ; index as j;">
+
+            <td *ngIf="key != 'headers'" style="font-size:14px;text-align: center; " scope="row">
+              {{key}}
+            </td>
+
+            <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
+              <a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a>
+            </td>
+
+            <td *ngIf="key.includes('file version') || key.includes('file description')"
+              style="font-size:14px;text-align: center;" scope="row">
+              {{get_current_data_array(node)[key]}}
+            </td>
+            <td *ngIf="key === 'Data'" style="font-size:14px;text-align: center;" scope="row">
+              <button (click)="show_datatable(node)" class="btn btn-primary btn-xs" title="{{node.id}}">Show
+                data
+              </button>
+            </td>
+            <td *ngIf="key === 'associated_headers'" style="font-size:14px;text-align: center;" scope="row">
+              <div class="btn-group mr-3" *ngFor="let headers of get_current_data_file_headers(node) ; index as k;">
+                <div *ngIf="headers['associated_linda_id'] === ''" class="btn-group" role="group"
+                  aria-label="Button group with nested dropdown">
+                  <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
+                    class="btn btn-primary btn-xs"
+                    title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
+                  </button>
+                </div>
+                <div *ngIf="headers['associated_linda_id'] !== ''" class="btn-group" role="group"
+                  aria-label="Button group with nested dropdown">
+                  <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
+                    class="btn btn-primary btn-xs"
+                    title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table> -->
+    </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div id="studies-page">
+    <!-- <div class="border-head">
+        <h3>
+            <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
+                    exper<span>I</span>me<span>N</span>tal
+                    meta<span>D</span>at<span>A</span></b></a>
+        </h3>
+    </div> -->
+    <!-- <div>
+        <mat-card>
+            <p> Below is the Investigation tree. it contains the whole history of all your projects in LINDA database.
+                Once you first logged, you will see nothing except the add investigation button.
+
+                Please feel free to click on it to expand as exhaustively as possible your investigation. Only unique ID
+                are mandatory to register your investigation in the database.
+                You can remove more than one node at the time if you use the right click button on Investigations tree
+                node and choose remove selected option.
+            </p>
+        </mat-card>
+    </div> -->
+    <!-- <button (click)="onClickTour()" style="float: right;" class="btn btn-light">Help</button> -->
+    <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="play_again()"><span style="margin-left: 5px;">Restart tutorial</span></button>
+    <button class="btn btn-success btn-xs fa fa-refresh" (click)="turn_off()"><span style="margin-left: 5px;">Turn off tutorial</span></button> -->
+    <button title="Here is the button for help " [matMenuTriggerFor]="helpMenu" class="btn btn-light fa fa-question-circle"></button>
+    <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+        [matMenuTriggerFor]="helpMenu">
+     </div>
+    <mat-menu #helpMenu="matMenu">
+        <button style="float: right;" class="btn btn-light" mat-menu-item
+            [matMenuTriggerFor]="HelpSubMenu">Help</button>
+    </mat-menu>
+    <mat-menu #HelpSubMenu="matMenu">
+<!--         <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
+        <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+        <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
+        <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
+        <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
+        <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
+        <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+    </mat-menu>
+    <div style="overflow: auto">
+        <mat-card>
+            
+            <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
+
+            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+            </div>
+            <mat-menu #contextMenu="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add study</button>
+            </mat-menu>
+            
+            <mat-menu #contextSubMenu="matMenu">
+                <button mat-menu-item (click)="add(false)">from original model template</button>
+                <button mat-menu-item (click)="add(true)">from saved templates</button>
+            </mat-menu>
+            
+            <h2>My Studies</h2>
+        
+            
+            <!-- <div class="mat-chip-list-wrapper text-center">
+                <mat-chip-list #chipsList aria-orientation="vertical">
+                <mat-chip class="chips"  (click)="onEdit(elm)" [matMenuTriggerFor]="userMenu" color="accent" [selected]="index === 0" *ngFor="let elm of studies; let index = index" [value]="elm.study_id">
+                    {{elm.project_short_name}}
+                </mat-chip>
+                </mat-chip-list>
+                <div style="visibility: hidden; position: fixed" [style.left]="userMenuPosition.x"
+                [style.top]="userMenuPosition.y" [matMenuTriggerFor]="userMenu">
+                </div>
+                <mat-menu #userMenu="matMenu">
+                    <button mat-menu-item [matMenuTriggerFor]="userMenusecond">Study</button>
+                </mat-menu>
+                <mat-menu #userMenusecond="matMenu">
+                    <button mat-menu-item (click)="onRemove()" confirm="Are you sure?">Remove</button>
+                </mat-menu>
+            </div> -->
+
+            <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                    <ng-container *ngIf="column!=='edit'">
+                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                    </ng-container>
+                    <ng-container *ngIf="column==='edit'">
+                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                        <td mat-cell *matCellDef="let element"> 
+                            <div class="btn-group" style="float: right;">
+                                <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                <button title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                            </div>
+                        </td>
+                    </ng-container>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+
+        <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
+        </mat-card>
+    </div>
+</div>
+
