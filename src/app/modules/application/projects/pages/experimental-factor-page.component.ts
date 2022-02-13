@@ -27,7 +27,7 @@ export class ExperimentalFactorPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ExperimentalFactorInterface>;
-  private displayedColumns: string[] = ['Experimental Factor type', 'Experimental Factor values', 'edit'];
+  private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };

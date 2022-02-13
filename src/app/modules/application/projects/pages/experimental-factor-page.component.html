@@ -22,7 +22,7 @@
         [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
     </div>
     <mat-menu #contextMenu="matMenu">
-        <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Experimental factor</button>
+        <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Observation unit</button>
     </mat-menu>
     
     <mat-menu #contextSubMenu="matMenu">
@@ -46,8 +46,8 @@
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                 <td mat-cell *matCellDef="let element"> 
                     <div class="btn-group" style="float: right;">
-                        <button title="Edit experimental factor" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                        <button title="Remove experimental factor" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                        <button title="Edit observation unit" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                        <button title="Remove observation unit" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
                     </div>
                 </td>
             </ng-container>
