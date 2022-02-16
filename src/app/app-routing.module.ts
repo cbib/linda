@@ -19,6 +19,11 @@ const routes: Routes = [
       .then(mod => mod.LoginModule)
   },
   {
+    path: 'map',
+    loadChildren: () => import('./modules/application/map/map.module')
+      .then(mod => mod.MapModule)
+  },
+  {
     path: 'signup',
     loadChildren: () => import('./modules/general/signup/signup.module')
       .then(mod => mod.SignupModule)
@@ -115,7 +120,8 @@ const routes: Routes = [
   { 
     path: '**', 
     component: NotFoundComponent 
-  }  
+  },
+  { path: 'map', loadChildren: () => import('./modules/application/map/map.module').then(m => m.MapModule) }  
 ];
 
 @NgModule({

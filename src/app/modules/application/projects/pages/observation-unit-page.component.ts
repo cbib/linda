@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { ObservationUnitInterface } from 'src/app/models/miappe/observation-unit';
+import { ObservationUnitInterface } from 'src/app/models/linda/observation-unit';
 
 @Component({
   selector: 'app-observation-unit-page',

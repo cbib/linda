@@ -14,8 +14,8 @@ import { MatTableDataSource} from '@angular/material/table';
 import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
-import { Investigation } from 'src/app/models/miappe/investigation';
-import { InvestigationInterface } from 'src/app/models/miappe/investigation'
+import { Investigation } from 'src/app/models/linda/investigation';
+import { InvestigationInterface } from 'src/app/models/linda/investigation'
 import { animate, state, style, transition, trigger} from '@angular/animations';
 import { ExportComponent } from '../../dialogs/export.component';
 
@@ -242,15 +242,15 @@ export class ProjectsPageComponent implements OnInit {
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate(path);
     }
-
     onRemove(element:InvestigationInterface) {
+
         const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
                     // Remove only childs from the seleccted node
                     if (result.all_childs) {
-                        this.globalService.remove_childs(this.model_key).pipe(first()).toPromise().then(
+                        this.globalService.remove_childs(element._key).pipe(first()).toPromise().then(
                             data => {
                                 if (data["success"]) {
                                     ////console.log(data["message"])

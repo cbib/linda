@@ -11,7 +11,7 @@
     Changes</button>
   <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close
     Study</button>
-
+  <div>
   <!-- Nav pills -->
   <ul class="nav nav-pills">
     <li class="nav-item">
@@ -19,24 +19,32 @@
         aria-controls="studyinfo" role="tab" data-toggle="tab" href="#studyinfo">1. Administrative informations</a>
     </li>
     <li class="nav-item">
+      <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studysite'}" (click)="changeTab('studysite')"
+        aria-controls="studydesign" role="tab" data-toggle="tab" href="#studysite">2. Experimental site</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studydesign'}" (click)="changeTab('studydesign')"
+        aria-controls="studydesign" role="tab" data-toggle="tab" href="#studydesign">3. Experimental design</a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='biomat'}" (click)="changeTab('biomat')" href="#biomat"
-        aria-controls="biomat" role="tab" data-toggle="tab">2. Biological materials</a>
+        aria-controls="biomat" role="tab" data-toggle="tab">4. Biological materials</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsunit'}" (click)="changeTab('obsunit')" href="#obsunit"
-        aria-controls="obsunit" role="tab" data-toggle="tab">3. Observations Units</a>
+        aria-controls="obsunit" role="tab" data-toggle="tab">5. Observations Units</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='expfac'}" (click)="changeTab('expfac')" href="#expfac"
-        aria-controls="expfac" role="tab" data-toggle="tab">4. Experimental Factors</a>
+        aria-controls="expfac" role="tab" data-toggle="tab">6. Experimental Factors</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsvar'}" (click)="changeTab('obsvar')" href="#obsvar"
-        aria-controls="obsvar" role="tab" data-toggle="tab">4. Observed variables</a>
+        aria-controls="obsvar" role="tab" data-toggle="tab">7. Observed variables</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='data_files'}" (click)="changeTab('data_files')" href="#data_files"
-        aria-controls="expfac" role="tab" data-toggle="tab">5. Data files</a>
+        aria-controls="expfac" role="tab" data-toggle="tab">8. Data files</a>
     </li>
   </ul>
   <!-- Tab panes -->
@@ -49,6 +57,24 @@
           inline="true"></app-form>
       </mat-card>
     </div>
+
+    <div [ngClass]="{ 'active':activeTab==='studysite'}" role="tabpanel" class="tab-pane active" id="studysite">
+      <h3>Describe your experimental site</h3>
+      <mat-card style="width: 80%;">
+        <app-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
+          [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+          inline="true"></app-form>
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='studydesign'}" role="tabpanel" class="tab-pane active" id="studydesign">
+      <h3>Describe your experimental design</h3>
+      <mat-card style="width: 80%;">
+        <app-form *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)"
+          [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+          inline="true"></app-form>
+      </mat-card>
+    </div>
+
     <div [ngClass]="{ 'active':activeTab==='biomat'}" role="tabpanel" class="tab-pane" id="biomat">
       <h3>Describe biological materials</h3>
       <mat-card style="width: 80%;">
@@ -136,4 +162,5 @@
     </mat-card>
     </div>
   </div>
+</div>
 </div>

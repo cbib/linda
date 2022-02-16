@@ -4,14 +4,14 @@ import { throwError, Observable } from 'rxjs';
 import { map, catchError, retry} from 'rxjs/operators';
 import {ResDataModal} from '../models/datatable_model';
 import { Constants } from "../constants";
-import { Investigation } from '../models/json/investigation';
-import { InvestigationInterface } from '../models/miappe/investigation'; 
-import {StudyInterface} from '../models/miappe/study'
-import { BiologicalMaterialInterface } from '../models/miappe/biological-material'
-import { ExperimentalFactorInterface } from '../models/miappe/experimental_factor'; 
-import { ObservationUnitInterface } from '../models/miappe/observation-unit';
-import { DataFileInterface } from '../models/miappe/data_files'
-import { ObservedVariableInterface } from '../models/miappe/observed-variable';
+import { Investigation } from '../models/miappe/investigation';
+import { InvestigationInterface } from '../models/linda/investigation'; 
+import {StudyInterface} from '../models/linda/study'
+import { BiologicalMaterialInterface } from '../models/linda/biological-material'
+import { ExperimentalFactorInterface } from '../models/linda/experimental_factor'; 
+import { ObservationUnitInterface } from '../models/linda/observation-unit';
+import { DataFileInterface } from '../models/linda/data_files'
+import { ObservedVariableInterface } from '../models/linda/observed-variable';
 import { User } from '../models';
 @Injectable({
     providedIn: 'root'

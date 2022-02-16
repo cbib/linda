@@ -34,9 +34,12 @@ export class ProjectPageComponent implements OnInit {
     endTime: Date;
     timeDiff: number;
 
-    constructor(private globalService: GlobalService, private alertService: AlertService,
+    constructor(private globalService: GlobalService, 
+        private alertService: AlertService,
         private searchService: SearchService,
-        private route: ActivatedRoute, private _cdr: ChangeDetectorRef){
+        private route: ActivatedRoute, 
+        private router: Router,
+        private _cdr: ChangeDetectorRef){
             console.log("entering project page")
             
             this.route.queryParams.subscribe(
@@ -163,6 +166,9 @@ export class ProjectPageComponent implements OnInit {
         
     }
     cancel(){
+        //this.notify.emit("close_study")
+        this.router.navigate(['/projects_page']);
+
         // Same as delete project and all childs 
     }
 }

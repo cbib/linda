@@ -101,7 +101,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         //console.log(this.mode)
         this.set_max_level();
         this.set_model();
-         
+        console.log(this.onlyTemplate)
         // if (currentUser['tutoriel_checked'] === false){
         //     this.onClickTour()
         // }
@@ -648,7 +648,7 @@ export class FormComponent implements OnInit//, AfterViewInit
             //     );
             // }
             if (this.mode === "create") {
-                if (this.onlyTemplate){
+                if (this.onlyTemplate===true){
                     this.globalService.add_template(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {

@@ -5,8 +5,8 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { BiologicalMaterialInterface } from 'src/app/models/miappe/biological-material';
-
+import { BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
+import { BiologicalMaterialTableModel} from '../../../../models/biological_material_models'
 @Component({
   selector: 'app-biological-material-page',
   templateUrl: './biological-material-page.component.html',
@@ -34,6 +34,10 @@ export class BiologicalMaterialPageComponent implements OnInit {
   userMenusecondPosition = { x: '0px', y: '0px' };
   investigationMenuPosition = { x: '0px', y: '0px' };
   helpMenuPosition = { x: '0px', y: '0px' };
+  //private bm_datasources:{} = {}
+  bm_vertice_data
+  dt_source:MatTableDataSource<BiologicalMaterialTableModel>;
+  newTableData:{}[]=[]
 
   constructor(
     public globalService: GlobalService,
@@ -55,18 +59,23 @@ export class BiologicalMaterialPageComponent implements OnInit {
   async ngOnInit() {
     console.log(this.parent_id)
     //await this.get_vertices()
-    this.get_all_biological_materials()
-    this.loaded = true
+    await this.get_all_biological_materials()
+    
+    
 
   }
   async get_all_biological_materials() {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         console.log(data)
-        this.dataSource = new MatTableDataSource(data);
-        console.log(this.dataSource)
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        var keys= Object.keys(data[0])
+        this.prepare_bm_data(data[0],keys)
+        console.log(this.dt_source)
+        //this.dataSource = new MatTableDataSource(data);
+        //console.log(this.dataSource)
+        this.dt_source.paginator = this.paginator;
+        this.dt_source.sort = this.sort;
+        this.loaded = true
       }
     )
   }
@@ -77,25 +86,61 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dt_source.filter = filterValue.trim().toLowerCase();
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    if (this.dt_source.paginator) {
+      this.dt_source.paginator.firstPage();
     }
   }
   get get_displayedColumns() {
     return this.displayedColumns
   }
   get get_dataSource() {
-    return this.dataSource
+    console.log(this.newTableData)
+    return this.dt_source
   }
 
   onRemove(element: BiologicalMaterialInterface) {
   }
   add(element: BiologicalMaterialInterface) {
-
   }
   onEdit(element: BiologicalMaterialInterface) {
-
   }
+  async prepare_bm_data(node_vertice, vertice_keys){
+          console.log(node_vertice)
+          console.log(vertice_keys)
+          //var newTableData:{}[]=[]
+          let datasources: BiologicalMaterialTableModel[] = []
+          var data= node_vertice
+          var keys = vertice_keys
+          for (var i = 0; i < data["Biological material ID"].length; i++) {
+              //this.tableData[0]["Biological material ID"].forEach(element => {
+              for (var j = 0; j < data["Biological material ID"][i].length; j++) {
+                  let tmp_dict:BiologicalMaterialTableModel={"Species":"","Organism":"","Biological material ID":"","Biological material preprocessing":"", 'Material source DOI':"", 'Material source ID (Holding institute/stock centre, accession)':"", 'Infraspecific name':"", 'Genus':""};
+                  for (var k = 0; k < keys.length; k++) {
+                      if (!keys[k].startsWith('_') && !keys[k].includes('altitude') && !keys[k].includes('latitude') && !keys[k].includes('longitude') && !keys[k].includes('coordinates uncertainty') && !keys[k].includes('description')){
+  
+                          if (keys[k].includes("Biological material") ){
+                              tmp_dict[keys[k]]=data[keys[k]][i][j]
+                          }
+                          else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")){
+                              tmp_dict[keys[k]]=data[keys[k]][i]
+                          }
+                          
+                          else{
+                              tmp_dict[keys[k]]=data[keys[k]]
+                          }  
+                          
+                      }
+                      
+                  }
+                  this.newTableData.push(tmp_dict)
+                  datasources.push(tmp_dict)
+                  
+                  
+              }
+          }
+          this.dt_source=new MatTableDataSource<BiologicalMaterialTableModel>(datasources);
+          
+      }
 }

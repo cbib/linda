@@ -6,5 +6,5 @@
     <app-material-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-material-form>
 </mat-dialog-content>
 <mat-dialog-content *ngIf="get_model_type==='observation_unit'">
-    <app-observation-unit-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="" [mode]="get_mode"></app-observation-unit-form>
+    <app-observation-unit-form (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" model_key="" [mode]="get_mode"></app-observation-unit-form>
 </mat-dialog-content>

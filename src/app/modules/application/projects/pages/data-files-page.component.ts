@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { DataFileInterface } from 'src/app/models/miappe/data_files'
+import { DataFileInterface } from 'src/app/models/linda/data_files'
 import { MatDialog } from '@angular/material/dialog';
 import { DatatableComponent } from '../../dialogs/datatable.component';
 

@@ -533,7 +533,7 @@
                                         </ng-container>
                                         <!--Biological material table-->
                                         <ng-container *ngIf="node.id.includes('biological_materials') ">
-                                            <app-biological-material-table [data]="get_bm_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-biological-material-table>
+                                            <app-biological-material-table [data]="get_bm_dataSource(node.id)"></app-biological-material-table>
                                         </ng-container>
                                         <ng-container *ngIf="node.id.includes('observation_units') ">
                                             <app-observation-unit-table [data]="get_ou_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-observation-unit-table>

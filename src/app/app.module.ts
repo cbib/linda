@@ -34,6 +34,7 @@ import { DialogModule } from './modules/application/dialogs/dialog.module';
 import { GanttModule } from './modules/application/gantt/gantt.module';
 import { ValidatorModule } from './modules/application/validators/validator.module'
 import { AlertModule } from './modules/application/alert/alert.module'
+import { MapModule } from './modules/application/map/map.module'  
 //import { DocumentationModule } from './modules/application/documentation/documentation.module'
 
 // MATERIAL MODULES 
@@ -115,7 +116,8 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     DialogModule,
     GanttModule,
     ValidatorModule,
-    AlertModule
+    AlertModule,
+    MapModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],

@@ -22,6 +22,8 @@ import { BiologicalMaterialPageComponent } from './biological-material-page.comp
 import { ExperimentalFactorPageComponent } from './experimental-factor-page.component';
 import { DataFilesPageComponent } from './data-files-page.component';
 import { ObservedVariablePageComponent } from './observed-variable-page.component';
+import { TableModule } from '../../tables/table.module';
+
 
 // Mu entry module
 import { DownloadModule } from '../../file_handlers/download.module';
@@ -29,6 +31,8 @@ import { ExtractModule } from '../../extract/extract.module';
 import { AlertModule } from '../../alert/alert.module';
 import { FormModule } from '../../forms/form.module';
 import { ExplorationModule } from '../../statistics/exploration.module';
+import { GanttModule } from '../../gantt/gantt.module';
+import { ProjectsTreeModule} from  '../../projects/tree/projects-tree.module'
 
 @NgModule({
   declarations: [ProjectsPageComponent,
@@ -51,6 +55,9 @@ import { ExplorationModule } from '../../statistics/exploration.module';
     MatDividerModule,
     AlertModule,
     ExplorationModule,
+    GanttModule,
+    ProjectsTreeModule,
+    TableModule
   ],
   exports: [
     ProjectsPageComponent,

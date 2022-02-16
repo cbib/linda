@@ -1294,6 +1294,8 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
           
       } 
       prepare_bm_data(node_vertice, vertice_keys){
+          console.log(node_vertice)
+          console.log(vertice_keys)
           var newTableData:{}[]=[]
           let datasources: BiologicalMaterialTableModel[] = []
           var data= node_vertice

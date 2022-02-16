@@ -41,9 +41,6 @@ export class ObservationUnitFormComponent implements OnInit {
   sampleTouchedRows: any;
   private currentUser
   selectedRowIndex = -1;
-
-
-
   private startfilling: boolean = false;
   ontology_type: string;
   show_spinner: boolean = false;
@@ -86,9 +83,8 @@ export class ObservationUnitFormComponent implements OnInit {
         this.parent_id = params['parent_id']
       }
     );
-    if (this.model_key != "") {
-      this.get_model_by_key();
-    }
+    console.log(this.model_key)
+    
 
   }
 
@@ -111,10 +107,12 @@ export class ObservationUnitFormComponent implements OnInit {
       experimentalFactorRows: this.fb.array([]),
       sampleRows: this.fb.array([]),
     });
-    if (this.model_key != "") {
+    //this.get_model()
+    console.log(this.model_key)
+    console.log(this.model_type)
+    if (this.model_key !== "") {
       this.get_model_by_key();
     }
-    //this.get_model()
     await this.get_model()
     this.onClickTour()
 

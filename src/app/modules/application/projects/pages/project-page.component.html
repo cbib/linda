@@ -9,8 +9,8 @@
         </h3>           
             <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
     </div> -->
-    <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
-    <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Cancel Project</button>
+    <!-- <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button> -->
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close Project</button>
 
 <!-- Nav pills -->
 <ul class="nav nav-pills">
@@ -18,63 +18,66 @@
       <a class="nav-link active" [ngClass]="{ 'active':activeTab==='identifiers'}" (click)="changeTab('identifiers')" aria-controls="identifiers" role="tab" data-toggle="tab" href="#identifiers">1. Administrative informations</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='assStud'}" href="#assStud" (click)="changeTab('assStud')" aria-controls="assStud" role="tab" data-toggle="tab">2. Associated Study(ies)</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='assStud'}" href="#assStud" (click)="changeTab('assStud')" aria-controls="assStud" role="tab" data-toggle="tab">2. Studies</a>
     </li>
     <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='ExpSite'}" href="#ExpSite" (click)="changeTab('ExpSite')" aria-controls="ExpSite" role="tab" data-toggle="tab">3. Experimental site</a>
     </li> -->
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Data'}" href="#Data" (click)="changeTab('Data')" aria-controls="Data" role="tab" data-toggle="tab">4. Data</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Data'}" href="#Data" (click)="changeTab('Data')" aria-controls="Data" role="tab" data-toggle="tab">3. Data</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Assign'}" href="#Assign" (click)="changeTab('Assign')" aria-controls="Assign" role="tab" data-toggle="tab">5. Assign</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Assign'}" href="#Assign" (click)="changeTab('Assign')" aria-controls="Assign" role="tab" data-toggle="tab">4. Assign</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Extract'}" href="#Extract" (click)="changeTab('Extract')" aria-controls="Extract" role="tab" data-toggle="tab">6. Extract</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Extract'}" href="#Extract" (click)="changeTab('Extract')" aria-controls="Extract" role="tab" data-toggle="tab">5. Extract</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Explore'}" href="#Explore" (click)="changeTab('Explore')" aria-controls="Explore" role="tab" data-toggle="tab">7. Explore</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Explore'}" href="#Explore" (click)="changeTab('Explore')" aria-controls="Explore" role="tab" data-toggle="tab">6. Explore</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" [ngClass]="{ 'active':activeTab==='Download'}" href="#Download" (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">8. Download</a>
-      </li>
+        <a class="nav-link" [ngClass]="{ 'active':activeTab==='Download'}" href="#Download" (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">7. Download</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Gantt'}" href="#Gantt" (click)="changeTab('Gantt')" aria-controls="Gantt" role="tab" data-toggle="tab">8. Gantt</a>
+  </li>
   </ul>
   <!-- Tab panes -->
   <div class="tab-content">
     <div [ngClass]="{ 'active':activeTab==='identifiers'}"  role="tabpanel" class="tab-pane active" id="identifiers">
       <h3>Describe your project</h3>
-            <mat-card style="width: 80%;">
+            <mat-card style="width: 98%;">
             <app-form *ngIf="activeTab==='identifiers'" (notify)="get_output_from_child($event)" [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="model_key" [mode]="get_mode" inline="true"></app-form>
             </mat-card>
     </div>
     <!-- <div [ngClass]="{ 'active':activeTab==='ExpSite'}"  role="tabpanel" class="tab-pane" id="ExpSite">
       <h3>Describe experimental site</h3>
-            <mat-card style="width: 80%;">
+            <mat-card style="width: 98%;">
               <app-form *ngIf="activeTab==='ExpSite'" (notify)="get_output_from_child($event)" model_type="study" [level]="2" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode"></app-form>
               </mat-card>
     </div> -->
     <div [ngClass]="{ 'active':activeTab==='Data'}"  role="tabpanel" class="tab-pane" id="Data">
       <h3>Download experimental data files</h3>
-          <mat-card style="width: 80%;">
+          <mat-card style="width: 98%;">
           <app-download *ngIf="activeTab==='Data'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract"></app-download>
           </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='Assign'}"  role="tabpanel" class="tab-pane" id="Assign">
       <h3>Define experimental data files columns</h3>
-          <mat-card style="width: 80%;">
+          <mat-card style="width: 98%;">
           <app-download *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-download>
           </mat-card>
     </div>
 
     <div [ngClass]="{ 'active':activeTab==='Extract'}"  role="tabpanel" class="tab-pane" id="Extract">
       <h3>Extract</h3>
-          <mat-card style="width: 80%;">
+          <mat-card style="width: 98%;">
             <app-extract *ngIf="activeTab==='Extract'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="experimental_factor" mode="extract"></app-extract>
           </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='Explore'}"  role="tabpanel" class="tab-pane" id="Explore">
       <h3>Extract</h3>
-          <mat-card style="width: 80%;">
+          <mat-card style="width: 98%;">
             <app-exploration *ngIf="activeTab==='Explore'"  [parent_id]="get_model_id" [investigation_key]="get_model_key"></app-exploration>
           </mat-card>
     </div>
@@ -88,7 +91,12 @@
     <div [ngClass]="{ 'active':activeTab==='Download'}"  role="tabpanel" class="tab-pane" id="Download">
       <h3>Download project metadata files</h3>
           <app-download  *ngIf="activeTab==='Download'"   [parent_id]="get_model_id" [model_key]="get_model_key" model_type="metadata_file" mode="create"></app-download>
-  </div>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='Gantt'}"  role="tabpanel" class="tab-pane" id="Gantt">
+      <h3>Gantt</h3>
+      <!-- add filter in gantt as in redmine -->
+          <app-gantt  *ngIf="activeTab==='Gantt'"  model_type="metadata_file" mode="create"></app-gantt>
+    </div>
   
   </div>
 </div>

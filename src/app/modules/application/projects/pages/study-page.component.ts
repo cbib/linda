@@ -5,7 +5,7 @@ import { WizardService } from '../services/wizard.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {  User } from '../../../../models';
-import { DataFileInterface } from 'src/app/models/miappe/data_files';
+import { DataFileInterface } from 'src/app/models/linda/data_files';
 
 @Component({
     selector: 'app-study-page',

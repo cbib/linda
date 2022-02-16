@@ -14,8 +14,14 @@ import { MatTableDataSource} from '@angular/material/table';
 import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
-import { StudyInterface } from 'src/app/models/miappe/study';
-import { instanceOfStudy } from 'src/app/models/miappe/study';
+import { Study } from 'src/app/models/linda/study';
+import { StudyInterface } from 'src/app/models/linda/study';
+import { instanceOfStudy } from 'src/app/models/linda/study';
+import { ExperimentalDesign } from 'src/app/models/linda/experimental-design';
+import { BlockDesign } from 'src/app/models/linda/experimental-design';
+import { Replication } from 'src/app/models/linda/experimental-design';
+import { PlotDesign } from 'src/app/models/linda/experimental-design';
+import { RowDesign } from 'src/app/models/linda/experimental-design';
 @Component({
     selector: 'app-studies-page',
     templateUrl: './studies-page.component.html',
@@ -112,8 +118,44 @@ export class StudiesPageComponent implements OnInit {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         //console.log(this.currentUser)
         console.log(this.parent_id)
+
+        this.extract_design(36,7,3)
+
+        
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
 
+    }
+    extract_design(_blocks:number,_columns:number,_rows:number){
+        let blocks=_blocks
+        let columns=_columns
+        let rows=_rows
+        let new_design:ExperimentalDesign=new ExperimentalDesign()
+        var replication:Replication=new Replication()
+        replication.set_replicate_number(3)
+        new_design.set_replication(replication)
+        new_design.set_number_of_entries(blocks*columns*rows)
+
+        var plot=1
+        for (let block=1;block<blocks+1;block++){
+            var block_design:BlockDesign=new BlockDesign(block, 36,[],[],[])
+            for (let column=1;column<columns+1;column++){
+                var plot_design:PlotDesign=new PlotDesign()
+                plot_design.set_column_number(column)
+                for (let row=1;row<rows+1;row++){
+                    plot++
+                    plot_design.set_plot_number(plot)
+                    var row_design:RowDesign=new RowDesign()
+                    row_design.set_row_number(row)
+                    row_design.set_row_per_plot(1)
+                    plot_design.add_row_design(row_design)
+                }
+                block_design.add_plot_design(plot_design)
+            }
+            console.log(block_design)
+            new_design.add_block_design(block_design)
+        }
+        console.log(new_design)
+        console.log(new_design.get_block_design(4))
     }
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -291,192 +333,179 @@ export class StudiesPageComponent implements OnInit {
     //         this.router.navigate([currentUrl]);
     //     });
     // }
-    reloadComponent(path: [string]) {
+    reloadComponent() {
         let currentUrl = this.router.url;
         ////console.log(currentUrl)
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
-        this.router.navigate(path);
+        //this.router.navigate(path);
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
     }
 
-    onRemove() {
-        // const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
-        // dialogRef.afterClosed().subscribe((result) => {
-        //     if (result) {
-        //         if (result.event == 'Confirmed') {
-        //             // Remove only childs from the seleccted node
-        //             if (result.all_childs) {
-        //                 this.globalService.remove_childs(this.active_node.id).pipe(first()).toPromise().then(
-        //                     data => {
-        //                         if (data["success"]) {
-        //                             ////console.log(data["message"])
-        //                             var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
-        //                             this.alertService.success(message)
-        //                         }
-        //                         else {
-        //                             this.alertService.error("this form contains errors! " + data["message"]);
-        //                         }
-        //                     }
-        //                 );
-        //                 window.location.reload();
-        //             }
-        //             //Remove only observed variable or experimental factors
-        //             // TODO add handler for observation units, biological materials, etc.
-        //             else if (result.only != "") {
-        //                 ////console.log(result.only)
-        //                 this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
-        //                     data => {
-        //                         if (data["success"]) {
-        //                             ////console.log(data["message"])
-        //                             var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
-        //                             //this.alertService.success(message)
-        //                             var datafile_ids = data["datafile_ids"]
-        //                             var removed_ids = data["removed_ids"]
-        //                             // datafile_ids.forEach(datafile_id => {
-        //                             //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-        //                             //         data => { ////console.log(data); }
-        //                             //       )
-        //                             // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////console.log(data);})
-        //                             // });
-        //                         }
-        //                         else {
-        //                             this.alertService.error("this form contains errors! " + data["message"]);
-        //                         }
-        //                     }
-        //                 );
-        //                 // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        //                 // this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
-        //                 this.reloadComponent(['/projects_tree'])
-        //                 //window.location.reload();
+    onRemove(element:StudyInterface ) {
+        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                if (result.event == 'Confirmed') {
+                    // Remove only childs from the seleccted node
+                    if (result.all_childs) {
+                        this.globalService.remove_childs(element._key).pipe(first()).toPromise().then(
+                            data => {
+                                if (data["success"]) {
+                                    ////console.log(data["message"])
+                                    var message = "child nodes of " + element._id+ " have been removed from your history !!"
+                                    this.alertService.success(message)
+                                    this.reloadComponent()
+                                }
+                                else {
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
+                            }
+                        );
+                        //window.location.reload();
+                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
 
-        //             }
-        //             else {
-        //                 ////console.log(this.active_node.id)
-        //                 this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
-        //                     data => {
-        //                         ////console.log(data)
-        //                         if (data["success"]) {
-        //                             ////console.log(data["message"])
-        //                             var message = this.active_node.id + " has been removed from your history !!"
-        //                             this.alertService.success(message)
-        //                             let new_step = 0
-        //                             if (!this.currentUser.tutoriel_done) {
-        //                                 if (this.active_node.id.split("/")[0] === "investigations") {
-        //                                     new_step = 0
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "studies") {
-        //                                     new_step = 2
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "experimental_factors") {
-        //                                     new_step = 4
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "observed_variables") {
-        //                                     new_step = 6
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "biological_materials") {
-        //                                     new_step = 8
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "biological_materials") {
-        //                                     new_step = 10
-        //                                 }
-        //                                 else if (this.active_node.id.split("/")[0] === "data_files") {
-        //                                     new_step = 12
-        //                                 }
-        //                                 else {
-        //                                     new_step = 0
-        //                                 }
-        //                                 this.currentUser.tutoriel_step = new_step.toString()
-        //                                 localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        //                             }
-        //                             this.reloadComponent(['/projects_tree'])
-        //                             //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
-        //                             //window.location.reload();
-        //                             ///this.router.navigate(['/projects_tree']);
+                    }
+                    //Remove only observed variable or experimental factors
+                    // TODO add handler for observation units, biological materials, etc.
+                    else if (result.only != "") {
+                        ////console.log(result.only)
+                        this.globalService.remove_childs_by_type(element._id, result.only).pipe(first()).toPromise().then(
+                            data => {
+                                if (data["success"]) {
+                                    ////console.log(data["message"])
+                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
+                                    //this.alertService.success(message)
+                                    var datafile_ids = data["datafile_ids"]
+                                    var removed_ids = data["removed_ids"]
+                                    this.reloadComponent()
+                                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
+                                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
+                                    // datafile_ids.forEach(datafile_id => {
+                                    //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
+                                    //         data => { ////console.log(data); }
+                                    //       )
+                                    // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////console.log(data);})
+                                    // });
+                                }
+                                else {
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
+                            }
+                        );
+                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                        //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
+                        ///window.location.reload();
+                        ///this.reloadComponent(['/studies_page'])
+                        //window.location.reload();
 
-        //                         }
-        //                         else {
-        //                             this.alertService.error("this form contains errors! " + data["message"]);
-        //                         }
-        //                     }
-        //                 );
-        //                 // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        //             }
-        //         }
-        //     }
-        //     //this.reloadComponent(['/projects'])
-        // });
+                    }
+                    else {
+                        ////console.log(this.active_node.id)
+                        this.globalService.remove(element._id).pipe(first()).toPromise().then(
+                            data => {
+                                ////console.log(data)
+                                if (data["success"]) {
+                                    console.log(data["message"])
+                                    var message = element._id + " has been removed from your history !!"
+                                    this.alertService.success(message)
+
+                                    //window.location.reload();
+                                    this.reloadComponent()
+                                    //this.router.navigate(['/projects_page'], { queryParams: { key: this.parent_key } });
+                                    //window.location.reload();
+                                    ///this.router.navigate(['/projects_tree']);
+                                }
+                                else {
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
+                            }
+                        );
+                        //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
+
+                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                    }
+                }
+            }
+            //this.reloadComponent(['/projects'])
+        });
 
     }
 
     add(template: boolean = false) {
 
-        // let user = JSON.parse(localStorage.getItem('currentUser'));
-        // if (template) {
-        //     const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: this.model_type, values: {}, parent_id: this.parent_id } });
-        //     dialogRef.afterClosed().subscribe(result => {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        if (template) {
+            const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: this.model_type, values: {}, parent_id: this.parent_id } });
+            dialogRef.afterClosed().subscribe(result => {
 
-        //         if (result) {
-        //             var keys = Object.keys(result.values);
+                if (result) {
+                    var keys = Object.keys(result.values);
 
-        //             for (var i = 0; i < keys.length; i++) {
-        //                 if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-        //                     keys.splice(i, 1);
-        //                     //var k=this.keys[i]
-        //                     i--;
-        //                 }
-        //             }
-        //             var new_values = {}
-        //             keys.forEach(attr => { new_values[attr] = result.values[attr] })
-        //             ////console.log(new_values)
-        //             this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
-        //                 data => {
-        //                     if (data["success"]) {
-        //                         //////console.log(data["message"])
-        //                         //this.model_id=data["_id"];
-        //                         this.ngOnInit();
-        //                         //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-        //                         var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
+                    for (var i = 0; i < keys.length; i++) {
+                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                            keys.splice(i, 1);
+                            //var k=this.keys[i]
+                            i--;
+                        }
+                    }
+                    var new_values = {}
+                    keys.forEach(attr => { new_values[attr] = result.values[attr] })
+                    ////console.log(new_values)
+                    this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
+                        data => {
+                            if (data["success"]) {
+                                //////console.log(data["message"])
+                                //this.model_id=data["_id"];
+                                this.ngOnInit();
+                                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
+                                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
 
-        //                         this.alertService.success(message)
-        //                         this.reloadComponent(['/projects_tree'])
-        //                         //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-        //                         return true;
-        //                     }
-        //                     else {
-        //                         //////console.log(data["message"])
-        //                         this.alertService.error("this form contains errors! " + data["message"]);
+                                this.alertService.success(message)
+                                this.reloadComponent()
+                                // here probably mode edit to open project template page
+                                //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
+                                return true;
+                            }
+                            else {
+                                //////console.log(data["message"])
+                                this.alertService.error("this form contains errors! " + data["message"]);
 
-        //                         return false;
-        //                         //this.router.navigate(['/studies']);
-        //                     }
-        //                 }
-        //             );
-        //         }
-        //     });
-        // }
-        // else {
-        //     let new_step = 0
-        //     if (!this.currentUser.tutoriel_done) {
-        //         if (this.currentUser.tutoriel_step === "0") {
-        //             new_step = 1
-        //             this.currentUser.tutoriel_step = new_step.toString()
-        //             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        //         }
-        //         else {
-        //             this.alertService.error("You are not in the right form as requested by the tutorial")
-        //         }
-        //     }
-        //     //let new_investigation:Investigation=new Investigation()
-        //     //console.log(new_investigation)
-        //     // this.globalService.add(new_investigation, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
-        //     //     data => {
-        //     //         if (data["success"]) {
-        //     //             console.log(data)
-        //     //             this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'], model_type: this.model_type, mode: "edit" } });
-        //     //         }
-        //     //     });;
-        //     ///this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-        // }
+                                return false;
+                                //this.router.navigate(['/studies']);
+                            }
+                        }
+                    );
+                }
+            });
+        }
+        else {
+            let new_step = 0
+            if (!this.currentUser.tutoriel_done) {
+                if (this.currentUser.tutoriel_step === "0") {
+                    new_step = 1
+                    this.currentUser.tutoriel_step = new_step.toString()
+                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                }
+                else {
+                    this.alertService.error("You are not in the right form as requested by the tutorial")
+                }
+            }
+            let new_study:Study=new Study()
+            console.log(new_study)
+            console.log(this.model_type)
+            console.log(this.parent_id)
+            this.globalService.add(new_study, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
+                data => {
+                    if (data["success"]) {
+                        console.log(data)
+                        
+                        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type:'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo'  } });
+                        //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
+
+                    }
+                });;
+        }
 
     }
 

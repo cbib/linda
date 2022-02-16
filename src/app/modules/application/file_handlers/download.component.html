@@ -377,6 +377,7 @@
                     <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Original headers</th>
                     <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE assignment</th>
                     <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE component</th>
+                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">MIAPPE field</th>
                     <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Ontologies</th> -->
                     <!-- <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assigned Ontology terms</th> -->
                     <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Visualization</th>
@@ -437,13 +438,26 @@
                         <!-- MIAPPE assignment-->
                         <th scope="col">
 
-                            <form [formGroup]="dataFileComponentForm[get_selected_file]">
+                            <!-- <form [formGroup]="dataFileComponentForm[get_selected_file]">
                                 <mat-form-field class="full-width">
                                     <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(get_selected_file)[i], get_selected_file)">
                                         <mat-option>--</mat-option>
                                         <mat-option *ngFor="let extract_option of get_extract_component_options.options" [value]="extract_option.value">
                                             {{extract_option.name}}
                                         </mat-option>
+                                    </mat-select>
+                                </mat-form-field>                    
+                            </form> -->
+                            <form [formGroup]="dataFileComponentForm[get_selected_file]">
+                                <mat-form-field class="full-width">
+                                    <mat-select placeholder="Options" formControlName="{{key}}" (selectionChange)="onModify($event.value,get_headers_by_filename(get_selected_file)[i], get_selected_file)">
+                                        <mat-option>--</mat-option>
+                                        <mat-optgroup  *ngFor="let extract_option of get_extract_component_options.options" [label]="extract_option.name"
+                                            [disabled]="extract_option.disabled">
+                                            <mat-option *ngFor="let value of extract_option.fields" [value]="value">
+                                                {{value}}
+                                            </mat-option>
+                                        </mat-optgroup>
                                     </mat-select>
                                 </mat-form-field>                    
                             </form>
@@ -460,6 +474,15 @@
                             </span>
                             <span *ngIf="i==0 && get_associated_header_by_filename(key, get_selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
                                 {{get_associated_header_by_filename(key, get_selected_file).associated_component}}
+                            </span>
+                        </th>
+                        <!-- Assigned MIAPPE component field-->
+                        <th scope="col">
+                            <span *ngIf="i>0 && get_associated_header_by_filename(key, get_selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                                {{get_associated_header_by_filename(key, get_selected_file).associated_component_field}} 
+                            </span>
+                            <span *ngIf="i==0 && get_associated_header_by_filename(key, get_selected_file).selected" style="display:inline-block; margin-left: 10px;"> 
+                                {{get_associated_header_by_filename(key, get_selected_file).associated_component_field}}
                             </span>
                         </th>
                         <!-- Ontologies component column-->
@@ -656,6 +679,7 @@
                                 {{get_associated_header_by_filename(key, get_selected_file).associated_component}}
                             </span>
                         </th>
+                        
                         <th>
                             <!-- <span style="display:inline-block; margin-left: 10px;"> 
                                 <select [value]="this.selectedOption.name" name="this.selectedOption.name" size="1" (change)="onExtractField($event.target.value,get_headers_by_filename(get_selected_file)[i])" ngModel>

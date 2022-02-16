@@ -34,8 +34,10 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
         </mat-form-field>
-        
-        <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+        <div *ngIf="loaded===true">
+        <app-biological-material-table [data]="get_dataSource"></app-biological-material-table>
+        </div>
+       <!--  <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
             
             <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
                 <ng-container *ngIf="column!=='edit'">
@@ -56,7 +58,7 @@
             <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
             <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
     </div>
     </mat-card>
     

@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { ObservedVariableInterface } from 'src/app/models/miappe/observed-variable';
+import { ObservedVariableInterface } from 'src/app/models/linda/observed-variable';
 
 @Component({
   selector: 'app-observed-variable-page',

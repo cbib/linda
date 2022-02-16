@@ -16,9 +16,14 @@
               <li class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/projects_tree']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects Tree</a>
               </li>
+              <!-- <li class="nav-item" style="list-style: none">
+                <a class="nav-link"  [routerLink]="['/map']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>amp</a>
+              </li> -->
               
               <li class="nav-item" style="list-style: none">
-                <a class="nav-link"  [routerLink]="['/projects_page']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
+                <a class="nav-link"  [routerLink]="['/projects_page']" routerLinkActive="active-link"><i><span class="material-icons">
+                  table_chart
+                  </span></i>Projects</a>
               </li>
               <!-- <li class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/projects']" routerLinkActive="active-link"><i class="fa fa-sitemap"></i>Projects</a>
@@ -26,17 +31,19 @@
               <li class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/templates']" routerLinkActive="active-link"><i class="fa fa-copy"></i>Templates</a>
               </li>
-              <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
+              <!-- <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/gantt']" routerLinkActive="active-link"><i class="fa fa-chart-area"></i>Gantt</a>
-              </li>
+              </li> -->
               <!--<li class="nav-item">
                 <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
               </li>-->
               
               <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
-                <a class="nav-link" [routerLink]="['/admin']" ><i class="fa fa-user-crown"></i> Admin</a>
+                <a class="nav-link" [routerLink]="['/admin']" ><i><span class="material-icons">
+                  admin_panel_settings
+                  </span></i> Admin</a>
               </li>  
-                      
+              
              <!--<li>
                 <a href="#AnalysisdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-interface-windows"></i>Analysis </a>
                 <ul id="AnalysisdropdownDropdown" class="collapse list-unstyled ">

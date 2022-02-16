@@ -5,7 +5,7 @@ import { MatSort} from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource} from '@angular/material/table';
-import { ExperimentalFactorInterface } from 'src/app/models/miappe/experimental_factor';
+import { ExperimentalFactorInterface } from 'src/app/models/linda/experimental_factor';
 
 @Component({
   selector: 'app-experimental-factor-page',
@@ -27,7 +27,7 @@ export class ExperimentalFactorPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ExperimentalFactorInterface>;
-  private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
+  private displayedColumns: string[] = ['Experimental Factor type', 'Experimental Factor values', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };

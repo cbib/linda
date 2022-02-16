@@ -37,7 +37,6 @@ export interface componentInterface {
     styleUrls: ['./download.component.css']
 })
 
-
 export class DownloadComponent implements OnInit, OnDestroy {
     // input part
     @Input() parent_id: string;
@@ -63,17 +62,93 @@ export class DownloadComponent implements OnInit, OnDestroy {
     public selectedOption: componentInterface;
     private extract_fields_options = {}
     private loaded:boolean=false
+
     private extract_component_options = {'options': [
-            { header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '' },
-            { header: "", associated_linda_id: "", name: 'Assign Study Identifiers from column', value: 'study' },
-            { header: "", associated_linda_id: "", name: 'Assign Experimental Factors', value: 'experimental_factor' },
-            { header: "", associated_linda_id: "", name: 'Assign Material Sources', value: 'biological_material' },
-            { header: "", associated_linda_id: "", name: 'Assign Observation Units', value: 'observation_unit' },
-            { header: "", associated_linda_id: "", name: 'Assign Observed variables', value: 'observed_variable' },
-            { header: "", associated_linda_id: "", name: 'Assign Timeline', value: 'time' }],
-                                        'defaut': 
-                                        { name: 'Assing MIAPPE components', value: '', label: 'test' }
+        { header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '' },
+        { header: "", associated_linda_id: "", name: 'Assign Study Identifiers from column', value: 'study' },
+        { header: "", associated_linda_id: "", name: 'Assign Experimental Factors', value: 'experimental_factor' },
+        { header: "", associated_linda_id: "", name: 'Assign Material Sources', value: 'biological_material' },
+        { header: "", associated_linda_id: "", name: 'Assign Observation Units', value: 'observation_unit' },
+        { header: "", associated_linda_id: "", name: 'Assign Observed variables', value: 'observed_variable' },
+        { header: "", associated_linda_id: "", name: 'Assign Timeline', value: 'time' }],
+                                    'defaut': 
+                                    { name: 'Assing MIAPPE components', value: '', label: 'test' }
     };
+
+    private extract_component_options2 = {
+        'options': [
+            { disabled:true,header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '', fields:[] },
+            { disabled:false, header: "", associated_linda_id: "", name: 'Study', value: 'study', fields:[
+                "Study unique ID",
+                "Study Name","Study title",
+                "Cultural practices",
+                "Contact institution",
+                "Geographic location (longitude)",
+                "Geographic location (latitude)",
+                "Geographic location (altitude)",
+                "Geographic location (country)",
+                "Start date of study",
+                "End date of study",
+                'Description of growth facility',
+                'Map of experimental design',
+                'Experimental site name',
+                'Description of the experimental design',
+                'Study description',
+                'Observation unit description',
+                'Observation unit level hierarchy',
+                'Type of experimental design'
+            ]},
+            { disabled:false, header: "", associated_linda_id: "", name: 'Experimental Factor', value: 'experimental_factor' , fields:[
+                'Experimental Factor description',
+                'Experimental Factor values',
+                'Experimental Factor accession number',
+                'Experimental Factor type'
+            ]},
+            { disabled:false, header: "", associated_linda_id: "", name: 'Biological Material', value: 'biological_material' , fields:[
+                'Genus',
+                'Species',
+                'Organism',
+                'Infraspecific name',
+                'Material source ID (Holding institute/stock centre, accession)',
+                'Material source description',
+                'Material source longitude',
+                'Material source altitude',
+                'Material source latitude',
+                'Material source DOI',
+                'Material source coordinates uncertainty',
+                'Biological material ID',
+                'Biological material preprocessing',
+                'Biological material coordinates uncertainty',
+                'Biological material longitude',
+                'Biological material latitude',
+                'Biological material altitude'
+            ]},
+            { disabled:false, header: "", associated_linda_id: "", name: 'Observation Unit', value: 'observation_unit', fields:[
+                'Observation unit ID',
+                'Observation unit type',
+                'External ID',
+                'Spatial distribution',
+                'Observation Unit factor value'
+            ]  },
+            { disabled:false, header: "", associated_linda_id: "", name: 'Observed variable', value: 'observed_variable' , fields:[
+                'Variable ID',
+                'Variable name',
+                'Variable accession number',
+                'Scale',
+                'Scale accession number',
+                'Time scale',
+                'Trait',
+                'Trait accession number',
+                'Method',
+                'Method description',
+                'Method accession number',
+                'Reference associated to the method'
+            ] },
+            { disabled:false, header: "", associated_linda_id: "", name: 'Timeline', value: 'time', fields:['time']  }
+        ],
+        'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
+    };
+  
 
     observation_unit_types: any[] = ["block", "sub-block","plot","plant","trial","pot","replicate","individual","virtual_trial","unit-parcel"];
     observation_unit_type=""
@@ -175,7 +250,6 @@ export class DownloadComponent implements OnInit, OnDestroy {
               // Trick the Router into believing it's last link wasn't previously loaded
               this.initializeInvites();
               this.router.navigated = false;
-            
             }
         });
         this.loaded=false
@@ -314,7 +388,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                 let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component, associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
                                 if (element.associated_component != "") {
                                     ///let tmp = {}
-                                    let tmp = { ...this.extract_component_options.options.filter(prop => prop.value === element.associated_component)[0] }
+                                    let tmp = { ...this.extract_component_options2.options.filter(prop => prop.value === element.associated_component)[0] }
                                     tmp['header'] = element.header
                                     tmp['associated_linda_id'] = element.associated_linda_id
                                     this.options_components_by_filename[data_file.filename].push(tmp)
@@ -441,7 +515,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
-    load_csv2(allTextLines: any, delimitor:string=",") {
+    /* load_csv2(allTextLines: any, delimitor:string=",") {
         this.lines_arr = [];
         this.lines_dict = []
         this.associated_headers = []
@@ -500,7 +574,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.dataFileComponentForm[this.selected_file].get(option.header).setValue(option.value);
         });
 
-    }
+    } */
     load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
 
 
@@ -584,8 +658,15 @@ export class DownloadComponent implements OnInit, OnDestroy {
     formatTime(val) {
         return val
     }
+    get_component(field: string ){
+        return this.extract_component_options2.options.filter(prop => prop.fields.includes(field))[0]['value']
+        //console.log(this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });)
+
+    }
     onModify(values: string, key: string, filename: string) {
+        
         console.log(values)
+        console.log(key)
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
@@ -594,6 +675,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = result.date_format; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = "time"; });
+                this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component_field = ""; });
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = true; });
                 this.time_set = true
                 this.checklistSelection.toggle(key);
@@ -603,13 +685,15 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = false; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = "" });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = ""; });
+            this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component_field = ""; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = false; });
         }
         else {
             this.data_to_extract[values] = key
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_term_id = ''; });
-            this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = values; });
+            this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component = this.get_component(values); });
+            this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.associated_component_field = values; });
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = false; });
 
             //this.associated_headers[key]={selected:true, associated_term_id:"", associated_component:values, is_time_values:false}
@@ -757,7 +841,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
     itemSelectionToggle(key: string): void {
-
+        console.log(this.associated_headers)
         this.checklistSelection.toggle(key);
         if (this.checklistSelection.isSelected(key)) {
             this.associated_headers.filter(prop => prop.header == key)['selected'] = true
@@ -1022,11 +1106,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
             }
             console.log(this.data_to_extract)
-            if (this.data_to_extract['study']) {
+            if (this.data_to_extract['Study unique ID']) {
                 let groups_label = []
                 //search for column declared as study column
                 for (var i = 0; i < this.headers.length; i++) {
-                    if (this.headers[i] == this.data_to_extract['study']) {
+                    if (this.headers[i] == this.data_to_extract['Study unique ID']) {
                         for (var j = 0; j < this.lines_arr.length; j++) {
                             groups_label.push(this.lines_arr[j][i])
                         }
@@ -1061,7 +1145,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                     study_model["Study Name"] = study_component_set_array[i]
                                     let unique_study_label = study_component_set_array[i]
                                     //get the header label for study column in the csv file
-                                    var study_column_name = this.data_to_extract['study']
+                                    var study_column_name = this.data_to_extract['Study unique ID']
 
                                     // filter lines_dict to keep lines that match unique_study_label
                                     var study_lines = this.lines_dict.filter(line => {
@@ -1144,7 +1228,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                         this.globalService.get_study_by_ID(unique_study_label, this.parent_id.split("/")[1]).pipe(first()).toPromise().then(
                             data => {
                                 // get the header label for study column in the csv file
-                                var study_column_name = this.data_to_extract['study']
+                                var study_column_name = this.data_to_extract['Study unique ID']
                                 // filter lines_dict to keep lines that match unique_study_label
                                 var study_lines = this.lines_dict.filter(line => {
                                     return line[study_column_name] === unique_study_label;
@@ -1185,7 +1269,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                                   
                                                   }
 
-                                                this.router.navigate(['/projects_tree']);
+                                                //this.router.navigate(['/projects_tree']);
+                                                this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'Assign' } });
+
                                                 //this.reloadComponent(['/projects_tree'])
                                             }
                                         }
@@ -1288,7 +1374,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         return this.filename_used
     }
     get get_extract_component_options(){
-      return this.extract_component_options
+      return this.extract_component_options2
     }
     get get_multi(){
       return this.multi

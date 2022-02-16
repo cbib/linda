@@ -14,6 +14,7 @@ import { first } from 'rxjs/operators';
 import { JoyrideService } from 'ngx-joyride';
 import * as uuid from 'uuid';
 import { SelectionComponent } from '../dialogs/selection.component';
+import { User } from 'src/app/models';
 /*
  Maybe add data filename to investigation component when adding data files with studies in download_component.ts
   It will be easier to build this page knowing the filename
@@ -50,35 +51,35 @@ export class ExtractComponent implements OnInit {
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatButtonToggle, { static: false }) toggle: MatButtonToggle;
-  material_types: any[] = ["Material ID", "biological Material ID"];
-  material_type = "Material ID"
-  observation_unit_types: any[] = ["block", "sub-block", "plot", "plant", "trial", "pot", "replicate", "individual", "virtual_trial", "unit-parcel"];
-  observation_unit_type = ""
+  material_types: string[] = ["Material ID", "biological Material ID"];
+  material_type:string = "Material ID"
+  observation_unit_types: string[] = ["block", "sub-block", "plot", "plant", "trial", "pot", "replicate", "individual", "virtual_trial", "unit-parcel"];
+  observation_unit_type:string = ""
   form: FormGroup;
-  cleaned_model = []
-  model_type_label = ""
-  study_array = []
-  variable_array = []
+  cleaned_model:{}[] = []
+  model_type_label:string = ""
+  study_array:string[] = []
+  variable_array:any[] = []
   headers_form = {}
-  global = {}
-  datafile_ids = {}
-  datafile_study_ids = {}
+  global:{}  = {}
+  datafile_ids:{} = {}
+  datafile_study_ids:{}  = {}
   ObservedVariables: {} = {};
   AllObservedVariables: {} = {};
   displayedColumns: {} = {};
   displayedcomponentColumns: {} = {};
   datasources: {} = {};
   data_ready: boolean = false
-  filename_used = []
-  model_types = ["experimental_factor","observation_unit","biological_material", "observed_variable"]
-  initialSelection = []
-  selection = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
+  filename_used:string[] = []
+  model_types = ["experimental_factor","observation_unit","biological_material", "observed_variable", "experimental_design"]
+  initialSelection:[] = []
+  selection:SelectionModel<{}> = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
   selected_file: string = ""
-  selected_model_type:string=""
+  selected_model_type:string="experimental_factor"
   save_as_template: boolean = false
-  private currentUser
-  private demo_subset = 0
-  part2 = false
+  private currentUser:User
+  private demo_subset:number = 0
+  part2:boolean = false
 
   constructor(
     private formBuilder: FormBuilder,
@@ -114,7 +115,6 @@ export class ExtractComponent implements OnInit {
   onFilenameChange(values: string) {
     this.selected_file = values
   }
-  
   onModelChange(values: string) {
 
     this.selected_model_type = values
@@ -123,7 +123,12 @@ export class ExtractComponent implements OnInit {
     console.log(this.model_type)
     this.get_data()
   }
-
+  onTypeChange(values: string) {
+    this.material_type = values
+  }
+  onOUTypeChange(values: string) {
+    this.observation_unit_type = values
+  }
   get get_demo_subset(){
     return this.demo_subset
   }
@@ -231,41 +236,15 @@ export class ExtractComponent implements OnInit {
       ////console.log(this.datasources)
     }
   }
-  get_model_type() {
+  get_model_type() :string{
     return this.model_type
   }
-  onTypeChange(values: string) {
-    this.material_type = values
-  }
-  onOUTypeChange(values: string) {
-    this.observation_unit_type = values
-  }
-  cancel() {
-
-    if (!this.currentUser.tutoriel_done) {
-      if (this.currentUser.tutoriel_step === "15") {
-        if (this.model_type === "investigation") {
-          var new_step = 14
-          this.currentUser.tutoriel_step = new_step.toString()
-          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-      }
-      else {
-        this.alertService.error("You are not in the right form as requested by the tutorial")
-
-      }
-    }
-    this.router.navigate(['/projects_tree'])
-  }
-
-
   get_model(model_type: string) {
-    let model = [];
+    //let model = [];
     //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
     this.globalService.get_model(model_type).toPromise().then(data => {
-      model = data;
-      var keys = Object.keys(model);
-      let cleaned_model_array = []
+      var keys = Object.keys(data);
+      this.cleaned_model = []
       for (var i = 0; i < keys.length; i++) {
         if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {
           keys.splice(i, 1);
@@ -274,18 +253,17 @@ export class ExtractComponent implements OnInit {
         else {
           var dict = {}
           dict["key"] = keys[i]
-          dict["pos"] = model[keys[i]]["Position"]
-          dict["level"] = model[keys[i]]["Level"]
-          dict["format"] = model[keys[i]]["Format"]
-          dict["Associated_ontologies"] = model[keys[i]]["Associated_ontologies"]
-          cleaned_model_array.push(dict)
+          dict["pos"] = data[keys[i]]["Position"]
+          dict["level"] = data[keys[i]]["Level"]
+          dict["format"] = data[keys[i]]["Format"]
+          dict["Associated_ontologies"] = data[keys[i]]["Associated_ontologies"]
+          this.cleaned_model.push(dict)
         }
       }
-      cleaned_model_array = cleaned_model_array.sort(function (a, b) { return a.pos - b.pos; });
-      this.cleaned_model = cleaned_model_array
+      this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a['pos'] - b['pos']; });
+      //this.cleaned_model = cleaned_model_array
     });
   }
-
   /** Whether the number of selected elements matches the total number of rows. */
   isAllRowSelected(selected_file: string) {
     const numSelected = this.selection.selected.length;
@@ -300,7 +278,6 @@ export class ExtractComponent implements OnInit {
         this.selection.select(row)
       });
   }
-
   Delete_extracted_component(value: string, filename: string) {
 
   }
@@ -328,7 +305,7 @@ export class ExtractComponent implements OnInit {
       }
     });
   }
-
+  //pre load data in dedicated MIAPPE component
   click_toggle(value: string, filename: string) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     //check if this header is already extracted from another file
@@ -353,6 +330,7 @@ export class ExtractComponent implements OnInit {
       })
       //propose to extract and replace component
     }
+    //else open dialog to propose new component creation by template or not
     else {
       const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value } });
       dialogRef.afterClosed().subscribe((confirmResult) => {
@@ -378,12 +356,15 @@ export class ExtractComponent implements OnInit {
                 });
 
             }
+            //else if use existing, use a existing component 
             else if (confirmResult.use_existing) {
               ////console.log("You have confirmed extraction from already described " + this.model_type_label + 's')
               window.location.reload();
               //open a dialog with model type already extracted in other file
             }
+            //else , create a new component by opening form generic component
             else {
+              console.log(this.model_type)
               const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
@@ -613,15 +594,148 @@ export class ExtractComponent implements OnInit {
       });
     }
   }
+  getIconStyle(key: string): Object {
+    if (key.includes('study')) {
 
+      return { backgroundColor: '#b6b6b6', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('event')) {
 
+      return { backgroundColor: 'lightcoral', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('observed_variable')) {
+
+      return { backgroundColor: '#2E8B57', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('material')) {
+
+      return { backgroundColor: '#72bcd4', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('biological_material')) {
+
+      return { backgroundColor: 'LightBlue', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('observation_unit')) {
+
+      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('unset')) {
+
+      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('notfound')) {
+
+      return { backgroundColor: 'Gray', 'border-radius': '4px', 'width': '100px' }
+    }
+    else if (key.includes('ready')) {
+
+      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'width': '100px' }
+    }
+    else {
+      return { backgroundColor: 'LightSteelBlue', 'border-radius': '100px' }
+    }
+  }
+  getToggleStyle(key: string): Object {
+    if (key.includes('study')) {
+
+      return { backgroundColor: '#b6b6b6', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('event')) {
+
+      return { backgroundColor: 'lightcoral', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('observed_variable')) {
+
+      return { backgroundColor: '#2E8B57', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('material')) {
+
+      return { backgroundColor: '#72bcd4', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('biological_material')) {
+
+      return { backgroundColor: 'LightBlue', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('observation_unit')) {
+
+      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('unset')) {
+
+      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('ready')) {
+
+      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('ready-tuto')) {
+
+      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'right' }
+    }
+    else if (key.includes('extracted')) {
+
+      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
+    }
+    else if (key.includes('test')) {
+      return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px' }
+    }
+    else {
+      return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px', 'float': 'left' }
+    }
+  }
+  get_state(column: string, filename: string) {
+    ////console.log(this.global[filename])
+    var tmp_list = []
+    let res = ""
+    this.global[filename].forEach(
+      element => {
+        ////console.log(element)
+        if (element[column]['id'].includes(this.model_type + "s")) {
+          //return "extracted"
+          tmp_list.push("extracted")
+        }
+        // else if(element[column].includes(this.model_type+"s")){
+
+        //   tmp_list.push("extracted")
+        // }
+        else {
+          //return "unset"
+          tmp_list.push("unset")
+        }
+      }
+    )
+
+    if (tmp_list.filter(component => component == 'extracted').length === this.global[filename].length) {
+      res = 'all_extracted'
+    }
+    else if (tmp_list.filter(component => component == 'unset').length === this.global[filename].length) {
+      res = 'all_unset'
+    }
+    else {
+      res = 'some_extracted_some_unset'
+    }
+    ////console.log(this.global[filename].length)
+    ////console.log(tmp_list.filter(component => component == 'extracted').length)
+    ////console.log(res)
+    return res
+  }
+  onClickTour() {
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    ////console.log(this.currentUser)
+    if (this.currentUser['tutoriel_step'] === "15") {
+      if (!this.part2) {
+        this.joyrideService.startTour(
+          { steps: ['StepDescription', 'StepSelectFile', 'StepComponentTable', 'StepAddComponent', 'StepLinkComponent', 'StepClickToggle'], stepDefaultPosition: 'bottom' } // Your steps order
+        );
+      }
+    }
+  }
   onSubmit() {
 
     if (this.selection.selected.length === 0) {
       this.alertService.error("You have to select row(s) in the component table")
     }
     else {
-
       ////console.log("ready to extract !!!!! ")
       var cnt = 0
       this.datasources[this.selected_file]['filteredData'].forEach(
@@ -735,144 +849,22 @@ export class ExtractComponent implements OnInit {
     // 
 
   }
+  cancel() {
 
-  getIconStyle(key: string): Object {
-    if (key.includes('study')) {
-
-      return { backgroundColor: '#b6b6b6', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('event')) {
-
-      return { backgroundColor: 'lightcoral', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('observed_variable')) {
-
-      return { backgroundColor: '#2E8B57', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('material')) {
-
-      return { backgroundColor: '#72bcd4', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('biological_material')) {
-
-      return { backgroundColor: 'LightBlue', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('observation_unit')) {
-
-      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('unset')) {
-
-      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('notfound')) {
-
-      return { backgroundColor: 'Gray', 'border-radius': '4px', 'width': '100px' }
-    }
-    else if (key.includes('ready')) {
-
-      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'width': '100px' }
-    }
-    else {
-      return { backgroundColor: 'LightSteelBlue', 'border-radius': '100px' }
-    }
-  }
-
-  getToggleStyle(key: string): Object {
-    if (key.includes('study')) {
-
-      return { backgroundColor: '#b6b6b6', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('event')) {
-
-      return { backgroundColor: 'lightcoral', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('observed_variable')) {
-
-      return { backgroundColor: '#2E8B57', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('material')) {
-
-      return { backgroundColor: '#72bcd4', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('biological_material')) {
-
-      return { backgroundColor: 'LightBlue', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('observation_unit')) {
-
-      return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('unset')) {
-
-      return { backgroundColor: 'LightGray', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('ready')) {
-
-      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('ready-tuto')) {
-
-      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'right' }
-    }
-    else if (key.includes('extracted')) {
-
-      return { backgroundColor: 'LightGreen', 'border-radius': '4px', 'float': 'left' }
-    }
-    else if (key.includes('test')) {
-      return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px' }
-    }
-    else {
-      return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px', 'float': 'left' }
-    }
-  }
-
-  get_state(column: string, filename: string) {
-    ////console.log(this.global[filename])
-    var tmp_list = []
-    let res = ""
-    this.global[filename].forEach(
-      element => {
-        ////console.log(element)
-        if (element[column]['id'].includes(this.model_type + "s")) {
-          //return "extracted"
-          tmp_list.push("extracted")
-        }
-        // else if(element[column].includes(this.model_type+"s")){
-
-        //   tmp_list.push("extracted")
-        // }
-        else {
-          //return "unset"
-          tmp_list.push("unset")
+    if (!this.currentUser.tutoriel_done) {
+      if (this.currentUser.tutoriel_step === "15") {
+        if (this.model_type === "investigation") {
+          var new_step = 14
+          this.currentUser.tutoriel_step = new_step.toString()
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         }
       }
-    )
+      else {
+        this.alertService.error("You are not in the right form as requested by the tutorial")
 
-    if (tmp_list.filter(component => component == 'extracted').length === this.global[filename].length) {
-      res = 'all_extracted'
-    }
-    else if (tmp_list.filter(component => component == 'unset').length === this.global[filename].length) {
-      res = 'all_unset'
-    }
-    else {
-      res = 'some_extracted_some_unset'
-    }
-    ////console.log(this.global[filename].length)
-    ////console.log(tmp_list.filter(component => component == 'extracted').length)
-    ////console.log(res)
-    return res
-  }
-  onClickTour() {
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    ////console.log(this.currentUser)
-    if (this.currentUser['tutoriel_step'] === "15") {
-      if (!this.part2) {
-        this.joyrideService.startTour(
-          { steps: ['StepDescription', 'StepSelectFile', 'StepComponentTable', 'StepAddComponent', 'StepLinkComponent', 'StepClickToggle'], stepDefaultPosition: 'bottom' } // Your steps order
-        );
       }
     }
+    this.router.navigate(['/projects_tree'])
   }
 
 }
