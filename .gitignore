@@ -65,3 +65,12 @@ src/assets/css/iconfont/
 src/scripts/
 useful_command.txt
 password.txt
+
+
+
+.idea/
+docs/
+export/
+gittpu.txt
+mydocs/
+src/.htmlhintrc
