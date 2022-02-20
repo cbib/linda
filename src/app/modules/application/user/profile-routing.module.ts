@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserComponent } from './user.component';
-
+import { PersonComponent } from './person.component';
 import { ProfileComponent } from './profile.component';
 
 const routes: Routes = [
   { path: '', component: ProfileComponent },
-  { path: 'user', component: UserComponent, children: [] },
+  { path: 'user', component: PersonComponent, children: [] },
 ];
 
 @NgModule({

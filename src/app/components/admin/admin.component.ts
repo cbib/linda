@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { first } from 'rxjs/operators';
+import { PersonInterface } from 'src/app/models/linda/person';
 import { User } from '../../models/user';
 declare const annyang: any;
 @Component({
@@ -13,7 +14,7 @@ export class AdminComponent implements OnInit {
 	voiceActiveSectionSuccess: boolean = false;
 	voiceActiveSectionListening: boolean = false;
 	voiceText: any;
-  users: User[] = [];
+  users: PersonInterface[] = [];
   constructor(private ngZone: NgZone) { }
 
   ngOnInit() {}

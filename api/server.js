@@ -65,7 +65,16 @@ const queues = require('@arangodb/foxx/queues')
 
 
 
-//var edgeDefinitions = [ {collection: "users_edge", "from": [ "users" ], "to" : [ "investigations" ] }, 
+//graph = graph_module._create("myGraph");
+
+
+//Create a graph using an edge collection edges and a single vertex collection vertices:
+//var edgeDefinitions = [ { collection: "persons_edge", "from": [ "persons" ], "to" : [ "investigations" ] } ];
+//graph = graph_module._create("myGraph", edgeDefinitions);
+
+
+
+//var edgeDefinitions = [ {collection: "persons_edge", "from": [ "persons" ], "to" : [ "investigations" ] }, 
 //                        {collection: "investigations_edge", "from": [ "investigations" ], "to" : [ "studies" ] }, 
 //                        {collection: "studies_edge", "from": [ "studies" ], "to" : [ "events", "data_files","observed_variables","experimental_factors","observation_units","environments","samples"] }
 //    ];
@@ -74,7 +83,7 @@ const queues = require('@arangodb/foxx/queues')
 //    graph_module._create("global", edgeDefinitions);
 //}
 
-//var graph =graph_module._create("Graph2", [graph_module._relation("users_edge", "users", "investigations"), 
+//var graph =graph_module._create("Graph2", [graph_module._relation("persons_edge", "persons", "investigations"), 
 //                                            graph_module._relation("investigations_edge", "investigations", "studies"),
 //                                            graph_module._relation("studies_edge", "studies", "events")
 //                                        ]) 
@@ -87,7 +96,7 @@ var observation_unit = db._collection('observation_unit');
 var environment = db._collection('environment');
 
 /*Document collections*/
-var users = db._collection('users');
+var persons = db._collection('persons');
 var investigations = db._collection('investigations');
 var studies = db._collection('studies');
 var events = db._collection('events');
@@ -98,8 +107,10 @@ var experimental_factors = db._collection('experimental_factors');
 var environments = db._collection('environments');
 var publications = db._collection('publications');
 var samples = db._collection('samples');
+
+
 /*Edge collections*/
-var users_edge = db._collection('users_edge');
+var persons_edge = db._collection('persons_edge');
 var investigations_edge = db._collection('investigations_edge');
 var observation_units = db._collection('observation_units');
 var studies_edge = db._collection('studies_edge');
@@ -111,10 +122,11 @@ var metadata_files = db._collection('metadata_files');
 
 /*Check if collections exist*/
 
-if (!users) {
-    db._createDocumentCollection('users');
-    users = db._collection('users');
+if (!persons) {
+    db._createDocumentCollection('persons');
+    persons = db._collection('persons');
 }
+
 if (!investigations) {
     db._createDocumentCollection('investigations');
     investigations = db._collection('investigations');
@@ -163,8 +175,8 @@ if (!metadata_files) {
 
 
 /*check if edge collections exist*/
-if (!users_edge) {
-    db._createDocumentCollection('users_edge');
+if (!persons_edge) {
+    db._createDocumentCollection('persons_edge');
 }
 if (!investigations_edge) {
     db._createDocumentCollection('investigations_edge');
@@ -176,14 +188,14 @@ if (!studies_edge) {
 //  db._createEdgeCollection('observation_units_edge');
 //}
 ////const study = db._collection('study');
-//const users = db._collection('users');
+//const persons = db._collection('persons');
 //const investigation = db._collection('investigation');
 ////const investigations = db._collection('investigations');
 //const study = db._collection('study');
 ////const studies = db._collection('studies');
 //const event = db._collection('event');
 ////const events = db._collection('events');
-////const users_edge = db._collection('users_edge');
+////const persons_edge = db._collection('persons_edge');
 ////const investigations_edge = db._collection('investigations_edge');
 
 
@@ -228,19 +240,12 @@ const DOC_NOT_FOUND = errors.ERROR_ARANGO_DOCUMENT_NOT_FOUND.code;
  ******************************************************************************************/
 
 router.get('/users', function (req, res) {
-    const keys = db._query(aql`
-    FOR entry IN ${users}
-    RETURN entry
-  `);
-    res.headers['Access-Control-Allow-Credentials'] = true
-    res.headers['Access-Control-Allow-Origin'] = true
-    res.send(keys);
-})
-    .response(joi.array().items(
-        joi.string().required()
-    ).required(), 'List of entry keys.')
-    .summary('List entry keys')
-    .description('Assembles a list of keys of entries in the collection.');
+    var users = []
+    users = db._query(aql`FOR entry IN ${persons} RETURN entry`);
+    res.send(users);
+}) .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+  .summary('List entry keys')
+  .description('Assembles a list of keys of entries in the collection.');
 
 
 // GET users by username
@@ -249,9 +254,9 @@ router.get('/users/:username', function (req, res) {
 
     try {
         var name = req.pathParams.username;
-        //const data = users.byExample({username : name});
-        const data = users.firstExample('username', name);
-        //const data = users.properties();
+        //const data = persons.byExample({username : name});
+        const data = persons.firstExample('username', name);
+        //const data = persons.properties();
         res.send(data);
     }
     catch (e) {
@@ -273,9 +278,9 @@ router.get('/users/:username', function (req, res) {
 
     try {
         var name = req.pathParams.username;
-        //const data = users.byExample({username : name});
-        const data = users.firstExample('username', name);
-        //const data = users.properties();
+        //const data = persons.byExample({username : name});
+        const data = persons.firstExample('username', name);
+        //const data = persons.properties();
         res.send(data);
     }
     catch (e) {
@@ -298,9 +303,9 @@ router.get('/get_user/:username/:password', function (req, res) {
     try {
         var name = req.pathParams.username;
         var pwd = req.pathParams.password;
-        //const data = users.byExample({username : name});
-        const data = users.byExample({ 'username': name, 'password': pwd });
-        //const data = users.properties();
+        //const data = persons.byExample({username : name});
+        const data = persons.byExample({ 'username': name, 'password': pwd });
+        //const data = persons.properties();
         res.send(data.toArray()[0]);
     }
     catch (e) {
@@ -329,7 +334,7 @@ router.post('/authenticate', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     const user_array = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -356,6 +361,94 @@ router.post('/authenticate', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist.');
 
+
+router.post('/authenticate_person', function (req, res) {
+    //const values = req.body.values;
+    var username = req.body.username;
+    var password = req.body.password;
+    const person_array = db._query(aql`
+        FOR entry IN ${persons}
+        FILTER entry.username == ${username}
+        FILTER entry.password == ${password}
+        RETURN entry
+      `);
+
+    if (person_array[0] === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists', person: {} });
+    }
+    else {
+        res.send({ success: true, message: 'Username ' + username + ' found', person: person_array['_documents'][0] });
+    }
+})
+    .body(joi.object({
+        username: joi.string().required(),
+        password: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(
+        joi.object({
+            success: joi.boolean().required(),
+            message: joi.string().required(),
+            person: joi.object().required()
+        }
+        ).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('check if user exist.');
+
+
+router.post('/register_person', function (req, res) {
+    const data = req.body;
+    //var username=req.body.username;
+    var searchExpression = { "person ID": req.body.username, "password": req.body.password };
+    var data_to_insert = {
+        "username": req.body.username,
+        "password": req.body.password,
+        "Person name": req.body['Person name'],
+        "Person ID": req.body['Person ID'],
+        "Person email": req.body['Person email'],
+        "Person role": req.body['Person role'],
+        "Person affiliation": req.body['Person role'],
+        "tutoriel_step": 0,
+        "tutoriel_done": false,
+        "treeview": false,
+        "admin": "false"
+    };
+
+    //alert(username);
+    //var password=req.body.password;
+    //var firstName=req.body.firstName;
+    //var lastName=req.body.lastName;
+
+    const keys = db._query(aql`UPSERT ${searchExpression} INSERT ${data_to_insert} UPDATE {}  IN ${persons} RETURN OLD `);
+
+    if (keys.next() === null) {
+        res.send({ success: true, message: 'everything is good' + JSON.stringify(keys) });
+    }
+    else {
+        res.send({ success: false, message: 'a user with username ' + searchExpression['Person ID'] + ' already exists' });
+    };
+
+})
+    .body(joi.object({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        confirmpassword: joi.string().required(),
+        "Person name": joi.string().required(),
+        "Person ID": joi.string().required(),
+        "Person role": joi.string().required(),
+        "Person affiliation": joi.string().required(),
+        "Person email": joi.string().required()
+    }).required(), 'Values to check.')
+
+    //.response(joi.string().required(), 'response.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('check if person exist.');
+
+
+
 router.post('/register', function (req, res) {
     const data = req.body;
     //var username=req.body.username;
@@ -367,7 +460,7 @@ router.post('/register', function (req, res) {
     //var firstName=req.body.firstName;
     //var lastName=req.body.lastName;
 
-    const keys = db._query(aql`UPSERT ${searchExpression} INSERT ${data_to_insert} UPDATE {}  IN ${users} RETURN OLD `);
+    const keys = db._query(aql`UPSERT ${searchExpression} INSERT ${data_to_insert} UPDATE {}  IN ${persons} RETURN OLD `);
 
     if (keys.next() === null) {
         res.send({ success: true, message: 'everything is good' + JSON.stringify(keys) });
@@ -401,7 +494,7 @@ router.post('/search', function (req, res) {
     var search_string = req.body.search_string;
 
     const user = db._query(aql`
-        FOR entry IN ${users}
+        FOR entry IN ${persons}
         FILTER entry.username == ${username}
         FILTER entry.password == ${password}
         RETURN entry
@@ -513,7 +606,7 @@ router.get('/get_model_child/:model_type', function (req, res) {
     var data = {}
 
     data = db._query(aql`FOR v, e, s IN 1..1 ANY ${model_type} GRAPH 'miappe' FILTER e._from==${model_type} RETURN {v:v}`);
-    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, users_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
+    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, persons_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
     res.send(data);
 })
     .pathParam('model_type', joi.string().required(), 'username of the entry.')
@@ -572,7 +665,7 @@ router.get('/get_parent/:model_type/:model_key', function (req, res) {
     var data = {}
 
     data = db._query(aql`FOR v, e IN 1..1 ANY ${model_id} GRAPH 'global' FILTER e._to==${model_id} RETURN {_key:e._key , _from:e._from}`);
-    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, users_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
+    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, persons_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
     res.send(data.next());
 })
     .pathParam('model_type', joi.string().required(), 'username of the entry.')
@@ -590,7 +683,7 @@ router.get('/get_childs/:model_type/:model_key', function (req, res) {
     var data = {}
 
     data = db._query(aql`FOR v, e, s IN 1..1 ANY ${model_id} GRAPH 'global' FILTER e._from==${model_id} RETURN {v:v}`);
-    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, users_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
+    //data=db._query(aql`FOR v, e IN 1..1 ANY 'investigations/770131' investigations_edge, studies_edge, persons_edge FILTER e._to=='investigations/770131' RETURN {_key:e._key , _from:e._from}`).toArray();
     res.send(data);
 })
     .pathParam('model_type', joi.string().required(), 'username of the entry.')
@@ -601,7 +694,7 @@ router.get('/get_childs/:model_type/:model_key', function (req, res) {
     .description('Assembles a list of keys of entries in the collection.');
 
 router.get('/get_vertices/:user_key', function (req, res) {
-    var user_id = "users/" + req.pathParams.user_key;
+    var user_id = "persons/" + req.pathParams.user_key;
     var data = [];
     data = db._query(aql`FOR v, e, s IN 1..3 ANY ${user_id} GRAPH 'global'  RETURN {e:e,s:s}`);
     res.send(data);
@@ -613,7 +706,7 @@ router.get('/get_vertices/:user_key', function (req, res) {
 
 
 router.get('/get_projects/:user_key', function (req, res) {
-    var user_id = "users/" + req.pathParams.user_key;
+    var user_id = "persons/" + req.pathParams.user_key;
     var data = [];
     data = db._query(aql`FOR v, e, s IN 1..3 ANY ${user_id} GRAPH 'global' PRUNE e._from ==${user_id}  RETURN s.vertices[1]`);
     res.send(data);
@@ -641,6 +734,18 @@ router.get('/get_data_files/:study_key', function (req, res) {
     var study_id = "studies/" + req.pathParams.study_key;
     var data = [];
     data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${study_id} GRAPH 'global' FILTER e._from==${study_id} AND CONTAINS(e._to, "data_files") RETURN v`);
+    res.send(data);
+})
+    .pathParam('study_key', joi.string().required(), 'study key of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    //.response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+router.get('/get_all_experimental_designs/:study_key', function (req, res) {
+    var study_id = "studies/" + req.pathParams.study_key;
+    var data = [];
+    data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${study_id} GRAPH 'global' FILTER e._from==${study_id} AND CONTAINS(e._to, "experimental_designs") RETURN v`);
     res.send(data);
 })
     .pathParam('study_key', joi.string().required(), 'study key of the entry.')
@@ -857,11 +962,11 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 //    if (model_type==='investigation'){
 //        id='investigations/'+key;
 //        
-//        data=db._query(aql`FOR v, e IN 1..2 ANY 'users/1' GRAPH 'global_graph' FILTER e._to==${_id} || e._from==${_id} RETURN {_key:e._key , _to:e._to}`).toArray();
+//        data=db._query(aql`FOR v, e IN 1..2 ANY 'persons/1' GRAPH 'global_graph' FILTER e._to==${_id} || e._from==${_id} RETURN {_key:e._key , _to:e._to}`).toArray();
 //        for (v in data){
 //            if (data[v]._to.startsWith('invest')){
 //                inv_key=data[v]._to.split("/")[1]
-//                db._query(aql`REMOVE ${data[v]._key} IN ${users_edge}`);
+//                db._query(aql`REMOVE ${data[v]._key} IN ${persons_edge}`);
 //                db._query(aql`REMOVE ${inv_key} IN ${investigations}`);
 //            }
 //            else{
@@ -872,7 +977,7 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 //            }
 //            
 //        }
-//        //Remove users_edge, investigations edge, studies and all associated data
+//        //Remove persons_edge, investigations edge, studies and all associated data
 //        //Remove investigation and clean investigations edge
 //        data = investigations.firstExample('_key',key);
 //    }
@@ -1246,8 +1351,8 @@ router.get('/get_by_parent_key/:model_type/:parent_key', function (req, res) {
     var array = [];
     try {
         if (model_type === 'investigation') {
-            var parent_id = 'users/' + parent_key;
-            var edges = users_edge.byExample({ '_from': parent_id }).toArray();
+            var parent_id = 'persons/' + parent_key;
+            var edges = persons_edge.byExample({ '_from': parent_id }).toArray();
             for (var i in edges) {
                 array.push(edges[i]['_to']);
             }
@@ -1309,7 +1414,7 @@ router.post('/upload_data', function (req, res) {
     //    //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-                FOR entry IN ${users}
+                FOR entry IN ${persons}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
@@ -1362,7 +1467,7 @@ router.post('/upload', function (req, res) {
     //    //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -1416,7 +1521,7 @@ router.post('/compare_component', function (req, res) {
     var model_type = req.pathParams.model_type;
     // input document 1
     const user = db._query(aql`
-        FOR entry IN ${users}
+        FOR entry IN ${persons}
         FILTER entry.username == ${username}
         FILTER entry.password == ${password}
         RETURN entry
@@ -1478,7 +1583,7 @@ router.post('/update_associated_headers_linda_id', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -1566,7 +1671,7 @@ router.post('/remove_associated_headers_linda_id', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-                FOR entry IN ${users}
+                FOR entry IN ${persons}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
@@ -1630,7 +1735,7 @@ router.post('/update_associated_headers', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -1709,7 +1814,7 @@ router.post('/update_template', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -1798,7 +1903,7 @@ router.post('/update', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-        FOR entry IN ${users}
+        FOR entry IN ${persons}
         FILTER entry.username == ${username}
         FILTER entry.password == ${password}
         RETURN entry
@@ -1874,7 +1979,7 @@ router.post('/update_field', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-        FOR entry IN ${users}
+        FOR entry IN ${persons}
         FILTER entry.username == ${username}
         FILTER entry.password == ${password}
         RETURN entry
@@ -1947,7 +2052,7 @@ router.post('/update_step', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -1962,8 +2067,8 @@ router.post('/update_step', function (req, res) {
         var update = [];
         var _id = '';
         if (model_type === 'user') {
-            _id = 'users/' + _key;
-            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
+            _id = 'persons/' + _key;
+            update = db._query(aql` FOR entry IN ${persons} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${persons} RETURN NEW`).toArray();
         }
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
@@ -2004,7 +2109,7 @@ router.post('/update_user', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -2018,9 +2123,9 @@ router.post('/update_user', function (req, res) {
         /////////////////////////////
         var update = [];
         var _id = '';
-        if (model_type === 'user') {
-            _id = 'users/' + _key;
-            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
+        if (model_type === 'person') {
+            _id = 'persons/' + _key;
+            update = db._query(aql` FOR entry IN ${persons} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${persons} RETURN NEW`).toArray();
         }
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
@@ -2055,7 +2160,7 @@ router.post('/remove_childs', function (req, res) {
     var id = req.body.id;
 
     const user = db._query(aql`
-                FOR entry IN ${users}
+                FOR entry IN ${persons}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
@@ -2149,7 +2254,7 @@ router.post('/remove_association', function (req, res) {
     var id = req.body.id;
     var datafile_id = req.body.datafile_id;
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -2222,7 +2327,7 @@ router.post('/remove_childs_by_type_and_id', function (req, res) {
     // }
 
     const user = db._query(aql`
-                    FOR entry IN ${users}
+                    FOR entry IN ${persons}
                     FILTER entry.username == ${username}
                     FILTER entry.password == ${password}
                     RETURN entry
@@ -2333,7 +2438,7 @@ router.post('/remove_childs_by_type', function (req, res) {
     // }
 
     const user = db._query(aql`
-                    FOR entry IN ${users}
+                    FOR entry IN ${persons}
                     FILTER entry.username == ${username}
                     FILTER entry.password == ${password}
                     RETURN entry
@@ -2454,7 +2559,7 @@ router.post('/remove_template', function (req, res) {
     var id = req.body.id;
 
     const user = db._query(aql`
-                FOR entry IN ${users}
+                FOR entry IN ${persons}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
@@ -2517,7 +2622,7 @@ router.post('/remove', function (req, res) {
     var id = req.body.id;
 
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -2626,7 +2731,38 @@ router.post('/remove', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
-
+//Post new data
+router.post('/add_edge', function (req, res) {
+    //posted variables
+    var username = req.body.username;
+    var password = req.body.password;
+    var investigation_id = req.body.investigation_id;
+    var person_id = req.body.person_id;
+    var persons_edge_coll = 'persons_edge'
+    if (!db._collection(persons_edge_coll)) {
+        db._createEdgeCollection(persons_edge_coll);
+    }
+    const persons_edge = db._collection(persons_edge_coll);
+    var edge_obj = {
+        "_from": person_id,
+        "_to": investigation_id
+    };
+    const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${persons_edge} RETURN NEW `);
+    res.send({ success: true, message: 'Everything is good for shared project saving', _id: investigation_id })
+})
+.body(joi.object({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    investigation_id: joi.string().required(),
+    person_id: joi.string().required()
+}).required(), 'Values to check.')
+.response(joi.object({
+    success: true,
+    message: joi.string().required(),
+    _id: joi.string().required(),
+}).required(), 'response to send.')
+.summary('List entry keys')
+.description('add MIAPPE description for given model.');
 
 //Post new data
 router.post('/add_template', function (req, res) {
@@ -2657,7 +2793,7 @@ router.post('/add_template', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -2668,7 +2804,7 @@ router.post('/add_template', function (req, res) {
         //first check if user exist
         /////////////////////////////
         //     const user = db._query(aql`
-        //     FOR entry IN ${users}
+        //     FOR entry IN ${persons}
         //     FILTER entry.username == ${username}
         //     FILTER entry.password == ${password}
         //     RETURN entry
@@ -2787,7 +2923,7 @@ router.post('/add', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -2798,7 +2934,7 @@ router.post('/add', function (req, res) {
         //first check if user exist
         /////////////////////////////
         //     const user = db._query(aql`
-        //     FOR entry IN ${users}
+        //     FOR entry IN ${persons}
         //     FILTER entry.username == ${username}
         //     FILTER entry.password == ${password}
         //     RETURN entry
@@ -2969,7 +3105,7 @@ router.post('/add_parent_and_child', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -3135,7 +3271,7 @@ router.post('/add_multi', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -3226,7 +3362,7 @@ router.post('/check_one_exists', function (req, res) {
     }
 
     const user = db._query(aql`
-                FOR entry IN ${users}
+                FOR entry IN ${persons}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
@@ -3272,6 +3408,57 @@ router.post('/check_one_exists', function (req, res) {
     .description('check if user exist.');
 
 
+
+///checkID
+
+router.post('/checkID', function (req, res) {
+    var field = req.body.field;
+    var value = req.body.value;
+    var model_type = req.body.model_type;
+    var coll_name = "";
+    if (model_type === "study") {
+        coll_name = "studies";
+    }
+    else {
+        coll_name = model_type + "s";
+    }
+    var coll = db._collection(coll_name);
+    if (!coll) {
+        db._createDocumentCollection(coll_name);
+    }
+
+    if (value === '') {
+        res.send({ success: false, message: 'nothing in value' });
+    }
+    const user = db._query(aql`FOR entry IN ${coll} FILTER entry['Person ID'] == ${value} RETURN entry`).toArray();
+    if (user.length === 0) {
+        res.send({ success: true, message: 'Person ORCID ' + 'doesn\'t exists', _id: "" });
+    }
+    else {
+        res.send({
+            success: false,
+            message: 'user ORCID already exist, cannot use this \" Person ORCID\" ',
+            _id: user[0]['Person ID']
+        });
+    }
+})
+    .body(joi.object({
+        field: joi.string().required(),
+        value: joi.string().allow('').required(),
+        model_type: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required(),
+        _id: ""
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('check if user exist.');
+
+
+
+
+
 router.post('/check', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -3297,7 +3484,7 @@ router.post('/check', function (req, res) {
         res.send({ success: false, message: 'nothing in value' });
     }
 
-    const user = db._query(aql`FOR entry IN ${users} FILTER entry.username == ${username} FILTER entry.password == ${password} RETURN entry`).toArray();
+    const user = db._query(aql`FOR entry IN ${persons} FILTER entry.username == ${username} FILTER entry.password == ${password} RETURN entry`).toArray();
 
     if (user.length === 0) {
         res.send({ success: false, message: 'username ' + username + 'doesn\'t exists', _id: "" });
@@ -3442,7 +3629,7 @@ router.post('/add_observation_units', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry
@@ -3603,7 +3790,7 @@ router.post('/remove_observation_unit', function (req, res) {
     var id = req.body.id;
 
     const user = db._query(aql`
-                    FOR entry IN ${users}
+                    FOR entry IN ${persons}
                     FILTER entry.username == ${username}
                     FILTER entry.password == ${password}
                     RETURN entry
@@ -4010,7 +4197,7 @@ router.post('/update_observation_units', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-        FOR entry IN ${users}
+        FOR entry IN ${persons}
         FILTER entry.username == ${username}
         FILTER entry.password == ${password}
         RETURN entry
@@ -4020,7 +4207,7 @@ router.post('/update_observation_units', function (req, res) {
         error_message.push('Username ' + username + ' doesn\'t exists')
     }
     else {
-        info_message.push("1- users exists \n")
+        info_message.push("1- persons exists \n")
         var data = [];
         var update = [];
         var diff = []
@@ -4038,7 +4225,7 @@ router.post('/update_observation_units', function (req, res) {
         var response;
         //get previous obsuuid 
         var previous_obsuuids = db._query(aql`FOR doc IN ${observation_unit_coll} FILTER doc._id==${observation_unit_id} RETURN doc.obsUUID `).toArray();
-        // info_message.push("1- users exists \n" +  previous_obsuuids[0])
+        // info_message.push("1- persons exists \n" +  previous_obsuuids[0])
         data = db._query(aql` FOR entry IN ${observation_unit_coll} FILTER entry._id == ${observation_unit_id} UPDATE entry WITH ${observation_unit_doc} IN ${observation_unit_coll} RETURN { before: OLD, after: NEW }`).toArray();
         //check if all previous obsuuid are 
         for (var i = 0; i < previous_obsuuids.length; i++) {
@@ -4255,7 +4442,7 @@ router.post('/update_observation_unit', function (req, res) {
     //first check if user exist
     /////////////////////////////
     const user = db._query(aql`
-            FOR entry IN ${users}
+            FOR entry IN ${persons}
             FILTER entry.username == ${username}
             FILTER entry.password == ${password}
             RETURN entry
@@ -4349,7 +4536,7 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
             db._createDocumentCollection(coll_name);
         }
 
-        var user_id = "users/" + user_key
+        var user_id = "persons/" + user_key
 
         var edges_data = edges.byExample({ "_from": user_id }).toArray();
         for (var i = 0; i < edges_data.length; i++) {
@@ -4392,7 +4579,7 @@ router.get('/get_all_templates/:user_key/', function (req, res) {
         }
 
 
-        var user_id = "users/" + user_key
+        var user_id = "persons/" + user_key
 
         var edges_data = edges.byExample({ "_from": user_id }).toArray();
         for (var i = 0; i < edges_data.length; i++) {
@@ -4447,7 +4634,7 @@ router.post('/saveTemplate', function (req, res) {
 
 
     const user = db._query(aql`
-    FOR entry IN ${users}
+    FOR entry IN ${persons}
     FILTER entry.username == ${username}
     FILTER entry.password == ${password}
     RETURN entry

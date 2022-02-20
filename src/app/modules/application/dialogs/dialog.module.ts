@@ -14,6 +14,7 @@ import { FormGenericComponent } from './form-generic.component';
 import  {BiologicalMaterialComponent } from './biological-material.component'
 import { SampleSelectionComponent } from './sample-selection.component'
 import { HelpLoaderComponent } from './help-loader.component'
+import { ShareProject } from './share-project';
 
 import { GlobalService} from '../../../services';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,7 +54,9 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     FormGenericComponent,
     BiologicalMaterialComponent,
     SampleSelectionComponent,
-    HelpLoaderComponent],
+    HelpLoaderComponent,
+    ShareProject
+  ],
   imports: [
     CommonModule,
     MatDialogModule,
@@ -97,7 +100,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     FormGenericComponent,
     BiologicalMaterialComponent,
     SampleSelectionComponent,
-    HelpLoaderComponent
+    HelpLoaderComponent,
+    ShareProject
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -113,7 +117,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     FormGenericComponent,
     BiologicalMaterialComponent,
     SampleSelectionComponent,
-    HelpLoaderComponent
+    HelpLoaderComponent,
+    ShareProject
   ]
 })
 export class DialogModule { }

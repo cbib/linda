@@ -31,14 +31,19 @@
               <li class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/templates']" routerLinkActive="active-link"><i class="fa fa-copy"></i>Templates</a>
               </li>
-              <!-- <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
+              <li class="nav-item" style="list-style: none">
+                <a class="nav-link"  [routerLink]="['/response-request']" routerLinkActive="active-link"><i class="fa fa-copy"></i>Reset</a>
+              </li>
+
+              
+              <!-- <li *ngIf="currentUser && currentUser['admin']===true" class="nav-item" style="list-style: none">
                 <a class="nav-link"  [routerLink]="['/gantt']" routerLinkActive="active-link"><i class="fa fa-chart-area"></i>Gantt</a>
               </li> -->
               <!--<li class="nav-item">
                 <a class="nav-link" [routerLink]="['/help']" routerLinkActive="active-link"><i class="fa fa-question-circle"></i> Help</a>
               </li>-->
               
-              <li *ngIf="currentUser && currentUser['admin']==='root'" class="nav-item" style="list-style: none">
+              <li *ngIf="currentUser && currentUser['admin']===true" class="nav-item" style="list-style: none">
                 <a class="nav-link" [routerLink]="['/admin']" ><i><span class="material-icons">
                   admin_panel_settings
                   </span></i> Admin</a>

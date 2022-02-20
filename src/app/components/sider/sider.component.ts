@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { User } from '../../models';
 import {GlobalService, SearchService, AuthenticationService } from '../../services';
 @Component({
   selector: 'app-sider',
@@ -17,9 +16,10 @@ export class SiderComponent {
     constructor(private authenticationService:AuthenticationService) {
       console.log("Welcome in Sider component")
       this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+      console.log( this.currentUser)
       if (!localStorage.getItem('currentUser')==undefined){
          this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-         console.log( this.currentUser)
+         
       }
     }
 }

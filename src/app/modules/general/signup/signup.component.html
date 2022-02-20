@@ -6,29 +6,57 @@
             <i class="fas fa-user-plus me-4"></i><strong>S'inscrire</strong>
           </h1>
           <div class="card-body px-lg-5 pt-4">
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="getregisterForm" (ngSubmit)="onSubmit()">
   
-              <div class="form-group">
-                  <!-- <label for="firstName">First Name</label> -->
+              <!-- <div class="form-group">
                   <input type="text" placeholder="First Name*" formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
                   <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
                       <div *ngIf="f.firstName.errors.required">First Name is required</div>
                   </div>
-              </div>
+              </div> -->
               <div class="form-group">
                   <!-- <label for="lastName">Last Name</label> -->
-                  <input type="text" placeholder="Last Name*" formControlName="lastName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
-                  <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
-                      <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+                  <input type="text" placeholder="Person name*" formControlName="Person name" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person name'].errors }" />
+                  <div *ngIf="submitted && f['Person name'].errors" class="invalid-feedback">
+                      <div *ngIf="f['Person name'].errors.required">Person name is required</div>
                   </div>
               </div>
               <div class="form-group">
-                  <!-- <label for="username">Username</label> -->
-                  <input type="text" placeholder="Username*" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-                  <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-                      <div *ngIf="f.username.errors.required">Username is required</div>
-                  </div>
-              </div>
+                <!-- <label for="lastName">Last Name</label> -->
+                <input type="text" placeholder="User name*" formControlName="username" class="form-control" />
+<!--                 <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person name'].errors.required">Person name is required</div>
+                </div> -->
+            </div>
+              <div class="form-group">
+                <!-- <label for="lastName">Last Name</label> -->
+                <input type="text" placeholder="Person affiliation*" formControlName="Person affiliation" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person affiliation'].errors }" />
+                <div *ngIf="submitted && f['Person affiliation'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person affiliation'].errors.required">Person affiliation is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- <label for="email">Email</label> -->
+                <input type="email" placeholder="Person email*" formControlName="Person email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person email'].errors }" />
+                <div *ngIf="submitted && f['Person email'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person email'].errors.required"> Person email is required</div>
+                    <div *ngIf="f['Person email'].errors.email">  must be valid email adress</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- <label for="lastName">Last Name</label> -->
+                <input type="text" placeholder="Person role*" formControlName="Person role" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person role'].errors }" />
+                <div *ngIf="submitted && f['Person role'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person role'].errors.required">Person role is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- <label for="lastName">Last Name</label> -->
+                <input type="text" placeholder="Person ID (ORCID ID)*" formControlName="Person ID" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person ID'].errors }" />
+                <div *ngIf="submitted && f['Person ID'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person ID'].errors.required">Person ID is required</div>
+                </div>
+            </div>
               <div class="form-group">
                   <!-- <label for="password">Password</label> -->
                   <input type="password" placeholder="Password*" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
@@ -40,25 +68,26 @@
               <div class="form-group">
                   <!-- <label for="confirmpassword">Confirm Password</label> -->
                   <input type="password" placeholder="Confirm Password*" formControlName="confirmpassword" class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.confirmpassword.errors }" />
-                  
                   <div *ngIf="submitted && f.confirmpassword.errors" class="invalid-feedback">
                       <div *ngIf="f.confirmpassword.errors.required">Password is required</div>
                       <div *ngIf="f.confirmpassword.errors.mustMatch">Passwords must match</div>
-          
                   </div>
-          
               </div>
+              <!-- <div formArrayName="usernames">
+                <h2>Usernames</h2>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="button" (click)="addUsername()">+ Add another username</button>
+                
+                    <div *ngFor="let username of usernames.controls; let i=index">
+                        <label for="alias-{{ i+1  }}">User name {{ i+1 }}:</label>                 
+                     <input placeholder="User name {{ i+1  }}" id="username-{{ i+1  }}" type="text" [formControlName]="i" class="form-control" >
+                    </div>
+                </div>
+              </div> -->
+              
               
               <div class="form-group">
-                  <!-- <label for="email">Email</label> -->
-                  <input type="email" placeholder="Email*" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                      <div *ngIf="f.email.errors.required"> Email is required</div>
-                      <div *ngIf="f.email.errors.email"> Email must be valid email adress</div>
-                  </div>
-              </div>
-              <div class="form-group">
-                  <button [disabled]="loading" class="btn btn-primary">         Sign Up         </button>
+                  <button [disabled]="!getregisterForm.valid" class="btn btn-primary">Sign Up</button>
                   
                   <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
                   <a [routerLink]="['/login']" class="btn btn-link">Cancel</a>
@@ -68,7 +97,6 @@
           
               <div class="form-group">
                   <a [routerLink]="['/login']" class="btn btn-link">Allready have a account ? </a>
-          
               </div>
                   
           </form>

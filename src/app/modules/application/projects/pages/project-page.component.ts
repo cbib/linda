@@ -5,6 +5,7 @@ import { WizardService } from '../services/wizard.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { User } from '../../../../models';
+import { PersonInterface } from 'src/app/models/linda/person';
 
 /* function instanceOfStudy(object: any): object is StudyInterface {
     return object;
@@ -27,7 +28,7 @@ export class ProjectPageComponent implements OnInit {
     public vertices: any = []
     public studies: any = []
     private loaded: boolean = false
-    private currentUser:User
+    private currentUser:PersonInterface
 
     projectForm:FormGroup
     startTime: Date;

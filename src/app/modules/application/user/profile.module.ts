@@ -5,22 +5,25 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileComponent } from './profile.component';
 import { AlertService, UserService} from '../../../services';
 import { AuthGuard } from '../../../guards/auth.guards';
-import { UserComponent } from './user.component';
+import { PersonComponent } from './person.component';
 
 @NgModule({
-  declarations: [ProfileComponent, UserComponent],
+  declarations: [ProfileComponent, PersonComponent],
   imports: [
     CommonModule,
     ProfileRoutingModule
   ],
   exports: [
     ProfileComponent,
-    UserComponent
+    PersonComponent
   ],
   providers: [
     AuthGuard,
     AlertService,
     UserService
+  ],
+  entryComponents: [
+    PersonComponent
   ]
 })
 export class ProfileModule { }

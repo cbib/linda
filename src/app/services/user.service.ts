@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map} from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { User } from '../models/user';
+import { PersonInterface } from '../models/linda/person';
 import {Constants} from "../constants";
 //import * as nodemailer from 'nodemailer';
+import { map, catchError, retry} from 'rxjs/operators';
 import {Md5} from 'ts-md5/dist/md5'; 
+import { throwError, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
   })
 export class UserService {
     private APIUrl:string;
-    //private apiUrl='http://127.0.0.1:8529/_db/MIAPPE_GRAPH/xeml'
     constructor(private http: HttpClient) { 
     this.APIUrl = Constants.APIConfig.APIUrl;}
 
@@ -23,8 +24,25 @@ export class UserService {
     /* getUserInfo() {
         return this.http.get<User>(`${this.APIUrl}/users` + user._id);
     } */
-    getAll() {
-        return this.http.get<User[]>(`${this.APIUrl}/users`);
+    private handleError(error: HttpErrorResponse) {
+        if (error.status === 0) {
+          // A client-side or network error occurred. Handle it accordingly.
+          console.error('An error occurred:', error.error);
+        } else {
+          // The backend returned an unsuccessful response code.
+          // The response body may contain clues as to what went wrong.
+          console.error(
+            `Backend returned code ${error.status}, body was: `, error.error);
+        }
+        // Return an observable with a user-facing error message.
+
+        return throwError(() => new Error('Something bad happened; please try again later.'))
+
+      }
+    getAll() : Observable<PersonInterface[]> {
+        //return this.http.get<PersonInterface[]>(`${this.APIUrl}users`);
+        return this.http.get<PersonInterface[]>(this.APIUrl + "users/").pipe(catchError(this.handleError));
+        
     }
 
 //    getByUsername_password(_id: string) {
@@ -40,15 +58,27 @@ export class UserService {
         return this.http.get(this.APIUrl + "get_user/" + username + "/" + password).pipe(map(this.extractData));
     }
 
-    register(user: User) {
+    register(user: PersonInterface) {
         console.log(user)
         //user['password']=Md5.hashStr(user.password)
         //return null
         return this.http.post(`${this.APIUrl}/register`, user);
     }
+    update_personal_infos(user: PersonInterface) {
+        console.log(user)
+        //user['password']=Md5.hashStr(user.password)
+        //return null
+        return this.http.post(`${this.APIUrl}/update_personal_infos`, user);
+    }
+    register_person(user: PersonInterface) {
+        console.log(user)
+        //user['password']=Md5.hashStr(user.password)
+        //return null
+        return this.http.post(`${this.APIUrl}/register_person`, user);
+    }
 
 
-//    update(user: User) {
+//    update(user: PersonInterface) {
 //        return this.http.put(`${this.apiUrl}/users/` + user._id, user);
 //    }
 //

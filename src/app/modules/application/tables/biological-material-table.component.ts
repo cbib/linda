@@ -17,7 +17,6 @@ export class BiologicalMaterialTableComponent implements OnInit {
     this.route.queryParams.subscribe(
       params => {
           this.data = params['data'];
-          console.log(this.data )
       }
   );
    }
@@ -28,9 +27,7 @@ export class BiologicalMaterialTableComponent implements OnInit {
   }
   getDataFromSource() {
     let tableData_columns=["Genus","Species","Organism","Biological material ID","Material source ID (Holding institute/stock centre, accession)","Infraspecific name","Biological material preprocessing","Material source DOI"]
-    console.log(this.data)
     this.tableData = this.data['filteredData'];
-    console.log(this.tableData)
     var columns = []
     //var tableData_columns = Object.keys(this.tableData[0]);
     tableData_columns.forEach(key => {

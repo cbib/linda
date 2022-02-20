@@ -34,7 +34,6 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
         </mat-form-field>
-        
         <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
             
             <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">

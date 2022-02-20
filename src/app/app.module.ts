@@ -1,3 +1,4 @@
+
 // MODULES AND SERVICES
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -35,7 +36,10 @@ import { GanttModule } from './modules/application/gantt/gantt.module';
 import { ValidatorModule } from './modules/application/validators/validator.module'
 import { AlertModule } from './modules/application/alert/alert.module'
 import { MapModule } from './modules/application/map/map.module'  
+import { AssignModule } from './modules/application/assign/assign.module';
+import { RequestResetModule } from './modules/general/request-reset/request-reset.module';
 //import { DocumentationModule } from './modules/application/documentation/documentation.module'
+
 
 // MATERIAL MODULES 
 import { MatCardModule } from '@angular/material/card';
@@ -117,7 +121,9 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     GanttModule,
     ValidatorModule,
     AlertModule,
-    MapModule
+    MapModule,
+    AssignModule,
+    RequestResetModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],
@@ -134,4 +140,12 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
               ],
   bootstrap: [AppComponent]
 })
+/**
+ * Code blocks are great for examples
+ *
+ * ```typescript
+ * // run typedoc --help for a list of supported languages
+ * const instance = new MyClass();
+ * ```
+ */
 export class AppModule { }

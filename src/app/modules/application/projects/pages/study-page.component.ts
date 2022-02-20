@@ -6,6 +6,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {  User } from '../../../../models';
 import { DataFileInterface } from 'src/app/models/linda/data_files';
+import { PersonInterface } from 'src/app/models/linda/person';
+
 
 @Component({
     selector: 'app-study-page',
@@ -25,7 +27,7 @@ export class StudyPageComponent implements OnInit {
     public vertices: any = []
     public studies: any = []
     private loaded: boolean = false
-    private currentUser:User
+    private currentUser:PersonInterface
     projectForm:FormGroup
     startTime: Date;
     endTime: Date;
@@ -132,6 +134,7 @@ export class StudyPageComponent implements OnInit {
 
         }
     }
+    
     submit(){
         
     }

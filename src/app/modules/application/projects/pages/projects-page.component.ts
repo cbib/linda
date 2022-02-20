@@ -18,6 +18,8 @@ import { Investigation } from 'src/app/models/linda/investigation';
 import { InvestigationInterface } from 'src/app/models/linda/investigation'
 import { animate, state, style, transition, trigger} from '@angular/animations';
 import { ExportComponent } from '../../dialogs/export.component';
+import { PersonInterface } from 'src/app/models/linda/person';
+import { ShareProject } from '../../dialogs/share-project';
 
 @Component({
     selector: 'app-projects-page',
@@ -54,7 +56,7 @@ export class ProjectsPageComponent implements OnInit {
     // public statistics: {};
     private displayed = false;
     loaded: boolean = false
-    private currentUser:User
+    private currentUser:PersonInterface
     private multiple_selection: boolean = false;
     private parent_id: string;
     private model_key: string;
@@ -157,6 +159,38 @@ export class ProjectsPageComponent implements OnInit {
         ////console.log("you are gonna explore your data !!")
         this.router.navigate(['/explore'], { queryParams: {parent_id: element._id} })
     }
+    onShare(element:InvestigationInterface){
+        console.log("Add dialog for share project with authentified users - or same group users")
+        const dialogRef = this.dialog.open(ShareProject, { width: '500px', data: { investigation_id: element._id } });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log(result['person_id'])
+                // create new edge doccument in persons_edge
+                this.globalService.add_edge(element._id,result['person_id']).pipe(first()).toPromise().then(
+                    data => {
+                        if (data["success"]) {
+                            console.log(data["_id"])
+                            //console.log(data["res_obj"])
+                            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+                            
+                            var message = "A new project " + data["_id"] + " has been successfully shared with "+result['person_id']+" !!"
+                            this.alertService.success(message)
+
+                            this.router.navigate(['/projects_page']);
+                            return true;
+                        }
+                        else {
+                            this.alertService.error("this form contains errors! " + data["message"]);
+                            return false;
+                        }
+                    }
+                );
+
+            }
+        });
+        
+    }
+
     onExportIsa(element:InvestigationInterface) {
         var model_type = this.globalService.get_model_type(element._id)
         var model_key = element._id.split("/")[1];
@@ -322,6 +356,7 @@ export class ProjectsPageComponent implements OnInit {
 
     }
 
+
     add(template: boolean = false) {
 
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -404,6 +439,9 @@ export class ProjectsPageComponent implements OnInit {
 
     show_info() {
         this.displayed = true
+    }
+    get get_currentUser():PersonInterface{
+        return this.currentUser
     }
 
     get get_tutorial_done() {

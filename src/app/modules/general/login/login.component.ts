@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AlertService, AuthenticationService } from '../../../services';
-import {Md5} from 'ts-md5/dist/md5';
+import { Md5} from 'ts-md5/dist/md5';
 
 
 
@@ -68,7 +68,6 @@ export class LoginComponent implements OnInit {
             .subscribe(
             //.toPromise().then(
                 ( data )=> {
-                  
                     console.log(data)
                     console.log(this.returnUrl)
                     this.router.navigate([this.returnUrl]);

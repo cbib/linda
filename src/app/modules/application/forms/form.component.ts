@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
 import { JoyrideService } from 'ngx-joyride';
+import { PersonInterface } from 'src/app/models/linda/person'; 
 
 // import { isBuffer } from 'util';
 // import { ConsoleReporter } from 'jasmine';
@@ -37,7 +38,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         level3: { heading: 'Level 3', message: 'At this stage you will see ontology form field for two important Study features <img src="/Users/benjamin/linda/src/assets/images/ontology_widget_form.png" style="width:100%;height: auto; display: block;" >' }
       }
     private startfilling: boolean = false;
-    private currentUser
+    private currentUser:PersonInterface
     private ontology_type: string;
     private show_spinner: boolean = false;
     private Checked = false

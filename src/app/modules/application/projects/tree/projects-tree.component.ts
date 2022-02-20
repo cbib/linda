@@ -22,6 +22,7 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
   import { BiologicalMaterialTableModel} from '../../../../models/biological_material_models'
   import { ObservationUnitTableModel} from '../../../../models/observation_unit_models'
   import { MiappeFlatNode } from '../../../../models/miappe_flat_node'
+import { PersonInterface } from 'src/app/models/linda/person';
   
   const ELEMENT_BM_DATA: BiologicalMaterialTableModel[] = []
   
@@ -52,7 +53,7 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
       // public statistics: {};
       private displayed = false;
       loaded:boolean=false
-      private currentUser : User
+      private currentUser : PersonInterface
       private active_node: MiappeNode;
       private current_data_keys = []
       private current_data_array = []
@@ -247,7 +248,7 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
                   }
                   //////console.log(vertice_data)
                   //////console.log(vertice_data_keys)
-                  if (parent_id.includes("users")) {
+                  if (parent_id.includes("persons")) {
                       if (cpt === 0) {
                           tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id, vertice_data_keys, vertice_data, bm_vertice_data))
                       }
@@ -731,23 +732,23 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
                       this.alertService.error("You are not in the right form as requested by the tutorial")
                   }
               }
-              this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract" } });
+              this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "download" } });
           }
       }
-      add_form_from_file(model_type: string, template: string) {
+      /* add_form_from_file(model_type: string, template: string) {
           var model_key = this.active_node.id.split("/")[1]
           var parent_id = ""
           if (this.active_node.id != 'Investigations tree') {
               parent_id = this.active_node.id
               this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract-form" } });
           }
-      }
+      } */
       assign_component(model_type: string, template: string){
           var model_key = this.active_node.id.split("/")[1]
           var parent_id = ""
           if (this.active_node.id != 'Investigations tree') {
               parent_id = this.active_node.id
-              this.router.navigate(['/download'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract-again" } });
+              this.router.navigate(['/assign'], { queryParams: { parent_id: parent_id, model_key: model_key, model_type: model_type, mode: "extract-again" } });
           }
       }
       add_from_data_file(model_type: string) {
@@ -1294,8 +1295,6 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
           
       } 
       prepare_bm_data(node_vertice, vertice_keys){
-          console.log(node_vertice)
-          console.log(vertice_keys)
           var newTableData:{}[]=[]
           let datasources: BiologicalMaterialTableModel[] = []
           var data= node_vertice

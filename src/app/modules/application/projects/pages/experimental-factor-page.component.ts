@@ -13,6 +13,12 @@ import { ExperimentalFactorInterface } from 'src/app/models/linda/experimental_f
   styleUrls: ['./experimental-factor-page.component.css']
 })
 export class ExperimentalFactorPageComponent implements OnInit {
+  @Input('level') level: number;
+  @Input('parent_id') parent_id:string;
+  @Input('model_key') model_key: string;
+  @Input('model_type') model_type: string;
+  @Input('mode') mode: string;
+  @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
@@ -20,12 +26,6 @@ export class ExperimentalFactorPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @Input('level') level: number;
-  @Input('parent_id') parent_id:string;
-  @Input('model_key') model_key: string;
-  @Input('model_type') model_type: string;
-  @Input('mode') mode: string;
-  @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ExperimentalFactorInterface>;
   private displayedColumns: string[] = ['Experimental Factor type', 'Experimental Factor values', 'edit'];
   loaded: boolean = false

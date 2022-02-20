@@ -68,14 +68,16 @@ export class BiologicalMaterialPageComponent implements OnInit {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         console.log(data)
-        var keys= Object.keys(data[0])
-        this.prepare_bm_data(data[0],keys)
-        console.log(this.dt_source)
-        //this.dataSource = new MatTableDataSource(data);
-        //console.log(this.dataSource)
-        this.dt_source.paginator = this.paginator;
-        this.dt_source.sort = this.sort;
-        this.loaded = true
+        if (data.length>0){
+          var keys= Object.keys(data[0])
+          this.prepare_bm_data(data[0],keys)
+          console.log(this.dt_source)
+          //this.dataSource = new MatTableDataSource(data);
+          //console.log(this.dataSource)
+          this.dt_source.paginator = this.paginator;
+          this.dt_source.sort = this.sort;
+          this.loaded = true
+        }
       }
     )
   }

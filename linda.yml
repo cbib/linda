@@ -1,0 +1,17 @@
+name: linda
+channels:
+  - anaconda
+  - cyclus
+  - trent
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+
+  - mcl
+  - pip
+  - pip:
+    - arango
+    - python-arango
+prefix: /opt/anaconda3/envs/linda

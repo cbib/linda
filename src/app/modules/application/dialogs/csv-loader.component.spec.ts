@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CsvLoaderDialogComponent } from './csv-loader.component';
+import { CsvLoaderComponent } from './csv-loader.component';
 
 describe('CsvLoaderDialogComponent', () => {
-  let component: CsvLoaderDialogComponent;
-  let fixture: ComponentFixture<CsvLoaderDialogComponent>;
+  let component: CsvLoaderComponent;
+  let fixture: ComponentFixture<CsvLoaderComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CsvLoaderDialogComponent ]
+      declarations: [ CsvLoaderComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CsvLoaderDialogComponent);
+    fixture = TestBed.createComponent(CsvLoaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

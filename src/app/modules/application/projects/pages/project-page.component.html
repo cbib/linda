@@ -59,13 +59,15 @@
     <div [ngClass]="{ 'active':activeTab==='Data'}"  role="tabpanel" class="tab-pane" id="Data">
       <h3>Download experimental data files</h3>
           <mat-card style="width: 98%;">
-          <app-download *ngIf="activeTab==='Data'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract"></app-download>
+          <app-download *ngIf="activeTab==='Data'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="download"></app-download>
           </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='Assign'}"  role="tabpanel" class="tab-pane" id="Assign">
       <h3>Define experimental data files columns</h3>
           <mat-card style="width: 98%;">
-          <app-download *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-download>
+<!--          <app-download *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-download>
+ -->          <app-assign *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-assign>
+
           </mat-card>
     </div>
 
@@ -76,7 +78,7 @@
           </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='Explore'}"  role="tabpanel" class="tab-pane" id="Explore">
-      <h3>Extract</h3>
+      <h3>Explore</h3>
           <mat-card style="width: 98%;">
             <app-exploration *ngIf="activeTab==='Explore'"  [parent_id]="get_model_id" [investigation_key]="get_model_key"></app-exploration>
           </mat-card>

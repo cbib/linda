@@ -2,17 +2,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { map, catchError, retry} from 'rxjs/operators';
-import {ResDataModal} from '../models/datatable_model';
+import { ResDataModal} from '../models/datatable_model';
 import { Constants } from "../constants";
 import { Investigation } from '../models/miappe/investigation';
 import { InvestigationInterface } from '../models/linda/investigation'; 
-import {StudyInterface} from '../models/linda/study'
+import { StudyInterface} from '../models/linda/study'
 import { BiologicalMaterialInterface } from '../models/linda/biological-material'
 import { ExperimentalFactorInterface } from '../models/linda/experimental_factor'; 
 import { ObservationUnitInterface } from '../models/linda/observation-unit';
 import { DataFileInterface } from '../models/linda/data_files'
 import { ObservedVariableInterface } from '../models/linda/observed-variable';
+import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
 import { User } from '../models';
+import { PersonInterface } from '../models/linda/person';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -21,7 +24,7 @@ import { User } from '../models';
 export class GlobalService {
 
     private APIUrl: string;
-    private user:User
+    private user:PersonInterface
     //private FAIRDOM='https://fairdomhub.org/investigations/56';
 
     constructor(private http: HttpClient) {
@@ -33,7 +36,7 @@ export class GlobalService {
         let body = res;
         return body || {};
     }
-    get_user() : User | undefined{
+    get_user() : PersonInterface | undefined{
         let tmp_user:any=localStorage.getItem('currentUser')
         return JSON.parse(tmp_user)
     }
@@ -121,6 +124,9 @@ export class GlobalService {
     get_all_biological_materials(study_key: string) : Observable<BiologicalMaterialInterface[]>{
         return this.http.get<BiologicalMaterialInterface[]>(this.APIUrl + "get_all_biological_materials/" + study_key).pipe(catchError(this.handleError));
     }
+    get_all_experimental_designs(study_key: string) : Observable<ExperimentalDesignInterface[]>{
+        return this.http.get<ExperimentalDesignInterface[]>(this.APIUrl + "get_all_experimental_designs/" + study_key).pipe(catchError(this.handleError));
+    }
     get_all_observed_variables(study_key: string) : Observable<ObservedVariableInterface[]>{
         return this.http.get<ObservedVariableInterface[]>(this.APIUrl + "get_all_observed_variables/" + study_key).pipe(catchError(this.handleError));
     }
@@ -181,15 +187,28 @@ export class GlobalService {
     
     // HTTP POST REQUEST
     is_exist(field: string, value: string, model_type: string): Observable<any> {
-        let user = this.get_user();
-        let obj2send = {
-            'username': user.username,
-            'password': user.password,
-            'field': field,
-            'value': value,
-            'model_type': model_type
-        };
-        return this.http.post(`${this.APIUrl + "check"}`, obj2send).pipe(catchError(this.handleError));
+        if (model_type==="person"){
+            console.log(field)
+            console.log(value)
+            let obj2send = {
+                'field': field,
+                'value': value,
+                'model_type': model_type
+            };
+            return this.http.post(`${this.APIUrl + "checkID"}`, obj2send).pipe(catchError(this.handleError));
+        }
+        else{
+            let user = this.get_user();
+            let obj2send = {
+                'username': user.username,
+                'password': user.password,
+                'field': field,
+                'value': value,
+                'model_type': model_type
+            };
+            return this.http.post(`${this.APIUrl + "check"}`, obj2send).pipe(catchError(this.handleError));
+        }
+        
     }
     check_one_exists(field:string, value:string, model_type:string){
         let user = this.get_user();
@@ -491,6 +510,18 @@ export class GlobalService {
     //     "template_id": null,
     //     "_id": "investigations/31262022"
     //   }
+    add_edge(investigation_id:string,person_id:string){
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'investigation_id': investigation_id,
+            'person_id':person_id
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_edge"}`, obj2send);
+    }
+
     add(values: {}, model_type: string, parent_id: string, as_template:boolean) {
         let user = this.get_user();
         let obj2send = {
@@ -504,6 +535,7 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
     }
+    
     add_template(values: {}, model_type: string) {
         let user = this.get_user();
         let obj2send = {

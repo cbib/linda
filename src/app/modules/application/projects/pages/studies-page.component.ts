@@ -119,7 +119,7 @@ export class StudiesPageComponent implements OnInit {
         //console.log(this.currentUser)
         console.log(this.parent_id)
 
-        this.extract_design(36,7,3)
+        //this.extract_design(36,7,3)
 
         
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
@@ -137,7 +137,7 @@ export class StudiesPageComponent implements OnInit {
 
         var plot=1
         for (let block=1;block<blocks+1;block++){
-            var block_design:BlockDesign=new BlockDesign(block, 36,[],[],[])
+            var block_design:BlockDesign=new BlockDesign(block, 36)
             for (let column=1;column<columns+1;column++){
                 var plot_design:PlotDesign=new PlotDesign()
                 plot_design.set_column_number(column)
@@ -146,7 +146,7 @@ export class StudiesPageComponent implements OnInit {
                     plot_design.set_plot_number(plot)
                     var row_design:RowDesign=new RowDesign()
                     row_design.set_row_number(row)
-                    row_design.set_row_per_plot(1)
+                    row_design.set_row_per_plot(rows)
                     plot_design.add_row_design(row_design)
                 }
                 block_design.add_plot_design(plot_design)

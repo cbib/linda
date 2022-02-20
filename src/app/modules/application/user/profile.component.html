@@ -37,22 +37,9 @@
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="personal_infos">
-          <h3>Identifiers</h3>
-          <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-sm-fn">First Name</span>
-            <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-            <button type="submit" (click)="modify_pwd()">Modify</button>
-          </div>
-          <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-sm-ln">Last Name</span>
-            <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-            <button type="submit" (click)="modify_email()">Modify</button>
-          </div>
-          <div class="input-group input-group-sm mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-sm-un">UserName</span>
-            <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-            <button type="submit" (click)="modify_email()">Modify</button>
-          </div>
+          <h3>Profile </h3>
+          <app-person></app-person>
+          
         </div>
         <div role="tabpanel" class="tab-pane" id="messages">
             Messages

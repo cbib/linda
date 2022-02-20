@@ -15,6 +15,7 @@ import { JoyrideService } from 'ngx-joyride';
 import * as uuid from 'uuid';
 import { SelectionComponent } from '../dialogs/selection.component';
 import { User } from 'src/app/models';
+import { PersonInterface } from 'src/app/models/linda/person';
 /*
  Maybe add data filename to investigation component when adding data files with studies in download_component.ts
   It will be easier to build this page knowing the filename
@@ -72,12 +73,12 @@ export class ExtractComponent implements OnInit {
   data_ready: boolean = false
   filename_used:string[] = []
   model_types = ["experimental_factor","observation_unit","biological_material", "observed_variable", "experimental_design"]
+  selected_model_type:string="experimental_factor"
   initialSelection:[] = []
   selection:SelectionModel<{}> = new SelectionModel<{}>(true, this.initialSelection /* multiple */);
   selected_file: string = ""
-  selected_model_type:string="experimental_factor"
   save_as_template: boolean = false
-  private currentUser:User
+  private currentUser:PersonInterface
   private demo_subset:number = 0
   part2:boolean = false
 

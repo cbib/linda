@@ -69,9 +69,8 @@
     <div [ngClass]="{ 'active':activeTab==='studydesign'}" role="tabpanel" class="tab-pane active" id="studydesign">
       <h3>Describe your experimental design</h3>
       <mat-card style="width: 80%;">
-        <app-form *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)"
-          [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
-          inline="true"></app-form>
+<!--         <app-form *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-form>
+ -->        <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>
       </mat-card>
     </div>
 
