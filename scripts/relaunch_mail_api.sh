@@ -1,5 +1,0 @@
-#!/bin/bash                                                                                                                                                  
-                                                                                                                                                             
-rm -rf MAIL_API.zip                                                                                                                                                                                                                                                                                                       
-zip -r MAIL_API.zip MAIL_API                                                                                                                                                                                                                                                                                              
-foxx replace /mail --server http://127.0.0.1:8529 --database MIAPPE_GRAPH -u root -P MAIL_API.zip                                                                              
