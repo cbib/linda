@@ -105,21 +105,23 @@ var events = db._collection('events');
 var data_files = db._collection('data_files');
 var observed_variables = db._collection('observed_variables');
 var experimental_factors = db._collection('experimental_factors');
-
+var observation_units = db._collection('observation_units');
 var environments = db._collection('environments');
 var publications = db._collection('publications');
 var samples = db._collection('samples');
-
-
+var templates = db._collection('templates');
+var metadata_files = db._collection('metadata_files');
 /*Edge collections*/
-var groups_edge = db._collection('groups_edge');
-var users_edge = db._collection('users_edge');
+
 
 var investigations_edge = db._collection('investigations_edge');
-var observation_units = db._collection('observation_units');
+var groups_edge = db._collection('groups_edge');
+var users_edge = db._collection('users_edge');
 var studies_edge = db._collection('studies_edge');
 var observation_units_edge = db._collection('observation_units_edge');
-var metadata_files = db._collection('metadata_files');
+var templates_edge = db._collection('templates_edge');
+var data_files_edge = db._collection('data_files_edge');
+
 
 
 
@@ -136,6 +138,10 @@ if (!users) {
 if (!persons) {
     db._createDocumentCollection('persons');
     persons = db._collection('persons');
+}
+if (!templates) {
+    db._createDocumentCollection('templates');
+    templates = db._collection('templates');
 }
 
 if (!investigations) {
@@ -195,9 +201,19 @@ if (!groups_edge) {
 if (!investigations_edge) {
     db._createDocumentCollection('investigations_edge');
 }
+if (!templates_edge) {
+    db._createDocumentCollection('templates_edge');
+}
 if (!studies_edge) {
     db._createEdgeCollection('studies_edge');
 }
+if (!data_files_edge) {
+    db._createDocumentCollection('data_files_edge');
+}
+if (!observation_units_edge) {
+    db._createEdgeCollection('observation_units_edge');
+}
+
 //if (!observation_units_edge) {
 //  db._createEdgeCollection('observation_units_edge');
 //}
@@ -3058,27 +3074,21 @@ router.post('/add_template', function (req, res) {
         //add template
         /////////////////////////////
 
-        if (!db._collection(model_type + "_templates")) {
-            db._createDocumentCollection(model_type + "_templates");
+        if (!db._collection("templates")) {
+            db._createDocumentCollection("templates");
         }
-        var template_coll = db._collection(model_type + "_templates");
+        var template_coll = db._collection("templates");
 
-        var template_edge_coll = 'templates_edge'
-        if (!db._collection(template_edge_coll)) {
-            db._createEdgeCollection(template_edge_coll);
+        var templates_edge_coll = 'templates_edge'
+        if (!db._collection(templates_edge_coll)) {
+            db._createEdgeCollection(templates_edge_coll);
         }
-        const template_edge = db._collection(template_edge_coll);
+        const templates_edge = db._collection(templates_edge_coll);
 
         var data = [];
         //var cleaned_values = { ...values }
-        var cleaned_values = Object.assign({}, values);
-        if (cleaned_values['Study unique ID']) {
-            cleaned_values['Study unique ID'] = ""
-        }
-        if (cleaned_values['Investigation unique ID']) {
-            cleaned_values['Investigation unique ID'] = ""
-        }
-        data = db._query(aql`INSERT ${cleaned_values} IN ${template_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+        
+        data = db._query(aql`INSERT ${values} IN ${template_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
 
         //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
         if (data[0].new !== null) {
@@ -3086,7 +3096,7 @@ router.post('/add_template', function (req, res) {
                 "_from": user[0]._id,
                 "_to": data[0].id
             };
-            const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${template_edge} RETURN NEW `);
+            const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${templates_edge} RETURN NEW `);
             //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
             successes.push({ success: true, message: 'Everything is good for template saving', _id: data[0].id })
         }
@@ -3098,7 +3108,7 @@ router.post('/add_template', function (req, res) {
 
     };
     if (errors.length === 0) {
-        res.send({ success: true, message: 'Everything is good ', res_obj: successes, template_id: successes[0]._id, _id: successes[1]._id });
+        res.send({ success: true, message: 'Everything is good ', res_obj: successes, template_id: successes[0]['_id'] });
     }
     else {
         res.send({ success: false, message: model_type + ' collection already have document with this title ', res_obj: errors, template_id: "", _id: "" });
@@ -3108,17 +3118,14 @@ router.post('/add_template', function (req, res) {
     .body(joi.object({
         username: joi.string().required(),
         password: joi.string().required(),
-        parent_id: joi.string().required(),
         values: joi.object().required(),
         model_type: joi.string().required(),
-        as_template: joi.boolean().required()
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
         message: joi.string().required(),
         res_obj: joi.array().items(joi.object().required()).required(),
-        template_id: joi.string().required(),
-        _id: joi.string().required()
+        template_id: joi.string().required()
     }).required(), 'response to send.')
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
@@ -4843,7 +4850,7 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
         var user_key = req.pathParams.user_key;
         var model_coll = req.pathParams.model_coll;
 
-        var coll_name = model_coll + '_templates'
+        var coll_name = 'templates'
         var data = [];
         const edges = db._collection('templates_edge');
         if (!edges) {

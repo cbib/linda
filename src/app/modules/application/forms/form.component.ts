@@ -674,7 +674,9 @@ export class FormComponent implements OnInit//, AfterViewInit
             //     );
             // }
             if (this.mode === "create") {
-                if (this.onlyTemplate===true){
+                console.warn(this.onlyTemplate)
+                if (this.onlyTemplate){
+                    console.warn("supposed to be true",this.onlyTemplate)
                     this.globalService.add_template(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
@@ -696,6 +698,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                     );
                 }
                 else{
+                    console.warn("supposed to be true",this.onlyTemplate)
                 //console.log(this.asTemplate)
                     this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.asTemplate).pipe(first()).toPromise().then(
                         data => {
