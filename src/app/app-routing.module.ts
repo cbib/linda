@@ -106,6 +106,25 @@ const routes: Routes = [
     loadChildren: () => import('./modules/application/gantt/gantt.module')
       .then(m => m.GanttModule) 
   },
+  { 
+    path: 'assign', 
+    loadChildren: () => import('./modules/application/assign/assign.module')
+    .then(m => m.AssignModule) ,
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'request-reset', 
+    loadChildren: () => import('./modules/general/request-reset/request-reset.module')
+    .then(m => m.RequestResetModule),
+    canActivate: [AuthGuard] 
+  },
+  { 
+    path: 'response-reset', 
+    loadChildren: () => import('./modules/general/response-reset/response-reset.module')
+    .then(m => m.ResponseResetModule),
+    canActivate: [AuthGuard] 
+    
+  },
   // DOCUMENTATION MODULE
   { 
     path: '', 
@@ -120,30 +139,6 @@ const routes: Routes = [
   { 
     path: '**', 
     component: NotFoundComponent 
-  },
-  { 
-    path: 'map', 
-    loadChildren: () => import('./modules/application/map/map.module')
-    .then(m => m.MapModule) 
-  },
-  { 
-    path: 'assign', 
-    loadChildren: () => import('./modules/application/assign/assign.module')
-    .then(m => m.AssignModule) ,
-    canActivate: [AuthGuard] 
-  },
-  { 
-    path: 'request-reset', 
-    loadChildren: () => import('./modules/general/request-reset/request-reset.module')
-    .then(m => m.RequestResetModule),
-    canActivate: [AuthGuard] 
-  },
-  { 
-    path: 'response-request', 
-    loadChildren: () => import('./modules/general/response-reset/response-reset.module')
-    .then(m => m.ResponseResetModule),
-    canActivate: [AuthGuard] 
-    
   }
 ];
 

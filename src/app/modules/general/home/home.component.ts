@@ -8,7 +8,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import {JoyrideService} from 'ngx-joyride';
 import {MatChipsModule} from '@angular/material/chips'
 import { MatChipList } from '@angular/material/chips';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 @Component({templateUrl: './home.component.html',
 styleUrls: ['./home.component.css']})
@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
     ads: AdItem[];
     step3 = false;
     step4 = false;
-    currentUser: PersonInterface;
+    currentUser: UserInterface;
     selected = "";
     startTime: Date;
     endTime: Date;

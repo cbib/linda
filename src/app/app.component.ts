@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation} from '@angular/core';
 import { User } from './models';
-import { PersonInterface } from './models/linda/person';
+import { UserInterface } from './models/linda/person';
 
 @Component({
   selector: 'app-linda',
@@ -18,6 +18,6 @@ import { PersonInterface } from './models/linda/person';
  */
 export class AppComponent {
   title = 'linda';
-  currentUser: PersonInterface;
+  currentUser: UserInterface;
   
 }

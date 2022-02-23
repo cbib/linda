@@ -21,7 +21,7 @@ import { FormGenericComponent } from '../dialogs/form-generic.component';
 import { HelpLoaderComponent } from '../dialogs/help-loader.component';
 import { FileService, GlobalService, AlertService } from '../../../services';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 export interface componentInterface {
     name: string;
@@ -215,7 +215,7 @@ export class AssignComponent implements OnInit {
     options_fields_by_component_by_filename = {}
     private selected_file: string = ""
     optionForm: FormGroup;
-    private currentUser: PersonInterface
+    private currentUser: UserInterface
     private mySubscription
 
     ///////// //////// ///////// //////////  private loaded:boolean=false;

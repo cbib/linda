@@ -9,7 +9,7 @@ import {AdItem } from '../../../banners/ad-item';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {JoyrideService} from 'ngx-joyride';
 import { Observable, of } from 'rxjs';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 
 @Component({
@@ -22,7 +22,7 @@ export class AboutComponent implements OnInit {
     ads: AdItem[];
     step3 = false;
     step4 = false;
-    currentUser: PersonInterface;
+    currentUser: UserInterface;
 
     constructor(private router: Router, private authenticationService: AuthenticationService, private adService: AdService, private readonly joyrideService: JoyrideService) {
         this.currentUser = this.authenticationService.currentUserValue;

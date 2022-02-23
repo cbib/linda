@@ -5,7 +5,7 @@ import { WizardService } from '../services/wizard.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { User } from '../../../../models';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 /* function instanceOfStudy(object: any): object is StudyInterface {
     return object;
@@ -25,10 +25,11 @@ export class ProjectPageComponent implements OnInit {
     @Input('model_type') model_type: string;
     @Input('activeTab') activeTab: string;
     @Input('mode') mode: string;
+    @Input('role') role: string;
     public vertices: any = []
     public studies: any = []
     private loaded: boolean = false
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
 
     projectForm:FormGroup
     startTime: Date;
@@ -51,6 +52,7 @@ export class ProjectPageComponent implements OnInit {
                     this.parent_id = params['parent_id']
                     this.model_key= params['model_key']
                     this.model_type=params['model_type']
+                    this.role=params['role']
                 }
             );
 
@@ -62,7 +64,6 @@ export class ProjectPageComponent implements OnInit {
         //this.model_key=this.model_id.split("/")[1]
         
         //await this.get_vertices()
-       // this.get_studies()
         this.loaded = true
         
         console.log(this.model_type)
@@ -115,25 +116,6 @@ export class ProjectPageComponent implements OnInit {
         var seconds = Math.round(this.timeDiff);
         ////console.log(seconds + " seconds");
     }
-    get_studies() {
-        var cpt = 0;
-        console.log(this.vertices)
-        let selected = [this.model_id];
-        let res = this.vertices.filter(({
-            e
-        }) => selected.includes(e['_from'])
-        );
-        res.forEach(
-            r => {           
-                let found_vertices=r['s']['vertices']
-                let res2= found_vertices.filter(vertice => vertice['_id']===r['e']['_to']
-                );
-                let study_id = res2["Study unique ID"]
-                let short_name = res2["Study Name"]
-                this.studies.push({ "study_short_name": short_name, "study_id": study_id, "study_parent_id": this.model_id })
-            }
-        );
-    }
     
     get get_parent_id(){
         return this.parent_id
@@ -161,6 +143,9 @@ export class ProjectPageComponent implements OnInit {
             
 
         }
+    }
+    get get_role(){
+        return this.role
     }
     submit(){
         //Go back to project pages

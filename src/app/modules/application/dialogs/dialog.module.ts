@@ -38,6 +38,8 @@ import { ScrollingModule} from '@angular/cdk/scrolling';
 import { FormModule } from '../forms/form.module';
 import { MaterialFormModule } from '../material-forms/material-form.module'
 import { ObservationUnitFormModule } from '../observation-unit-forms/observation-unit-form.module';
+import { GroupLoginComponent } from './group-login.component';
+import { AlertModule } from '../alert/alert.module';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     BiologicalMaterialComponent,
     SampleSelectionComponent,
     HelpLoaderComponent,
-    ShareProject
+    ShareProject,
+    GroupLoginComponent
   ],
   imports: [
     CommonModule,
@@ -80,7 +83,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     MatTableModule,
     FormModule,
     MaterialFormModule,
-    ObservationUnitFormModule
+    ObservationUnitFormModule,
+    AlertModule
     
   ],
   providers: [
@@ -101,7 +105,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     BiologicalMaterialComponent,
     SampleSelectionComponent,
     HelpLoaderComponent,
-    ShareProject
+    ShareProject,
+    GroupLoginComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -118,7 +123,8 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
     BiologicalMaterialComponent,
     SampleSelectionComponent,
     HelpLoaderComponent,
-    ShareProject
+    ShareProject,
+    GroupLoginComponent
   ]
 })
 export class DialogModule { }

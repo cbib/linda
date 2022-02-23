@@ -37,7 +37,7 @@ export class SignupComponent implements OnInit {
         'username': [''],
         'Person affiliation': ['', Validators.required],
         'Person role': [''],
-        'Person ID': ['', [Validators.required, Validators.minLength(12)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", "Person ID")],
+        'Person ID': ['', [Validators.required, Validators.minLength(12)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "user", "Person ID")],
         'Person email': ['', [Validators.required, Validators.email]],
         'password': ['', [Validators.required, Validators.minLength(6)]],
         'confirmpassword': ['', Validators.required],
@@ -122,7 +122,7 @@ export class SignupComponent implements OnInit {
                 if (attr["key"].includes("ID")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                     //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", attr["key"])];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "user", attr["key"])];
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
@@ -158,11 +158,16 @@ export class SignupComponent implements OnInit {
             return;
         }
         console.log(Md5.hashStr(this.registerForm.value.password))
+
         this.registerForm.get('password').setValue(Md5.hashStr(this.registerForm.value.password))
         this.registerForm.get('confirmpassword').setValue(Md5.hashStr(this.registerForm.value.confirmpassword))
+        this.registerForm.get('Person ID').setValue(Md5.hashStr(this.registerForm.value['Person ID']))
         //this.loading = true;
+        let date_created=new Date()
+        this.registerForm.value['dateCreated']= date_created.toUTCString()
         console.log(this.registerForm.value)
-        this.userService.register_person(this.registerForm.value)
+        // for now only group guest is accessible
+        this.userService.register_person(this.registerForm.value, "groups/Guests")
             .pipe(first())
             .subscribe(
                 data => {

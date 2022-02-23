@@ -14,6 +14,7 @@ import { DataFileInterface } from '../models/linda/data_files'
 import { ObservedVariableInterface } from '../models/linda/observed-variable';
 import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
 import { User } from '../models';
+import { UserInterface } from '../models/linda/person';
 import { PersonInterface } from '../models/linda/person';
 
 @Injectable({
@@ -24,7 +25,7 @@ import { PersonInterface } from '../models/linda/person';
 export class GlobalService {
 
     private APIUrl: string;
-    private user:PersonInterface
+    private user:UserInterface
     //private FAIRDOM='https://fairdomhub.org/investigations/56';
 
     constructor(private http: HttpClient) {
@@ -36,7 +37,7 @@ export class GlobalService {
         let body = res;
         return body || {};
     }
-    get_user() : PersonInterface | undefined{
+    get_user() : UserInterface | undefined{
         let tmp_user:any=localStorage.getItem('currentUser')
         return JSON.parse(tmp_user)
     }
@@ -115,11 +116,17 @@ export class GlobalService {
     get_all_vertices(user_key: string) {
         return this.http.get(this.APIUrl + "get_vertices/" + user_key).pipe(catchError(this.handleError));
     }
-    get_all_projects(user_key: string) : Observable<InvestigationInterface[]>{
-        return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + user_key).pipe(catchError(this.handleError));
+    get_projects(person_key: string) : Observable<InvestigationInterface[]>{
+        return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + person_key).pipe(catchError(this.handleError));
     }
-    get_all_studies(investigation_key: string) : Observable<StudyInterface[]>{
-        return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key).pipe(catchError(this.handleError));
+    get_studies(investigation_key: string, person_key: string) : Observable<StudyInterface[]>{
+        return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key + "/" + person_key).pipe(catchError(this.handleError));
+    }
+    get_all_project_persons(investigation_key: string) : Observable<PersonInterface[]>{
+        return this.http.get<PersonInterface[]>(this.APIUrl + "get_project_persons/" + investigation_key).pipe(catchError(this.handleError));
+    }
+    get_all_study_persons(study_key: string) : Observable<PersonInterface[]>{
+        return this.http.get<PersonInterface[]>(this.APIUrl + "get_study_persons/" + study_key).pipe(catchError(this.handleError));
     }
     get_all_biological_materials(study_key: string) : Observable<BiologicalMaterialInterface[]>{
         return this.http.get<BiologicalMaterialInterface[]>(this.APIUrl + "get_all_biological_materials/" + study_key).pipe(catchError(this.handleError));
@@ -155,7 +162,7 @@ export class GlobalService {
         return this.http.get(this.APIUrl + "get_all_templates/" + user_key).pipe(catchError(this.handleError));
     }
     get_type_child_from_parent(parent_name: string, parent_key: string, child_type: string): Observable<any> {
-        return this.http.get(this.APIUrl + "get_data_from_child_model/" + parent_name + "/" + parent_key + "/" + child_type).pipe(catchError(this.handleError));
+        return this.http.get(this.APIUrl + "get_type_child_from_parent/" + parent_name + "/" + parent_key + "/" + child_type).pipe(catchError(this.handleError));
     }
     get_parent_id(model_name: string, model_key: string) {
         console.log(model_name, model_key)
@@ -187,9 +194,10 @@ export class GlobalService {
     
     // HTTP POST REQUEST
     is_exist(field: string, value: string, model_type: string): Observable<any> {
-        if (model_type==="person"){
+        if (model_type==="user"){
             console.log(field)
             console.log(value)
+            console.log(model_type)
             let obj2send = {
                 'field': field,
                 'value': value,
@@ -510,27 +518,31 @@ export class GlobalService {
     //     "template_id": null,
     //     "_id": "investigations/31262022"
     //   }
-    add_edge(investigation_id:string,person_id:string){
+    add_edge(parent_id:string,person_id:string, role:string, group_key:string=""){
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
-            'investigation_id': investigation_id,
-            'person_id':person_id
+            'role': role,
+            'parent_id': parent_id,
+            'person_id':person_id,
+            'group_key':group_key
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_edge"}`, obj2send);
     }
 
-    add(values: {}, model_type: string, parent_id: string, as_template:boolean) {
+    add(values: {}, model_type: string, parent_id: string, as_template:boolean, group_key:string="") {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
+            'role': "owner",
             'parent_id': parent_id,
             'values': values,
             'model_type': model_type,
-            'as_template': as_template
+            'as_template': as_template,
+            'group_key':group_key
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);

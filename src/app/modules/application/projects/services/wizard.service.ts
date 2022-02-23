@@ -7,7 +7,7 @@ import { GlobalService, AlertService } from '../../../../services';
 import { User } from '../../../../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { JoyrideService } from 'ngx-joyride';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 
 @Injectable({
@@ -15,7 +15,7 @@ import { PersonInterface } from 'src/app/models/linda/person';
 })
 export class WizardService {
     private APIUrl: string;
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
     constructor(private httpClient: HttpClient,
         private globalService: GlobalService,
         private alertService: AlertService,
@@ -26,14 +26,14 @@ export class WizardService {
         //this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
         //console.log(this.currentUser)
     }
-    turn_off(currentUser:PersonInterface){
+    turn_off(currentUser:UserInterface){
         this.globalService.update_user(true, currentUser['_key'], 'tutoriel_done', 'person').toPromise().then(
             data => {
                 ////console.log(data['user'])
                 localStorage.setItem('currentUser', JSON.stringify(data['user']));
         });
     }
-    play_again(vertices, currentUser:PersonInterface){
+    play_again(vertices, currentUser:UserInterface){
         console.log("Play tutorial again !! ")
         // delete all investigations
         this.globalService.check_one_exists("Investigation unique ID", "Maizes1", "investigation").pipe(first()).toPromise().then(
@@ -101,7 +101,7 @@ export class WizardService {
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate(path);
     }
-    onDone(vertices, currentUser:PersonInterface, mode_replay=false ) {
+    onDone(vertices, currentUser:UserInterface, mode_replay=false ) {
         if (mode_replay){
             this.onClickTour(vertices,currentUser, true,"0")
         }
@@ -115,7 +115,7 @@ export class WizardService {
             }
         }
     }
-    onClickTour(vertices, currentUser:PersonInterface, replay:boolean=false, level:string="0") {
+    onClickTour(vertices, currentUser:UserInterface, replay:boolean=false, level:string="0") {
      // //console.log(currentUser)
         if (!currentUser['tutoriel_done']){
             if (vertices.length===0){

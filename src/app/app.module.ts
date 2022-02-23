@@ -38,6 +38,7 @@ import { AlertModule } from './modules/application/alert/alert.module'
 import { MapModule } from './modules/application/map/map.module'  
 import { AssignModule } from './modules/application/assign/assign.module';
 import { RequestResetModule } from './modules/general/request-reset/request-reset.module';
+import { ResponseResetModule } from './modules/general/response-reset/response-reset.module';
 //import { DocumentationModule } from './modules/application/documentation/documentation.module'
 
 
@@ -123,7 +124,8 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     AlertModule,
     MapModule,
     AssignModule,
-    RequestResetModule
+    RequestResetModule,
+    ResponseResetModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],

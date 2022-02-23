@@ -41,112 +41,210 @@
             </mat-menu>  
         </div> -->
         <ul class="nav nav-pills">
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link active" aria-controls="guest" role="tab" data-toggle="tab" href="#guest">Guest User</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#BFP" aria-controls="BFP" role="tab" data-toggle="tab">BFP User</a>
-            </li>
+            </li> -->
             <li class="nav-item">
+                <a class="nav-link" [ngClass]="{ 'active':activeTab==='Guests'}" (click)="changeTab('Guests')" href="#Guests"
+                  aria-controls="Guests" role="tab" data-toggle="tab">Guest Projects</a>
+              </li>
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{ 'active':activeTab==='BFP'}" (click)="changeTab('BFP')" href="#BFP"
+                  aria-controls="BFP" role="tab" data-toggle="tab">BFP Projects</a>
+              </li>
+            <!-- <li class="nav-item">
               <a class="nav-link" href="#consort" aria-controls="consort" role="tab" data-toggle="tab">Consortium User</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Adminitrator User</a>
-            </li>
+            </li> -->
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="guest">
+            <div [ngClass]="{ 'active':activeTab==='Guests'}" role="tabpanel" class="tab-pane active" id="Guests">
                 <h2>My current projects</h2>
+                
                 <mat-divider></mat-divider>
-                    <mat-card style="width: 95%;">
-                        <div>
-                            <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
-                            <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
-                            <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
-                                [matMenuTriggerFor]="helpMenu">
-                            </div>
-                            <mat-menu #helpMenu="matMenu">
-                                <button style="float: right;" class="btn btn-light" mat-menu-item
-                                    [matMenuTriggerFor]="HelpSubMenu">Help</button>
-                            </mat-menu>
-                            <mat-menu #HelpSubMenu="matMenu">
-                                <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
-<!--                                 <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
-                                <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
-                                <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
-                                <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
-                                <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
-                                <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
-                            </mat-menu>
-                            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-                                [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
-                            </div>
-                            <mat-menu #contextMenu="matMenu">
-                                <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
-                            </mat-menu>
-                            
-                            <mat-menu #contextSubMenu="matMenu">
-                                <button mat-menu-item (click)="add(false)">from original model template</button>
-                                <button mat-menu-item (click)="add(true)">from saved templates</button>
-                            </mat-menu>
-                            <span class="span-project"></span>
-                            <mat-form-field appearance="standard">
-                                <mat-label>Filter</mat-label>
-                                <input matInput (keyup)="applyFilter($event)" placeholder="PROJECT 101" #input>
-                            </mat-form-field>
-                            
-                            <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+                    <mat-card *ngIf="activeTab==='Guests'" style="width: 95%;">
+                        <div *ngIf="get_user_group('Guests')">
+                            <div>
+                                <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+                                <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
+                                <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+                                    [matMenuTriggerFor]="helpMenu">
+                                </div>
+                                <mat-menu #helpMenu="matMenu">
+                                    <button style="float: right;" class="btn btn-light" mat-menu-item
+                                        [matMenuTriggerFor]="HelpSubMenu">Help</button>
+                                </mat-menu>
+                                <mat-menu #HelpSubMenu="matMenu">
+                                    <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
+    <!--                                 <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+                                </mat-menu>
+                                <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                                    [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+                                </div>
+                                <mat-menu #contextMenu="matMenu">
+                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+                                </mat-menu>
                                 
-                                <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
-                                    <ng-container *ngIf="column!=='edit'">
-                                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                    <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
-                                    </ng-container>
-                                    <ng-container  *ngIf="column==='edit'">
-                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                        <td mat-cell *matCellDef="let element"> 
-                                            <div class="btn-group" style="float: right;">
-                                                <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                                                <button title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
-                                                <button title="Explore project" (click)="onExplore(element)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
-                                                <button title="Export project as ISA-Tab" (click)="onExportIsa(element)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
-                                                <button title="Export project as json, tsv, csv" (click)="onExport(element)" class="btn btn-light btn-xs fa fa-upload"></button>
-                                                <button *ngIf="get_currentUser['admin']===true" title="Export project as json, tsv, csv" (click)="onShare(element)" class="btn btn-light btn-xs fa fa-upload">Share</button>
-                                            </div>
-                                        </td>
-                                    </ng-container>
-                                </ng-container>
+                                <mat-menu #contextSubMenu="matMenu">
+                                    <button mat-menu-item (click)="onAdd(false)">from original model template</button>
+                                    <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+                                </mat-menu>
+                                <span class="span-project"></span>
+                                <mat-form-field appearance="standard">
+                                    <mat-label>Filter</mat-label>
+                                    <input matInput (keyup)="applyFilter($event)" placeholder="PROJECT 101" #input>
+                                </mat-form-field>
                                 
-                                <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
-                                <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
-                            </table>
-                            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                                <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+                                    
+                                    <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                                        <ng-container *ngIf="column!=='edit'">
+                                            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                            <td mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                        </ng-container>
+                                        <ng-container  *ngIf="column==='edit'">
+                                            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                            <td mat-cell *matCellDef="let element"> 
+                                                <div class="btn-group" style="float: right;">
+                                                    <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                                    <button [disabled]="get_role(element)==='reader'" title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                                                    <button title="Explore project" (click)="onExplore(element)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
+                                                    <button title="Export project as ISA-Tab" (click)="onExportIsa(element)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
+                                                    <button title="Export project as json, tsv, csv" (click)="onExport(element)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                                    <button *ngIf="get_currentUser['admin']===true" title="Share project with other users" (click)="onShare(element)" class="btn btn-light">Share</button>
+                                                </div>
+                                            </td>
+                                        </ng-container>
+                                    </ng-container>
+                                    
+                                    <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+                                    <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+                                </table>
+                                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                            </div>
+                        </div>
+                        <div *ngIf="!get_user_group('Guests')">
+                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
+                            <button mat-menu-item (click)="onAccessGroup('Guests')" >ACCESS</button>
                         </div>
                     </mat-card>
             </div>
-            <div role="tabpanel" class="tab-pane" id="BFP">
+            <div [ngClass]="{ 'active':activeTab==='BFP'}" role="tabpanel" class="tab-pane active" id="BFP">
                 <h2>BFP projects</h2>
+                <button [disabled]="get_currentUser['admin']!==true" mat-menu-item (click)="invitePerson('BFP')" >Invite people</button>
                 <mat-divider></mat-divider>
                 <!--Add button ask for BFP account-->
-                    <mat-card style="width: 80%;">
+                    <mat-card *ngIf="activeTab==='BFP'" style="width: 95%;">
+                        <div *ngIf="get_user_group('BFP')">
+                            <div>
+                                <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+                                <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
+                                <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+                                    [matMenuTriggerFor]="helpMenu">
+                                </div>
+                                <mat-menu #helpMenu="matMenu">
+                                    <button style="float: right;" class="btn btn-light" mat-menu-item
+                                        [matMenuTriggerFor]="HelpSubMenu">Help</button>
+                                </mat-menu>
+                                <mat-menu #HelpSubMenu="matMenu">
+                                    <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
+    <!--                                 <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+                                </mat-menu>
+                                <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+                                    [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+                                </div>
+                                <mat-menu #contextMenu="matMenu">
+                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+                                </mat-menu>
+                                
+                                <mat-menu #contextSubMenu="matMenu">
+                                    <button mat-menu-item (click)="onAdd(false)">from original model template</button>
+                                    <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+                                </mat-menu>
+                                <span class="span-project"></span>
+                                <mat-form-field appearance="standard">
+                                    <mat-label>Filter</mat-label>
+                                    <input matInput (keyup)="applyFilter($event)" placeholder="PROJECT 101" #input>
+                                </mat-form-field>
+                                
+                                <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+                                    
+                                    <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                                        <ng-container *ngIf="column!=='edit'">
+                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                        <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                        </ng-container>
+                                        <ng-container  *ngIf="column==='edit'">
+                                            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                            <td mat-cell *matCellDef="let element"> 
+                                                <div class="btn-group" style="float: right;">
+                                                    <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                                    <button [disabled]="get_role(element)==='reader'" title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                                                    <button title="Explore project" (click)="onExplore(element)" class="btn btn-light btn-xs fa fa-bar-chart"></button>
+                                                    <button title="Export project as ISA-Tab" (click)="onExportIsa(element)" class="btn btn-light btn-xs fa "><i class="icon-play"></i></button>
+                                                    <button title="Export project as json, tsv, csv" (click)="onExport(element)" class="btn btn-light btn-xs fa fa-upload"></button>
+                                                    <button *ngIf="get_currentUser['admin']===true" title="Share project with other users" (click)="onShare(element)" class="btn btn-light">Share</button>
+                                                </div>
+                                            </td>
+                                        </ng-container>
+                                    </ng-container>
+                                    
+                                    <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+                                    <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+                                </table>
+                                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                            </div>
+                        </div>
+                        <div *ngIf="!get_user_group('BFP')">
+                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
+                            <button mat-menu-item (click)="onAccessGroup('BFP')" >Login</button>
+                        </div>
                     </mat-card>
             </div>
-            <div role="tabpanel" class="tab-pane" id="consort">
+            <!-- <div role="tabpanel" class="tab-pane" id="consort">
                 <h2>My current projects</h2>
-                <!-- Which consortium, add a select tag -->
                 <mat-divider></mat-divider>
                     <mat-card style="width: 80%;">
+                        <div *ngIf="get_group('consort')">
+
+                        </div>
+                        <div *ngIf="get_group('consort')">
+                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
+                            <button mat-menu-item (click)="onAccessGroup('consort')" >ACCESS</button>
+                        </div>
                     </mat-card>
             </div>
             <div role="tabpanel" class="tab-pane" id="admin">
                 <h2>Admin projects</h2>
                 <mat-divider></mat-divider>
                     <mat-card style="width: 80%;">
+                        <div *ngIf="get_group('admin')">
+
+                        </div>
+                        <div *ngIf="get_group('admin')">
+                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
+                            <button mat-menu-item (click)="onAccessGroup('admin')" >ACCESS</button>
+                        </div>
                     </mat-card>
-            </div>
+            </div> -->
         
         <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
-        
+        </div>
         
         </div>
         

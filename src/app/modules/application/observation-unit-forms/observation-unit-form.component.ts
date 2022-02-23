@@ -12,7 +12,7 @@ import { SampleSelectionComponent } from '../dialogs/sample-selection.component'
 import {JoyrideService} from 'ngx-joyride';
 import { BiologicalMaterialDialogModel } from '../../../models/biological_material_models'
 import { ExperimentalFactorDialogModel } from '../../../models/experimental_factor_models' 
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 @Component({
   selector: 'app-observation-unit-form',
@@ -39,7 +39,7 @@ export class ObservationUnitFormComponent implements OnInit {
   biologicalMaterialTouchedRows: any;
   experimentalFactorTouchedRows: any;
   sampleTouchedRows: any;
-  private currentUser:PersonInterface
+  private currentUser:UserInterface
   selectedRowIndex = -1;
   private startfilling: boolean = false;
   ontology_type: string;

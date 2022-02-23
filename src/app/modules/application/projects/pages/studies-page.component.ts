@@ -14,6 +14,8 @@ import { MatTableDataSource} from '@angular/material/table';
 import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
+import { UserInterface } from 'src/app/models/linda/person';
+import { PersonInterface } from 'src/app/models/linda/person';
 import { Study } from 'src/app/models/linda/study';
 import { StudyInterface } from 'src/app/models/linda/study';
 import { instanceOfStudy } from 'src/app/models/linda/study';
@@ -22,6 +24,11 @@ import { BlockDesign } from 'src/app/models/linda/experimental-design';
 import { Replication } from 'src/app/models/linda/experimental-design';
 import { PlotDesign } from 'src/app/models/linda/experimental-design';
 import { RowDesign } from 'src/app/models/linda/experimental-design';
+import { ShareProject } from '../../dialogs/share-project';
+
+
+
+
 @Component({
     selector: 'app-studies-page',
     templateUrl: './studies-page.component.html',
@@ -49,12 +56,14 @@ export class StudiesPageComponent implements OnInit {
     // public statistics: {};
     private displayed = false;
     loaded: boolean = false
-    private currentUser:User
+    private currentUser:UserInterface
     private multiple_selection: boolean = false;
     private parent_key: string;
     private model_selected: string
     public vertices: any = []
     public studies: any = []
+    private roles:{study_id:string,role:string}[]=[]
+
     startTime: Date;
     endTime: Date;
     timeDiff: number;
@@ -100,17 +109,12 @@ export class StudiesPageComponent implements OnInit {
         if (this.dataSource.paginator) {
           this.dataSource.paginator.firstPage();
         }
-      }
-
+    }
     async ngOnInit() {
 
         //await this.get_vertices()
-        //this.get_studies()
-        this.get_all_studies()
-
+        this.get_studies()
         this.loaded = true
-
-
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             //this.search_string=data
@@ -118,44 +122,9 @@ export class StudiesPageComponent implements OnInit {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         //console.log(this.currentUser)
         console.log(this.parent_id)
-
         //this.extract_design(36,7,3)
-
-        
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
 
-    }
-    extract_design(_blocks:number,_columns:number,_rows:number){
-        let blocks=_blocks
-        let columns=_columns
-        let rows=_rows
-        let new_design:ExperimentalDesign=new ExperimentalDesign()
-        var replication:Replication=new Replication()
-        replication.set_replicate_number(3)
-        new_design.set_replication(replication)
-        new_design.set_number_of_entries(blocks*columns*rows)
-
-        var plot=1
-        for (let block=1;block<blocks+1;block++){
-            var block_design:BlockDesign=new BlockDesign(block, 36)
-            for (let column=1;column<columns+1;column++){
-                var plot_design:PlotDesign=new PlotDesign()
-                plot_design.set_column_number(column)
-                for (let row=1;row<rows+1;row++){
-                    plot++
-                    plot_design.set_plot_number(plot)
-                    var row_design:RowDesign=new RowDesign()
-                    row_design.set_row_number(row)
-                    row_design.set_row_per_plot(rows)
-                    plot_design.add_row_design(row_design)
-                }
-                block_design.add_plot_design(plot_design)
-            }
-            console.log(block_design)
-            new_design.add_block_design(block_design)
-        }
-        console.log(new_design)
-        console.log(new_design.get_block_design(4))
     }
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -170,178 +139,41 @@ export class StudiesPageComponent implements OnInit {
             }
         )
     }
-/*     play_again() {
-        this.wizardService.play_again(this.vertices, this.currentUser)
+    get_role(element: StudyInterface):string{
+        return this.roles.filter(inv=> inv.study_id==element._id)[0]['role']
     }
-    turn_off() {
-        this.wizardService.turn_off(this.currentUser)
-    }
-    onDone() {
-        this.wizardService.onDone(false, this.currentUser, this.vertices)
-    } */
-    /* onClickTour(replay: boolean, level: string) {
-        this.wizardService.onClickTour(this.vertices, this.currentUser, replay, level)
-    } */
-    get get_displayed() {
-        return this.displayed
-    }
-    get get_multiple_selection() {
-        return this.multiple_selection
-    }
-    get get_checklist_selection() {
-        return this.checklistSelection
-    }
-    get get_model_type() {
-        return this.model_type
-    }
-    get get_parent_id() {
-        return this.parent_id
-    }
-    get get_displayedColumns(){
-        return this.displayedColumns
-      }  
-    get get_dataSource(){
-        return this.dataSource
+    async get_studies() {
+        //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
+            return this.userService.get_person(this.currentUser._key).toPromise().then(
+                person_id => {
+                    console.log(person_id)
+                    return this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise().then(
+                        data => {
+                            console.log(data)
+                            this.roles=data.map(study => study['roles']);
+                            const studies = data.map(study => study['study']);
+                            this.dataSource = new MatTableDataSource(studies);
+                            console.log(this.dataSource)
+                            this.dataSource.paginator = this.paginator;
+                            this.dataSource.sort = this.sort;
+                        }
+                    );
+                }
+            )
     }
 
-    get get_tutorial_done() {
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        return this.currentUser['tutoriel_done']
-    }
-    get get_tutoriel_level() {
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        return this.currentUser['tutoriel_step']
-    }
-    get get_model_selected() {
-        if (this.model_selected === undefined) {
-            return ""
-        }
-        else {
-            return this.model_selected;
-
-        }
-    }
+    // Event handler
     onEdit(elem) {
         console.warn("a study has been selected")
         console.warn(elem)
         //this.notify.emit(elem)
-        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo" } });
+        let role=this.roles.filter(inv=> inv.study_id==elem._id)[0]['role']
+        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo", role:role } });
 
     }
-    // get_studies() {
-    //     var cpt = 0;
-    //     console.log(this.vertices)
-    //     console.log(this.parent_id)
-    //     let selected = [this.parent_id];
-    //     console.log(selected)
-    //     let res = this.vertices.filter(({
-    //         e
-    //     }) => 
-    //         //selected.includes(e['_from'])
-    //         console.log(e)
-    //     );
-
-    //     console.log(res)
-    //     res.forEach(
-    //         r => {
-    //             let study_id = r['s']['vertices'][1]["Study unique ID"]
-    //             let short_name = r['s']['vertices'][1]["Study Name"]
-    //             this.studies.push({ "study_short_name": short_name, "study_id": study_id, "study_parent_id": this.parent_id })
-    //         }
-    //     );
-    // }
-    async get_all_studies() {
-        //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
-        return this.globalService.get_all_studies(this.parent_id.split('/')[1]).toPromise().then(
-            data => {
-                console.log(data)
-                this.dataSource = new MatTableDataSource(data);
-                console.log(this.dataSource)
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
-            }
-        )
-    }
-    get_studies() {
-        var cpt = 0;
-        console.log(this.vertices)
-        let selected = [this.parent_id];
-        let res = this.vertices.filter(({
-            e
-        }) => selected.includes(e['_from'])
-        );
-        res.forEach(
-            r => {
-                console.log(r['e']['_to'])
-                console.log(r['s']['vertices'])
-                
-                let found_vertices=r['s']['vertices']
-                let res2= found_vertices.filter(vertice => vertice['_id']===r['e']['_to'])[0];
-                console.log(res2)
-                let study_linda_id = res2["_id"]
-                let study_id = res2["Study unique ID"]
-                let short_name = res2["Study Name"]
-                console.log(study_id)
-                console.log(short_name)
-                this.studies.push({ "study_short_name": short_name, "study_id": study_id, "_id":study_linda_id,"study_parent_id": this.parent_id })
-                console.log(this.studies)
-            }
-        );
-    }
-    get_output_from_child(val:any){
-        if (val === 'cancel the form'){
-          console.log("Cancel form")
-        }
-        /* else if (val === 'close_study'){
-            delete this.selected_study
-        }
-        else if (instanceOfStudy(val)){
-            this.selected_study=val
-            console.log(this.selected_study)
-        } */
-        else{
-            console.log(val)
-            this.alertService.success("Changes have been successfully saved")
-        }
-    }
-
-
-    activate_multiple_selection(val: boolean) {
-        this.multiple_selection = val;
-        var selected_set = this.checklistSelection.selected
-    }
-
     onNext(node: string) {
         ////console.log(node)
     }
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        ////console.log(seconds + " seconds");
-    }
-
-    // reloadCurrentRoute() {
-    //     let currentUrl = this.router.url;
-    //     this.router.navigateByUrl('/projects_tree', { skipLocationChange: true }).then(() => {
-    //         this.router.navigate([currentUrl]);
-    //     });
-    // }
-    reloadComponent() {
-        let currentUrl = this.router.url;
-        ////console.log(currentUrl)
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.router.onSameUrlNavigation = 'reload';
-        //this.router.navigate(path);
-        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-    }
-
     onRemove(element:StudyInterface ) {
         const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
@@ -431,8 +263,7 @@ export class StudiesPageComponent implements OnInit {
         });
 
     }
-
-    add(template: boolean = false) {
+    onAdd(template: boolean = false) {
 
         let user = JSON.parse(localStorage.getItem('currentUser'));
         if (template) {
@@ -500,7 +331,7 @@ export class StudiesPageComponent implements OnInit {
                     if (data["success"]) {
                         console.log(data)
                         
-                        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type:'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo'  } });
+                        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type:'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo' , role:"owner" } });
                         //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
 
                     }
@@ -508,86 +339,205 @@ export class StudiesPageComponent implements OnInit {
         }
 
     }
+    onShare(element: StudyInterface) {
+        console.log(this.currentUser)
+        console.log("Add dialog for share project with authentified users - or same group users")
+        const dialogRef = this.dialog.open(ShareProject, { width: '500px', data: { model_id: element._id } });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+
+                var guest_person: PersonInterface = result['person']
+                console.log(guest_person['_id'])
+                console.log(element._id)
+                // create new edge doccument in users_edge
+
+                this.globalService.add_edge(element._id, guest_person['_id'], "reader").pipe(first()).toPromise().then(
+                    data => {
+                        if (data["success"]) {
+                            console.log(data["_id"])
+                            var message = "A new study " + data["_id"] + " has been successfully shared with " + guest_person['Person name'] + " !!"
+                            this.alertService.success(message)
+                            this.router.navigate(['/projects_page']);
+                            return true;
+                        }
+                        else {
+                            this.alertService.error("this form contains errors! " + data["message"]);
+                            return false;
+                        }
+                    }
+                );
 
 
+            }
+        });
+
+    }
+    
     identify() {
         ////console.log('Hello, Im user tree!');
     }
     isArray(obj: any) {
         return Array.isArray(obj)
     }
-
+    get_output_from_child(val:any){
+        if (val === 'cancel the form'){
+          console.log("Cancel form")
+        }
+        /* else if (val === 'close_study'){
+            delete this.selected_study
+        }
+        else if (instanceOfStudy(val)){
+            this.selected_study=val
+            console.log(this.selected_study)
+        } */
+        else{
+            console.log(val)
+            this.alertService.success("Changes have been successfully saved")
+        }
+    }
+    activate_multiple_selection(val: boolean) {
+        this.multiple_selection = val;
+        var selected_set = this.checklistSelection.selected
+    }
     show_info() {
         this.displayed = true
     }
-    getStyle(node: MiappeNode): Object {
+    start() {
+        this.startTime = new Date();
+    };
+    end() {
+        this.endTime = new Date();
+        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
+        this.timeDiff = this.timeDiff / 1000.0;
+        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
+        // get seconds 
+        var seconds = Math.round(this.timeDiff);
+        ////console.log(seconds + " seconds");
+    }
+    reloadCurrentRoute() {
+        let currentUrl = this.router.url;
+        this.router.navigateByUrl('/projects_tree', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentUrl]);
+         });
+    } 
+    reloadComponent() {
+        let currentUrl = this.router.url;
+        ////console.log(currentUrl)
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        //this.router.navigate(path);
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
+    }
+    extract_design(_blocks:number,_columns:number,_rows:number){
+        let blocks=_blocks
+        let columns=_columns
+        let rows=_rows
+        let new_design:ExperimentalDesign=new ExperimentalDesign()
+        var replication:Replication=new Replication()
+        replication.set_replicate_number(3)
+        new_design.set_replication(replication)
+        new_design.set_number_of_entries(blocks*columns*rows)
 
-        if (node.id.includes('Investigations tree')) {
-
-            return { backgroundColor: 'white', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
+        var plot=1
+        for (let block=1;block<blocks+1;block++){
+            var block_design:BlockDesign=new BlockDesign(block, 36)
+            for (let column=1;column<columns+1;column++){
+                var plot_design:PlotDesign=new PlotDesign()
+                plot_design.set_column_number(column)
+                for (let row=1;row<rows+1;row++){
+                    plot++
+                    plot_design.set_plot_number(plot)
+                    var row_design:RowDesign=new RowDesign()
+                    row_design.set_row_number(row)
+                    row_design.set_row_per_plot(rows)
+                    plot_design.add_row_design(row_design)
+                }
+                block_design.add_plot_design(plot_design)
+            }
+            console.log(block_design)
+            new_design.add_block_design(block_design)
         }
-        else if (node.id.includes('studies')) {
-
-            return { backgroundColor: '#b6b6b6', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-        else if (node.id.includes('investigations')) {
-
-            return { backgroundColor: 'lightblue', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-
-        else if (node.id.includes('events')) {
-
-            return { backgroundColor: 'lightcoral', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-        else if (node.id.includes('metadata')) {
-
-            return { backgroundColor: 'OldLace', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-        else if (node.id.includes('observed')) {
-
-            return { backgroundColor: '#2E8B57', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-
-        else if (node.id.includes('biological_materials')) {
-
-            return { backgroundColor: '#72bcd4', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-        else if (node.id.includes('observation_units')) {
-
-            return { backgroundColor: '#FF7F50', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
+        console.log(new_design)
+        console.log(new_design.get_block_design(4))
+    }
+    /* get_studies() {
+        var cpt = 0;
+        console.log(this.vertices)
+        let selected = [this.parent_id];
+        let res = this.vertices.filter(({
+            e
+        }) => selected.includes(e['_from'])
+        );
+        res.forEach(
+            r => {
+                console.log(r['e']['_to'])
+                console.log(r['s']['vertices'])
+                
+                let found_vertices=r['s']['vertices']
+                let res2= found_vertices.filter(vertice => vertice['_id']===r['e']['_to'])[0];
+                console.log(res2)
+                let study_linda_id = res2["_id"]
+                let study_id = res2["Study unique ID"]
+                let short_name = res2["Study Name"]
+                console.log(study_id)
+                console.log(short_name)
+                this.studies.push({ "study_short_name": short_name, "study_id": study_id, "_id":study_linda_id,"study_parent_id": this.parent_id })
+                console.log(this.studies)
+            }
+        );
+    } */
+    // Getters
+    get get_displayed() {
+        return this.displayed
+    }
+    get get_multiple_selection() {
+        return this.multiple_selection
+    }
+    get get_checklist_selection() {
+        return this.checklistSelection
+    }
+    get get_model_type() {
+        return this.model_type
+    }
+    get get_parent_id() {
+        return this.parent_id
+    }
+    get get_displayedColumns(){
+        return this.displayedColumns
+      }  
+    get get_dataSource(){
+        return this.dataSource
+    }
+    get get_tutorial_done() {
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        return this.currentUser['tutoriel_done']
+    }
+    get get_tutoriel_level() {
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        return this.currentUser['tutoriel_step']
+    }
+    get get_model_selected() {
+        if (this.model_selected === undefined) {
+            return ""
         }
         else {
-            return { backgroundColor: 'LightSteelBlue', width: '100%', 'margin-bottom': '10px', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
+            return this.model_selected;
+
         }
     }
-
-    getIconStyle(key: string): Object {
-        if (key.includes('study')) {
-
-            return { backgroundColor: '#b6b6b6', 'border-radius': '4px', 'float': 'left' }
-        }
-        else if (key.includes('event')) {
-
-            return { backgroundColor: 'lightcoral', 'border-radius': '4px', 'float': 'left' }
-        }
-        else if (key.includes('observed_variable')) {
-
-            return { backgroundColor: '#2E8B57', 'border-radius': '4px', 'float': 'left' }
-        }
-        else if (key.includes('material')) {
-
-            return { backgroundColor: '#72bcd4', 'border-radius': '4px', 'box-shadow': '2px 2px 2px 2px' }
-        }
-        else if (key.includes('biological_material')) {
-
-            return { backgroundColor: 'LightBlue', 'border-radius': '4px', 'float': 'left' }
-        }
-        else if (key.includes('observation_unit')) {
-
-            return { backgroundColor: '#FF7F50', 'border-radius': '4px', 'float': 'left' }
-        }
-        else {
-            return { backgroundColor: 'LightSteelBlue', 'border-radius': '4px', 'float': 'left' }
-        }
+    get get_currentUser(): UserInterface {
+        return this.currentUser
     }
+    /*     play_again() {
+        this.wizardService.play_again(this.vertices, this.currentUser)
+    }
+    turn_off() {
+        this.wizardService.turn_off(this.currentUser)
+    }
+    onDone() {
+        this.wizardService.onDone(false, this.currentUser, this.vertices)
+    } */
+    /* onClickTour(replay: boolean, level: string) {
+        this.wizardService.onClickTour(this.vertices, this.currentUser, replay, level)
+    } */
 }

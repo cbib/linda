@@ -31,6 +31,7 @@ import { ExperimentalFactorPageComponent } from './experimental-factor-page.comp
 import { DataFilesPageComponent } from './data-files-page.component';
 import { ObservedVariablePageComponent } from './observed-variable-page.component';
 import { ExperimentalDesignPageComponent } from './experimental-design-page.component';
+import { PersonsPageComponent } from './persons-page.component';
 
 // Mu entry module
 import { DownloadModule } from '../../file_handlers/download.module';
@@ -54,7 +55,8 @@ import { TableModule } from '../../tables/table.module';
     ExperimentalFactorPageComponent, 
     DataFilesPageComponent, 
     ObservedVariablePageComponent,
-    ExperimentalDesignPageComponent],
+    ExperimentalDesignPageComponent,
+    PersonsPageComponent],
   imports: [
     CommonModule,
     ProjectsPageRoutingModule,
@@ -92,7 +94,8 @@ import { TableModule } from '../../tables/table.module';
     ExperimentalFactorPageComponent,
     DataFilesPageComponent,
     ObservedVariablePageComponent,
-    ExperimentalDesignPageComponent
+    ExperimentalDesignPageComponent,
+    PersonsPageComponent
   ],
   providers: [
     JoyrideService,
@@ -110,7 +113,8 @@ import { TableModule } from '../../tables/table.module';
     ExperimentalFactorPageComponent,
     DataFilesPageComponent,
     ObservedVariablePageComponent,
-    ExperimentalDesignPageComponent
+    ExperimentalDesignPageComponent,
+    PersonsPageComponent
   ]
 })
 export class ProjectsPageModule { }

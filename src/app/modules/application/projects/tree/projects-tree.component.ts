@@ -22,7 +22,7 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
   import { BiologicalMaterialTableModel} from '../../../../models/biological_material_models'
   import { ObservationUnitTableModel} from '../../../../models/observation_unit_models'
   import { MiappeFlatNode } from '../../../../models/miappe_flat_node'
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
   
   const ELEMENT_BM_DATA: BiologicalMaterialTableModel[] = []
   
@@ -53,7 +53,7 @@ import { PersonInterface } from 'src/app/models/linda/person';
       // public statistics: {};
       private displayed = false;
       loaded:boolean=false
-      private currentUser : PersonInterface
+      private currentUser : UserInterface
       private active_node: MiappeNode;
       private current_data_keys = []
       private current_data_array = []
@@ -190,7 +190,7 @@ import { PersonInterface } from 'src/app/models/linda/person';
           )
       }
       build_hierarchy(edges: []): MiappeNode[] {
-          //////console.log(edges)
+          console.log(edges)
           var cpt = 0;
           var tmp_nodes = []
           tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
@@ -248,7 +248,7 @@ import { PersonInterface } from 'src/app/models/linda/person';
                   }
                   //////console.log(vertice_data)
                   //////console.log(vertice_data_keys)
-                  if (parent_id.includes("persons")) {
+                  if (parent_id.includes("users")) {
                       if (cpt === 0) {
                           tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id, vertice_data_keys, vertice_data, bm_vertice_data))
                       }

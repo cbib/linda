@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {  User } from '../../../../models';
 import { DataFileInterface } from 'src/app/models/linda/data_files';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 
 @Component({
@@ -23,11 +23,12 @@ export class StudyPageComponent implements OnInit {
     @Input('model_key') model_key: string;
     @Input('activeTab') activeTab: string;
     @Input('mode') mode: string;
+    @Input('role') role: string;
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     public vertices: any = []
     public studies: any = []
     private loaded: boolean = false
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
     projectForm:FormGroup
     startTime: Date;
     endTime: Date;
@@ -49,8 +50,12 @@ export class StudyPageComponent implements OnInit {
                     this.mode = params['mode'];
                     this.parent_id = params['parent_id']
                     this.model_key= params['model_key']
+                    this.role=params['role']
                 }
             );
+            console.log(this.role)
+            console.warn(this.role)
+            console.log(this.role)
             
 
     }
@@ -124,6 +129,9 @@ export class StudyPageComponent implements OnInit {
     }
     get get_model_key(){
         return this.model_key
+    }
+    get get_role(){
+        return this.role
     }
     get_output_from_child(val:any){
         if (val === 'cancel the form'){

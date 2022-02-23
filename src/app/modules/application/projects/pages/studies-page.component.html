@@ -51,8 +51,8 @@
             </mat-menu>
             
             <mat-menu #contextSubMenu="matMenu">
-                <button mat-menu-item (click)="add(false)">from original model template</button>
-                <button mat-menu-item (click)="add(true)">from saved templates</button>
+                <button mat-menu-item (click)="onAdd(false)">from original model template</button>
+                <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
             </mat-menu>
             
             <h2>My Studies</h2>
@@ -85,8 +85,9 @@
                         <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                         <td mat-cell *matCellDef="let element"> 
                             <div class="btn-group" style="float: right;">
-                                <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                                <button title="Remove project" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                                <button title="Edit study" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                <button [disabled]="get_role(element)==='reader'" title="Remove study" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                                <button *ngIf="get_currentUser['admin']===true" title="Share study with other users" (click)="onShare(element)" class="btn btn-light">Share</button>
                             </div>
                         </td>
                     </ng-container>

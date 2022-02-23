@@ -26,6 +26,6 @@ export class HelpLoaderComponent implements OnInit {
   onOkClick(): void {
   this.dialogRef.close({event:"Confirmed"});
 
-}
+  }
 
 }

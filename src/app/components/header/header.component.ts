@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { SearchResultComponent } from '../../modules/application/dialogs/search-result.component';
 import { Router } from '@angular/router';
 import { User } from '../../models';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -14,11 +14,11 @@ import { PersonInterface } from 'src/app/models/linda/person';
 })
 export class HeaderComponent implements OnInit{
     //@Input() private _currentUser!: {};
-  private _currentUser:PersonInterface
-  public get currentUser(): PersonInterface {
+  private _currentUser:UserInterface
+  public get currentUser(): UserInterface {
         return this._currentUser;
   }
-  public set currentUser(value: PersonInterface) {
+  public set currentUser(value: UserInterface) {
         this._currentUser = value;
   }
   title = 'LINDA';

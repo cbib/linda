@@ -11,7 +11,7 @@ import * as uuid from 'uuid';
 import { DelimitorComponent } from '../dialogs/delimitor.component';
 import { CsvLoaderComponent } from '../dialogs/csv-loader.component';
 import * as XLSX from 'xlsx';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 import {JoyrideService} from 'ngx-joyride';
 @Component({
@@ -39,7 +39,7 @@ export class MaterialFormComponent implements OnInit {
 
   Checked= false
   private startfilling: boolean = false;
-  private currentUser:PersonInterface
+  private currentUser:UserInterface
   show_spinner: boolean = false;
   index_row = 0
   material_id = ""

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { User } from '../models/user';
+import { UserInterface } from '../models/linda/person';
 import { PersonInterface } from '../models/linda/person';
 import {Constants} from "../constants";
 //import * as nodemailer from 'nodemailer';
@@ -40,8 +41,8 @@ export class UserService {
 
       }
     getAll() : Observable<PersonInterface[]> {
-        //return this.http.get<PersonInterface[]>(`${this.APIUrl}users`);
-        return this.http.get<PersonInterface[]>(this.APIUrl + "users/").pipe(catchError(this.handleError));
+        //return this.http.get<UserInterface[]>(`${this.APIUrl}users`);
+        return this.http.get<PersonInterface[]>(this.APIUrl + "persons/").pipe(catchError(this.handleError));
         
     }
 
@@ -58,27 +59,38 @@ export class UserService {
         return this.http.get(this.APIUrl + "get_user/" + username + "/" + password).pipe(map(this.extractData));
     }
 
-    register(user: PersonInterface) {
+    register(user: UserInterface) {
         console.log(user)
         //user['password']=Md5.hashStr(user.password)
         //return null
         return this.http.post(`${this.APIUrl}/register`, user);
     }
-    update_personal_infos(user: PersonInterface) {
+    update_personal_infos(user: UserInterface) {
         console.log(user)
         //user['password']=Md5.hashStr(user.password)
         //return null
         return this.http.post(`${this.APIUrl}/update_personal_infos`, user);
     }
-    register_person(user: PersonInterface) {
-        console.log(user)
+    get_person(user_key:string): Observable<PersonInterface>{
+        return this.http.get<PersonInterface>(this.APIUrl + "get_person/" + user_key).pipe(catchError(this.handleError));
+    }
+    get_groups(user_key:string): Observable<any>{
+        return this.http.get<any>(this.APIUrl + "get_groups/" + user_key).pipe(catchError(this.handleError));
+    }
+
+    register_person(person: UserInterface, group_id:string) {
+        console.log(person)
         //user['password']=Md5.hashStr(user.password)
         //return null
-        return this.http.post(`${this.APIUrl}/register_person`, user);
+        let obj2send = {
+            'person': person,
+            'group_id': group_id
+        };
+        return this.http.post(`${this.APIUrl}register_person`, obj2send);
     }
 
 
-//    update(user: PersonInterface) {
+//    update(user: UserInterface) {
 //        return this.http.put(`${this.apiUrl}/users/` + user._id, user);
 //    }
 //

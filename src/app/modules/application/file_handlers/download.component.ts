@@ -21,9 +21,9 @@ import { DateformatComponent } from '../dialogs/dateformat.component';
 import { DelimitorComponent } from '../dialogs/delimitor.component';
 import { FormGenericComponent } from '../dialogs/form-generic.component';
 import { HelpLoaderComponent } from '../dialogs/help-loader.component';
-import { FileService, GlobalService, AlertService } from '../../../services';
+import { FileService, GlobalService, AlertService, UserService } from '../../../services';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 export interface componentInterface {
     name: string;
@@ -214,7 +214,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     options_fields_by_component_by_filename = {}
     private selected_file: string = ""
     optionForm: FormGroup;
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
     private mySubscription
 
     ///////// //////// ///////// //////////  private loaded:boolean=false;
@@ -234,6 +234,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         private globalService: GlobalService,
         private route: ActivatedRoute,
         private readonly joyrideService: JoyrideService,
+        private userService: UserService,
         public dialog: MatDialog) {
 
         //use this when you pass argument using this.router.navigate
@@ -1382,7 +1383,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                             add_study_res => {
                                                 if (add_study_res["success"]) {
                                                     console.log(add_study_res["message"])
-                                                    this.router.navigate(['/projects_tree']);
+                                                    this.router.navigate(['/projects_page']);
                                                 }
                                             });
                                         //this.router.navigate(['/projects_tree']);
@@ -1496,53 +1497,58 @@ export class DownloadComponent implements OnInit, OnDestroy {
             // No study id defined
             else {
                 if (this.labelPosition === "no_study_id") {
-                    this.globalService.get_all_studies(this.parent_id.split("/")[1]).pipe(first()).toPromise().then(
-                        data => {
-                            console.log(data)
-                            let unique_study_label=""
-                            // add dataffiles to all studies found
-                            let data_model_dict = {}
-                            this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
-                            var data_model = { ...data_model_dict };
-                            
-                            data_model['Data file version'] = '1.0'
-                            data_model['Data file link'] = this.fileName
-                            data_model['Data'] = this.csv_lines_dict
-                            data_model['associated_headers'] = this.associated_headers_by_filename[this.fileName]
-                            data_model['headers'] = this.headers
-                            console.log(data_model)
-                            data.forEach(study => {
-                                let study_id=study['_id']
+                    return this.userService.get_person(this.currentUser._key).toPromise().then(
+                        person_id => {
+                            console.log(person_id)
+                            this.globalService.get_studies(this.parent_id.split("/")[1],person_id[0].split("/")[1]).pipe(first()).toPromise().then(
+                                data => {
+                                    console.log(data)
+                                    let unique_study_label=""
+                                    // add dataffiles to all studies found
+                                    let data_model_dict = {}
+                                    this.cleaned_data_file_model.forEach(attr => { data_model_dict[attr["key"]] = "" });
+                                    var data_model = { ...data_model_dict };
+                                    
+                                    data_model['Data file version'] = '1.0'
+                                    data_model['Data file link'] = this.fileName
+                                    data_model['Data'] = this.csv_lines_dict
+                                    data_model['associated_headers'] = this.associated_headers_by_filename[this.fileName]
+                                    data_model['headers'] = this.headers
+                                    console.log(data_model)
+                                    data.forEach(study => {
+                                        let study_id=study['_id']
 
-                                data_model['Data file description'] = 'Data have been extracted for ' + study_id + ' from ' + this.fileName
-                                console.log(study_id)
-                                this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
-                                    data_upload => {
-                                        console.log(data_upload)
-                                        if (data_upload[0]["id"]) {
-                                            console.log(data_upload[0]["new"]["Data file description"])
+                                        data_model['Data file description'] = 'Data have been extracted for ' + study_id + ' from ' + this.fileName
+                                        console.log(study_id)
+                                        this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
+                                            data_upload => {
+                                                console.log(data_upload)
+                                                if (data_upload[0]["id"]) {
+                                                    console.log(data_upload[0]["new"]["Data file description"])
 
 
-                                            if (!this.currentUser.tutoriel_done) {
-                                                if (this.currentUser.tutoriel_step === "13") {
-                                                    let new_step = 14
-                                                    this.currentUser.tutoriel_step = new_step.toString()
-                                                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                                    if (!this.currentUser.tutoriel_done) {
+                                                        if (this.currentUser.tutoriel_step === "13") {
+                                                            let new_step = 14
+                                                            this.currentUser.tutoriel_step = new_step.toString()
+                                                            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                                                        }
+                                                        else {
+                                                            this.alertService.error("You are not in the right form as requested by the tutorial")
+                                                        }
+
+                                                    }
+
+                                                    //this.router.navigate(['/projects_tree']);
+                                                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', model_id: this.parent_id, mode: "edit", activeTab: 'Assign' } });
+
+                                                    //this.reloadComponent(['/projects_tree'])
                                                 }
-                                                else {
-                                                    this.alertService.error("You are not in the right form as requested by the tutorial")
-                                                }
-
                                             }
-
-                                            //this.router.navigate(['/projects_tree']);
-                                            this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', model_id: this.parent_id, mode: "edit", activeTab: 'Assign' } });
-
-                                            //this.reloadComponent(['/projects_tree'])
-                                        }
-                                    }
-                                );
-                            });
+                                        );
+                                    });
+                                }
+                            );
                         }
                     )
                     

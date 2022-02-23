@@ -8,7 +8,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
 import { JoyrideService } from 'ngx-joyride';
-import { PersonInterface } from 'src/app/models/linda/person'; 
+import { UserInterface } from 'src/app/models/linda/person'; 
 
 // import { isBuffer } from 'util';
 // import { ConsoleReporter } from 'jasmine';
@@ -30,6 +30,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     @Input('inline') inline: string;
     @Input('asTemplate') asTemplate: boolean;
     @Input('onlyTemplate') onlyTemplate: boolean;
+    @Input('role') role: string;
     
     @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
     public guided_tour_messages: any = {
@@ -38,7 +39,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         level3: { heading: 'Level 3', message: 'At this stage you will see ontology form field for two important Study features <img src="/Users/benjamin/linda/src/assets/images/ontology_widget_form.png" style="width:100%;height: auto; display: block;" >' }
       }
     private startfilling: boolean = false;
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
     private ontology_type: string;
     private show_spinner: boolean = false;
     private Checked = false
@@ -85,6 +86,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 this.inline=params['inline']
                 this.asTemplate=params['asTemplate']
                 this.onlyTemplate=params['onlyTemplate']
+                this.role=params['role']
 
             }
         );
@@ -92,6 +94,8 @@ export class FormComponent implements OnInit//, AfterViewInit
             console.log(this.model_key)
             this.get_model_by_key();
         }
+        console.log(this.mode)
+        console.warn(this.role)
         console.log(this.mode)
         
     }
@@ -328,44 +332,65 @@ export class FormComponent implements OnInit//, AfterViewInit
             }
             else {
                 let attributeFilters = [];
+                console.warn(this.role)
                 this.cleaned_model.forEach(attr => {
                     if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
                         this.validated_term[attr["key"]] = { selected: false, values: "" }
                         //if (attr["key"].includes("ID")) {
-                        if (attr["format"] === "Unique identifier") {
+                        ///if (attr["format"] === "Unique identifier") {
+                        if (attr["key"].includes("ID")) {
                             //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
                             if (this.model_to_edit[attr["key"]]=== ""){
                                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                                if (this.role!=='owner'){
+                                    this.disabled_id_keys.push(attr["key"])
+                                }
                             }
                             else{
                                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
                                 this.disabled_id_keys.push(attr["key"])
                             }
                         }
-                        else if (attr["key"].includes("Short title")) {
+                        else if (attr["key"].includes("Project Name")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
+                            if (this.role!=='owner'){
+                                console.log(this.role)
+                                this.disabled_id_keys.push(attr["key"])
+                            }
+                        }
+                        else if (attr["key"].includes("Study Name")) {
+                            attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
+                            if (this.role!=='owner'){
+                                console.log(this.role)
+                                this.disabled_id_keys.push(attr["key"])
+                            }
                         }
                         else {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
+                            if (this.role!=='owner'){
+                                this.disabled_id_keys.push(attr["key"])
+                            }
                         }
                     }
                 });
+                console.log(this.disabled_id_keys)
                 this.modelForm = this.formBuilder.group(attributeFilters);
 
                 for (let i = 0; i < this.disabled_id_keys.length; i++) {
                     let attr = this.disabled_id_keys[i]
-                    // //console.log(this.disabled_id_keys[i])
+                    console.log(this.disabled_id_keys[i])
                     // //console.log(this.modelForm.value)
                     // //console.log(this.modelForm.get(this.disabled_id_keys[i]))
                     // //console.log(this.modelForm.value[this.disabled_id_keys[i]])
-                    if (this.disabled_id_keys[i].includes("ID")){
+                    this.modelForm.get(this.disabled_id_keys[i]).disable();
+                    /* if (this.disabled_id_keys[i].includes("ID")){
                         this.modelForm.get(this.disabled_id_keys[i]).disable();
                     }
                     else{
                         if (this.modelForm.value[this.disabled_id_keys[i]]){
                             this.modelForm.get(this.disabled_id_keys[i]).disable();
                         }
-                    }            
+                    }  */           
     
                 }
                 //console.log(this.modelForm.value)
@@ -781,11 +806,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                             }
                             else {
                                 this.alertService.error("this form contains errors! " + data["message"]);
-
                                 return false;
                             };
-
-
                         }
                     );
                 }

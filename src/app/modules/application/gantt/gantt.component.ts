@@ -4,7 +4,7 @@ import { GlobalService} from '../../../services';
 import { MiappeNode } from '../../../models';
 import { GantElement } from './GantElement';
 import { ModelGant } from './GantElement';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 @Component({
   selector: 'app-gantt',
@@ -186,7 +186,7 @@ export class GanttComponent implements OnInit {
         if (short_name === "" || short_name === undefined) {
           short_name = e["e"]["_to"]
         }
-        if (parent_id.includes("persons")) {
+        if (parent_id.includes("users")) {
 
           if (cpt === 0) {
             tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
@@ -222,7 +222,7 @@ export class GanttComponent implements OnInit {
     return term
   }
   get_vertices() {
-    let user:PersonInterface = JSON.parse(localStorage.getItem('currentUser'));
+    let user:UserInterface = JSON.parse(localStorage.getItem('currentUser'));
     console.log(user)
     return this.globalService.get_all_vertices(user._key).toPromise().then(
       data => {

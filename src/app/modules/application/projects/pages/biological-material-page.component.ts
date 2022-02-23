@@ -67,11 +67,11 @@ export class BiologicalMaterialPageComponent implements OnInit {
   async get_all_biological_materials() {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
-        console.log(data)
+        //console.log(data)
         if (data.length>0){
           var keys= Object.keys(data[0])
           this.prepare_bm_data(data[0],keys)
-          console.log(this.dt_source)
+          //console.log(this.dt_source)
           //this.dataSource = new MatTableDataSource(data);
           //console.log(this.dataSource)
           this.dt_source.paginator = this.paginator;
@@ -98,7 +98,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
     return this.displayedColumns
   }
   get get_dataSource() {
-    console.log(this.newTableData)
+    //console.log(this.newTableData)
     return this.dt_source
   }
 
@@ -109,8 +109,8 @@ export class BiologicalMaterialPageComponent implements OnInit {
   onEdit(element: BiologicalMaterialInterface) {
   }
   async prepare_bm_data(node_vertice, vertice_keys){
-          console.log(node_vertice)
-          console.log(vertice_keys)
+          //console.log(node_vertice)
+          //console.log(vertice_keys)
           //var newTableData:{}[]=[]
           let datasources: BiologicalMaterialTableModel[] = []
           var data= node_vertice

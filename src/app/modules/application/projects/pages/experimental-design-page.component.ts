@@ -16,7 +16,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { MatTableDataSource} from '@angular/material/table';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { MatDialog } from '@angular/material/dialog';
-import { PersonInterface } from 'src/app/models/linda/person';
+import { UserInterface } from 'src/app/models/linda/person';
 
 @Component({
   selector: 'app-experimental-design-page',
@@ -70,7 +70,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
     private displayedColumns: string[] = ['Blocks per trial', 'edit'];
     private study_id:string
 
-    private currentUser:PersonInterface
+    private currentUser:UserInterface
 
     constructor(public globalService: GlobalService,
         public ontologiesService: OntologiesService,
