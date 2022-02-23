@@ -3248,56 +3248,58 @@ router.post('/add', function (req, res) {
             }
         }
         /////////////////////////////
-        //now check if investigation exists else add to database
+        //else check if investigation exists and add to database
         /////////////////////////////
-        var data = [];
-        data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
-
-        if (model_type !== 'observation_unit') {
-            // var data = [];
-            // data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
-
-            //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-
-            if (data[0].new === null) {
-                //res.send({ success: false, message: model_type + ' collection already have document with this title ', _id: 'none' });
-                errors.push({ success: false, message: model_type + ' collection already have document with this title ', _id: null })
-
-
-            }
-            //Document exists add edges in edge collection
-            else {
-                var obj = {
-                    "_from": parent_id,
-                    "_to": data[0].id,
-                };
-
-                const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
-                ///res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
-                if (model_type === 'investigation') {
-                    var person = get_person_from_user_id(user[0]['_id'], users_edge)
-                    console.log(person)
-                    var obj2 = {
-                        "_from": data[0].id,
-                        "_to": person[0],
-                        "role":role,
-                        "group_keys":[group_key]
-                    };
-
-                    const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${investigations_edge} RETURN NEW `);
+        else{
+            var data = [];
+            data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+    
+            if (model_type !== 'observation_unit') {
+                // var data = [];
+                // data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+    
+                //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
+    
+                if (data[0].new === null) {
+                    //res.send({ success: false, message: model_type + ' collection already have document with this title ', _id: 'none' });
+                    errors.push({ success: false, message: model_type + ' collection already have document with this title ', _id: null })
+    
+    
                 }
-                if (model_type === 'study') {
-                    var person = get_person_from_user_id(user[0]['_id'], users_edge)
-                    console.log(person)
-                    var obj2 = {
-                        "_from": data[0].id,
-                        "_to": person[0],
-                        "role":role
+                //Document exists add edges in edge collection
+                else {
+                    var obj = {
+                        "_from": parent_id,
+                        "_to": data[0].id,
                     };
-
-                    const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${studies_edge} RETURN NEW `);
+    
+                    const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
+                    ///res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+                    if (model_type === 'investigation') {
+                        var person = get_person_from_user_id(user[0]['_id'], users_edge)
+                        console.log(person)
+                        var obj2 = {
+                            "_from": data[0].id,
+                            "_to": person[0],
+                            "role":role,
+                            "group_keys":[group_key]
+                        };
+    
+                        const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${investigations_edge} RETURN NEW `);
+                    }
+                    if (model_type === 'study') {
+                        var person = get_person_from_user_id(user[0]['_id'], users_edge)
+                        console.log(person)
+                        var obj2 = {
+                            "_from": data[0].id,
+                            "_to": person[0],
+                            "role":role
+                        };
+    
+                        const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${studies_edge} RETURN NEW `);
+                    }
+                    successes.push({ success: true, message: 'Everything is good for adding ' + as_template, _id: data[0].id })
                 }
-                successes.push({ success: true, message: 'Everything is good for adding ' + as_template, _id: data[0].id })
             }
         }
     };

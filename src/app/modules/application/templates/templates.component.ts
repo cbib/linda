@@ -105,7 +105,7 @@ export class TemplatesComponent implements OnInit {
     if (! this.selected_model){
       this.alertService.error("You need to select a model first !! ")
     }else{
-      this.router.navigate(['/generic_form'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: "", model_type: this.selected_model, mode: "create" , inline:"false", asTemplate:true, onlyTemplate:true}, skipLocationChange: true}); //replaceUrl: false
+      this.router.navigate(['/generic_form'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: "", model_type: this.selected_model, mode: "create" , inline:"false", asTemplate:true, onlyTemplate:true, role:"owner"}, skipLocationChange: true}); //replaceUrl: false
 
     }
   }
