@@ -169,7 +169,7 @@ get_vertices(){
         "observed_variables":[]
     }
     if (this.currentUser){
-            return this.globalService.get_all_vertices(this.currentUser['_key']).toPromise().then(
+            return this.globalService.get_inv_stud_vertices(this.currentUser['_key']).toPromise().then(
                 data => {
                     this.vertice_data=data;
                     this.vertice_data.forEach(

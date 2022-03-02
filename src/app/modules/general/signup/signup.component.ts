@@ -46,7 +46,7 @@ export class SignupComponent implements OnInit {
           this.formBuilder.control('')
         ]) */
       },{validator: MustMatch('password', 'confirmpassword')}
-      );
+    );
     registerForm2: FormGroup=new FormGroup({})
     loading = false;
     submitted = false;

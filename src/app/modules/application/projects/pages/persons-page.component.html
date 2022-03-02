@@ -72,19 +72,19 @@
                                 
                                 <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
                                     <ng-container *ngIf="column!=='edit'">
-                                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                    <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                        <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
                                     </ng-container>
-                                    <ng-container  *ngIf="column==='edit'">
+ <!--                                     <ng-container  *ngIf="column==='edit'">
                                         <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                                         <td mat-cell *matCellDef="let element"> 
                                             <div class="btn-group" style="float: right;">
-                                                <button title="Edit person" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                                               <button title="Edit person" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
                                                 <button title="Remove person" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
-                                            </div>
+                                          </div>
                                         </td>
-                                    </ng-container>
-                                </ng-container>
+                                    </ng-container> --> 
+                                </ng-container> 
                                 
                                 <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
                                 <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>

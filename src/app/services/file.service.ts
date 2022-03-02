@@ -33,11 +33,12 @@ export class FileService {
             'username': user.username,
             'password': user.password,
             'parent_id': parent_id,
-            'data': data
+            'values': data
         };
         //console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload_data"}`, obj2send).pipe(map(this.extractData));
     }
+
     
     public upload3(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -45,7 +46,7 @@ export class FileService {
             'username': user.username,
             'password': user.password,
             'parent_id': parent_id,
-            'obj': {
+            'values': {
                 'headers': headers,
                 'associated_headers': associated_headers,
                 'data': data,
@@ -53,6 +54,7 @@ export class FileService {
             }
 
         };
+        console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload_data"}`, obj2send).pipe(map(this.extractData));
     }
     public upload2(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {

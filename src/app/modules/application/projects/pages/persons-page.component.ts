@@ -70,7 +70,7 @@ export class PersonsPageComponent implements OnInit {
     dtOptions: DataTables.Settings = {};
     tableData = [];
     private model_type: string = 'investigation'
-    private displayedColumns: string[] = ['Person name', 'Person email', 'Person role', 'Person affiliation', 'edit'];
+    private displayedColumns: string[] = ['Person name', 'Person email', 'Person role', 'Person affiliation'];
 
     constructor(
         private globalService: GlobalService,
@@ -176,19 +176,6 @@ export class PersonsPageComponent implements OnInit {
     onNext(node: string) {
         ////console.log(node)
     }
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        ////console.log(seconds + " seconds");
-    }
-
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
         this.router.navigateByUrl('/projects_tree', { skipLocationChange: true }).then(() => {

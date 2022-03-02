@@ -305,7 +305,7 @@ export class AssignComponent implements OnInit {
     }
 
     /**
-   * Test if n is numeric type.
+   * Get data with get_all_data_files() from globalService .
    *
    * @remarks
    * This method is part of the {@link download.ts} component.
@@ -386,7 +386,7 @@ export class AssignComponent implements OnInit {
                         });
                         //this.AttributesGroups[data_file.filename].push(tmpAttributesGroups)
                         this.dataFileComponentForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
-                        this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
+                        //this.dataFileComponentFieldForm[data_file.filename] = this.formBuilder.group(tmpAttributesGroups)
                         this.options_components_by_filename[data_file.filename].forEach(option => {
                             //console.log(option.header)
                             this.dataFileComponentForm[data_file.filename].get(option.header).setValue(option.value);
@@ -395,6 +395,7 @@ export class AssignComponent implements OnInit {
 
                 });
                 this.selected_file = this.filename_used[0]
+                console.log(this.dataFileComponentForm)
 
             }
             //add corresponding component fields

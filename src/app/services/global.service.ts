@@ -10,7 +10,7 @@ import { StudyInterface} from '../models/linda/study'
 import { BiologicalMaterialInterface } from '../models/linda/biological-material'
 import { ExperimentalFactorInterface } from '../models/linda/experimental_factor'; 
 import { ObservationUnitInterface } from '../models/linda/observation-unit';
-import { DataFileInterface } from '../models/linda/data_files'
+import { AssociatedHeadersInterface, DataFileInterface } from '../models/linda/data_files'
 import { ObservedVariableInterface } from '../models/linda/observed-variable';
 import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
 import { User } from '../models';
@@ -26,6 +26,9 @@ export class GlobalService {
 
     private APIUrl: string;
     private user:UserInterface
+    private startTime:Date;
+    private endTime:Date;
+    private timeDiff:number
     //private FAIRDOM='https://fairdomhub.org/investigations/56';
 
     constructor(private http: HttpClient) {
@@ -40,6 +43,18 @@ export class GlobalService {
     get_user() : UserInterface | undefined{
         let tmp_user:any=localStorage.getItem('currentUser')
         return JSON.parse(tmp_user)
+    }
+    start() {
+        this.startTime = new Date();
+    };
+    end() {
+        this.endTime = new Date();
+        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
+        this.timeDiff = this.timeDiff / 1000.0;
+        console.log("Elapsed time :" + this.timeDiff+ " seconds")
+        // get seconds 
+        var seconds = Math.round(this.timeDiff);
+        console.log(seconds + " seconds");
     }
 
     private handleError(error: HttpErrorResponse) {
@@ -98,8 +113,8 @@ export class GlobalService {
         return this.http.get(this.APIUrl + "get_max_level/" + model_type).pipe(catchError(this.handleError));
     }
     //Get all data files by investigation
-    get_all_data_files(model_key:string): Observable<any> {
-        return this.http.get(this.APIUrl + "get_all_data_files/" + model_key).pipe(catchError(this.handleError));
+    get_all_data_files(investigation_key:string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_all_data_files/" + investigation_key).pipe(catchError(this.handleError));
     }
     get_data_filename(parent_key:string, model_type:string): Observable<any> {
         return this.http.get(this.APIUrl + "get_data_filename/" + parent_key + "/" + model_type).pipe(catchError(this.handleError));
@@ -114,13 +129,20 @@ export class GlobalService {
         return this.http.get(this.APIUrl + "get_associated_component_by_type_from_datafiles/" + datafile_key + "/" + type).pipe(catchError(this.handleError));
     }
     get_all_vertices(user_key: string) {
-        return this.http.get(this.APIUrl + "get_vertices/" + user_key).pipe(catchError(this.handleError));
+        return this.http.get(this.APIUrl + "get_all_vertices/" + user_key).pipe(catchError(this.handleError));
+    }
+    //used in header component 
+    get_inv_stud_vertices(user_key: string){
+        return this.http.get(this.APIUrl + "get_inv_stud_vertices/" + user_key).pipe(catchError(this.handleError));
     }
     get_projects(person_key: string) : Observable<InvestigationInterface[]>{
         return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + person_key).pipe(catchError(this.handleError));
     }
     get_studies(investigation_key: string, person_key: string) : Observable<StudyInterface[]>{
         return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key + "/" + person_key).pipe(catchError(this.handleError));
+    }
+    get_studies_and_persons(investigation_key: string): Observable<{"e":{},"s":{}}[]>{
+        return this.http.get<{"e":{},"s":{}}[]>(this.APIUrl + "get_studies_and_persons/" + investigation_key).pipe(catchError(this.handleError));
     }
     get_all_project_persons(investigation_key: string) : Observable<PersonInterface[]>{
         return this.http.get<PersonInterface[]>(this.APIUrl + "get_project_persons/" + investigation_key).pipe(catchError(this.handleError));
@@ -143,8 +165,8 @@ export class GlobalService {
     get_all_observation_units(study_key: string) : Observable<ObservationUnitInterface[]>{
         return this.http.get<ObservationUnitInterface[]>(this.APIUrl + "get_all_observation_units/" + study_key).pipe(catchError(this.handleError));
     }
-    get_data_files(study_key: string): Observable<DataFileInterface[]>{
-        return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + study_key).pipe(catchError(this.handleError));
+    get_data_files(model_key: string, collection:string): Observable<DataFileInterface[]>{
+        return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + model_key + "/" +  collection).pipe(catchError(this.handleError));
     }
     get_all_observation_unit_childs(observation_unit_key: string) {
         return this.http.get<[]>(this.APIUrl + "get_observation_unit_childs/" + observation_unit_key);
@@ -268,7 +290,7 @@ export class GlobalService {
             'model_type': model_type
 
         };
-        return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
+        return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
     update_user(value: boolean, key: string, field: string, model_type: string) {
         let user = this.get_user();
@@ -546,6 +568,24 @@ export class GlobalService {
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add"}`, obj2send);
+    }
+    extract(values: {}, model_type: string, parent_id: string, as_template:boolean, datafile_id:string , associated_headers:AssociatedHeadersInterface[], column_original_label:string,  group_key:string="") {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'role': "owner",
+            'parent_id': parent_id,
+            'values': values,
+            'model_type': model_type,
+            'as_template': as_template,
+            'datafile_id':datafile_id,
+            'associated_headers':associated_headers,
+            'column_original_label':column_original_label,
+            'group_key':group_key
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "extract"}`, obj2send);
     }
     
     add_template(values: {}, model_type: string) {

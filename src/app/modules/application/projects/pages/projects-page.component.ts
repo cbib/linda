@@ -58,25 +58,27 @@ export class ProjectsPageComponent implements OnInit {
     // public statistics: {};
     private displayed = false;
     loaded: boolean = false
-    private currentUser: UserInterface
-    private multiple_selection: boolean = false;
-    private parent_id: string;
-    private model_key: string;
-    private model_selected: string
-    public vertices: InvestigationInterface[] = []
-    public projects: any = []
-    private roles:{project_id:string,role:string}[]=[]
-    private group_keys:{project_id:string,group_keys:string[]}[]=[]
-    //private dataSource
-    private dataSource: MatTableDataSource<InvestigationInterface>;
-    expandedElement: InvestigationInterface | null;
     startTime: Date;
     endTime: Date;
     timeDiff: number;
     dataTable: any;
     dtOptions: DataTables.Settings = {};
     tableData = [];
+    expandedElement: InvestigationInterface | null;
     group_key:string;
+
+    public vertices: InvestigationInterface[] = []
+    public projects: any = []
+    private currentUser: UserInterface
+    private multiple_selection: boolean = false;
+    private parent_id: string;
+    private model_key: string;
+    private model_selected: string
+    private roles:{project_id:string,role:string}[]=[]
+    private group_keys:{project_id:string,group_keys:string[]}[]=[]
+
+    //private dataSource
+    private dataSource: MatTableDataSource<InvestigationInterface>;
     private user_groups=[]
     private model_type: string = 'investigation'
     private displayedColumns: string[] = ['Investigation unique ID', 'Investigation description', 'edit'];
@@ -97,9 +99,7 @@ export class ProjectsPageComponent implements OnInit {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         this.activeTab="Guests"
         this.group_key="Guests"
-
     }
-
     private initialSelection = []
     private checklistSelection = new SelectionModel<MatChip>(true, this.initialSelection /* multiple */);
 
@@ -117,7 +117,6 @@ export class ProjectsPageComponent implements OnInit {
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
-
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
         }
@@ -129,21 +128,15 @@ export class ProjectsPageComponent implements OnInit {
         this.get_projects()
     }
     async ngOnInit() {
-
-
         //await this.get_vertices()
         this.get_projects()
         this.loaded = true
-
-
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             this.search_string = data
         })
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
         this.get_user_groups()
-
         this.parent_id = this.currentUser['_id']
         console.log(this.currentUser)
 
@@ -181,18 +174,18 @@ export class ProjectsPageComponent implements OnInit {
                         this.roles=data.map(project => project['roles']);
                         this.group_keys=data.map(project => project['groups']);
                         const projects = data.map(project => project['project']);
-                        const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
-                        const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key));
+                        /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
+                        const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
                         //projects.filter((data) => data.projec.includes(this.group_key));
-                        let arr3 = projects.map((item, i) => Object.assign({}, item, this.group_keys[i]));
-                        const getProjects = arr3.filter((data) => data.group_keys.includes(this.group_key));
-                        console.log("arr3", arr3)
+                        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.group_keys[i]));
+                        const getProjects = projects_groups.filter((data) => data.group_keys.includes(this.group_key));
+                        /* console.log("arr3", arr3)
                         console.log("getProjects",getProjects)
                         console.log("getProjects1",getProjects1)
                         console.log("getProjects2",getProjects2)
                         console.log("this.group_keys",this.group_keys)
                         console.log("projects",projects)
-                        console.log("this.roles",this.roles)
+                        console.log("this.roles",this.roles) */
                         
                         this.dataSource = new MatTableDataSource(getProjects);
                         console.log(this.dataSource)
@@ -202,13 +195,6 @@ export class ProjectsPageComponent implements OnInit {
                 )
             }
         )
-    }
-
-    get get_displayedColumns() {
-        return this.displayedColumns
-    }
-    get get_dataSource() {
-        return this.dataSource
     }
     // play_again() {
     //     this.wizardService.play_again(this.vertices, this.currentUser)
@@ -238,10 +224,6 @@ export class ProjectsPageComponent implements OnInit {
     onExplore(element: InvestigationInterface) {
         ////console.log("you are gonna explore your data !!")
         this.router.navigate(['/explore'], { queryParams: { parent_id: element._id } })
-    }
-
-    invitePerson(group_key){
-        console.log(group_key)
     }
     onShare(element: InvestigationInterface) {
         console.log(this.currentUser)
@@ -324,7 +306,7 @@ export class ProjectsPageComponent implements OnInit {
     onEdit(elem: InvestigationInterface) {
         console.log("on Edit")
         let role=this.roles.filter(inv=> inv.project_id==elem._id)[0]['role']
-        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'], model_type: "investigation", model_key: elem._key, model_id: elem._id, mode: "edit", activeTab: 'identifiers', role: role} });
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'], model_type: "investigation", model_key: elem._key, model_id: elem._id, mode: "edit", activeTab: 'identifiers', role: role, group_key:this.group_key} });
     }
     onNext(node: string) {
         ////console.log(node)
@@ -485,6 +467,9 @@ export class ProjectsPageComponent implements OnInit {
         }
 
     }
+    invitePerson(group_key){
+        console.log(group_key)
+    }
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
         this.router.navigateByUrl('/projects_tree', { skipLocationChange: true }).then(() => {
@@ -502,18 +487,6 @@ export class ProjectsPageComponent implements OnInit {
         this.multiple_selection = val;
         var selected_set = this.checklistSelection.selected
     }
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        ////console.log(seconds + " seconds");
-    }
     identify() {
         ////console.log('Hello, Im user tree!');
     }
@@ -525,6 +498,12 @@ export class ProjectsPageComponent implements OnInit {
     }
 
     // Getters
+    get get_displayedColumns() {
+        return this.displayedColumns
+    }
+    get get_dataSource() {
+        return this.dataSource
+    }
     get get_currentUser(): UserInterface {
         return this.currentUser
     }
@@ -556,6 +535,9 @@ export class ProjectsPageComponent implements OnInit {
     }
     get get_model_type() {
         return this.model_type
+    }
+    get get_group_key(){
+        return this.group_key
     }
 
 }

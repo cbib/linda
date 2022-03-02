@@ -63,24 +63,16 @@ export class LoginComponent implements OnInit {
         //var encrypted_password=md5.appendStr(this.f.password.value).end();
         this.loading = true;
 
-        this.authenticationService.login(this.f.username.value, Md5.hashStr(this.f.password.value))
-            .pipe(first())
-            .subscribe(
-            //.toPromise().then(
-                ( data )=> {
-                    console.log(data)
-                    console.log(this.returnUrl)
+        this.authenticationService.login(this.f.username.value, Md5.hashStr(this.f.password.value)).pipe(first())
+            .subscribe(( data )=> {
                     this.router.navigate([this.returnUrl]);
                 },
                 error => {
                     this.error = error
-                    console.log(this.f.username.value)
-                    console.log(this.f.password.value)
-                    console.log("incorrect password or username");
                     this.alertService.error(error);
                     this.authenticationService.logout()
                     this.loading = false;
                 }
-                );
+            );
     }
 }

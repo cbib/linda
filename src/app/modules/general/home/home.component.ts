@@ -54,28 +54,16 @@ export class HomeComponent implements OnInit {
     }
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        this.start();
+        this.globalService.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             data => {
                 console.log(data)
-                this.end()
+                this.globalService.end()
                 this.vertices = data;
                 
             }
         )
     }
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        console.log(seconds + " seconds");
-    } 
     // public onClick(): void {
     //     this.guidedTourService.startTour(this.LindaTour);
     // }

@@ -26,10 +26,12 @@ export class ProjectPageComponent implements OnInit {
     @Input('activeTab') activeTab: string;
     @Input('mode') mode: string;
     @Input('role') role: string;
+    @Input('group_key') group_key: string;
     public vertices: any = []
     public studies: any = []
     private loaded: boolean = false
     private currentUser:UserInterface
+    private collection:string;
 
     projectForm:FormGroup
     startTime: Date;
@@ -53,30 +55,30 @@ export class ProjectPageComponent implements OnInit {
                     this.model_key= params['model_key']
                     this.model_type=params['model_type']
                     this.role=params['role']
+                    this.group_key=params['group_key']
+                    this.collection="investigations"
                 }
             );
+            console.warn("group key in project page", this.group_key)
 
     }
 
     async ngOnInit() {
+        this.collection="investigations"
+        console.log(this.collection)
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         this.parent_id = this.currentUser['_id']
         //this.model_key=this.model_id.split("/")[1]
-        
         //await this.get_vertices()
         this.loaded = true
-        
         console.log(this.model_type)
         console.log(this.model_id)
-
         this.projectForm = new FormGroup({})
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             //this.search_string=data
         })
-
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
-
     }
 
     ngAfterViewInit() {
@@ -85,36 +87,24 @@ export class ProjectPageComponent implements OnInit {
             this._cdr.detectChanges()
         });
     }
+
     changeTab(tab:string){
         this.activeTab=tab
         console.log(this.activeTab)
-
     }
+
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         //////console.log(user)
-        this.start();
+        this.globalService.start()
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             //return this.globalService.get_all_vertices(user._key).subscribe(
             data => {
-                console.log(data)
-                this.end()
+                console.log(data)   
+                this.globalService.end()
                 this.vertices = data;
             }
         )
-    }
-
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        ////console.log(seconds + " seconds");
     }
     
     get get_parent_id(){
@@ -132,7 +122,15 @@ export class ProjectPageComponent implements OnInit {
     get get_model_key(){
         return this.model_key
     }
-    
+    get get_role(){
+        return this.role
+    }
+    get get_group_key(){
+        return this.group_key
+    }
+    get get_collection(){
+        return this.collection
+    }
     get_output_from_child(val:any){
         if (val === 'cancel the form'){
           console.log("Cancel form")
@@ -143,9 +141,6 @@ export class ProjectPageComponent implements OnInit {
             
 
         }
-    }
-    get get_role(){
-        return this.role
     }
     submit(){
         //Go back to project pages

@@ -54,7 +54,7 @@
   <div class="tab-content">
     <div [ngClass]="{ 'active':activeTab==='studyinfo'}" role="tabpanel" class="tab-pane active" id="studyinfo">
       <h3>Describe your study</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <app-form *ngIf="activeTab==='studyinfo'" id="study_form" (notify)="get_output_from_child($event)"
           [model_type]="'study'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
           inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form>    
@@ -63,7 +63,7 @@
 
     <div [ngClass]="{ 'active':activeTab==='studysite'}" role="tabpanel" class="tab-pane active" id="studysite">
       <h3>Describe your experimental site</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <app-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
           [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
           inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form> 
@@ -72,13 +72,13 @@
     </div>
     <div [ngClass]="{ 'active':activeTab==='studydesign'}" role="tabpanel" class="tab-pane active" id="studydesign">
       <h3>Describe your experimental design</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
           <!--         <app-form *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-form>
- -->        <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
+ -->        <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_model_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
         </div>
 
       </mat-card>
@@ -86,7 +86,7 @@
 
     <div [ngClass]="{ 'active':activeTab==='biomat'}" role="tabpanel" class="tab-pane" id="biomat">
       <h3>Describe biological materials</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
@@ -100,7 +100,7 @@
     </div>
     <div [ngClass]="{ 'active':activeTab==='obsunit'}" role="tabpanel" class="tab-pane" id="obsunit">
       <h3>Describe observation units</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
@@ -116,7 +116,7 @@
 
     <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
       <h3>Observed variables</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
@@ -132,7 +132,7 @@
     </div>
     <div [ngClass]="{ 'active':activeTab==='expfac'}" role="tabpanel" class="tab-pane" id="expfac">
       <h3>Describe experimental factors</h3>
-      <mat-card style="width: 80%;">
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
@@ -145,18 +145,22 @@
       </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='data_files'}" role="tabpanel" class="tab-pane" id="data_files">
-      <h3>Explore associated data</h3>
-      
-
-
-      <mat-card style="width: 80%;">
+      <h3>Explore associated datafiles</h3>
+      <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-data-files-page *ngIf="activeTab==='data_files'" (notify)="get_output_from_child($event)"
-          [model_type]="'data_files'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-      </app-data-files-page>
+          <app-data-files-page 
+            *ngIf="activeTab==='data_files'" 
+            (notify)="get_output_from_child($event)"
+            collection="studies" 
+            [parent_id]="get_model_id" 
+            [model_key]="get_model_key"
+            [role]="get_role" 
+            [group_key]="get_group_key"
+          >
+          </app-data-files-page>
        </div>
       
 <!--       <table  class="table table-hover table-bordered  table-striped text-center">

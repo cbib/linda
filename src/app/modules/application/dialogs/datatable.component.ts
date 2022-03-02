@@ -14,8 +14,8 @@ interface DialogData {
 
 
 export class DatatableComponent implements OnInit {
-private collection:string=""
 private model_key:string=""
+private collection:string=""
 
 dataTable: any;
 dtOptions: any;
@@ -23,8 +23,8 @@ tableData = [];
 @ViewChild('dataTable', {static: true}) table;
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<DatatableComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-      this.collection=this.data.collection
       this.model_key=this.data.model_key
+      this.collection=this.data.collection
      }
 
   ngOnInit() {
@@ -32,6 +32,7 @@ tableData = [];
   }
   getDataFromSource() {
     this.globalService.get_data_file(this.model_key).subscribe(data => {
+      console.log(data)
       this.tableData = data.data;
       console.log(this.tableData)
       var columns = []

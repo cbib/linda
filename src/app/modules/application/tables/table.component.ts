@@ -10,7 +10,6 @@ export class TableComponent implements OnInit {
   dtOptions: any;
   tableData = [];
   @Input() data:{};
-  @Input() vertice:{}
   @Input() data_columns:[]
   @ViewChild('dataTable', {static: true}) table;
 
@@ -18,9 +17,13 @@ export class TableComponent implements OnInit {
     this.route.queryParams.subscribe(
       params => {
           this.data = params['data'];
-          this.vertice = params['data_vertice']
+          //this.vertice = params['data_vertice']
           this.data_columns = params['data_columns']
+          console.log(this.data)
+          //console.log(this.vertice)
+          console.log(this.data_columns)
       }
+      
   );
    }
 
@@ -30,7 +33,8 @@ export class TableComponent implements OnInit {
   }
   getDataFromSource() {
     //let tableData_columns=["Observation unit ID","Observation Unit factor value","Observation unit type", "External ID","Spatial distribution"]
-    this.tableData = this.data['filteredData'];
+    console.log(this.data)
+    this.tableData = this.data['Data'];
     var columns = []
     //var tableData_columns = Object.keys(this.tableData[0]);
     this.data_columns.forEach(key => {

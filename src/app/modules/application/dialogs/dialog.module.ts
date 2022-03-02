@@ -15,6 +15,7 @@ import  {BiologicalMaterialComponent } from './biological-material.component'
 import { SampleSelectionComponent } from './sample-selection.component'
 import { HelpLoaderComponent } from './help-loader.component'
 import { ShareProject } from './share-project';
+import { TableComponent } from '../tables/table.component';
 
 import { GlobalService} from '../../../services';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +30,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
@@ -40,6 +43,13 @@ import { MaterialFormModule } from '../material-forms/material-form.module'
 import { ObservationUnitFormModule } from '../observation-unit-forms/observation-unit-form.module';
 import { GroupLoginComponent } from './group-login.component';
 import { AlertModule } from '../alert/alert.module';
+import { FilesLoaderComponent } from './files-loader.component';
+import { TableModule} from '../tables/table.module';
+import { AssignComponent } from './assign.component';
+import { MapColumnComponent } from './map-column.component';
+import { DefineComponent } from './define.component'
+import { DataTablesModule } from 'angular-datatables';
+import { AddColumnComponent } from './add-column.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +68,12 @@ import { AlertModule } from '../alert/alert.module';
     SampleSelectionComponent,
     HelpLoaderComponent,
     ShareProject,
-    GroupLoginComponent
+    GroupLoginComponent,
+    FilesLoaderComponent,
+    AssignComponent,
+    MapColumnComponent,
+    DefineComponent,
+    AddColumnComponent
   ],
   imports: [
     CommonModule,
@@ -84,7 +99,12 @@ import { AlertModule } from '../alert/alert.module';
     FormModule,
     MaterialFormModule,
     ObservationUnitFormModule,
-    AlertModule
+    AlertModule,
+    TableModule,
+    MatChipsModule,
+    MatDividerModule,
+    DataTablesModule
+    
     
   ],
   providers: [
@@ -106,7 +126,8 @@ import { AlertModule } from '../alert/alert.module';
     SampleSelectionComponent,
     HelpLoaderComponent,
     ShareProject,
-    GroupLoginComponent
+    GroupLoginComponent,
+    FilesLoaderComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -124,7 +145,12 @@ import { AlertModule } from '../alert/alert.module';
     SampleSelectionComponent,
     HelpLoaderComponent,
     ShareProject,
-    GroupLoginComponent
+    GroupLoginComponent,
+    FilesLoaderComponent,
+    TableComponent,
+    AssignComponent,
+    DefineComponent,
+    AddColumnComponent
   ]
 })
 export class DialogModule { }

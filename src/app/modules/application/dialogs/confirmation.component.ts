@@ -41,6 +41,7 @@ export class ConfirmationComponent implements OnInit {
   header: string=""
   headers=[]
   selected_header=""
+  Checked:boolean=false
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<ConfirmationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
@@ -164,10 +165,12 @@ export class ConfirmationComponent implements OnInit {
   set_check_all_childs(all_childs: boolean) {
     this.all_childs = all_childs
     this.only = ""
+    this.Checked=all_childs
   }
   set_check_only(event: boolean, model_type: string) {
     this.only = model_type
     this.all_childs = false
+    this.Checked=event
   }
   set_check_template(template: boolean) {
     this.use_template = template

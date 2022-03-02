@@ -180,11 +180,11 @@ import { UserInterface } from 'src/app/models/linda/person';
       async get_vertices() {
           let user = JSON.parse(localStorage.getItem('currentUser'));
           ////////console.log(user)
-          this.start();
+          this.globalService.start();
           return this.globalService.get_all_vertices(user._key).toPromise().then(
           //return this.globalService.get_all_vertices(user._key).subscribe(
               data => {
-                  this.end()
+                  this.globalService.end()
                   this.vertices = data;
               }
           )
@@ -385,19 +385,6 @@ import { UserInterface } from 'src/app/models/linda/person';
       onNext(node:string) {
           //////console.log(node)
       }
-      start() {
-          this.startTime = new Date();
-      };
-      end() {
-          this.endTime = new Date();
-          this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-          this.timeDiff = this.timeDiff / 1000.0;
-          //////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-      
-          // get seconds 
-          var seconds = Math.round(this.timeDiff);
-          //////console.log(seconds + " seconds");
-      } 
       onExperimental_design(node){
           this.router.navigate(['/design'])
       }
@@ -1037,8 +1024,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       show_datatable(node: MiappeNode){
           this.model_key = node.id.split("/")[1]
-          var collection = node.id.split("/")[0]
-          const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: { collection: collection, model_key: this.model_key } });
+          const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: {model_key: this.model_key } });
           dialogRef.afterClosed().subscribe(result => {
               if (result) {
                   if (result.event == 'Confirmed') {

@@ -4,7 +4,8 @@ export interface AssociatedHeadersInterface{
       "associated_term_id": string;
       "associated_component": string;
       "associated_component_field": string;
-      "associated_linda_id": string;
+      "associated_linda_id": string[];
+      "associated_values": string[];
       "is_time_values": boolean;
       "is_numeric_values": boolean;
     }
@@ -17,7 +18,7 @@ export interface DataFileInterface {
   "Data file link": string;
   "Data file description": string;
   "Data file version": string;
-  "Data":[];
+  "Data":{}[];
   "associated_headers":AssociatedHeadersInterface[];
-  "headers":[];
+  "headers":string[];
 }

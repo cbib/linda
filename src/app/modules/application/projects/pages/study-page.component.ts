@@ -8,7 +8,6 @@ import {  User } from '../../../../models';
 import { DataFileInterface } from 'src/app/models/linda/data_files';
 import { UserInterface } from 'src/app/models/linda/person';
 
-
 @Component({
     selector: 'app-study-page',
     templateUrl: './study-page.component.html',
@@ -24,6 +23,7 @@ export class StudyPageComponent implements OnInit {
     @Input('activeTab') activeTab: string;
     @Input('mode') mode: string;
     @Input('role') role: string;
+    @Input('group_key') group_key: string;
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
     public vertices: any = []
     public studies: any = []
@@ -45,17 +45,20 @@ export class StudyPageComponent implements OnInit {
             this.route.queryParams.subscribe(
                 params => {
                     this.level = params['level'];
-                    this.model_type = params['model_type'];
-                    this.model_id = params['model_id'];
-                    this.mode = params['mode'];
                     this.parent_id = params['parent_id']
+                    this.model_id = params['model_id'];
+                    this.model_type = params['model_type'];
                     this.model_key= params['model_key']
+                    this.activeTab= params['activeTab']
+                    this.mode = params['mode'];
                     this.role=params['role']
+                    this.group_key=params['group_key']
                 }
             );
             console.log(this.role)
             console.warn(this.role)
             console.log(this.role)
+            console.warn("group key in study page", this.group_key)
             
 
     }
@@ -63,11 +66,14 @@ export class StudyPageComponent implements OnInit {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         ///this.parent_id = this.currentUser['_id']
         //this.model_key=this.model_id.split("/")[1]
-        console.log(this.model_id)
-        console.log(this.mode)
-        console.log(this.parent_id)
-        console.log(this.model_type)
-        console.log(this.model_key)
+        console.warn(this.level)
+        console.warn(this.model_id)
+        console.warn(this.mode)
+        console.warn(this.parent_id)
+        console.warn(this.model_type)
+        console.warn(this.model_key)
+        console.warn(this.role)
+        console.warn(this.group_key)
         //await this.get_vertices()
         this.loaded = true
         //this.projectForm = new FormGroup({})
@@ -82,12 +88,12 @@ export class StudyPageComponent implements OnInit {
     /* async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         //////console.log(user)
-        this.start();
+        this.globalService.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             //return this.globalService.get_all_vertices(user._key).subscribe(
             data => {
                 console.log(data)
-                this.end()
+                this.globalService.end()
                 this.vertices = data;
             }
         )
@@ -103,22 +109,7 @@ export class StudyPageComponent implements OnInit {
         this.activeTab=tab
         console.log(this.activeTab)
     }
-    
-    
-    start() {
-        this.startTime = new Date();
-    };
-    end() {
-        this.endTime = new Date();
-        this.timeDiff = this.endTime.valueOf() - this.startTime.valueOf();
-        this.timeDiff = this.timeDiff / 1000.0;
-        ////console.log("Elapsed time :" + this.timeDiff+ " seconds")
-        // get seconds 
-        var seconds = Math.round(this.timeDiff);
-        ////console.log(seconds + " seconds");
-    }
     get get_parent_id(){
-        console.log(this.parent_id)
         return this.parent_id
     }
     get get_mode(){
@@ -133,13 +124,15 @@ export class StudyPageComponent implements OnInit {
     get get_role(){
         return this.role
     }
+    get get_group_key(){
+        return this.group_key
+    }
     get_output_from_child(val:any){
         if (val === 'cancel the form'){
           console.log("Cancel form")
         }
         else{
             console.log("Cancel form")
-
         }
     }
     
@@ -148,8 +141,7 @@ export class StudyPageComponent implements OnInit {
     }
     cancel(){
         //this.notify.emit("close_study")
-        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.get_role, group_key: this.group_key} });
         // Same as delete project and all childs 
     }
 }
