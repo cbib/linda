@@ -1,0 +1,10 @@
+.chips{
+    height: 43px;
+    padding: 5px;
+    border-radius: 10px;
+    justify-content: center;
+    border: 1.0rem;
+    border-color: black;
+    /*border-width: 10px;*/
+    
+}

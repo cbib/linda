@@ -1,0 +1,77 @@
+<div class="border-head">
+    <h3 mat-dialog-title>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div>
+<div mat-dialog-title>
+    <alert></alert>
+    <h1 style="text-align: center;">Add a new column</h1>
+</div>
+<div mat-dialog-content>
+    <form [formGroup]="get_generalForm" (ngSubmit)="onAdd()">
+
+        <button [disabled]="!get_generalForm.valid || !get_field_submitted" class="btn btn-default btn-info" type="submit" style="float: right;">Update data file</button>
+        
+        <div class="form-group">
+            <label for="Header">Header</label>
+            <input type="text" placeholder="Header*" formControlName="Header" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="Total">Total</label>
+            <input type="number" placeholder="Total*" formControlName="Total" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="UseSameNumber">Use same number of rows</label>
+        <mat-checkbox [checked]="get_useSameNumberCheck.isSelected('usesameline')" formControlName="UseSameNumber"  (change)="itemSelectionToggle('usesameline')"></mat-checkbox>
+        </div>
+        
+        <div class="form-group">
+            <label for="Link term">Link with another column: </label>
+            <mat-form-field class="full-width">
+                <mat-select formControlName="Link term" placeholder="Link with another header"
+                    (selectionChange)="onLink($event.value)">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let associated_header of get_data_file.associated_headers" [value]="associated_header.header">
+                        {{associated_header.header}}
+                    </mat-option>
+                   <!--  <mat-optgroup *ngFor="let associated_header of get_data_file.associated_headers"
+                        [label]="associated_header.header">
+                        <mat-option *ngFor="let associated_header of extract_option.fields" [value]="value">
+                            {{value}}
+                        </mat-option>
+                    </mat-optgroup> -->
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <label for="Standard term">Select term and field: </label>
+            <mat-form-field class="full-width">
+                <mat-select formControlName="Standard term" placeholder="Select component and field"
+                    (selectionChange)="onModify($event.value)">
+                    <mat-option>--</mat-option>
+                    <mat-optgroup *ngFor="let extract_option of get_extract_component_options.options"
+                        [label]="extract_option.name" [disabled]="extract_option.disabled">
+                        <mat-option *ngFor="let value of extract_option.fields" [value]="value">
+                            {{value}}
+                        </mat-option>
+                    </mat-optgroup>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <div *ngIf="get_linked_values.length>1">
+                <p>
+                    You have to defined more than one value to link with this column (in fact : {{get_linked_values.length}})
+                </p>
+            </div>
+            <label for="Value">Value</label>
+            <input type="text" placeholder="Value*" formControlName="Value" class="form-control" />
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [disabled]="!get_ready_to_add" (click)="onOkClick()">Add column</button>
+  </div>
+  
