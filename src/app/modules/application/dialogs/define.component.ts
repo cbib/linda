@@ -229,11 +229,12 @@ export class DefineComponent implements OnInit {
     this.cells = []
     this.data_file.Data.forEach(data => { this.cells.push(data[this.column_original_label]); total_lines++ })
     this.detected_values = Array.from(new Set(this.cells));
+    this.associated_header = this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0]
+
     if (this.has_study_column) {
 
       //this.study_original_column_label=this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0]
-      this.study_associated_header = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component === 'study')[0]
-      this.associated_header = this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0]
+      this.study_associated_header = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID')[0]
       this.detected_studies = this.study_associated_header.associated_values
       console.log("study ids were already described ")
       console.log(this.detected_studies)
@@ -241,10 +242,24 @@ export class DefineComponent implements OnInit {
         this.generalForm.get('Standard term').setValue(this.associated_header.associated_component_field)
         this.extraction_component_field = this.associated_header.associated_component_field
         this.extraction_component = this.associated_header.associated_component
+        this.detected_values=this.associated_header.associated_values
+      }
+      else{
+        if (this.detected_values.length<this.detected_studies.length){
+          while(this.detected_values.length<this.detected_studies.length){
+            this.detected_values.push(this.detected_values[0])
+          }
+          //this.detected_values=[this.detected_values[0].repeat(this.detected_studies.length)]
+        } 
+        else if (this.detected_values.length===this.detected_studies.length){
+
+        }
+        else{
+          this.alertService.error('Number of entry must match total number of studies')
+        }
       }
     }
     else {
-      this.associated_header = this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0]
       if (this.associated_header.selected) {
         this.generalForm.get('Standard term').setValue(this.associated_header.associated_component_field)
         this.extraction_component_field = this.associated_header.associated_component_field
@@ -257,7 +272,7 @@ export class DefineComponent implements OnInit {
     }
   }
 
-  clean_associated_headers(index) {
+  clean_associated_headers() {
     this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.selected = false; });
     this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_term_id = "" });
     this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_component = ""; });
@@ -389,10 +404,10 @@ export class DefineComponent implements OnInit {
   has_study_column(): boolean {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component === 'study').length !== 0
   }
-  onRemove(study_name: string) {
+  onRemove(component_value: string) {
     if (this.extraction_component === "study") {
       if (this.extraction_component_field === "Study unique ID") {
-        let study_id = this.associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(study_name)]
+        let study_id = this.associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(component_value)]
         this.globalService.remove(study_id).pipe(first()).toPromise().then(
           data => {
             if (data["success"]) {
@@ -406,14 +421,15 @@ export class DefineComponent implements OnInit {
               console.log(new Set(studyIDs))
               this.detected_values = Array.from(new Set(studyIDs));*/
               this.associated_header.associated_linda_id = this.associated_header.associated_linda_id.filter(linda_id => linda_id !== study_id);
-              this.associated_header.associated_values = this.associated_header.associated_values.filter(linda_id => linda_id !== study_name);
+              this.associated_header.associated_values = this.associated_header.associated_values.filter(linda_id => linda_id !== component_value);
               //this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_values.filter(value=>value!==this.associated_header.associated_values[index]); });
               console.log(this.data_file.associated_headers)
+              this.clean_associated_headers()
               var data_model = { ...this.data_file };
               this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
                 data => {
                   console.log(data);
-                  this.alertService.success("you have removed item type " + this.extraction_component + " called " + study_name)
+                  this.alertService.success("you have removed item type " + this.extraction_component + " called " + component_value)
                   this.component_extracted = false
                   this.removeSelection = []
                   this.removeListSelection = new SelectionModel<string>(true, this.removeSelection /* multiple */)
@@ -425,9 +441,31 @@ export class DefineComponent implements OnInit {
           }
         );
       }
+      else if (["Experimental site name", "Start date of study", "Study title"].includes(this.extraction_component_field) ){
+        let study_id = this.study_associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(component_value)]
+          // update field Experimental site name with values in column
+          console.log(study_id)
+          
+        this.globalService.update_field("", study_id.split("/")[1], this.extraction_component_field, "study").pipe(first()).toPromise().then(data => { 
+          console.log(data);
+          this.clean_associated_headers()
+              var data_model = { ...this.data_file };
+              this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                data => {
+                  console.log(data);
+                  this.alertService.success("you have removed item type " + this.extraction_component + " called " + component_value)
+                  this.component_extracted = false
+                  //this.removeSelection = []
+                 // this.removeListSelection = new SelectionModel<string>(true, this.removeSelection /* multiple */)
+                  //this.studies_to_create=[]
+                  ///this.ngOnInit()
+                }
+              );
+        })
+      }
     }
   }
-  onExtract(component_value): void {
+  onExtract(component_value, index:number): void {
     console.log(component_value)
     console.log(this.extraction_component)
     console.log(this.extraction_component_field)
@@ -476,14 +514,17 @@ export class DefineComponent implements OnInit {
         );
       }
       else if (["Experimental site name", "Start date of study", "Study title"].includes(this.extraction_component_field) ){
+
         // update field Experimental site name with values in column using study name
-        this.study_associated_header.associated_linda_id.forEach((study_id,index)=>{
-          console.log(study_id)
+        let study_id= this.study_associated_header.associated_linda_id[index]
+        /* this.study_associated_header.associated_linda_id.forEach((study_id,index)=>{
+          console.log(study_id) */
           // update field Experimental site name with values in column
-          this.globalService.update_field(component_value, study_id.split("/")[1], this.extraction_component_field, "study").pipe(first()).toPromise().then(data => { 
+          this.globalService.update_field(component_value, study_id.split("/")[1], this.extraction_component_field, "study").pipe(first()).toPromise().then(
+            data => { 
             console.log(data);
-            this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_linda_id.push(study_id); });
-            this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_values.push(component_value); });
+            this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(study_id)
+            this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_values.push(component_value)
             console.log(this.data_file.associated_headers)
             if (index===this.study_associated_header.associated_linda_id.length-1){
               var data_model = { ...this.data_file };
@@ -499,20 +540,14 @@ export class DefineComponent implements OnInit {
               this.component_extracted = true
             }
           });
-
-          
-          
-          
-
-        });
-        
       }
       else if (this.extraction_component_field === "Study Name") {
         // update field study name with values in column
         console.log(component_value)
       }
+      else{
 
-
+      }
     }
   }
   itemSelectionToggle(_study_id: string): void {

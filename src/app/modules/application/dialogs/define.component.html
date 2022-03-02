@@ -106,7 +106,7 @@
                         </th>
                         <th scope="col">
                             <button [disabled]="has_associated_header_values(key)"
-                                (click)="onExtract(key)">Create</button>
+                                (click)="onExtract(key,i)">Create</button>
                         </th>
                         <th scope="col">
                             {{get_associated_header_values(key)}}
@@ -159,6 +159,7 @@
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -176,7 +177,7 @@
                         </th>
                         <th scope="col">
                             <button [disabled]="has_associated_header_values(key)"
-                                (click)="onExtract(key)">Create</button>
+                                (click)="onExtract(key,i)">Create</button>
                         </th>
                         <th scope="col">
                             {{get_associated_header_values(key)}}
@@ -186,6 +187,9 @@
                                 (click)="onRemove(key)">Remove</button>
                             <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" [checked]="get_removeListSelection.isSelected(key)"
                                 (change)="itemRemoveToggle(key)"></mat-checkbox> -->
+                        </th>
+                        <th scope="col">
+                            {{get_detected_studies[i]}}
                         </th>
                     </tr>
                 </tbody>

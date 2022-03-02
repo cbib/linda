@@ -2315,7 +2315,7 @@ router.post('/update_field', function (req, res) {
         password: joi.string().required(),
         _key: joi.string().required(),
         field: joi.string().required(),
-        value: joi.string().required(),
+        value: joi.string().allow('').required(),
         model_type: joi.string().required()
     }).required(), 'Values to check.')
     .response(joi.object({
