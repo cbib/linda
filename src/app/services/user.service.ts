@@ -71,8 +71,17 @@ export class UserService {
         //return null
         return this.http.post(`${this.APIUrl}/update_personal_infos`, user);
     }
-    get_person(user_key:string): Observable<PersonInterface>{
-        return this.http.get<PersonInterface>(this.APIUrl + "get_person/" + user_key).pipe(catchError(this.handleError));
+    update_person_infos(person: PersonInterface) {
+        console.log(person)
+        //user['password']=Md5.hashStr(user.password)
+        //return null
+        return this.http.post(`${this.APIUrl}/update_person_infos`, person);
+    }
+    get_person_id(user_key:string): Observable<PersonInterface>{
+        return this.http.get<PersonInterface>(this.APIUrl + "get_person_id/" + user_key).pipe(catchError(this.handleError));
+    }
+    get_person(person_id:string): Observable<PersonInterface>{
+        return this.http.get<PersonInterface>(this.APIUrl + "get_person/" + person_id).pipe(catchError(this.handleError));
     }
     get_groups(user_key:string): Observable<any>{
         return this.http.get<any>(this.APIUrl + "get_groups/" + user_key).pipe(catchError(this.handleError));

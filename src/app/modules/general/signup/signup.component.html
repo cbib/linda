@@ -3,7 +3,7 @@
       <div class="col-xl-5 col-lg-6 col-md-10 col-sm-12 mx-auto mt-5">
         <div class="nga-card">
           <h1 class="h5 card-header text-center py-4">
-            <i class="fas fa-user-plus me-4"></i><strong>S'inscrire</strong>
+            <i class="fa fa-user-plus me-4"></i><strong>S'inscrire</strong>
           </h1>
           <div class="card-body px-lg-5 pt-4">
             <form [formGroup]="getregisterForm" (ngSubmit)="onSubmit()">
@@ -16,10 +16,15 @@
               </div> -->
               <div class="form-group">
                   <!-- <label for="lastName">Last Name</label> -->
-                  <input type="text" placeholder="Person name*" formControlName="Person name" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person name'].errors }" />
-                  <div *ngIf="submitted && f['Person name'].errors" class="invalid-feedback">
+                  <input type="text" placeholder="Person name*" formControlName="Person name" class="form-control" [ngClass]="{ 'is-invalid': submitted && personName.errors }" />
+                  <!-- <div *ngIf="submitted && f['Person name'].errors" class="invalid-feedback">
                       <div *ngIf="f['Person name'].errors.required">Person name is required</div>
-                  </div>
+                  </div> -->
+                  <div *ngIf="personName.invalid && (personName.dirty || personName.touched)" class="alert alert-danger">
+                    <div *ngIf="personName.errors?.required">
+                        Person name is required.
+                    </div>
+                </div>
               </div>
               <div class="form-group">
                 <!-- <label for="lastName">Last Name</label> -->
@@ -30,48 +35,88 @@
             </div>
               <div class="form-group">
                 <!-- <label for="lastName">Last Name</label> -->
-                <input type="text" placeholder="Person affiliation*" formControlName="Person affiliation" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person affiliation'].errors }" />
-                <div *ngIf="submitted && f['Person affiliation'].errors" class="invalid-feedback">
-                    <div *ngIf="f['Person affiliation'].errors.required">Person affiliation is required</div>
+                <input type="text" placeholder="Person affiliation*" formControlName="Person affiliation" class="form-control" [ngClass]="{ 'is-invalid': submitted && personAffiliation.errors }" required>
+                <div *ngIf="personAffiliation.invalid && (personAffiliation.dirty || personAffiliation.touched)" class="alert alert-danger">
+                    <div *ngIf="personAffiliation.errors?.required">
+                        Person affiliation is required.
+                    </div>
                 </div>
+               <!--  <div *ngIf="submitted && f['Person affiliation'].errors" class="invalid-feedback">
+                    <div *ngIf="f['Person affiliation'].errors.required">Person affiliation is required</div>
+                </div> -->
             </div>
             <div class="form-group">
                 <!-- <label for="email">Email</label> -->
-                <input type="email" placeholder="Person email*" formControlName="Person email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person email'].errors }" />
-                <div *ngIf="submitted && f['Person email'].errors" class="invalid-feedback">
+                <input type="email" placeholder="Person email*" formControlName="Person email" class="form-control" [ngClass]="{ 'is-invalid': submitted && personEmail.errors }" required>
+                <div *ngIf="personEmail.invalid && (personEmail.dirty || personEmail.touched)" class="alert alert-danger">
+                    <div *ngIf="personEmail.errors?.required">
+                        Person email is required.
+                    </div>
+                    <div *ngIf="personEmail.errors?.email">
+                        must be valid email adress.
+                    </div>
+                    <div *ngIf="personEmail.errors?.create">
+                        This value is already used.
+                    </div>
+                </div>
+                <!-- <div *ngIf="submitted && f['Person email'].errors" class="invalid-feedback">
                     <div *ngIf="f['Person email'].errors.required"> Person email is required</div>
                     <div *ngIf="f['Person email'].errors.email">  must be valid email adress</div>
-                </div>
+                </div> -->
             </div>
             <div class="form-group">
                 <!-- <label for="lastName">Last Name</label> -->
-                <input type="text" placeholder="Person role*" formControlName="Person role" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person role'].errors }" />
-                <div *ngIf="submitted && f['Person role'].errors" class="invalid-feedback">
-                    <div *ngIf="f['Person role'].errors.required">Person role is required</div>
-                </div>
+                <input type="text" placeholder="Person role*" formControlName="Person role" class="form-control" />
             </div>
             <div class="form-group">
                 <!-- <label for="lastName">Last Name</label> -->
-                <input type="text" placeholder="Person ID (ORCID ID)*" formControlName="Person ID" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['Person ID'].errors }" />
-                <div *ngIf="submitted && f['Person ID'].errors" class="invalid-feedback">
+                <input type="text" placeholder="Person ID (ORCID ID)*" formControlName="Person ID" class="form-control" [ngClass]="{ 'is-invalid': submitted && personID.errors }" />
+               <!--  <div *ngIf="submitted && f['Person ID'].errors" class="invalid-feedback">
                     <div *ngIf="f['Person ID'].errors.required">Person ID is required</div>
+                </div> -->
+                <div *ngIf="personID.invalid && (personID.dirty || personID.touched)" class="alert alert-danger">
+                    <div *ngIf="personID.errors?.required">
+                        Person ID is required.
+                    </div>
+                    <div *ngIf="personID.errors?.minLength">
+                        minimum length ID is 12 characters (as for ORCID ID).
+                    </div>
+                    <div *ngIf="personID.errors?.create">
+                        This ORCID ID is already used.
+                    </div>
                 </div>
             </div>
               <div class="form-group">
                   <!-- <label for="password">Password</label> -->
-                  <input type="password" placeholder="Password*" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-                  <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                  <input type="password" placeholder="Password*" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && password.errors }" required>
+                  <!-- <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
                       <div *ngIf="f.password.errors.required">Password is required</div>
                       <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
-                  </div>
+                  </div> -->
+                  <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+                    <div *ngIf="password.errors?.required">
+                        Password is required.
+                    </div>
+                    <div *ngIf="password.errors?.minLength">
+                        Password must be at least 6 characters.
+                    </div>
+                </div>
               </div>
               <div class="form-group">
                   <!-- <label for="confirmpassword">Confirm Password</label> -->
-                  <input type="password" placeholder="Confirm Password*" formControlName="confirmpassword" class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.confirmpassword.errors }" />
-                  <div *ngIf="submitted && f.confirmpassword.errors" class="invalid-feedback">
-                      <div *ngIf="f.confirmpassword.errors.required">Password is required</div>
+                  <input type="password" placeholder="Confirm Password*" formControlName="confirmpassword" class="form-control"  [ngClass]="{ 'is-invalid': submitted && confirmPassword.errors }" required>
+                  <!-- <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                      <div *ngIf="f.confirmPassword.errors.required">Password is required</div>
                       <div *ngIf="f.confirmpassword.errors.mustMatch">Passwords must match</div>
-                  </div>
+                  </div> -->
+                  <div *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)" class="alert alert-danger">
+                    <div *ngIf="confirmPassword.errors?.required">
+                        Password confirmation is required.
+                    </div>
+                    <div *ngIf="confirmPassword.errors?.mustMatch">
+                        Password must match password.
+                    </div>
+                </div> 
               </div>
               <!-- <div formArrayName="usernames">
                 <h2>Usernames</h2>

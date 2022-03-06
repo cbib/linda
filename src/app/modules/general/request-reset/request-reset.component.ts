@@ -35,21 +35,27 @@ export class RequestResetComponent implements OnInit {
     console.log(form)
     if (form.valid) {
       this.IsvalidForm = true;
-      this.authService.requestReset(this.RequestResetForm.value).subscribe(
+      this.authService.requestReset(this.RequestResetForm.value).toPromise().then(
         data => {
-          this.RequestResetForm.reset();
+          if (data['success']){
+            console.log("need to write routine service")
+          }
+
+
+          /* this.RequestResetForm.reset();
           this.successMessage = "Reset password link send to email sucessfully.";
           setTimeout(() => {
             this.successMessage = null;
             this.router.navigate(['login']);
-          }, 3000);
-        },
+          }, 3000); */
+        }
+        /* ,
         err => {
 
           if (err.error.message) {
             this.errorMessage = err.error.message;
           }
-        }
+        } */
       );
     } else {
       this.IsvalidForm = false;

@@ -216,7 +216,7 @@ export class GlobalService {
     
     // HTTP POST REQUEST
     is_exist(field: string, value: string, model_type: string): Observable<any> {
-        if (model_type==="user"){
+        if (model_type==="person"){
             console.log(field)
             console.log(value)
             console.log(model_type)

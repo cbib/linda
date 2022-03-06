@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {GlobalService } from '../../../services';
+import {GlobalService, AlertService } from '../../../services';
 import { DataFileInterface } from '../../../models/linda/data_files'
 import { DefineComponent } from './define.component'
 import { AddColumnComponent} from './add-column.component'
@@ -17,7 +17,7 @@ interface DialogData {
   templateUrl: './assign.component.html',
   styleUrls: ['./assign.component.css']
 })
-export class AssignComponent implements OnInit {
+export class AssignComponent implements OnInit, OnDestroy{
   private data_file:DataFileInterface;
   private collection:string;
   private parent_id:string;
@@ -30,6 +30,7 @@ export class AssignComponent implements OnInit {
   @ViewChild('dataTable', {static: true}) table;
     constructor(
       private globalService: GlobalService, 
+      private alertService: AlertService, 
       public dialogRef: MatDialogRef<AssignComponent>,
       @Inject(MAT_DIALOG_DATA) public data: DialogData,
       public definedialog: MatDialog) {
@@ -43,11 +44,15 @@ export class AssignComponent implements OnInit {
       console.log(this.data_file.associated_headers)
       this.getDataFromSource()
     }
+    refresh(){
+      this.alertService.error("Find a way to refresh table after add a new column")
+    }
     add_composite(){
       const dialogRef = this.definedialog.open(AddColumnComponent, { width: '1000px', data: {data_file:this.data_file, parent_id:this.parent_id, group_key:this.group_key} });
               dialogRef.afterClosed().subscribe(data => {
                   if (data !== undefined) {
                       console.log(data)
+                      this.data_file=data.data_file
                   };
               });
     }
@@ -56,6 +61,7 @@ export class AssignComponent implements OnInit {
               dialogRef.afterClosed().subscribe(data => {
                   if (data !== undefined) {
                       console.log(data)
+                      this.data_file=data.data_file
                   };
               });
 
@@ -88,6 +94,7 @@ export class AssignComponent implements OnInit {
               dialogRef.afterClosed().subscribe(data => {
                   if (data !== undefined) {
                       console.log(data)
+                      this.data_file=data.data_file
                   };
               });
     }
@@ -105,7 +112,10 @@ export class AssignComponent implements OnInit {
     }
   
     onOkClick(): void {
-      this.dialogRef.close({event:"Confirmed"});
+      this.dialogRef.close({event:"Confirmed", data_file:this.data_file});
+    }
+    ngOnDestroy() {
+      this.dialogRef.close({ event: "Confirmed", data_file: this.data_file });
     }
 
 }

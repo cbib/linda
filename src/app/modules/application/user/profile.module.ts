@@ -3,27 +3,44 @@ import { CommonModule } from '@angular/common';
 
 import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileComponent } from './profile.component';
-import { AlertService, UserService} from '../../../services';
+import { AlertService, UserService, GlobalService} from '../../../services';
 import { AuthGuard } from '../../../guards/auth.guards';
 import { PersonComponent } from './person.component';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MessageComponent } from './message.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule} from '@angular/material/list'; 
+import { MatIconModule } from '@angular/material/icon';
+import { DialogModule } from '../dialogs/dialog.module';
+
 
 @NgModule({
-  declarations: [ProfileComponent, PersonComponent],
+  declarations: [ProfileComponent, PersonComponent, MessageComponent],
   imports: [
     CommonModule,
-    ProfileRoutingModule
+    ProfileRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatDividerModule,
+    MatListModule,
+    MatIconModule,
+    DialogModule
   ],
   exports: [
     ProfileComponent,
-    PersonComponent
+    PersonComponent,
+    MessageComponent
   ],
   providers: [
     AuthGuard,
     AlertService,
-    UserService
+    UserService,
+    GlobalService
   ],
   entryComponents: [
-    PersonComponent
+    PersonComponent,
+    MessageComponent
   ]
 })
 export class ProfileModule { }

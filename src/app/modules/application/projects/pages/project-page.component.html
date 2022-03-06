@@ -25,7 +25,7 @@
     <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='ExpSite'}" href="#ExpSite" (click)="changeTab('ExpSite')" aria-controls="ExpSite" role="tab" data-toggle="tab">3. Experimental site</a>
     </li> -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Data'}" href="#Data" (click)="changeTab('Data')"
         aria-controls="Data" role="tab" data-toggle="tab">3. Data</a>
     </li>
@@ -36,27 +36,28 @@
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Extract'}" href="#Extract" (click)="changeTab('Extract')"
         aria-controls="Extract" role="tab" data-toggle="tab">5. Extract</a>
+    </li> -->
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='project_data_files'}" (click)="changeTab('project_data_files')"
+        href="#project_data_files" aria-controls="expfac" role="tab" data-toggle="tab">3. Data files</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Explore'}" href="#Explore" (click)="changeTab('Explore')"
-        aria-controls="Explore" role="tab" data-toggle="tab">6. Explore</a>
+        aria-controls="Explore" role="tab" data-toggle="tab">4. Explore</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Download'}" href="#Download"
-        (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">7. Download</a>
+        (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">5. Download</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Gantt'}" href="#Gantt" (click)="changeTab('Gantt')"
-        aria-controls="Gantt" role="tab" data-toggle="tab">8. Gantt</a>
+        aria-controls="Gantt" role="tab" data-toggle="tab">6. Gantt</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" (click)="changeTab('People')"
-        aria-controls="People" role="tab" data-toggle="tab">9. Project members</a>
+        aria-controls="People" role="tab" data-toggle="tab">7. Project members</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='project_data_files'}" (click)="changeTab('project_data_files')"
-        href="#project_data_files" aria-controls="expfac" role="tab" data-toggle="tab">8. Data files</a>
-    </li>
+
   </ul>
   <!-- Tab panes -->
   <div class="tab-content">
@@ -75,7 +76,7 @@
       </app-studies-page>
       <!--<app-study-page *ngIf="get_selected_study && activeTab==='assStud'" (notify)="get_output_from_child($event)" [level]="1" [model_key]="get_selected_study._key" [parent_id]="get_model_id" model_type="study" [model_id]="get_selected_study._id" [mode]="'edit'" ></app-study-page> -->
     </div>
-    <div [ngClass]="{ 'active':activeTab==='Data'}" role="tabpanel" class="tab-pane" id="Data">
+    <!-- <div [ngClass]="{ 'active':activeTab==='Data'}" role="tabpanel" class="tab-pane" id="Data">
       <h3>Download experimental data files</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
@@ -96,12 +97,9 @@
             access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <!--          <app-download *ngIf="activeTab==='Assign'"  [parent_id]="get_model_id" [model_key]="get_model_key" model_type="study" mode="extract-again"></app-download>
- -->
           <app-assign *ngIf="activeTab==='Assign'" [parent_id]="get_model_id" [model_key]="get_model_key"
             model_type="study" mode="extract-again"></app-assign>
         </div>
-
       </mat-card>
     </div>
 
@@ -117,7 +115,7 @@
             model_type="experimental_factor" mode="extract"></app-extract>
         </div>
       </mat-card>
-    </div>
+    </div> -->
     <div [ngClass]="{ 'active':activeTab==='Explore'}" role="tabpanel" class="tab-pane" id="Explore">
       <h3>Explore</h3>
       <mat-card style="width: 98%;">

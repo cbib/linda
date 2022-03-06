@@ -34,7 +34,8 @@
     <div *ngIf="get_extraction_component==='study'">
         <h4>Project informations</h4>
         <label for="lastName">People involved in this project</label>
-        <table datatable [dtOptions]="dtOptions" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
             id="persontable" [ngClass]="{'table-dark': false}">
             <thead class="text-nowrap">
                 <tr>
@@ -56,7 +57,8 @@
         <mat-divider></mat-divider>
         <h4>Studies informations</h4>
         <label for="lastName">Persons and studies in your project</label>
-        <table datatable [dtOptions]="dtOptions" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
             id="studytable" [ngClass]="{'table-dark': false}">
             <thead class="text-nowrap">
                 <tr>
@@ -75,24 +77,24 @@
             </tbody>
         </table>
         <mat-divider></mat-divider>
-        
+
 
         <section *ngIf="get_extraction_component_field==='Study unique ID'">
             <h4>Column informations</h4>
             <label for="lastName">Detected study unique ID(s) in this column</label>
-            <table datatable [dtOptions]="dtOptions" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_study_id">
                 <thead title="">
                     <tr>
                         <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let key of get_detected_values ; index as i;"
+                    <tr *ngFor="let key of detected_values ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
 
                         <!-- select check box for select component to create-->
@@ -105,15 +107,14 @@
                             {{key}}
                         </th>
                         <th scope="col">
-                            <button [disabled]="has_associated_header_values(key)"
-                                (click)="onExtract(key,i)">Create</button>
+                            <ng-container>
+                                <button [disabled]="has_associated_header_linda_id_by_value(key, i)"
+                                    (click)="onExtract(key,i)">Create</button>
+                            </ng-container>
                         </th>
                         <th scope="col">
-                            {{get_associated_header_values(key)}}
-                        </th>
-                        <th scope="col">
-                            <button [disabled]="!has_associated_header_values(key)"
-                                (click)="onRemove(key)">Remove</button>
+                            <button [disabled]="!has_associated_header_linda_id_by_value(key, i)"
+                                (click)="onRemove(key,i)">Remove</button>
                             <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" 
                                 [checked]="get_removeListSelection.isSelected(key)"
                                 (change)="itemRemoveToggle(key)"></mat-checkbox> -->
@@ -121,24 +122,58 @@
                     </tr>
                 </tbody>
             </table>
+            <h4>Extraction informations</h4>
+            <label for="lastName">Extracted component from values in column</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                id="datatable_component_id">
+                <thead title="">
+
+                    <tr>
+
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let key of detected_ids ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+
+
+                        <th scope="col">
+                            {{detected_studies[i]}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_value_by_linda_id(key, i)}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_linda_id(key, i)}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
         </section>
+
+
         <section *ngIf="get_extraction_component_field!=='Study unique ID'">
-            <div *ngIf="has_study_column()">
+            <div *ngIf="has_study_associated_header()">
                 <h4>Study informations</h4>
                 <label for="lastName">Detected study unique ID(s) in this data file</label>
-                <table datatable [dtOptions]="dtOptions" class="dataTable table table-hover table-bordered 
-                table-responsive-md table-striped text-center"
+                <table datatable [dtOptions]="dtOptions"
+                    class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
                     id="datatable_study_detected_id">
                     <thead title="table">
                         <tr>
                             <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s) in this file
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s)
+                                in this file
                             </th>
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let key of get_detected_studies ; index as i;"
+                        <tr *ngFor="let key of detected_studies ; index as i;"
                             style="font-size:10px;text-align: center; cursor: move;">
                             <th scope="col">
                                 {{key}}
@@ -149,53 +184,59 @@
                         </tr>
                     </tbody>
                 </table>
-                <h4>Column informations</h4>
-                <table datatable [dtOptions]="dtOptions" class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-                id="datatable_component_id">
-                <thead title="">
-                    <tr>
-                        <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let key of get_detected_values ; index as i;"
-                        style="font-size:10px;text-align: center; cursor: move;">
+                <h4>Extraction informations</h4>
+                <label>Extracted component from values in column</label>
+                <table datatable [dtOptions]="dtOptions"
+                    class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                    id="datatable_values_detected">
+                    <thead title="">
+                        <tr>
+                            <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)
+                            </th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                            <ng-container *ngIf="get_extraction_component==='study'">
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted in
+                                </th>
+                            </ng-container>
+                            <ng-container *ngIf="get_extraction_component!=='study'">
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as
+                                </th>
+                            </ng-container>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let key of detected_values ; index as i;"
+                            style="font-size:10px;text-align: center; cursor: move;">
+                            <th scope="col">
+                                {{key}}
+                            </th>
+                            <th scope="col">
+                                {{detected_studies[i]}}
+                            </th>
+                        
+                            <th scope="col">
+                                <ng-container>
+                                    <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i], i)"
+                                        (click)="onLink(key,detected_studies[i],i)">Link</button>
+                                </ng-container>
+                            </th>
+                            <th scope="col">
+                                <button [disabled]="!has_associated_header_linda_id_by_study_id(detected_studies[i], i)"
+                                    (click)="onRemove(key,i)">Unlink</button>
+                            </th>
+                            <th scope="col">
+                                {{get_associated_header_linda_id_by_study_id(detected_studies[i], i)}}
+                            </th>
+                        
+                        </tr>
+                    </tbody>
+                </table>
 
-                        <!-- select check box for select component to create-->
-                        <!-- <th scope="col">
-                            <mat-checkbox [disabled]="get_associated_header.associated_values[i]" [checked]="get_checklistSelection.isSelected(key)"
-                                (change)="itemSelectionToggle(key)"></mat-checkbox>
-                        </th> -->
-                        <!-- Original headers column-->
-                        <th scope="col">
-                            {{key}}
-                        </th>
-                        <th scope="col">
-                            <button [disabled]="has_associated_header_values(key)"
-                                (click)="onExtract(key,i)">Create</button>
-                        </th>
-                        <th scope="col">
-                            {{get_associated_header_values(key)}}
-                        </th>
-                        <th scope="col">
-                            <button [disabled]="!has_associated_header_values(key)"
-                                (click)="onRemove(key)">Remove</button>
-                            <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" [checked]="get_removeListSelection.isSelected(key)"
-                                (change)="itemRemoveToggle(key)"></mat-checkbox> -->
-                        </th>
-                        <th scope="col">
-                            {{get_detected_studies[i]}}
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
             </div>
-            <div *ngIf="!has_study_column()">
+            <div *ngIf="!has_study_associated_header()">
                 <p>You have to define a column for study id first</p>
             </div>
         </section>
@@ -238,6 +279,6 @@
 </div>
 
 <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button (click)="onOkClick()">Ok</button>
+    <!-- <button mat-button (click)="onNoClick()">Cancel</button> -->
+    <button mat-button (click)="onOkClick()">Close</button>
 </div>

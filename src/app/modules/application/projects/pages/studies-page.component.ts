@@ -156,7 +156,7 @@ export class StudiesPageComponent implements OnInit {
     }
     async get_studies() {
         //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
-            return this.userService.get_person(this.currentUser._key).toPromise().then(
+            return this.userService.get_person_id(this.currentUser._key).toPromise().then(
                 person_id => {
                     console.log(person_id)
                     return this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise().then(

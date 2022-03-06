@@ -49,7 +49,10 @@ export class HeaderComponent implements OnInit{
   async ngOnInit() {
     console.log("Welcome in Header component")
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-    await this.get_vertices()  
+    if (this.currentUser!==null || this.currentUser!==undefined){
+        await this.get_vertices()  
+    }
+   // await this.get_vertices()  
     /**
      * test modif
         * // TODO: here need to get same parameter as for edit fucntion in user tree

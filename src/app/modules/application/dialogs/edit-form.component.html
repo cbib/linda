@@ -1,0 +1,50 @@
+<div class="border-head">
+    <h3 mat-dialog-title>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div>
+<div mat-dialog-title>
+    <h1 style="text-align: center;">Edit</h1>
+</div>
+<div mat-dialog-content>
+    <form [formGroup]="get_editForm" (ngSubmit)="OnEdit()">        
+        <div class="form-group">
+            <label for="field">Field to update: {{get_field_to_edit}}</label>
+            <input type="text" id="field" placeholder="field*" formControlName="{{get_field_to_edit}}" class="form-control" required>
+            <div *ngIf="field.invalid && (field.dirty || field.touched)" class="alert alert-danger">
+                <div *ngIf="field.errors?.required">
+                    {{get_field_to_edit}} is required.
+                </div>
+                <div *ngIf="field.errors?.email">
+                    must be valid email adress.
+                </div>
+                <div *ngIf="field.errors?.create">
+                    This address is already used.
+                </div>
+                <div *ngIf="field.errors?.minLength">
+                        Password must be at least 6 characters.
+                </div>
+            </div>
+        </div>
+        <div *ngIf="get_field_to_edit==='password'" class="form-group">
+            <label for="confirmpassword">confirmpassword</label>
+            <input type="text" id="confirmpassword" placeholder="confirmpassword*" formControlName="confirmpassword" class="form-control" required>
+            <div *ngIf="confirmpassword.invalid && (confirmpassword.dirty || confirmpassword.touched)" class="alert alert-danger">
+                <div *ngIf="confirmpassword.errors?.required">
+                    Password confirmation is required.
+                </div>
+                <div *ngIf="confirmpassword.errors?.mustMatch">
+                    Password must match password.
+                </div>
+            </div> 
+        </div>
+        
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button  (click)="onOkClick()">Add</button>
+  </div>
+  
+

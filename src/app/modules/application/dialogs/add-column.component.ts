@@ -4,16 +4,65 @@ import { AssociatedHeadersInterface, DataFileInterface } from 'src/app/models/li
 import { PersonInterface } from 'src/app/models/linda/person';
 import { GlobalService, AlertService } from '../../../services';
 import { DateformatComponent } from '../dialogs/dateformat.component';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { UniqueIDValidatorComponent } from '../../application/validators/unique-id-validator.component'
 import { StudyInterface } from 'src/app/models/linda/study';
 import { SelectionModel } from '@angular/cdk/collections';
 import { first } from 'rxjs/operators';
+import { timeStamp } from 'console';
 
 interface DialogData {
   data_file: DataFileInterface;
   parent_id: string;
   group_key: string;
+}
+
+/** A header's name */
+export function forbiddenHeaderValidator(_data_file: DataFileInterface): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const forbidden=_data_file.associated_headers.filter(associated_header=>associated_header.header===control.value).length>0
+    return forbidden ? {forbiddenName: {value: control.value}} : null;
+  };
+}
+
+/** A header's name */
+export function forbiddenFieldValidator(_data_file: DataFileInterface): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value===''){
+      return null;
+    }
+    else{
+      const forbidden=_data_file.associated_headers.filter(associated_header=>associated_header.associated_component_field===control.value).length>0
+      return forbidden ? {forbiddenField: {value: control.value}} : null;
+    }
+  };
+}
+export function isDateFormat(_date){
+  //isDate('2018-08-01T18:30:00.000Z');
+  //const _regExp  = new RegExp('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$');
+  //isDate('2018-08-01')
+  const _regExp  = new RegExp('^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])?$');
+  return _regExp.test(_date);
+}
+
+/** A header's name */
+// for value
+// for link term
+export function emptyValuesValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    console.log(control.value)
+    if (control.value===''){
+      return null;
+    }
+    else{
+      const empty= control.value['values'].length===0
+      return empty ? {emptyValues: {value: control.value}} : null;
+    }
+    
+
+   // const empty=linked_values.length===0
+    ///return empty ? {emptyValues: {value: control.value}} : null;
+  };
 }
 
 
@@ -115,24 +164,13 @@ export class AddColumnComponent implements OnInit {
     ],
     'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
   };
-  generalForm: FormGroup = this.formBuilder.group({
-      'Header': ['', Validators.required],
-      'Value': ['', Validators.required],
-      'Total': [0, Validators.required],
-      'UseSameNumber': [''],
-      'Standard term': [''],
-      'Link term': [''],
-    }
-  );
+  generalForm: FormGroup ;
   private initialSelection = []
   private useSameNumberCheck = new SelectionModel<string>(true, this.initialSelection /* multiple */);
-  private extraction_component: string = ""
-  private extraction_component_field: string  = ""
-  private link_component: string = ""
-  private link_component_field: string  = ""
   dtOptions: DataTables.Settings = {};
  
   field_submitted = false;
+
 
   constructor(
     private globalService: GlobalService,
@@ -148,7 +186,18 @@ export class AddColumnComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.linked_values=[]
+
+    this.generalForm = this.formBuilder.group({
+      'header': ['',[ Validators.required, forbiddenHeaderValidator(this.data_file)]],
+      //'column_value': ['', Validators.required],
+      'total': [0, Validators.required],
+      'useSameNumber': [''],
+      'standardTerm': ['',[ Validators.required,  forbiddenFieldValidator(this.data_file)]],
+      'linkTerm': ['',emptyValuesValidator()],
+      'aliases': this.formBuilder.array([
+        this.formBuilder.control('', Validators.required)
+      ])
+    });
   }
   
   itemSelectionToggle(key: string): void {
@@ -156,21 +205,21 @@ export class AddColumnComponent implements OnInit {
     if (this.useSameNumberCheck.isSelected(key)) {
         console.log(key, 'is selected')
         this.use_same_total_lines=true
-        this.generalForm.get('Total').patchValue(this.data_file.Data.length)
+        this.total.patchValue(this.data_file.Data.length)
     }
     else {
        console.log(key, 'is unselected')
        this.use_same_total_lines=false
-       this.generalForm.get('Total').patchValue(0)
+       this.total.patchValue(0)
     }
   }
   
   onModify(values: string): void  {
-    console.log(values)
+    /* console.log(values)
     this.field_submitted=true
-    this.extraction_component_field=values
-    if (this.get_component(values) === "study") { 
-      this.extraction_component = "study"
+    console.log(this.generalForm)*/
+    if (['Start date of study', 'End date of study'].includes(values)){
+      console.log(("Date detected"))
     }
   }
 
@@ -179,40 +228,52 @@ export class AddColumnComponent implements OnInit {
   }
 
   onLink(values: string): void {
-    this.link_component_field=values
+    console.log(values)
+    console.log(this.linkTerm.value.values.length)
+    while (this.aliases.length!==this.linkTerm.value.values.length){
+      this.aliases.push(this.formBuilder.control('', Validators.required));
+    }
+
+    
+    /*
     this.linked_values= this.data_file.associated_headers.filter(associated_header=>associated_header.header===values)[0].associated_values
-    console.log(this.linked_values)
+    if (this.linked_values.length===0){
+      this.alertService.error("There is no values associated with this column called '" + values + "' - Please select another column to link with ! ")
+    }
+    console.log(this.linked_values) */
   }
-
   onAdd(){
+    console.log(this.aliases.controls)
     //header does not exist
-    if (this.data_file.headers.filter(header=>header===this.generalForm.get('Header').value).length===0){
-
-      if (this.linked_values.length>1){
-        let header_to_link=this.generalForm.get('Link term').value
-        if (this.linked_values.length !== this.generalForm.get('Value').value.split(",").length){
+    //if (this.data_file.headers.filter(header=>header===this.header.value).length===0){
+    
+    
+    
+    if (this.linkTerm.value!==''){
+        let header_to_link=this.linkTerm.value['header']
+        if (this.linkTerm.value.values.length !== this.aliases.controls.length){
           this.alertService.error("Same number of values is required for link component and column values")
         }
         else{
           // Update Data 
-          this.linked_values.forEach((linked_value, index)=>{
+          this.linkTerm.value.values.forEach((linked_value, index)=>{
             this.data_file.Data.forEach(line=>{
               if (line[header_to_link]===linked_value){
-                line[this.generalForm.get('Header').value]= this.generalForm.get('Value').value.split(",")[index]
+                line[this.header.value]= this.aliases.controls[index].value
               }
             });
           });
           // Update headers
-          this.data_file.headers.push(this.generalForm.get('Header').value)
+          this.data_file.headers.push(this.header.value)
           // Update associated_headers
           var associated_header: AssociatedHeadersInterface = {
-            header: this.generalForm.get('Header').value,
+            header: this.header.value,
             selected: true,
-            associated_component: this.get_component(this.generalForm.get('Standard term').value),
+            associated_component: this.get_component(this.standardTerm.value),
             associated_linda_id: [],
             associated_term_id: "",
             associated_values: [],
-            associated_component_field:this.extraction_component_field,
+            associated_component_field:this.standardTerm.value,
             is_numeric_values:false,
             is_time_values:false
           };
@@ -221,79 +282,70 @@ export class AddColumnComponent implements OnInit {
           this.alertService.success("data file has been modified ! Press OK to update data")
           this.ready_to_add=true
         }
-      }
-      else{
-          // Update Data 
-          this.data_file.Data.forEach(line=>{
-            line[this.generalForm.get('Header').value]=this.generalForm.get('Value').value
-          })
-          // Update headers
-          this.data_file.headers.push(this.generalForm.get('Header').value)
-          // Update associated_headers
-          var associated_header: AssociatedHeadersInterface = {
-            header: this.generalForm.get('Header').value,
-            selected: true,
-            associated_component: this.get_component(this.generalForm.get('Standard term').value),
-            associated_linda_id: [],
-            associated_term_id: "",
-            associated_values: [],
-            associated_component_field:this.extraction_component_field,
-            is_numeric_values:false,
-            is_time_values:false
-          };
-
-          this.data_file.associated_headers.push(associated_header)
-          this.alertService.success("data file has been modified ! Press OK to update data")
-          this.ready_to_add=true
-      }
     }
     else{
       this.data_file.Data.forEach(line=>{
-        line[this.generalForm.get('Header').value]=this.generalForm.get('Value').value
+        line[this.header.value]=this.aliases.controls[0].value
       })
-      /* var associated_header: AssociatedHeadersInterface = {
-        header: this.generalForm.get('Header').value,
+      // Update headers
+      this.data_file.headers.push(this.header.value)
+      // Update associated_headers
+      var associated_header: AssociatedHeadersInterface = {
+        header: this.header.value,
         selected: true,
-        associated_component: this.get_component(this.generalForm.get('Standard term').value),
+        associated_component: this.get_component(this.standardTerm.value),
         associated_linda_id: [],
         associated_term_id: "",
         associated_values: [],
-        associated_component_field:this.extraction_component_field,
+        associated_component_field:this.standardTerm.value,
         is_numeric_values:false,
         is_time_values:false
-      }; */
-      this.data_file.associated_headers.filter(associated_header=>associated_header.header===this.generalForm.get('Header').value)[0].associated_component=this.extraction_component
-      this.data_file.associated_headers.filter(associated_header=>associated_header.header===this.generalForm.get('Header').value)[0].associated_component_field=this.extraction_component_field
+      };
 
-      //this.alertService.error("this headers allready exists")
-      
+      this.data_file.associated_headers.push(associated_header)
+      this.alertService.success("data file has been modified ! Press OK to update data")
+      this.ready_to_add=true
     }
+
+
+
+
+/*     else{
+      this.data_file.Data.forEach(line=>{
+        line[this.header.value]=this.column_value.value
+      })
+      this.data_file.associated_headers.filter(associated_header=>associated_header.header===this.header.value)[0].associated_component=this.get_component(this.standardTerm.value)
+      this.data_file.associated_headers.filter(associated_header=>associated_header.header===this.header.value)[0].associated_component_field=this.standardTerm.value
+    } */
    
     console.log(this.data_file)
     //this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { console.log(data); })
 
-    /* this.generalForm.get('Value').value
-    this.generalForm.get('Standard term').value
-    this.generalForm.get('Link term').value */
+    /* this.Value.value
+    this.generalForm.get('standardTerm').value
+    this.generalForm.get('linkTerm').value */
   }
+  get isDate(){
+    return ['Start date of study','End date of study'].includes(this.generalForm.get('standardTerm').value)
+  }
+  get header() { return this.generalForm.get('header'); }
+  get column_value() { return this.generalForm.get('column_value'); }
+  get total() { return this.generalForm.get('total'); }
+  get useSameNumber() { return this.generalForm.get('useSameNumber'); }
+  get standardTerm() { return this.generalForm.get('standardTerm'); }
+  get linkTerm() { return this.generalForm.get('linkTerm'); }
+
+  get aliases() { return this.generalForm.get('aliases') as FormArray;}
+
+  addAlias() {
+    this.aliases.push(this.formBuilder.control(''));
+  }
+
   get get_ready_to_add(){
     return this.ready_to_add
   }
- 
   get get_linked_values():any[]{
     return this.linked_values
-  }
-  get get_extraction_component(): string {
-    return this.extraction_component
-  }
-  get get_extraction_component_field(): string {
-    return this.extraction_component_field
-  }
-  get get_link_component(): string {
-    return this.link_component
-  }
-  get get_link_component_field(): string {
-    return this.link_component_field
   }
   get get_use_same_total_lines(){
     return this.use_same_total_lines
@@ -314,11 +366,12 @@ export class AddColumnComponent implements OnInit {
     return this.field_submitted
   }
   onNoClick(): void {
-    this.dialogRef.close({event:"Cancelled"});
+    this.dialogRef.close({event:"Cancelled", data_file: this.data_file});
   }
-
   onOkClick(): void {
-    this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { console.log(data); })
-    this.dialogRef.close({event:"Confirmed"});
+    this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { 
+      console.log(data); 
+      this.dialogRef.close({event:"Confirmed", data_file: this.data_file});
+    })
   }
 }

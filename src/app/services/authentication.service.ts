@@ -74,13 +74,11 @@ export class AuthenticationService {
         //this.router.navigate(['/login']); 
 
     }
-    requestReset(body): Observable<any> {
-        let obj2send = {
-            'username': this.currentUserValue.username,
-            'password': this.currentUserValue.password,
-        };
-        console.log(obj2send)
-        return this.http.post(`${this.APIUrl + "req-reset-password"}`, obj2send);
+    requestReset(email_obj:{"email":string}) {
+        
+        console.log(email_obj)
+        ///return null
+        return this.http.post(`${this.APIUrl + "req-reset-password"}`, email_obj);
 
     }
 

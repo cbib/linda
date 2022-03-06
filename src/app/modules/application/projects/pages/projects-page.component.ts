@@ -165,7 +165,7 @@ export class ProjectsPageComponent implements OnInit {
     }
     async get_projects() {
         // get person linda db id 
-        return this.userService.get_person(this.currentUser._key).toPromise().then(
+        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
             person_id => {
                 console.log(person_id)
                 return this.globalService.get_projects(person_id[0].split("/")[1]).toPromise().then(

@@ -11,28 +11,41 @@
 <div mat-dialog-content>
     <form [formGroup]="get_generalForm" (ngSubmit)="onAdd()">
 
-        <button [disabled]="!get_generalForm.valid || !get_field_submitted" class="btn btn-default btn-info" type="submit" style="float: right;">Update data file</button>
+        <button [disabled]="!get_generalForm.valid" class="btn btn-default btn-info" type="submit" style="float: right;">Update data file</button>
         
         <div class="form-group">
-            <label for="Header">Header</label>
-            <input type="text" placeholder="Header*" formControlName="Header" class="form-control" />
+            <label for="header">Header</label>
+            <input type="text" id="header" placeholder="header*" formControlName="header" class="form-control" required>
+            <div *ngIf="header.invalid && (header.dirty || header.touched)" class="alert alert-danger">
+                <div *ngIf="header.errors?.required">
+                    header is required.
+                </div>
+                <div *ngIf="header.errors?.forbiddenName">
+                    header already exists in this file.
+                </div>
+            </div>
         </div>
         <div class="form-group">
-            <label for="Total">Total</label>
-            <input type="number" placeholder="Total*" formControlName="Total" class="form-control" />
+            <label for="total">total</label>
+            <input type="number" placeholder="total*" formControlName="total" class="form-control" />
+            <div *ngIf="total.invalid && (total.dirty || total.touched)" class="alert alert-danger">
+                <div *ngIf="total.errors?.required">
+                    total lines is required.
+                </div>
+            </div>
         </div>
         <div class="form-group">
-            <label for="UseSameNumber">Use same number of rows</label>
-        <mat-checkbox [checked]="get_useSameNumberCheck.isSelected('usesameline')" formControlName="UseSameNumber"  (change)="itemSelectionToggle('usesameline')"></mat-checkbox>
+            <label for="useSameNumber">Use same number of rows</label>
+        <mat-checkbox [checked]="get_useSameNumberCheck.isSelected('usesameline')" formControlName="useSameNumber"  (change)="itemSelectionToggle('usesameline')"></mat-checkbox>
         </div>
         
         <div class="form-group">
-            <label for="Link term">Link with another column: </label>
-            <mat-form-field class="full-width">
-                <mat-select formControlName="Link term" placeholder="Link with another header"
+            <label for="linkTerm">Link with another column :  </label>
+            <mat-form-field>
+                <mat-select formControlName="linkTerm" 
                     (selectionChange)="onLink($event.value)">
                     <mat-option>--</mat-option>
-                    <mat-option *ngFor="let associated_header of get_data_file.associated_headers" [value]="associated_header.header">
+                    <mat-option *ngFor="let associated_header of get_data_file.associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values}">
                         {{associated_header.header}}
                     </mat-option>
                    <!--  <mat-optgroup *ngFor="let associated_header of get_data_file.associated_headers"
@@ -42,12 +55,18 @@
                         </mat-option>
                     </mat-optgroup> -->
                 </mat-select>
+                <div *ngIf="linkTerm.invalid && (linkTerm.dirty || linkTerm.touched)" class="alert alert-danger">
+                    <div *ngIf="linkTerm.errors?.emptyValues">
+                        This column has no values assigned to any components.
+                    </div>
+                </div>
             </mat-form-field>
+            
         </div>
         <div class="form-group">
-            <label for="Standard term">Select term and field: </label>
+            <label for="standardTerm">Select term and field :  </label>
             <mat-form-field class="full-width">
-                <mat-select formControlName="Standard term" placeholder="Select component and field"
+                <mat-select formControlName="standardTerm" placeholder="Select component and field"
                     (selectionChange)="onModify($event.value)">
                     <mat-option>--</mat-option>
                     <mat-optgroup *ngFor="let extract_option of get_extract_component_options.options"
@@ -57,17 +76,44 @@
                         </mat-option>
                     </mat-optgroup>
                 </mat-select>
+                <div *ngIf="standardTerm.invalid && (standardTerm.dirty || standardTerm.touched)" class="alert alert-danger">
+                    <div *ngIf="standardTerm.errors?.required">
+                        Field component is required.
+                    </div>
+                    <div *ngIf="standardTerm.errors?.forbiddenField">
+                        This field component is already assigned to another ccolumn in this datafile !! 
+                    </div>
+                </div>
             </mat-form-field>
+            
+            
         </div>
-        <div class="form-group">
-            <div *ngIf="get_linked_values.length>1">
+        
+        <!-- <div class="form-group">
+            <div *ngIf="linkTerm.value['values'] && linkTerm.value['values'].length>1">
                 <p>
-                    You have to defined more than one value to link with this column (in fact : {{get_linked_values.length}})
+                    You have to defined more than one value to link with this column (in fact : {{linkTerm.value['values'].length}}) and respect order below
+
                 </p>
+                <ul>
+                    <li *ngFor="let item of linkTerm.value['values']; index as i"> 
+                        Value {{i+1}} : {{item}}
+                    </li>
+                </ul>
             </div>
-            <label for="Value">Value</label>
-            <input type="text" placeholder="Value*" formControlName="Value" class="form-control" />
-        </div>
+            <label for="column_value">Column value</label>
+            <input type="text" placeholder="column value(s)*" formControlName="column_value" class="form-control" required>
+        </div> -->
+            <div formArrayName="aliases">
+                <h2>Column value</h2>
+               <!--  <button type="button" (click)="addAlias()">+ Add another alias</button> -->
+                <div *ngFor="let alias of aliases.controls; let i=index">
+                  <!-- The repeated alias template -->
+                    <label for="alias-{{ i }}">Value {{ i +1 }}:</label>
+                    <input *ngIf="isDate" id="date-{{ i }}" type="date" [formControlName]="i">
+                    <input *ngIf="!isDate" id="alias-{{ i }}" type="text" [formControlName]="i">
+                </div>
+              </div>
     </form>
 </div>
 <div mat-dialog-actions>

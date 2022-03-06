@@ -1,4 +1,4 @@
-<div class="input-group input-group-sm mb-3">
+<!-- <div class="input-group input-group-sm mb-3">
     <span class="input-group-text" id="inputGroup-sizing-sm-fn">First Name</span>
     <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
     <button type="submit" (click)="modify_pwd()">Modify</button>
@@ -12,4 +12,188 @@
     <span class="input-group-text" id="inputGroup-sizing-sm-un">UserName</span>
     <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
     <button type="submit" (click)="modify_email()">Modify</button>
-</div>
+</div> -->
+<mat-divider></mat-divider>
+<h3 mat-subheader>Member since {{account_creation_date}}</h3>
+
+<section *ngIf="loaded" style="margin-top: 10px; padding-left: 50px; position: relative;">
+
+    <mat-list style="float: left;width: 50%;">
+        <div>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Name</h4>
+                <p mat-line class="demo-2"> {{get_currentPerson['Person name']}} </p>
+               <!--  <mat-divider [inset]="true"></mat-divider> -->
+            </mat-list-item>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Username</h4>
+                <p mat-line class="demo-2"> {{currentUser.username}} </p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Email</h4>
+                <p mat-line class="demo-2"> {{get_currentPerson['Person email']}} </p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Password</h4>
+                <p mat-line class="demo-2"> ************** </p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Affiliation</h4>
+                <p mat-line class="demo-2"> {{get_currentPerson['Person affiliation']}} </p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>account_circle</mat-icon>
+                <h4 mat-line>Role</h4>
+                <p mat-line class="demo-2"> {{get_currentPerson['Person role']}} </p>
+            </mat-list-item>
+        </div>
+    </mat-list>
+    <mat-list style="float: right;width: 50%;">
+        <div>
+            <mat-list-item class="nga-card-step" >
+                <mat-icon mat-list-icon>edit</mat-icon>
+                <h4 mat-line></h4>
+                <p mat-line (click)="onModify('name')" class="demo-2"> Modify Name</p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step">
+                <mat-icon mat-list-icon>edit</mat-icon>
+                <h4 mat-line></h4>
+                <p mat-line (click)="onModify('username')" class="demo-2"> Modify username</p>
+            </mat-list-item >
+            <mat-list-item class="nga-card-step">
+                <mat-icon mat-list-icon>edit</mat-icon>
+                <h4 mat-line></h4>
+                <p mat-line (click)="onModify('email')" class="demo-2"> Modify email</p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step">
+                <mat-icon mat-list-icon>edit</mat-icon>
+                <h4 mat-line></h4>
+                <p mat-line (click)="onModify('password')" class="demo-2"> Modify password</p>
+            </mat-list-item>
+            <mat-list-item class="nga-card-step">
+                <mat-icon mat-list-icon>edit</mat-icon>
+                <h4 mat-line></h4>
+                <p mat-line (click)="onModify('affiliation')" class="demo-2"> Modify affiliation</p>
+            </mat-list-item>
+        </div>
+        <mat-divider></mat-divider>
+    </mat-list>
+</section>
+
+
+<!-- <section style="margin-top: 10px; padding-left: 50px; position: relative;">
+    <mat-list>
+        <mat-list-item *ngFor="let key of currentUser_keys; last as last">
+            <mat-icon mat-list-icon>account_circle</mat-icon>
+            <h4 mat-line>{{key}}</h4>
+            <p mat-line class="demo-2"> {{currentUser[key]}} </p>
+            <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+        </mat-list-item>    
+        <mat-list-item *ngFor="let key of currentPerson_keys">
+            <mat-icon mat-list-icon>account_circle</mat-icon>
+            <h4 mat-line>{{key}}</h4>
+            <p mat-line class="demo-2"> {{get_currentPerson[key]}} </p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+    </mat-list>
+</section> -->
+
+<!-- <section style="margin-top: 10px; padding-left: 270px; position: relative;">
+<mat-list>
+    <mat-list-item *ngFor="let key of currentUser_keys; last as last">
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <h4 mat-line>{{key}}</h4>
+        <p mat-line class="demo-2"> {{currentUser[key]}} </p>
+        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+    </mat-list-item>    
+    <mat-list-item *ngFor="let key of currentPerson_keys">
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <h4 mat-line>{{key}}</h4>
+        <p mat-line class="demo-2"> {{get_currentPerson[key]}} </p>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+</mat-list>
+</section> -->
+<!-- <mat-list style="float: right;width: 50%;">
+    <h3 mat-subheader>"Edit profile"</h3>
+    <mat-list-item  *ngFor="let key of currentUser_keys; last as last">
+        <mat-icon mat-list-icon>edit</mat-icon>
+        <p mat-line class="demo-2"> Modify username</p>
+        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+    </mat-list-item>
+    <mat-list-item >
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <p mat-line class="demo-2"> Modify passsword</p>
+        <mat-divider [inset]="true"></mat-divider>
+    </mat-list-item>
+    <mat-list-item *ngFor="let key of currentPerson_keys">
+        <mat-icon mat-list-icon>account_circle</mat-icon>
+        <h4 *ngIf="key==='Person email'" mat-line>Modify email</h4>
+    </mat-list-item>
+</mat-list> -->
+
+
+<!-- <form style="margin-left: 50%;" [formGroup]="getregisterForm">
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="form-group mb-3">
+        <label for="person_name">Person name: {{personName.value}}</label>
+    </div>
+    <div class="form-group">
+        <label for="user_name">User name : {{Username.value}}</label>
+        <input type="text" id="user_name" placeholder="User name*" formControlName="username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="person_affiliation">Person affiliation: {{personAffiliation.value}}</label>
+        <input type="text" id="person_affiliation" placeholder="Person affiliation*"
+            formControlName="Person affiliation" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && personAffiliation.errors }" required>
+        <div *ngIf="personAffiliation.invalid && (personAffiliation.dirty || personAffiliation.touched)"
+            class="alert alert-danger">
+            <div *ngIf="personAffiliation.errors?.required">
+                Person affiliation is required.
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="person_email">Person email: {{personEmail.value}}</label>
+        <input type="email" id="person_email" placeholder="Person email*" formControlName="Person email"
+            class="form-control" [ngClass]="{ 'is-invalid': submitted && personEmail.errors }" required>
+        <div *ngIf="personEmail.invalid && (personEmail.dirty || personEmail.touched)" class="alert alert-danger">
+            <div *ngIf="personEmail.errors?.required">
+                Person email is required.
+            </div>
+            <div *ngIf="personEmail.errors?.email">
+                must be valid email adress.
+            </div>
+            <div *ngIf="personEmail.errors?.create">
+                This address is already used.
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="person_role">Person role: {{personID.value}}</label>
+        <input type="text" id="person_role" placeholder="Person role*" formControlName="Person role"
+            class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="person_id">Person ID</label>
+        <input type="text" id="person_id" placeholder="Person ID (ORCID ID)*" formControlName="Person ID"
+            class="form-control" [ngClass]="{ 'is-invalid': submitted && personID.errors }" />
+        <div *ngIf="personID.invalid && (personID.dirty || personID.touched)" class="alert alert-danger">
+            <div *ngIf="personID.errors?.required">
+                Person ID is required.
+            </div>
+            <div *ngIf="personID.errors?.minLength">
+                minimum length ID is 12 characters (as for ORCID ID).
+            </div>
+            <div *ngIf="personID.errors?.create">
+                This ORCID ID is already used.
+            </div>
+        </div>
+    </div>
+</form> -->

@@ -25,6 +25,11 @@
     Save changes
     </button>
 
+    <button *ngIf="role==='reader'" joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="get_left" [stepContentParams]="{'model_n':model_type}"
+    class="btn btn-success" style="float: left;" type="submit" (click)="request_access()" >
+    Request access
+    </button>
+
     <!-- </div> -->
     <ng-template #submitcontent let-nod="model_n">
         <div>

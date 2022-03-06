@@ -943,4 +943,9 @@ export class FormComponent implements OnInit//, AfterViewInit
         }
 
     };
+    request_access(){
+        // create collection  messages and messages_edge from persons to messages
+        // When requets access add a new messages in messages 
+        // this.messageService
+    }
 }

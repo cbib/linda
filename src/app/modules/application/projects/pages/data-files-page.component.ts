@@ -40,6 +40,7 @@ export class DataFilesPageComponent implements OnInit {
 
   private dataSource: MatTableDataSource<DataFileInterface>;
   private displayedColumns: string[] = ['Data file link', 'Data file description', 'edit'];
+  private data_files:DataFileInterface[]=[]
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -60,17 +61,18 @@ export class DataFilesPageComponent implements OnInit {
 
   async ngOnInit() {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    this.get_data_files()
+    this.load_data_files()
     this.loaded = true
   }
 
-  async get_data_files() {
+  async load_data_files() {
     /* console.log("model key get_data_files() in data-files.component", this.model_key )
     console.log("collection get_data_files() in data-files.component", this.collection ) */
     return this.globalService.get_data_files(this.model_key, this.collection).toPromise().then(
       data => {
-        //console.log(data)
-        this.dataSource = new MatTableDataSource(data);
+        console.log(data)
+        this.data_files=data
+        this.dataSource = new MatTableDataSource(this.data_files);
         //console.log(this.dataSource)
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -98,10 +100,13 @@ export class DataFilesPageComponent implements OnInit {
   get get_dataSource() {
     return this.dataSource
   }
+  get get_data_files(){
+    return this.data_files
+  }
   
 
   onRemove(element: DataFileInterface) {
-    //console.log(element._id)
+    console.log(element._id)
     ////console.log(this.active_node.id)
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
@@ -181,8 +186,15 @@ export class DataFilesPageComponent implements OnInit {
     const dialogRef = this.dialog.open(AssignComponent, { width: '1000px', data: {collection:this.collection , data_file: elem, parent_id:this.parent_id, group_key:this.group_key} });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.load_data_files()
         if (result.event == 'Confirmed') {
           let model_id = "studies/" + this.model_key
+          console.log(result.data_file)
+          this.loaded = true
+          /* this.data_files=this.data_files.filter(datafile=>datafile._id!==elem._id)
+          this.data_files.push(result.data_file)
+          this.dataSource = new MatTableDataSource(this.data_files); */
+          
           ///this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: this.model_key, model_type:'study', model_id: model_id, mode: "edit", activeTab: 'data_files' , role:this.role, group_key:this.group_key} });
 
           ////console.log("hello")

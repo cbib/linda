@@ -50,6 +50,7 @@ import { MapColumnComponent } from './map-column.component';
 import { DefineComponent } from './define.component'
 import { DataTablesModule } from 'angular-datatables';
 import { AddColumnComponent } from './add-column.component';
+import { EditFormComponent } from './edit-form.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { AddColumnComponent } from './add-column.component';
     AssignComponent,
     MapColumnComponent,
     DefineComponent,
-    AddColumnComponent
+    AddColumnComponent,
+    EditFormComponent
   ],
   imports: [
     CommonModule,
@@ -127,7 +129,8 @@ import { AddColumnComponent } from './add-column.component';
     HelpLoaderComponent,
     ShareProject,
     GroupLoginComponent,
-    FilesLoaderComponent
+    FilesLoaderComponent,
+    EditFormComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -150,7 +153,8 @@ import { AddColumnComponent } from './add-column.component';
     TableComponent,
     AssignComponent,
     DefineComponent,
-    AddColumnComponent
+    AddColumnComponent,
+    EditFormComponent
   ]
 })
 export class DialogModule { }

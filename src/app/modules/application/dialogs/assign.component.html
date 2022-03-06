@@ -5,9 +5,11 @@
     </h3>
 </div>
 <div mat-dialog-content >
+    <alert></alert>
     <section class="format-section">
         <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_column()">Add a new column</button>
         <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_composite()">Build composite column</button>
+        <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="refresh()">Refresh file</button>
 
         <br>
         <mat-divider></mat-divider>
@@ -17,7 +19,9 @@
                 <tr>
                     <th *ngFor="let column of get_tableData_columns ; index as j;">
                         <button style="background-color: #4ECDC4" *ngIf="!get_data_file.associated_headers[j].selected" mat-button class="btn-primary" (click)="onDefine(column)">Define column</button>
-                        <button style="background-color: #4ECDC4" *ngIf="get_data_file.associated_headers[j].selected" mat-button class="btn-primary" (click)="onDefine(column)">Define column again</button>
+                        <button style="background-color: #4ECDC4" *ngIf="get_data_file.associated_headers[j].selected && get_data_file.associated_headers[j].associated_linda_id.length==0" mat-button class="btn-primary" (click)="onDefine(column)">Define column again</button>
+                        <button style="background-color: #25995f" *ngIf="get_data_file.associated_headers[j].selected && get_data_file.associated_headers[j].associated_linda_id.length>0" mat-button class="btn-success" (click)="onDefine(column)">Extract column again</button>
+
                         <br>
                         <mat-card style="background-color: #4ECDC4; min-height: 20 px;" class="chips"  *ngIf="get_data_file.associated_headers[j].selected">{{get_data_file.associated_headers[j].associated_component_field}}</mat-card>
                         <mat-card style="background-color: gray;" class="chips"  *ngIf="!get_data_file.associated_headers[j].selected">No term</mat-card>
@@ -37,6 +41,6 @@
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button (click)="onNoClick()">Close</button>
   <button mat-button  (click)="onOkClick()">Ok</button>
 </div>

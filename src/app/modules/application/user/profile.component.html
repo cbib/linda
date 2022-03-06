@@ -8,44 +8,29 @@
     </div>
     <!-- Nav pills -->
       <ul class="nav nav-pills">
+
         <li class="nav-item">
-          <a class="nav-link active" aria-controls="identifiers" role="tab" data-toggle="tab" href="#identifiers">Identifiers</a>
+          <a class="nav-link" href="#personal_infos" aria-controls="personal_infos" role="tab" data-toggle="tab"  [ngClass]="{ 'active':activeTab==='personal_infos'}" (click)="changeTab('personal_infos')">Account</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#personal_infos" aria-controls="personal_infos" role="tab" data-toggle="tab">Personal data</a>
+          <a class="nav-link" href="#messages" aria-controls="messages" role="tab" data-toggle="tab" [ngClass]="{ 'active':activeTab==='messages'}" (click)="changeTab('messages')">Messages</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#settings" tabindex="-1" aria-controls="settings" role="tab" data-toggle="tab">Settings</a>
+          <a class="nav-link" href="#settings" tabindex="-1" aria-controls="settings" role="tab" data-toggle="tab" [ngClass]="{ 'active':activeTab==='settings'}" (click)="changeTab('settings')">Settings</a>
         </li>
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="identifiers">
-            <h3>Identifiers</h3>
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm-pwd">Password</span>
-              <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-              <button type="submit" (click)="modify_pwd()">Modify</button>
-            </div>
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-sm-em">Email</span>
-              <input type="text" style="height:100%;padding: .375rem .75rem;font-size: 1rem;" class="form-control" placeholder="************" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-              <button type="submit" (click)="modify_email()">Modify</button>
-            </div>
-            
+        <div [ngClass]="{ 'active':activeTab==='personal_infos'}" role="tabpanel" class="tab-pane active" id="personal_infos">
+          <app-person *ngIf="activeTab==='personal_infos'" ></app-person>
+          <!-- <app-person *ngIf="activeTab==='personal_infos'"  [currentPerson]="get_currentPerson"></app-person> -->
         </div>
-        <div role="tabpanel" class="tab-pane" id="personal_infos">
-          <h3>Profile </h3>
-          <app-person></app-person>
-          
-        </div>
-        <div role="tabpanel" class="tab-pane" id="messages">
+        <div [ngClass]="{ 'active':activeTab==='messages'}" role="tabpanel" class="tab-pane active" id="messages">
+
             Messages
+            <app-message *ngIf="activeTab==='messages'"></app-message>
         </div>
-        <div role="tabpanel" class="tab-pane" id="settings">
+        <div [ngClass]="{ 'active':activeTab==='settings'}" role="tabpanel" class="tab-pane active" id="settings">
             Settings
         </div>
       </div>

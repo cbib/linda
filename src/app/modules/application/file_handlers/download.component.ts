@@ -1497,7 +1497,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             // No study id defined
             else {
                 if (this.labelPosition === "no_study_id") {
-                    return this.userService.get_person(this.currentUser._key).toPromise().then(
+                    return this.userService.get_person_id(this.currentUser._key).toPromise().then(
                         person_id => {
                             console.log(person_id)
                             this.globalService.get_studies(this.parent_id.split("/")[1],person_id[0].split("/")[1]).pipe(first()).toPromise().then(
