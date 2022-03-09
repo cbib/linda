@@ -17,6 +17,7 @@ export interface AuthResponse {
 export class AuthenticationService {
 
     private APIUrl: string;
+    private nodemailerUrl: string;
     private currentUserSubject: BehaviorSubject<UserInterface>;
     public currentUser: Observable<UserInterface>;
     public user: UserInterface;
@@ -29,6 +30,7 @@ export class AuthenticationService {
         this.currentUserSubject = new BehaviorSubject<UserInterface>(JSON.parse(tmp));
         this.currentUser = this.currentUserSubject.asObservable();
         this.APIUrl = Constants.APIConfig.APIUrl;
+        this.nodemailerUrl = Constants.APIConfig.nodemailerUrl;
     }
     public get currentUserValue(): UserInterface {
         return this.currentUserSubject.value;
@@ -74,15 +76,25 @@ export class AuthenticationService {
         //this.router.navigate(['/login']); 
 
     }
-    requestReset(email_obj:{"email":string}) {
-        
-        console.log(email_obj)
+    requestReset(email_obj) {
+        let obj2send = {
+            'email': email_obj.email,
+        };
+        console.log(obj2send)
         ///return null
-        return this.http.post(`${this.APIUrl + "req-reset-password"}`, email_obj);
+        //let nodemailerUrl = Constants.APIConfig.APIUrl;
+        //return this.http.post(this.nodemailerUrl,email_obj)
+       // return this.http.post(`${this.nodemailerUrl}`, email_obj);
+        //return this.http.post(this.APIUrl + 'send-mail/', obj2send);
+        return this.http.post(`${this.APIUrl + "sendmailbyemail/"}`, obj2send);
 
     }
 
     newPassword(body): Observable<any> {
         return this.http.post(`${this.APIUrl}new-password`, body);
+    }
+
+    ValidPasswordToken(body): Observable<any> {
+       return this.http.post(`${this.APIUrl}valid-password-token`, body);
     }
 }

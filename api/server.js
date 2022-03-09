@@ -27,7 +27,7 @@
 //db.useBasicAuth("root", "benjamin");
 
 
-//const   cors = require('cors');
+//const cors = require('cors');
 //const express = require('express')
 //var app = express();
 //app.use(express.json({limit: '50mb'}));
@@ -46,6 +46,7 @@
 var log = require("console").log;
 const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
+
 const router = createRouter();
 module.context.use(router);
 const joi = require('joi');
@@ -53,12 +54,37 @@ const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
+
+
+/* const nodemailer = require("nodemailer");
+require("dotenv").config();
+
+
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    type: "OAuth2",
+    user: process.env.EMAIL,
+    pass: process.env.WORD,
+    clientId: process.env.OAUTH_CLIENTID,
+    clientSecret: process.env.OAUTH_CLIENT_SECRET,
+    refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+  },
+});
+transporter.verify((err, success) => {
+  err
+    ? console.log(err)
+    : console.log(`=== Server is ready to take messages: ${success} ===`);
+}); */
+
 //const queue1 = queues.create("my-queue");
 
 // queue1.push(
 //     { mount: "/xeml", name: "send-mail" },
 //     { to: "bdartigues@gmail.com", body: "Hello world" }
 // );
+
+
 
 
 //const writeFile = require('write-file')
@@ -261,12 +287,55 @@ const DOC_NOT_FOUND = errors.ERROR_ARANGO_DOCUMENT_NOT_FOUND.code;
 //.summary('Store entry or entries')
 //.description('Store a single entry or multiple entries in the "myFoxxCollection" collection.');
 
+/*#############*/
+// in your router
+const getUserName = require("./queries/get-user-name");
+
+const telegram = require("./queries/telegram-chat");
+
+const sendMail = require("./queries/send-mail");
+
+router.get("/admin-username", (req, res) => {
+  res.json(getUserName(true));
+});
+
+router.get("/all-username", (req, res) => {
+  res.json(getUserName(false));
+});
+
+router.post("/send-telegram", (req, res) => {
+    const email = req.body.email
+    res.json(telegram);
+  });
+
+router.post('/sendmailbyemail', (req, res) => {
+    const email = req.body.email
+    console.log("email in api server.js", email)
+
+    sendMail({'email':email})
+    //res.json(sendMail({'email':email}));
+    res.send({success:true})
+  })    
+  .body(joi.object({
+    email: joi.string().required()
+}).required(), 'Values to check.')
+.response(
+    joi.object({
+        success: joi.boolean().required()
+
+    }
+    ).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('check if user exist.');
+
 /*****************************************************************************************
  ******************************************************************************************
  *********************************GROUPS****************************************************
  ******************************************************************************************
  ******************************************************************************************
  ******************************************************************************************/
+
+
 
 router.get('/get_groups/:user_key', function (req, res) {
     var user_id = "users/" + req.pathParams.user_key;
@@ -3218,15 +3287,39 @@ router.post('/add_template', function (req, res) {
 
 
 router.post('/req-reset-password', function (req, res) {
+    //const sendgrid = require('sendgrid');
+    
     var email = req.body.email;
     console.log(email)
-    res.send({success:true})
+    const SENDGRID_API_KEY = "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"
+    sgMail.setApiKey(SENDGRID_API_KEY)
+    const msg = {
+        to: 'bdartigues@gmail.com',
+      // Change to your recipient
+        from: 'bdartigues@gmail.com',
+      // Change to your verified sender
+        subject: 'Sending with SendGrid Is Fun',
+        text: 'and easy to do anywhere, even with Node.js',
+        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+     }
+     sgMail.send(msg)
+     res.send({success:true, message: 'Email sent\n', response: {}})
+     /* .then((resp) => {
+         console.log('Email sent\n', resp)
+         res.send({success:true, message: 'Email sent\n', response: resp})
+       })
+       .catch((error) => {
+         console.error(error)
+         res.send({success:false, message: 'Email not sent\n', response: error})
+     }) */
 })
 .body(joi.object({
         email:joi.string().required()
 }).required(), 'Values to check.')
 .response(joi.object({
-    success: true,
+    success: joi.boolean().required(),
+    message: joi.string().required(),
+    response: joi.object().required()
 }).required(), 'response to send.')
 .summary('List entry keys')
 .description('add MIAPPE description for given model.');

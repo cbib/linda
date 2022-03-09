@@ -187,12 +187,16 @@ mat-progress-bar .mat-progress-bar-buffer {
 }*/
 h2 {
     /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
-    font-family: Comic;
+    /* font-family: Comic; */
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    font-family: "Gill Sans", sans-serif;
    }
 
 h5 {
     /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
-    font-family: Comic;
+    /* font-family: Comic; */
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    font-family: "Gill Sans", sans-serif;
    }
 
 p {

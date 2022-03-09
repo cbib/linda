@@ -21,6 +21,7 @@ import { PersonInterface, UserInterface } from 'src/app/models/linda/person';
 import { InvestigationInterface } from 'src/app/models/linda/investigation'
 import { ShareProject } from '../../dialogs/share-project';
 import { GroupLoginComponent } from '../../dialogs/group-login.component';
+import { ProjectLoaderComponent } from '../../dialogs/project-loader.component';
 
 @Component({
     selector: 'app-projects-page',
@@ -259,7 +260,7 @@ export class ProjectsPageComponent implements OnInit {
     }
     onExportIsa(element: InvestigationInterface) {
         var model_type = this.globalService.get_model_type(element._id)
-        var model_key = element._id.split("/")[1];
+        var model_key = element._key;
         var model_id = element._id
         var collection_name = element._id.split("/")[0];
         this.globalService.get_by_key(model_key, model_type).toPromise().then(model_data => {
@@ -273,6 +274,21 @@ export class ProjectsPageComponent implements OnInit {
                 });
             });
         });
+    }
+    onImport(){
+        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id } });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            if (result.event == 'Confirmed') {
+
+            
+              /* let model_id = this.collection + '/' + this.model_key
+              this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+              this.router.onSameUrlNavigation = 'reload';
+              this.router.navigate(['/projects_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: model_id, model_key: this.model_key, model_type: 'investigation', activeTab: 'project_data_files', mode: "edit", group_key: this.group_key } });
+ */            }
+          }
+        }); 
     }
     onExport(element: InvestigationInterface) {
         var model_type = this.globalService.get_model_type(element._id)

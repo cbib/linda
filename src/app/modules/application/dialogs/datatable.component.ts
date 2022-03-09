@@ -20,6 +20,7 @@ private collection:string=""
 dataTable: any;
 dtOptions: any;
 tableData = [];
+loaded:boolean=false
 @ViewChild('dataTable', {static: true}) table;
   constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<DatatableComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) {
@@ -31,23 +32,29 @@ tableData = [];
     this.getDataFromSource()
   }
   getDataFromSource() {
-    this.globalService.get_data_file(this.model_key).subscribe(data => {
-      console.log(data)
-      this.tableData = data.data;
-      console.log(this.tableData)
-      var columns = []
-      var tableData_columns = Object.keys(this.tableData[0]);
-      tableData_columns.forEach(key => {
-        columns.push({title: key, data: key})
-      });
-      this.dtOptions = {
-        data: this.tableData,
-        columns: columns
-      };
-    }, err => {}, () => {
-      this.dataTable = $(this.table.nativeElement);
-      this.dataTable.DataTable(this.dtOptions);
-    });
+    this.globalService.get_data_file(this.model_key).subscribe(
+      data => {
+        console.log(data)
+        this.tableData = data.data;
+        console.log(this.tableData)
+        var columns = []
+        var tableData_columns = Object.keys(this.tableData[0]);
+        tableData_columns.forEach(key => {
+          columns.push({title: key, data: key})
+        });
+        this.dtOptions = {
+          data: this.tableData,
+          columns: columns
+        };
+      }, 
+      err => {
+
+      }, () => {
+        this.dataTable = $(this.table.nativeElement);
+        this.dataTable.DataTable(this.dtOptions);
+        this.loaded=true
+      }
+    );
   
   }
   onNoClick(): void {

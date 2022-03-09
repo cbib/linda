@@ -278,8 +278,6 @@ export class DefineComponent implements OnInit, OnDestroy {
     console.warn("detected values= ", this.detected_values)
     console.warn("detected associated header= ", this.associated_header)
     console.warn("detected study associated header= ", this.study_associated_header)
-
-
   }
   onModify(values: string) {
     console.log(this.associated_header)
@@ -303,7 +301,6 @@ export class DefineComponent implements OnInit, OnDestroy {
         }
         else if (["Experimental site name", "Start date of study", "End date of study", "Study Name", "Study title", "Study description", "Contact institution"].includes(this.extraction_component_field)) {
           /* if (this.has_study_associated_header()) {
-
           }
           else {
             console.log("study column not detected")
@@ -627,9 +624,6 @@ export class DefineComponent implements OnInit, OnDestroy {
   get detected_ids() {
     return this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0].associated_linda_id
   }
-
-
-
   clean_associated_header(_associated_header: AssociatedHeadersInterface, _study_id: string, _component_value) {
     console.log(_associated_header)
     
@@ -823,15 +817,6 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
 
   }
-
-
-
-
-
-
-
-
-
 
 
 

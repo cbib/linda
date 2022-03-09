@@ -78,7 +78,7 @@
         </table>
         <mat-divider></mat-divider>
 
-
+        <!-- Specific STUDY Part-->
         <section *ngIf="get_extraction_component_field==='Study unique ID'">
             <h4>Column informations</h4>
             <label for="lastName">Detected study unique ID(s) in this column</label>
@@ -154,8 +154,6 @@
                 </tbody>
             </table>
         </section>
-
-
         <section *ngIf="get_extraction_component_field!=='Study unique ID'">
             <div *ngIf="has_study_associated_header()">
                 <h4>Study informations</h4>
@@ -240,35 +238,92 @@
                 <p>You have to define a column for study id first</p>
             </div>
         </section>
-        <!-- <button *ngIf="get_associated_header.associated_values.length===0" (click)="onExtract()" [disabled]="get_studies_to_create.length===0" class="btn btn-primary">Extract</button> -->
-        <!--  <button *ngIf="get_associated_header.associated_values.length!==0" (click)="onRemove()" [disabled]="get_studies_to_remove.length===0" class="btn btn-primary">Remove</button> -->
-
-        <!--  <form [formGroup]="get_definecolumnForm" (ngSubmit)="onSubmit()">
-
-            <div class="form-group">
-                <label for="lastName">Detected study unique ID in this column</label>
-                <input type="text" placeholder="Study IDs*" formControlName="Study IDs" class="form-control"
-                    [ngClass]="{ 'is-invalid': submitted && define_f['Study IDs'].errors }" />
-                <div *ngIf="submitted && define_f['Study IDs'].errors" class="invalid-feedback">
-                    <div *ngIf="define_f['Study IDs'].errors.required">Study IDs has to be unique - A study as already
-                        the same ID</div>
-                </div> 
-            </div>
-            <div class="form-group">
-                <button [disabled]="get_studies_to_create.length===0 || get_component_extracted===false" class="btn btn-primary">Extract</button>
-                
-                <a class="btn btn-link">Cancel</a>
-            </div>
-        </form>-->
     </div>
     <div *ngIf="get_extraction_component==='observed_variable'">
-        <h4>Observed variable</h4>
         <app-form id="observed_variable_form" (notify)="get_output_from_child($event)"
             [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="'create'"
             inline="true" onlyTemplate="false" asTemplate="false" [role]="">
         </app-form>
     </div>
     <div *ngIf="get_extraction_component==='experimental_factor'">
+        <h4>Project informations</h4>
+        <label for="lastName">People involved in this project</label>
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            id="persontable" [ngClass]="{'table-dark': false}">
+            <thead class="text-nowrap">
+                <tr>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Name</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Project group</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:10px;text-align: center; cursor: move;"
+                    *ngFor="let person of get_projectPersons.persons ; index as i;">
+                    <td>{{person['Person name']}}</td>
+                    <td>{{get_projectPersons.groups[i]}}</td>
+                    <td>{{get_projectPersons.roles[i]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <mat-divider></mat-divider>
+        <h4>Studies informations</h4>
+        <label for="lastName">Persons and studies in your project</label>
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            id="studytable" [ngClass]="{'table-dark': false}">
+            <thead class="text-nowrap">
+                <tr>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Study ID</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person name</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:10px;text-align: center; cursor: move;"
+                    *ngFor="let person of get_studyPersons.persons ; index as i;">
+                    <td>{{get_studyPersons.studies[i]['Study unique ID']}}</td>
+                    <td>{{person['Person name']}}</td>
+                    <td>{{get_studyPersons.roles[i]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <mat-divider></mat-divider>
+        <div *ngIf="has_study_associated_header()">
+            <h4>Study informations</h4>
+            <label for="lastName">Detected study unique ID(s) in this data file</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
+                id="datatable_study_detected_id">
+                <thead title="table">
+                    <tr>
+                        <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s)
+                            in this file
+                        </th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let key of detected_studies ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{key}}
+                        </th>
+                        <th scope="col">
+                            {{get_study_associated_header_values(key)}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <app-form id="experimental_factor_form" (notify)="get_output_from_child($event)"
+            [model_type]="'experimental_factor'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="'create'"
+            inline="true" onlyTemplate="false" asTemplate="false" [role]="">
+        </app-form> -->
     </div>
     <div *ngIf="get_extraction_component==='observation_unit'">
     </div>

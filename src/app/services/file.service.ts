@@ -106,6 +106,9 @@ export class FileService {
         })
         );
     }
+
+
+
     read_csv(fileUploaded:File) {
         let fileReader = new FileReader();
         var csv:string|ArrayBuffer=""
@@ -127,9 +130,7 @@ export class FileService {
             var first_sheet_name = book.SheetNames[0];
             var worksheet = book.Sheets[first_sheet_name];
             var csv = XLSX.utils.sheet_to_csv(worksheet);
-            return this.get_csv(csv);
-            
-            
+            return this.get_csv(csv);     
         }
         fileReader.readAsArrayBuffer(fileUploaded);
         
@@ -137,7 +138,6 @@ export class FileService {
     get_csv(csvData: any) {
         return csvData.split(/\r|\n|\r/);
     }
-
     public build_path(root_id, models, selected_format) {
         var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         models['models_data'].forEach(
@@ -309,7 +309,6 @@ export class FileService {
         );
         return paths
     }
-
     public build_zip(paths, zipFile: JSZip) {
         //let zipFile: JSZip = new JSZip();
         //save a config file to reload
@@ -395,6 +394,11 @@ export class FileService {
         let blob_json = new Blob([JSON.stringify(dict)], { type: 'application/json' });
         zipFile.file('hierarchy.json', blob_json);
         return zipFile
+    }
+
+    open_zip(fileUploaded:File){
+        let zipFile: JSZip = new JSZip();
+        return zipFile.loadAsync(fileUploaded)
     }
 
     // public loadMultipleFiles() {
@@ -628,7 +632,6 @@ export class FileService {
             });
         }
     }
-
     public build_isa_model2(data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, edge={}) {
 
 
@@ -1293,7 +1296,6 @@ export class FileService {
         //console.log(return_data)
         return return_data
     }
-
     public build_isa_model(data, model, isa_model, return_data, model_type) {
         //console.log(return_data)
         var keys = Object.keys(data);
@@ -1518,7 +1520,6 @@ export class FileService {
         //console.log(return_data)
         return return_data
     }
-
     public saveFiles(model_data, submodels, collection_name = 'data', model_id = "", selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
         //console.log(submodels)
         var model_key = model_id.split("/")[1];
@@ -1545,7 +1546,6 @@ export class FileService {
         zipFile = this.build_zip(paths, zipFile)
         zipFile.generateAsync({ type: "blob" }).then(function (blob) { saveAs(blob, dir_root_id + ".zip"); });
     }
-
     public saveFile(data, model_id: string, model_type: string, selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
         let zipFile: JSZip = new JSZip();
         var formats = Object.keys(selected_format);
@@ -1641,7 +1641,6 @@ export class FileService {
 
 
     }
-
     public ConvertJsonModelTo(objArray, sep = ',') {
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';
@@ -1657,7 +1656,6 @@ export class FileService {
         }
         return str;
     }
-
     public ConvertInvestigationModelTo(objArray, sep = '\t') {
         ////console.log(objArray)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
@@ -1722,7 +1720,6 @@ export class FileService {
         ////console.log(str)
         return str;
     }
-
     public ConvertTraitModelTo(objArray, sep = ',') {
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';
@@ -1759,7 +1756,6 @@ export class FileService {
         }
         return str;
     }
-
     public ConvertStudyModelTo(objArray, sep = '\t') {
         //console.log(objArray)
 
@@ -2037,7 +2033,6 @@ export class FileService {
         // str += '\r\n';
         return str;
     }
-
     public ConvertAssayModelTo(objArray, sep = '\t') {
         //console.log(objArray)
 
@@ -2221,7 +2216,6 @@ export class FileService {
         // str += '\r\n';
         return str;
     }
-
     public ConvertMetadataJsonTo(objArray, sep = ',') {
         let data = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
 
@@ -2257,7 +2251,6 @@ export class FileService {
 
         return str;
     }
-
     public get_mapping_data_by_key(model: {}, key: string) {
         // //console.log(key)
         // //console.log(model)
@@ -2268,7 +2261,6 @@ export class FileService {
         }
         return mapping_data
     }
-
     public is_ontology_key(model: {}, key: string) {
 
         if (model[key]["Associated ontologies"]) {

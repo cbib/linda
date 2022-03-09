@@ -39,8 +39,6 @@ import { MapModule } from './modules/application/map/map.module'
 import { AssignModule } from './modules/application/assign/assign.module';
 import { RequestResetModule } from './modules/general/request-reset/request-reset.module';
 import { ResponseResetModule } from './modules/general/response-reset/response-reset.module';
-//import { DocumentationModule } from './modules/application/documentation/documentation.module'
-
 
 // MATERIAL MODULES 
 import { MatCardModule } from '@angular/material/card';
@@ -50,7 +48,6 @@ import { MatDividerModule} from '@angular/material/divider';
 // DIRECTIVES
 import { AdDirective } from './directives/ad.directive';
 import { DragDropDirective } from './directives/drag-drop.directive';
-//import { AlertComponent } from './directives/alert.component';
 
 // COMPONENTS
 import { AppComponent } from './app.component';
@@ -58,7 +55,6 @@ import { JwtInterceptor, ErrorInterceptor } from './helpers';
 import { AuthGuard } from './guards/auth.guards';
 import { AdBannerComponent } from './banners/ad-banner.component';
 import { PubAdComponent } from './banners/pub-ad.component';
-
 import { PublicationsComponent } from './modules/application/documentation/publications.component';
 
 // PAGES COMPONENTS 
@@ -72,7 +68,6 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
 @NgModule({
   declarations: [
     AppComponent,
-    ///AlertComponent,
     HomeComponent,
     AdminComponent,
     AdBannerComponent,

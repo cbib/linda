@@ -6,6 +6,19 @@
 </div>
 <div mat-dialog-content >
    
+    <section *ngIf="!loaded" class="format-section">
+        <div id="loader">
+            <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="loading"></div>
+        </div>
+    </section>
     <section class="format-section">
         <table class="table table-hover table-bordered table-responsive-md table-striped text-center" #dataTable ></table>
     </section>

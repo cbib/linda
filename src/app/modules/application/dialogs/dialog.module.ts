@@ -51,6 +51,7 @@ import { DefineComponent } from './define.component'
 import { DataTablesModule } from 'angular-datatables';
 import { AddColumnComponent } from './add-column.component';
 import { EditFormComponent } from './edit-form.component';
+import { ProjectLoaderComponent } from './project-loader.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { EditFormComponent } from './edit-form.component';
     MapColumnComponent,
     DefineComponent,
     AddColumnComponent,
-    EditFormComponent
+    EditFormComponent,
+    ProjectLoaderComponent
   ],
   imports: [
     CommonModule,
@@ -130,7 +132,8 @@ import { EditFormComponent } from './edit-form.component';
     ShareProject,
     GroupLoginComponent,
     FilesLoaderComponent,
-    EditFormComponent
+    EditFormComponent,
+    ProjectLoaderComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -154,7 +157,8 @@ import { EditFormComponent } from './edit-form.component';
     AssignComponent,
     DefineComponent,
     AddColumnComponent,
-    EditFormComponent
+    EditFormComponent,
+    ProjectLoaderComponent
   ]
 })
 export class DialogModule { }

@@ -115,8 +115,7 @@ const routes: Routes = [
   { 
     path: 'request-reset', 
     loadChildren: () => import('./modules/general/request-reset/request-reset.module')
-    .then(m => m.RequestResetModule),
-    canActivate: [AuthGuard] 
+    .then(m => m.RequestResetModule)
   },
   { 
     path: 'response-reset', 

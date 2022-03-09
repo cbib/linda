@@ -292,6 +292,18 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
+
+    test_script(name:string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+        };
+        return this.http.post(`${this.APIUrl + "/_api/foxx/scripts/test.js"}`, obj2send);
+    }
+
+    //http://localhost:8529/_db/linda/xeml/_api/foxx/scripts/test.js
+
     update_user(value: boolean, key: string, field: string, model_type: string) {
         let user = this.get_user();
         let obj2send = {

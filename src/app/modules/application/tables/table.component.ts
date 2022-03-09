@@ -6,12 +6,12 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements OnInit {
-  dataTable: any;
-  dtOptions: any;
-  tableData = [];
   @Input() data:{};
   @Input() data_columns:[]
   @ViewChild('dataTable', {static: true}) table;
+  dataTable: any;
+  dtOptions: any;
+  tableData = [];
 
   constructor(private router: Router,private route: ActivatedRoute) {
     this.route.queryParams.subscribe(
@@ -29,6 +29,7 @@ export class TableComponent implements OnInit {
 
   ngOnInit() {
     //console.log(this.data['filteredData'])
+    console.log(this.data)
     this.getDataFromSource()
   }
   getDataFromSource() {

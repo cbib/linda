@@ -92,12 +92,12 @@
                                     [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
                                 </div>
                                 <mat-menu #contextMenu="matMenu">
-                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add</button>
                                 </mat-menu>
                                 
                                 <mat-menu #contextSubMenu="matMenu">
-                                    <button mat-menu-item (click)="onAdd(false)">from original model template</button>
-                                    <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+                                    <button mat-menu-item (click)="onAdd(false)">new project</button>
+                                    <button mat-menu-item (click)="onImport()">from files</button>
                                 </mat-menu>
                                 <span class="span-project"></span>
                                 <mat-form-field appearance="standard">
@@ -169,12 +169,12 @@
                                     [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
                                 </div>
                                 <mat-menu #contextMenu="matMenu">
-                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add project</button>
+                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add</button>
                                 </mat-menu>
                                 
                                 <mat-menu #contextSubMenu="matMenu">
-                                    <button mat-menu-item (click)="onAdd(false)">from original model template</button>
-                                    <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+                                    <button mat-menu-item (click)="onAdd(false)">new project</button>
+                                    <button mat-menu-item (click)="onImport()">from files</button>
                                 </mat-menu>
                                 <span class="span-project"></span>
                                 <mat-form-field appearance="standard">
