@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Constants } from "../constants";
 import { User } from '../models';
 import { UserInterface } from '../models/linda/person';
+import * as uuid from 'uuid';
 
 export interface AuthResponse {
     success: boolean;
@@ -77,8 +78,11 @@ export class AuthenticationService {
 
     }
     requestReset(email_obj) {
+        let token = uuid.v4()
+
         let obj2send = {
             'email': email_obj.email,
+            'token': token
         };
         console.log(obj2send)
         ///return null
@@ -86,15 +90,17 @@ export class AuthenticationService {
         //return this.http.post(this.nodemailerUrl,email_obj)
        // return this.http.post(`${this.nodemailerUrl}`, email_obj);
         //return this.http.post(this.APIUrl + 'send-mail/', obj2send);
-        return this.http.post(`${this.APIUrl + "sendmailbyemail/"}`, obj2send);
+        return this.http.post(`${this.APIUrl + "request-reset/"}`, obj2send);
 
     }
 
-    newPassword(body): Observable<any> {
-        return this.http.post(`${this.APIUrl}new-password`, body);
+    resetPassword(body:{resettoken:string, newPassword:string, confirmPassword:string}): Observable<any> {
+        console.log(body)
+        //return this.http.post(`${this.APIUrl}reset-password`, body);
+        return this.http.post(`${this.APIUrl + "reset-password/"}`, body);
     }
 
-    ValidPasswordToken(body): Observable<any> {
-       return this.http.post(`${this.APIUrl}valid-password-token`, body);
+    ValidPasswordToken(obj2send:{resettoken:string}) {
+        return this.http.post(`${this.APIUrl + "valid-password-token/"}`, obj2send);
     }
 }

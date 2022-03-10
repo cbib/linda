@@ -38,7 +38,6 @@ import { AlertModule } from './modules/application/alert/alert.module'
 import { MapModule } from './modules/application/map/map.module'  
 import { AssignModule } from './modules/application/assign/assign.module';
 import { RequestResetModule } from './modules/general/request-reset/request-reset.module';
-import { ResponseResetModule } from './modules/general/response-reset/response-reset.module';
 
 // MATERIAL MODULES 
 import { MatCardModule } from '@angular/material/card';
@@ -62,6 +61,8 @@ import { AdminComponent } from './components/admin/admin.component';
 import { HomeComponent } from './modules/general/home/home.component';
 import { HomeNewComponent } from './modules/general/home/home-new.component';
 import { NotFoundComponent } from './modules/general/not-found/not-found.component';
+import { ResponseResetComponent } from './modules/general/response-reset/response-reset.component';
+
 
 
 
@@ -76,7 +77,8 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     DragDropDirective,
     PublicationsComponent,
     HomeNewComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    ResponseResetComponent
   ],
   imports: [
     BrowserModule,
@@ -119,8 +121,7 @@ import { NotFoundComponent } from './modules/general/not-found/not-found.compone
     AlertModule,
     MapModule,
     AssignModule,
-    RequestResetModule,
-    ResponseResetModule
+    RequestResetModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],

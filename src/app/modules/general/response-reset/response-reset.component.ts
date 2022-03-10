@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Md5 } from 'ts-md5/dist/md5'
 
 @Component({
   selector: 'app-response-reset',
@@ -12,7 +13,7 @@ export class ResponseResetComponent implements OnInit {
   ResponseResetForm: FormGroup;
   errorMessage: string;
   successMessage: string;
-  resetToken: null;
+  resetToken: string;
   CurrentState: any;
   IsResetFormValid = true;
   constructor(
@@ -22,28 +23,37 @@ export class ResponseResetComponent implements OnInit {
     private fb: FormBuilder ) {
 
     this.CurrentState = 'Wait';
-    this.route.params.subscribe(params => {
-      this.resetToken = params.token;
-      console.log(this.resetToken);
-      this.VerifyToken();
-    });
+    this.route.queryParams.subscribe(
+      params => {
+        console.log(params)
+        this.resetToken = params.token;
+        console.log(this.resetToken);
+        this.VerifyToken();
+      }
+      
+    );
   }
 
 
   ngOnInit() {
-
     this.Init();
   }
 
   VerifyToken() {
-    /* this.authService.ValidPasswordToken({ resettoken: this.resetToken }).subscribe(
+    this.authService.ValidPasswordToken({ 'resettoken': this.resetToken }).toPromise().then(
       data => {
-        this.CurrentState = 'Verified';
+        console.log(data)
+        if (data['success']){
+            this.CurrentState = 'Verified';
+        }
+        else{
+          this.CurrentState = 'NotVerified';
+        }
       },
       err => {
         this.CurrentState = 'NotVerified';
       }
-    ); */
+    );
   }
 
   Init() {
@@ -78,7 +88,10 @@ export class ResponseResetComponent implements OnInit {
     console.log(form.get('confirmPassword'));
     if (form.valid) {
       this.IsResetFormValid = true;
-      this.authService.newPassword(this.ResponseResetForm.value).subscribe(
+      console.log(this.ResponseResetForm.value)
+      this.ResponseResetForm.get('newPassword').setValue(Md5.hashStr(this.ResponseResetForm.value.newPassword))
+      this.ResponseResetForm.get('confirmPassword').setValue(Md5.hashStr(this.ResponseResetForm.value.confirmPassword))
+      this.authService.resetPassword(this.ResponseResetForm.value).subscribe(
         data => {
           this.ResponseResetForm.reset();
           this.successMessage = data.message;
@@ -93,6 +106,7 @@ export class ResponseResetComponent implements OnInit {
           }
         }
       );
-    } else { this.IsResetFormValid = false; }
+    } 
+    else { this.IsResetFormValid = false; }
   }
 }

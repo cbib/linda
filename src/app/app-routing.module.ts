@@ -7,12 +7,13 @@ import { HomeComponent } from './modules/general/home/home.component';
 import { AdminComponent } from './components/admin/admin.component'
 import { HomeNewComponent } from './modules/general/home/home-new.component';
 import { NotFoundComponent } from './modules/general/not-found/not-found.component';
-
+import { ResponseResetComponent } from './modules/general/response-reset/response-reset.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home2', pathMatch: 'full' },
   //{ path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'home2',component: HomeNewComponent, canActivate: [AuthGuard]},
+  { path: 'response-reset',component: ResponseResetComponent},
   {
     path: 'login',
     loadChildren: () => import('./modules/general/login/login.module')
@@ -117,13 +118,11 @@ const routes: Routes = [
     loadChildren: () => import('./modules/general/request-reset/request-reset.module')
     .then(m => m.RequestResetModule)
   },
-  { 
+  /* { 
     path: 'response-reset', 
     loadChildren: () => import('./modules/general/response-reset/response-reset.module')
-    .then(m => m.ResponseResetModule),
-    canActivate: [AuthGuard] 
-    
-  },
+    .then(m => m.ResponseResetModule)
+  }, */
   // DOCUMENTATION MODULE
   { 
     path: '', 

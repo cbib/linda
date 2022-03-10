@@ -54,7 +54,10 @@ const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
 const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
-
+//const uuidV4 = require('uuid/v4');
+//const uuid = require('uuid');
+//const { v4: uuidv4 } = require('uuid');
+//var uuid = require('uuid');
 
 /* const nodemailer = require("nodemailer");
 require("dotenv").config();
@@ -293,7 +296,7 @@ const getUserName = require("./queries/get-user-name");
 
 const telegram = require("./queries/telegram-chat");
 
-const sendMail = require("./queries/send-mail");
+
 
 router.get("/admin-username", (req, res) => {
   res.json(getUserName(true));
@@ -308,16 +311,117 @@ router.post("/send-telegram", (req, res) => {
     res.json(telegram);
   });
 
-router.post('/sendmailbyemail', (req, res) => {
-    const email = req.body.email
-    console.log("email in api server.js", email)
 
-    sendMail({'email':email})
+router.post('/reset-password', (req, res) => {
+    const resettoken = req.body.resettoken
+    const newPassword = req.body.newPassword
+    const confirmPassword = req.body.confirmPassword
+    console.log(resettoken)
+    const result = db._query(aql`
+        for user in users 
+            filter user['token']== ${resettoken}
+                return {user:user}
+    `).toArray();
+    if (result[0] === null){
+        res.send({success:false})
+    }
+    else{
+        let personId= result[0]['user']['Person ID']
+        var update_passwordd = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'password':${newPassword}}  IN ${users} RETURN NEW `);
+        var update_token = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':""}  IN ${users} RETURN NEW `);
+        res.send({success:true})
+    }
+}).body(joi.object({
+    resettoken :joi.string().required(),
+    newPassword :joi.string().required(),
+    confirmPassword :joi.string().required()
+}).required(), 'Values to check.')
+.response(
+    joi.object({
+        success: joi.boolean().required()
+    }
+    ).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('check if user exist.');
+
+
+router.post('/valid-password-token', (req, res) => {
+    const resettoken = req.body.resettoken
+    console.log(resettoken)
+    const result = db._query(aql`
+        for user in users 
+            filter user['token']== ${resettoken}
+                return {user:user}
+    `).toArray();
+    if (result[0] === null){
+        res.send({success:false})
+    }
+    else{
+        res.send({success:true})
+    }
+}).body(joi.object({
+    resettoken :joi.string().required()
+}).required(), 'Values to check.')
+.response(
+    joi.object({
+        success: joi.boolean().required()
+    }
+    ).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('check if user exist.');
+
+//const sendMail = require("./queries/send-mail");
+router.post('/request-reset', (req, res) => {
+    const email = req.body.email
+    const token = req.body.token
+    console.log("email in api server.js", email)
+    //check that person email exists then add token to corresponding user
+    const users = db._collection('users');
+
+    try {
+        const result = db._query(aql`
+        for person in persons 
+            filter person['Person email']==${email} 
+                for user in users 
+                    filter user['Person ID']== person['Person ID']
+                        return {user:user, person:person}
+        `).toArray();
+        console.log("user found with this email", result[0]['user'])
+        // add token
+        result[0]['user']['token'] = token
+        console.log("user found with this email", result[0]['user'])
+        console.log("person found with this email", result[0]['person'])
+        // Update user 
+        let personId= result[0]['person']['Person ID']
+        var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
+        // send mail with email and token 
+
+
+        res.send({success:true});
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
+        }
+        res.throw(404, 'The entry does not exist', e);
+    }
+
+    
+    
+
+    
+
+    // Here must call .sh script that run mail tool to send to email
+    // Script exists on VM in /var/www/html
+
+
+    //sendMail({'email':email})
     //res.json(sendMail({'email':email}));
     res.send({success:true})
   })    
   .body(joi.object({
-    email: joi.string().required()
+    email: joi.string().required(),
+    token :joi.string().required()
 }).required(), 'Values to check.')
 .response(
     joi.object({
