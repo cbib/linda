@@ -564,7 +564,7 @@ router.post('/authenticate_group', function (req, res) {
         }
         else {
 
-            //add edge in group edge
+            // add edge in group edge
             var groups_edge_coll = 'groups_edge'
             if (!db._collection(groups_edge_coll)) {
                 db._createEdgeCollection(groups_edge_coll);
@@ -1514,31 +1514,6 @@ router.get('/get_by_key/:model_type/:key', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
-router.get('/get_template_by_key/:model_type/:key', function (req, res) {
-    try {
-        var model_type = req.pathParams.model_type;
-        var key = req.pathParams.key;
-        var data = [];
-        var datatype = model_type + '_templates';
-        const coll = db._collection(datatype);
-        if (!coll) {
-            db._createDocumentCollection(datatype);
-        }
-        data = coll.firstExample('_key', key);
-        res.send(data);
-    }
-    catch (e) {
-        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
-            throw e;
-        }
-        res.throw(404, 'The entry does not exist', e);
-    }
-
-}).pathParam('model_type', joi.string().required(), 'model requested.')
-    .pathParam('key', joi.string().required(), 'unique key.')
-    .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
-    .summary('Retrieve an entry')
-    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
 router.get('/get_data_filename/:parent_key/:model_type', function (req, res) {
@@ -3181,6 +3156,7 @@ router.post('/add_template', function (req, res) {
     var password = req.body.password;
     var values = req.body.values;
     var model_type = req.body.model_type;
+    var role = req.body.role;
 
 
     var datatype = "";
@@ -3194,6 +3170,12 @@ router.post('/add_template', function (req, res) {
     if (!coll) {
         db._createDocumentCollection(datatype);
     }
+    // get users edge
+    var users_edge_coll = 'users_edge'
+    if (!db._collection(users_edge_coll)) {
+        db._createEdgeCollection(users_edge_coll);
+    }
+    const users_edge = db._collection(users_edge_coll);
 
     var errors = []
     var successes = []
@@ -3226,7 +3208,7 @@ router.post('/add_template', function (req, res) {
     }
     else {
         /////////////////////////////
-        //add template
+        // add template
         /////////////////////////////
 
         if (!db._collection("templates")) {
@@ -3242,7 +3224,7 @@ router.post('/add_template', function (req, res) {
 
         var data = [];
         //var cleaned_values = { ...values }
-
+        values["_model_type"]=model_type
         data = db._query(aql`INSERT ${values} IN ${template_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
 
         //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
@@ -3251,8 +3233,17 @@ router.post('/add_template', function (req, res) {
                 "_from": user[0]._id,
                 "_to": data[0].id
             };
-            const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${templates_edge} RETURN NEW `);
+            
+            const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${users_edge} RETURN NEW `);
             //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+            var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
+            var obj2 = {
+                "_from": data[0].id,
+                "_to": person[0],
+                "role": role
+            };
+            const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${templates_edge} RETURN NEW `);
+
             successes.push({ success: true, message: 'Everything is good for template saving', _id: data[0].id })
         }
         //Document exists
@@ -3275,6 +3266,7 @@ router.post('/add_template', function (req, res) {
         password: joi.string().required(),
         values: joi.object().required(),
         model_type: joi.string().required(),
+        role:joi.string().required()
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
@@ -3284,46 +3276,6 @@ router.post('/add_template', function (req, res) {
     }).required(), 'response to send.')
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
-
-
-router.post('/req-reset-password', function (req, res) {
-    //const sendgrid = require('sendgrid');
-    
-    var email = req.body.email;
-    console.log(email)
-    const SENDGRID_API_KEY = "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"
-    sgMail.setApiKey(SENDGRID_API_KEY)
-    const msg = {
-        to: 'bdartigues@gmail.com',
-      // Change to your recipient
-        from: 'bdartigues@gmail.com',
-      // Change to your verified sender
-        subject: 'Sending with SendGrid Is Fun',
-        text: 'and easy to do anywhere, even with Node.js',
-        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-     }
-     sgMail.send(msg)
-     res.send({success:true, message: 'Email sent\n', response: {}})
-     /* .then((resp) => {
-         console.log('Email sent\n', resp)
-         res.send({success:true, message: 'Email sent\n', response: resp})
-       })
-       .catch((error) => {
-         console.error(error)
-         res.send({success:false, message: 'Email not sent\n', response: error})
-     }) */
-})
-.body(joi.object({
-        email:joi.string().required()
-}).required(), 'Values to check.')
-.response(joi.object({
-    success: joi.boolean().required(),
-    message: joi.string().required(),
-    response: joi.object().required()
-}).required(), 'response to send.')
-.summary('List entry keys')
-.description('add MIAPPE description for given model.');
-
 
 
 //Post new data
@@ -4373,7 +4325,7 @@ router.post('/add_observation_units', function (req, res) {
         //Document exists add edges in edge collection
         else {
 
-            //add from studdy to observation unit edge
+            // add from studdy to observation unit edge
             var obj = {
                 "_from": parent_id,
                 "_to": data[0].id
@@ -4393,7 +4345,7 @@ router.post('/add_observation_units', function (req, res) {
                     var biological_material_data = values['biological_materials'][i];
                     var bm_db_id = ''
                     var bm_obj = {}
-                    //add biological_material link to observation unit edge 
+                    // add biological_material link to observation unit edge 
                     for (var j = 0; j < biological_material_data.length; j++) {
                         if (biological_material_data[j]['lindaID'] !== bm_db_id) {
                             if (bm_db_id !== '') {
@@ -5243,17 +5195,32 @@ router.post('/update_observation_unit', function (req, res) {
  ******************************************************************************************
  ******************************************************************************************/
 
+
+ router.get('/get_templates/:person_key', function (req, res) {
+    var person_id = "persons/" + req.pathParams.person_key;
+    var data = [];
+    data = db._query(aql`FOR v, e, s IN 1..3 INBOUND ${person_id} GRAPH 'global' PRUNE e._to ==${person_id} FILTER CONTAINS(e._from, "templates") RETURN {template:s.vertices[1],role:e.role, groups:{template_id:v._id, group_keys:e.group_keys}, roles:{template_id:v._id, role:e.role}}`);
+    res.send(data);
+})
+    .pathParam('person_key', joi.string().required(), 'user id of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    //.response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+
+
 //Get templates - used in template selection dialog component
-router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
+router.get('/get_templates_by_user/:user_key/:model_coll/', function (req, res) {
     try {
         var user_key = req.pathParams.user_key;
         var model_coll = req.pathParams.model_coll;
 
         var coll_name = 'templates'
         var data = [];
-        const edges = db._collection('templates_edge');
-        if (!edges) {
-            db._createDocumentCollection('templates_edge');
+        const users_edge = db._collection('users_edge');
+        if (!users_edge) {
+            db._createDocumentCollection('users_edge');
         }
         const coll = db._collection(coll_name);
         if (!coll) {
@@ -5262,7 +5229,7 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
 
         var user_id = "users/" + user_key
 
-        var edges_data = edges.byExample({ "_from": user_id }).toArray();
+        var edges_data = users_edge.byExample({ "_from": user_id }).toArray();
         for (var i = 0; i < edges_data.length; i++) {
             if (edges_data[i]['_to'].includes(coll_name)) {
                 //var tmp={'_id':edges_data[i]['_to']};
@@ -5290,9 +5257,33 @@ router.get('/get_templates/:user_key/:model_coll/', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
+router.get('/get_template_by_key/:key', function (req, res) {
+        try {
+            var key = req.pathParams.key;
+            var data = [];
+            var datatype = 'templates';
+            const coll = db._collection(datatype);
+            if (!coll) {
+                db._createDocumentCollection(datatype);
+            }
+            data = coll.firstExample('_key', key);
+            res.send(data);
+        }
+        catch (e) {
+            if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+                throw e;
+            }
+            res.throw(404, 'The entry does not exist', e);
+        }
+    
+    }).pathParam('key', joi.string().required(), 'unique key.')
+        .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
+        .summary('Retrieve an entry')
+        .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+    
 
 //Get templates
-router.get('/get_all_templates/:user_key/', function (req, res) {
+/* router.get('/get_all_templates/:user_key/', function (req, res) {
     try {
         var user_key = req.pathParams.user_key;
 
@@ -5333,7 +5324,7 @@ router.get('/get_all_templates/:user_key/', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
-
+ */
 
 
 //Post new templates data

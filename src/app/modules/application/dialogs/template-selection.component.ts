@@ -40,7 +40,7 @@ export class TemplateSelectionComponent implements OnInit {
 
     ngOnInit() {
         if (this.search_type=="Template"){
-            this.globalService.get_templates(this.user_key,this.model_type).toPromise().then(
+            this.globalService.get_templates_by_user(this.user_key,this.model_type).toPromise().then(
                 data => {
                     this.result=data;
                 }

@@ -23,6 +23,7 @@ export class AssignComponent implements OnInit, OnDestroy{
   private parent_id:string;
   private group_key:string;
   private tableData_columns:string[]
+  loaded:boolean=false
   dataTable: any;
   //dtOptions: any;
   dtOptions: DataTables.Settings = {};
@@ -85,7 +86,7 @@ export class AssignComponent implements OnInit, OnDestroy{
         console.log("no errors")
         this.dataTable = $(this.table.nativeElement);
         this.dataTable.DataTable(this.dtOptions);
-        
+        this.loaded=true
       });
     }
     onDefine(column:string){
@@ -107,9 +108,14 @@ export class AssignComponent implements OnInit, OnDestroy{
     get get_tableData_columns(){
       return this.tableData_columns
     }
+    get get_loaded(){
+      return this.loaded
+    } 
+
     onNoClick(): void {
       this.dialogRef.close({event:"Cancelled"});
     }
+
   
     onOkClick(): void {
       this.dialogRef.close({event:"Confirmed", data_file:this.data_file});

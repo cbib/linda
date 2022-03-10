@@ -10,10 +10,23 @@
         <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_column()">Add a new column</button>
         <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_composite()">Build composite column</button>
         <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="refresh()">Refresh file</button>
+        <br>
+    </section>
+    <section *ngIf="!get_loaded" class="format-section">
+        <div id="loader">
+            <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="loading"></div>
+        </div>
+    </section>
 
-        <br>
-        <mat-divider></mat-divider>
-        <br>
+    <section class="format-section">   
         <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"  #dataTable >
             <thead>
                 <tr>

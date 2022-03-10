@@ -433,18 +433,20 @@ export class FormComponent implements OnInit//, AfterViewInit
             return value;
         }
     }
-    onOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
+    onOntologyTermSelection(ontology_id: string, key: string, multiple: string) {
         //this.show_spinner = true;
+        console.log(key)
         const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
         // dialogRef..afterOpened().subscribe(result => {
         //     this.show_spinner = false;
         // })
         dialogRef.afterClosed().subscribe(result => {
             if (result !== undefined) {
+                console.log(result)
                 this.startfilling = true;
                 this.ontology_type = result.ontology_type;
                 this.selected_set = result.selected_set;
-                if (multiple) {
+                if (multiple==='true') {
                     var term_ids = this.modelForm.controls[key].value + '/'
                     for (var i = this.selected_set.length - 1; i >= 0; i--) {
                         term_ids += this.selected_set[i]['id'] + '/'
@@ -472,6 +474,7 @@ export class FormComponent implements OnInit//, AfterViewInit
 
                         if (key.includes(" accession number")) {
                             var_key = key.split(" accession number")[0]
+                            console.warn(var_key)
                             var_name = var_key + " name"
                             var_name_id = var_key + " ID"
                             var_description = var_key + " description"
@@ -545,7 +548,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     get_model_by_key() {
         this.model_to_edit = [];
         if( this.mode==="edit_template"){
-            this.globalService.get_template_by_key(this.model_key, this.model_type).toPromise().then(data => {
+            this.globalService.get_template_by_key(this.model_key).toPromise().then(data => {
                 console.log(data)
                 this.model_to_edit = data;
                 this.modelForm.patchValue(this.model_to_edit);
@@ -677,7 +680,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 console.warn(this.onlyTemplate)
                 if (this.onlyTemplate){
                     console.warn("supposed to be true",this.onlyTemplate)
-                    this.globalService.add_template(this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
+                    this.globalService.add_template(this.modelForm.value, this.model_type, this.role).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
                                 this.model_id = data["_id"];
@@ -698,7 +701,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                     );
                 }
                 else{
-                    console.warn("supposed to be true",this.onlyTemplate)
+                    console.warn("supposed to be false",this.onlyTemplate)
                 //console.log(this.asTemplate)
                     this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.asTemplate).pipe(first()).toPromise().then(
                         data => {

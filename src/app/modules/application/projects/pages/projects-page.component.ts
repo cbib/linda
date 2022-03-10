@@ -11,7 +11,6 @@ import { MediaObserver } from "@angular/flex-layout";
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort'
 import { MatTableDataSource } from '@angular/material/table';
-import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
 import { Investigation } from 'src/app/models/linda/investigation';
@@ -66,7 +65,7 @@ export class ProjectsPageComponent implements OnInit {
     dtOptions: DataTables.Settings = {};
     tableData = [];
     expandedElement: InvestigationInterface | null;
-    group_key:string;
+    group_key: string;
 
     public vertices: InvestigationInterface[] = []
     public projects: any = []
@@ -75,12 +74,12 @@ export class ProjectsPageComponent implements OnInit {
     private parent_id: string;
     private model_key: string;
     private model_selected: string
-    private roles:{project_id:string,role:string}[]=[]
-    private group_keys:{project_id:string,group_keys:string[]}[]=[]
+    private roles: { project_id: string, role: string }[] = []
+    private group_keys: { project_id: string, group_keys: string[] }[] = []
 
     //private dataSource
     private dataSource: MatTableDataSource<InvestigationInterface>;
-    private user_groups=[]
+    private user_groups = []
     private model_type: string = 'investigation'
     private displayedColumns: string[] = ['Investigation unique ID', 'Investigation description', 'edit'];
 
@@ -98,8 +97,8 @@ export class ProjectsPageComponent implements OnInit {
         private _cdr: ChangeDetectorRef
     ) {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        this.activeTab="Guests"
-        this.group_key="Guests"
+        this.activeTab = "Guests"
+        this.group_key = "Guests"
     }
     private initialSelection = []
     private checklistSelection = new SelectionModel<MatChip>(true, this.initialSelection /* multiple */);
@@ -122,9 +121,9 @@ export class ProjectsPageComponent implements OnInit {
             this.dataSource.paginator.firstPage();
         }
     }
-    changeTab(tab:string){
-        this.activeTab=tab
-        this.group_key=tab
+    changeTab(tab: string) {
+        this.activeTab = tab
+        this.group_key = tab
         console.log(this.activeTab)
         this.get_projects()
     }
@@ -142,26 +141,26 @@ export class ProjectsPageComponent implements OnInit {
         console.log(this.currentUser)
 
     }
-    get_user_groups(){
+    get_user_groups() {
         this.userService.get_groups(this.currentUser._key).toPromise().then(
             grps => {
                 console.log(grps)
-                for (var g in grps){
+                for (var g in grps) {
                     console.log(g)
                     this.user_groups.push(grps[g].split('/')[1])
                 }
                 console.log(this.user_groups)
-                
+
             }
         );
     }
-    get_role(element: InvestigationInterface):string{
-        return this.roles.filter(inv=> inv.project_id==element._id)[0]['role']
+    get_role(element: InvestigationInterface): string {
+        return this.roles.filter(inv => inv.project_id == element._id)[0]['role']
     }
     /* get_group_keys(element: InvestigationInterface):string{
         return this.group_keys.filter(inv=> inv.project_id==element._id)[0]['group_keys']
     } */
-    get_user_group(group_key:string){
+    get_user_group(group_key: string) {
         return this.user_groups.includes(group_key)
     }
     async get_projects() {
@@ -171,9 +170,9 @@ export class ProjectsPageComponent implements OnInit {
                 console.log(person_id)
                 return this.globalService.get_projects(person_id[0].split("/")[1]).toPromise().then(
                     data => {
-                        console.log("data",data)
-                        this.roles=data.map(project => project['roles']);
-                        this.group_keys=data.map(project => project['groups']);
+                        console.log("data", data)
+                        this.roles = data.map(project => project['roles']);
+                        this.group_keys = data.map(project => project['groups']);
                         const projects = data.map(project => project['project']);
                         /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
                         const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
@@ -187,7 +186,7 @@ export class ProjectsPageComponent implements OnInit {
                         console.log("this.group_keys",this.group_keys)
                         console.log("projects",projects)
                         console.log("this.roles",this.roles) */
-                        
+
                         this.dataSource = new MatTableDataSource(getProjects);
                         console.log(this.dataSource)
                         this.dataSource.paginator = this.paginator;
@@ -206,15 +205,15 @@ export class ProjectsPageComponent implements OnInit {
     // onDone() {
     //     this.wizardService.onDone(false, this.currentUser, this.vertices)
     // }
-    onAccessGroup(_group_key:string){
+    onAccessGroup(_group_key: string) {
         console.log(this.currentUser)
-        const dialogRef = this.dialog.open(GroupLoginComponent, { width: '500px', data: { group_key: _group_key , current_user:this.currentUser} });
+        const dialogRef = this.dialog.open(GroupLoginComponent, { width: '500px', data: { group_key: _group_key, current_user: this.currentUser } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 console.log(result['logged'])
                 this.user_groups.push(_group_key)
-                this.router.navigate(['/projects_page'], { queryParams: {  activeTab: _group_key}});
-                
+                this.router.navigate(['/projects_page'], { queryParams: { activeTab: _group_key } });
+
             }
         });
 
@@ -275,20 +274,20 @@ export class ProjectsPageComponent implements OnInit {
             });
         });
     }
-    onImport(){
+    onImport() {
         const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id } });
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            if (result.event == 'Confirmed') {
+            if (result) {
+                if (result.event == 'Confirmed') {
 
-            
+
               /* let model_id = this.collection + '/' + this.model_key
               this.router.routeReuseStrategy.shouldReuseRoute = () => false;
               this.router.onSameUrlNavigation = 'reload';
               this.router.navigate(['/projects_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: model_id, model_key: this.model_key, model_type: 'investigation', activeTab: 'project_data_files', mode: "edit", group_key: this.group_key } });
  */            }
-          }
-        }); 
+            }
+        });
     }
     onExport(element: InvestigationInterface) {
         var model_type = this.globalService.get_model_type(element._id)
@@ -321,8 +320,8 @@ export class ProjectsPageComponent implements OnInit {
     }
     onEdit(elem: InvestigationInterface) {
         console.log("on Edit")
-        let role=this.roles.filter(inv=> inv.project_id==elem._id)[0]['role']
-        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'], model_type: "investigation", model_key: elem._key, model_id: elem._id, mode: "edit", activeTab: 'identifiers', role: role, group_key:this.group_key} });
+        let role = this.roles.filter(inv => inv.project_id == elem._id)[0]['role']
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'], model_type: "investigation", model_key: elem._key, model_id: elem._id, mode: "edit", activeTab: 'identifiers', role: role, group_key: this.group_key } });
     }
     onNext(node: string) {
         ////console.log(node)
@@ -409,81 +408,32 @@ export class ProjectsPageComponent implements OnInit {
         });
 
     }
-    onAdd(template: boolean = false) {
-
+    onAdd() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        if (template) {
-            const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: this.model_type, values: {}, parent_id: this.parent_id } });
-            dialogRef.afterClosed().subscribe(result => {
-
-                if (result) {
-                    var keys = Object.keys(result.values);
-
-                    for (var i = 0; i < keys.length; i++) {
-                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-                            keys.splice(i, 1);
-                            //var k=this.keys[i]
-                            i--;
-                        }
-                    }
-                    var new_values = {}
-                    keys.forEach(attr => { new_values[attr] = result.values[attr] })
-                    ////console.log(new_values)
-
-                    this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
-                        data => {
-                            if (data["success"]) {
-                                //////console.log(data["message"])
-                                //this.model_id=data["_id"];
-                                this.ngOnInit();
-                                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
-
-                                this.alertService.success(message)
-                                this.reloadComponent(['/projects_tree'])
-                                // here probably mode edit to open project template page
-                                //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-                                return true;
-                            }
-                            else {
-                                //////console.log(data["message"])
-                                this.alertService.error("this form contains errors! " + data["message"]);
-
-                                return false;
-                                //this.router.navigate(['/studies']);
-                            }
-                        }
-                    );
-                }
-            });
-        }
-        else {
-            let new_step = 0
-            if (!this.currentUser.tutoriel_done) {
-                if (this.currentUser.tutoriel_step === "0") {
-                    new_step = 1
-                    this.currentUser.tutoriel_step = new_step.toString()
-                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                }
-                else {
-                    this.alertService.error("You are not in the right form as requested by the tutorial")
-                }
+        let new_step = 0
+        if (!this.currentUser.tutoriel_done) {
+            if (this.currentUser.tutoriel_step === "0") {
+                new_step = 1
+                this.currentUser.tutoriel_step = new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
-            let new_investigation: Investigation = new Investigation()
-            console.log(new_investigation)
-            this.globalService.add(new_investigation, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
-                data => {
-                    if (data["success"]) {
-                        console.log(data)
-                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers' , role:"owner"} });
-                        //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-
-                    }
-                });;
+            else {
+                this.alertService.error("You are not in the right form as requested by the tutorial")
+            }
         }
+        let new_investigation: Investigation = new Investigation()
+        console.log(new_investigation)
+        this.globalService.add(new_investigation, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
+            data => {
+                if (data["success"]) {
+                    console.log(data)
+                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner" } });
+                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
 
+                }
+            });;
     }
-    invitePerson(group_key){
+    invitePerson(group_key) {
         console.log(group_key)
     }
     reloadCurrentRoute() {
@@ -552,7 +502,7 @@ export class ProjectsPageComponent implements OnInit {
     get get_model_type() {
         return this.model_type
     }
-    get get_group_key(){
+    get get_group_key() {
         return this.group_key
     }
 

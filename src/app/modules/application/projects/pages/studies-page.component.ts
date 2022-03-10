@@ -9,9 +9,8 @@ import { MatChip } from '@angular/material/chips';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MediaObserver } from "@angular/flex-layout";
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort} from '@angular/material/sort'
-import { MatTableDataSource} from '@angular/material/table';
-import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
+import { MatSort } from '@angular/material/sort'
+import { MatTableDataSource } from '@angular/material/table';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
 import { UserInterface } from 'src/app/models/linda/person';
@@ -37,9 +36,9 @@ import { ShareProject } from '../../dialogs/share-project';
 export class StudiesPageComponent implements OnInit {
 
     @Input() search_string: string;
-    @Input('parent_id') parent_id:string;
-    @Input('group_key') group_key:string;
-    @Input('role') role:string;
+    @Input('parent_id') parent_id: string;
+    @Input('group_key') group_key: string;
+    @Input('role') role: string;
     @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
@@ -58,14 +57,14 @@ export class StudiesPageComponent implements OnInit {
     // public statistics: {};
     private displayed = false;
     loaded: boolean = false
-    private currentUser:UserInterface
+    private currentUser: UserInterface
     private multiple_selection: boolean = false;
     private parent_key: string;
     private model_selected: string
     public vertices: any = []
     public studies: any = []
-    private roles:{study_id:string,role:string}[]=[]
-    
+    private roles: { study_id: string, role: string }[] = []
+
 
     startTime: Date;
     endTime: Date;
@@ -90,11 +89,11 @@ export class StudiesPageComponent implements OnInit {
         public dialog: MatDialog
     ) {
         this.route.queryParams.subscribe(
-             params => {
-                 this.parent_id = params['parent_id'];
-                 this.group_key = params['group_key'];
-                 this.role== params['role'];
-             }
+            params => {
+                this.parent_id = params['parent_id'];
+                this.group_key = params['group_key'];
+                this.role == params['role'];
+            }
         );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         console.warn("group key in studies page", this.group_key)
@@ -111,9 +110,9 @@ export class StudiesPageComponent implements OnInit {
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
-    
+
         if (this.dataSource.paginator) {
-          this.dataSource.paginator.firstPage();
+            this.dataSource.paginator.firstPage();
         }
     }
     async ngOnInit() {
@@ -145,33 +144,33 @@ export class StudiesPageComponent implements OnInit {
             }
         )
     }
-    get_user_role(element: StudyInterface):string{
-        return this.roles.filter(inv=> inv.study_id==element._id)[0]['role']
+    get_user_role(element: StudyInterface): string {
+        return this.roles.filter(inv => inv.study_id == element._id)[0]['role']
     }
-    get get_role(){
+    get get_role() {
         return this.role
     }
-    get get_group_key(){
+    get get_group_key() {
         return this.group_key
     }
     async get_studies() {
         //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
-            return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-                person_id => {
-                    console.log(person_id)
-                    return this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise().then(
-                        data => {
-                            console.log(data)
-                            this.roles=data.map(study => study['roles']);
-                            const studies = data.map(study => study['study']);
-                            this.dataSource = new MatTableDataSource(studies);
-                            console.log(this.dataSource)
-                            this.dataSource.paginator = this.paginator;
-                            this.dataSource.sort = this.sort;
-                        }
-                    );
-                }
-            )
+        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
+            person_id => {
+                console.log(person_id)
+                return this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise().then(
+                    data => {
+                        console.log(data)
+                        this.roles = data.map(study => study['roles']);
+                        const studies = data.map(study => study['study']);
+                        this.dataSource = new MatTableDataSource(studies);
+                        console.log(this.dataSource)
+                        this.dataSource.paginator = this.paginator;
+                        this.dataSource.sort = this.sort;
+                    }
+                );
+            }
+        )
     }
 
     // Event handler
@@ -179,14 +178,14 @@ export class StudiesPageComponent implements OnInit {
         console.warn("a study has been selected")
         console.warn(elem)
         //this.notify.emit(elem)
-        let role=this.roles.filter(inv=> inv.study_id==elem._id)[0]['role']
-        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo", role:role, group_key:this.group_key } });
+        let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
+        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo", role: role, group_key: this.group_key } });
 
     }
     onNext(node: string) {
         ////console.log(node)
     }
-    onRemove(element:StudyInterface ) {
+    onRemove(element: StudyInterface) {
         const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -197,7 +196,7 @@ export class StudiesPageComponent implements OnInit {
                             data => {
                                 if (data["success"]) {
                                     ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id+ " have been removed from your history !!"
+                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
                                     this.alertService.success(message)
                                     //this.reloadComponent()
                                 }
@@ -206,7 +205,7 @@ export class StudiesPageComponent implements OnInit {
                                 }
                             }
                         );
-                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.role  , group_key: this.group_key} });
+                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
 
                         //window.location.reload();
 
@@ -239,7 +238,7 @@ export class StudiesPageComponent implements OnInit {
                                 }
                             }
                         );
-                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.role  , group_key: this.group_key} });
+                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
 
                         // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
                         //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
@@ -271,7 +270,7 @@ export class StudiesPageComponent implements OnInit {
                                 }
                             }
                         );
-                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.role  , group_key: this.group_key} });
+                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
 
                         //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
 
@@ -287,79 +286,32 @@ export class StudiesPageComponent implements OnInit {
     onAdd(template: boolean = false) {
 
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        if (template) {
-            const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: this.model_type, values: {}, parent_id: this.parent_id } });
-            dialogRef.afterClosed().subscribe(result => {
-
-                if (result) {
-                    var keys = Object.keys(result.values);
-
-                    for (var i = 0; i < keys.length; i++) {
-                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
-                            keys.splice(i, 1);
-                            //var k=this.keys[i]
-                            i--;
-                        }
-                    }
-                    var new_values = {}
-                    keys.forEach(attr => { new_values[attr] = result.values[attr] })
-                    ////console.log(new_values)
-                    this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
-                        data => {
-                            if (data["success"]) {
-                                //////console.log(data["message"])
-                                //this.model_id=data["_id"];
-                                this.ngOnInit();
-                                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result.values['_id'] + " has been successfully integrated in your history !!"
-
-                                this.alertService.success(message)
-                                this.reloadComponent()
-                                // here probably mode edit to open project template page
-                                //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-                                return true;
-                            }
-                            else {
-                                //////console.log(data["message"])
-                                this.alertService.error("this form contains errors! " + data["message"]);
-
-                                return false;
-                                //this.router.navigate(['/studies']);
-                            }
-                        }
-                    );
-                }
-            });
-        }
-        else {
-            let new_step = 0
-            if (!this.currentUser.tutoriel_done) {
-                if (this.currentUser.tutoriel_step === "0") {
-                    new_step = 1
-                    this.currentUser.tutoriel_step = new_step.toString()
-                    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-                }
-                else {
-                    this.alertService.error("You are not in the right form as requested by the tutorial")
-                }
+        let new_step = 0
+        if (!this.currentUser.tutoriel_done) {
+            if (this.currentUser.tutoriel_step === "0") {
+                new_step = 1
+                this.currentUser.tutoriel_step = new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
-            let new_study:Study=new Study()
-            console.log(new_study)
-            console.log(this.model_type)
-            console.log(this.parent_id)
-            this.globalService.add(new_study, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
-                data => {
-                    if (data["success"]) {
-                        console.log(data)
-                        
-                        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type:'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo' , role:"owner", group_key:this.group_key } });
-                        //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-
-                    }
-                });;
+            else {
+                this.alertService.error("You are not in the right form as requested by the tutorial")
+            }
         }
+        let new_study: Study = new Study()
+        console.log(new_study)
+        console.log(this.model_type)
+        console.log(this.parent_id)
+        this.globalService.add(new_study, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
+            data => {
+                if (data["success"]) {
+                    console.log(data)
 
+                    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo', role: "owner", group_key: this.group_key } });
+                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
+                }
+            });;
     }
+
     onShare(element: StudyInterface) {
         console.log(this.currentUser)
         console.log("Add dialog for share project with authentified users - or same group users")
@@ -393,16 +345,16 @@ export class StudiesPageComponent implements OnInit {
         });
 
     }
-    
+
     identify() {
         ////console.log('Hello, Im user tree!');
     }
     isArray(obj: any) {
         return Array.isArray(obj)
     }
-    get_output_from_child(val:any){
-        if (val === 'cancel the form'){
-          console.log("Cancel form")
+    get_output_from_child(val: any) {
+        if (val === 'cancel the form') {
+            console.log("Cancel form")
         }
         /* else if (val === 'close_study'){
             delete this.selected_study
@@ -411,7 +363,7 @@ export class StudiesPageComponent implements OnInit {
             this.selected_study=val
             console.log(this.selected_study)
         } */
-        else{
+        else {
             console.log(val)
             this.alertService.success("Changes have been successfully saved")
         }
@@ -426,37 +378,37 @@ export class StudiesPageComponent implements OnInit {
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
         this.router.navigateByUrl('/projects_tree', { skipLocationChange: true }).then(() => {
-        this.router.navigate([currentUrl]);
-         });
-    } 
+            this.router.navigate([currentUrl]);
+        });
+    }
     reloadComponent() {
         let currentUrl = this.router.url;
         ////console.log(currentUrl)
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         //this.router.navigate(path);
-        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud', role:this.role,group_key:this.group_key } });
+        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', model_id: this.parent_id, mode: "edit", activeTab: 'assStud', role: this.role, group_key: this.group_key } });
     }
-    extract_design(_blocks:number,_columns:number,_rows:number){
-        let blocks=_blocks
-        let columns=_columns
-        let rows=_rows
-        let new_design:ExperimentalDesign=new ExperimentalDesign()
-        var replication:Replication=new Replication()
+    extract_design(_blocks: number, _columns: number, _rows: number) {
+        let blocks = _blocks
+        let columns = _columns
+        let rows = _rows
+        let new_design: ExperimentalDesign = new ExperimentalDesign()
+        var replication: Replication = new Replication()
         replication.set_replicate_number(3)
         new_design.set_replication(replication)
-        new_design.set_number_of_entries(blocks*columns*rows)
+        new_design.set_number_of_entries(blocks * columns * rows)
 
-        var plot=1
-        for (let block=1;block<blocks+1;block++){
-            var block_design:BlockDesign=new BlockDesign(block, 36)
-            for (let column=1;column<columns+1;column++){
-                var plot_design:PlotDesign=new PlotDesign()
+        var plot = 1
+        for (let block = 1; block < blocks + 1; block++) {
+            var block_design: BlockDesign = new BlockDesign(block, 36)
+            for (let column = 1; column < columns + 1; column++) {
+                var plot_design: PlotDesign = new PlotDesign()
                 plot_design.set_column_number(column)
-                for (let row=1;row<rows+1;row++){
+                for (let row = 1; row < rows + 1; row++) {
                     plot++
                     plot_design.set_plot_number(plot)
-                    var row_design:RowDesign=new RowDesign()
+                    var row_design: RowDesign = new RowDesign()
                     row_design.set_row_number(row)
                     row_design.set_row_per_plot(rows)
                     plot_design.add_row_design(row_design)
@@ -511,10 +463,10 @@ export class StudiesPageComponent implements OnInit {
     get get_parent_id() {
         return this.parent_id
     }
-    get get_displayedColumns(){
+    get get_displayedColumns() {
         return this.displayedColumns
-      }  
-    get get_dataSource(){
+    }
+    get get_dataSource() {
         return this.dataSource
     }
     get get_tutorial_done() {

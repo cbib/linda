@@ -138,6 +138,18 @@ export class GlobalService {
     get_projects(person_key: string) : Observable<InvestigationInterface[]>{
         return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + person_key).pipe(catchError(this.handleError));
     }
+    get_templates(person_key: string) : Observable<{}[]>{
+        return this.http.get<{}[]>(this.APIUrl + "get_templates/" + person_key).pipe(catchError(this.handleError));
+    }
+    get_templates_by_user(user_key: string, model_coll: string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_templates_by_user/" + user_key + "/" + model_coll).pipe(catchError(this.handleError));
+    }
+    /* get_all_templates(user_key: string): Observable<any> {
+        return this.http.get(this.APIUrl + "get_all_templates/" + user_key).pipe(catchError(this.handleError));
+    } */
+    get_template_by_key(key: string) {
+        return this.http.get(this.APIUrl + 'get_template_by_key/' + key).pipe(catchError(this.handleError));
+    }
     get_studies(investigation_key: string, person_key: string) : Observable<StudyInterface[]>{
         return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key + "/" + person_key).pipe(catchError(this.handleError));
     }
@@ -177,12 +189,6 @@ export class GlobalService {
     get_all_childs_by_model(model_type: string, model_key: string) {
         return this.http.get(this.APIUrl + "get_childs_by_model/" + model_type + "/" + model_key).pipe(catchError(this.handleError));
     }
-    get_templates(user_key: string, model_coll: string): Observable<any> {
-        return this.http.get(this.APIUrl + "get_templates/" + user_key + "/" + model_coll).pipe(catchError(this.handleError));
-    }
-    get_all_templates(user_key: string): Observable<any> {
-        return this.http.get(this.APIUrl + "get_all_templates/" + user_key).pipe(catchError(this.handleError));
-    }
     get_type_child_from_parent(parent_name: string, parent_key: string, child_type: string): Observable<any> {
         return this.http.get(this.APIUrl + "get_type_child_from_parent/" + parent_name + "/" + parent_key + "/" + child_type).pipe(catchError(this.handleError));
     }
@@ -196,9 +202,7 @@ export class GlobalService {
         return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
         //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
     }
-    get_template_by_key(key: string, model_type: string) {
-        return this.http.get(this.APIUrl + 'get_template_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
-    }
+    
     get_elem(collection: string, key: string) {
         return this.http.get(this.APIUrl + 'get_elem/' + collection + '/' + key).pipe(catchError(this.handleError));
     }
@@ -600,13 +604,14 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "extract"}`, obj2send);
     }
     
-    add_template(values: {}, model_type: string) {
+    add_template(values: {}, model_type: string, role:string) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
             'values': values,
             'model_type': model_type,
+            'role':role
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_template"}`, obj2send);

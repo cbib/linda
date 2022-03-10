@@ -61,7 +61,7 @@ export class ConfirmationComponent implements OnInit {
     //this.only=this.model_type
     //this.all_childs=false
     if (this.mode.includes("extract_env_var")) {
-      this.globalService.get_templates(this.user_key, this.model_type).toPromise().then(
+      this.globalService.get_templates_by_user(this.user_key, this.model_type).toPromise().then(
         data => {
           this.template_result = data;
 
@@ -147,7 +147,7 @@ export class ConfirmationComponent implements OnInit {
   
 
   get_template(){
-      this.globalService.get_templates(this.user_key,this.model_type).toPromise().then(
+      this.globalService.get_templates_by_user(this.user_key,this.model_type).toPromise().then(
         data => {
             this.template_result=data;
         }
