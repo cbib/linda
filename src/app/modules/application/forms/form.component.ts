@@ -284,8 +284,8 @@ export class FormComponent implements OnInit//, AfterViewInit
             if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
                 if (attr["key"].includes("ID")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
@@ -341,13 +341,13 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (attr["key"].includes("ID")) {
                             //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
                             if (this.model_to_edit[attr["key"]]=== ""){
-                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
                                 if (this.role!=='owner'){
                                     this.disabled_id_keys.push(attr["key"])
                                 }
                             }
                             else{
-                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.create(this.globalService, this.alertService, this.model_type, attr["key"])];
+                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
                                 this.disabled_id_keys.push(attr["key"])
                             }
                         }
@@ -776,7 +776,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 let element = event.target as HTMLInputElement;
                 let value_field = element.innerText;
                 if (this.mode==="edit_template"){
-                    this.globalService.update(this.model_key, this.modelForm.value, this.model_type, true).pipe(first()).toPromise().then(
+                    this.globalService.update_document(this.model_key, this.modelForm.value, this.model_type, true).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
                                 var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
@@ -798,7 +798,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 
                 }
                 else{
-                    this.globalService.update(this.model_key, this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
+                    this.globalService.update_document(this.model_key, this.modelForm.value, this.model_type).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
                                 var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
@@ -826,12 +826,12 @@ export class FormComponent implements OnInit//, AfterViewInit
 
     cancel(form: any) {
         //console.log(this.mode)
-        if (this.mode==="preprocess"){
+        if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
             this.notify.emit('cancel the form');
         }
         else{
             let new_step=0
-            if (!this.currentUser.tutoriel_done){
+           /*  if (!this.currentUser.tutoriel_done){
                 if (this.currentUser.tutoriel_step==="1"){
                     if (this.model_type==="investigation"){
                         new_step=0
@@ -878,13 +878,13 @@ export class FormComponent implements OnInit//, AfterViewInit
             
                 //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
                 this.router.navigate(['/projects_tree']);
-            }
+            } */
         }
 
     }
 
     back(modelForm, level) {
-        if (this.mode==="preprocess"){
+        if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
             this.level-=1
             if (this.model_type==="biological_material"){
                 this.level=1
@@ -903,7 +903,7 @@ export class FormComponent implements OnInit//, AfterViewInit
 
         }
         else {
-            if (this.mode==="preprocess"){
+            if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
                 //console.log("start to subbmit")
                 if (!form.valid) {
                     //console.log("invalid  form")
@@ -931,7 +931,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     goToNext(form: any, level) {
         //console.log(level)
         //console.log(this.mode)
-        if (this.mode==="preprocess"){
+        if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
             this.level+=1
             if (this.model_type==="biological_material"){
                 this.level=1

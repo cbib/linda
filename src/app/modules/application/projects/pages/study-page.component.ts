@@ -136,9 +136,6 @@ export class StudyPageComponent implements OnInit {
         }
     }
     
-    submit(){
-        
-    }
     cancel(){
         //this.notify.emit("close_study")
         this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.get_role, group_key: this.group_key} });

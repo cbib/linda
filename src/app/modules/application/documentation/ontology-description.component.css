@@ -3,6 +3,8 @@
     margin: 4px;
     cursor: pointer;
     text-decoration: none;
+    min-height: 180px;
+    
   }
   
   .nga-card-step:hover {

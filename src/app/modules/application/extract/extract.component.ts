@@ -366,7 +366,7 @@ export class ExtractComponent implements OnInit {
             //else , create a new component by opening form generic component
             else {
               console.log(this.model_type)
-              const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
+              const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess" } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
                   if (result.event == 'Confirmed') {

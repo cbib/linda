@@ -38,8 +38,6 @@ export class FileService {
         //console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload_data"}`, obj2send).pipe(map(this.extractData));
     }
-
-    
     public upload3(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -74,7 +72,6 @@ export class FileService {
         //console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload"}`, obj2send).pipe(map(this.extractData));
     }
-
     public upload(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
@@ -106,9 +103,6 @@ export class FileService {
         })
         );
     }
-
-
-
     read_csv(fileUploaded:File) {
         let fileReader = new FileReader();
         var csv:string|ArrayBuffer=""
@@ -139,6 +133,7 @@ export class FileService {
         return csvData.split(/\r|\n|\r/);
     }
     public build_path(root_id, models, selected_format) {
+        console.log(models)
         var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         models['models_data'].forEach(
             result => {
@@ -151,6 +146,7 @@ export class FileService {
                         result_bis => {
                             var _from_bis: string = result_bis["e"]["_from"]
                             var _to_bis: string = result_bis["e"]["_to"]
+                            // ????????
                             if ((_to == _from_bis) && (_to == _to_bis)) {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
@@ -161,9 +157,7 @@ export class FileService {
                                             if (path.split('/').length > 2) {
                                                 paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
-                                            else if (path.split('/').length == 2) {
-                                                paths['parent_id'].push(path.split('/')[0])
-                                            }
+                                            //if (path.split('/').length == 2) 
                                             else {
                                                 paths['parent_id'].push(root_id)
                                             }
@@ -181,13 +175,9 @@ export class FileService {
                                             if (path.split('/').length > 2) {
                                                 paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
-                                            else if (path.split('/').length == 2) {
-                                                paths['parent_id'].push(path.split('/')[0])
-                                            }
+                                            //if (path.split('/').length == 2) 
                                             else {
                                                 paths['parent_id'].push(root_id)
-                                                //console.log(path.split('/'))
-                                                //console.log(path.split('/').length)
                                             }
                                         }
                                     }
@@ -195,6 +185,7 @@ export class FileService {
                             }
                         }
                     )
+                    //
                     if (path == '') {
                         for (var i = 0; i < formats.length; i++) {
                             if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
@@ -312,6 +303,7 @@ export class FileService {
     public build_zip(paths, zipFile: JSZip) {
         //let zipFile: JSZip = new JSZip();
         //save a config file to reload
+        console.log(paths)
         var dict = { 'filepath': [], 'model_type': [], 'parent_id': [] }
         for (var i = 0; i < paths['filepath'].length; i++) {
             let model_type = paths['data'][i]["_id"].split('/')[0]
@@ -395,12 +387,10 @@ export class FileService {
         zipFile.file('hierarchy.json', blob_json);
         return zipFile
     }
-
     open_zip(fileUploaded:File){
         let zipFile: JSZip = new JSZip();
         return zipFile.loadAsync(fileUploaded)
     }
-
     // public loadMultipleFiles() {
     //     // read a zip file
     //     fs.readFile("test.zip", function(err, data) {
@@ -415,7 +405,7 @@ export class FileService {
         //console.log(submodels)
         var model_key = model_id.split("/")[1];
         var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
-        var root_id = collection_name + '/' + model_key
+        //var root_id = collection_name + '/' + model_key
         //paths = this.build_path(root_id, submodels, selected_format)
         let zipFile: JSZip = new JSZip();
         //build isa model root

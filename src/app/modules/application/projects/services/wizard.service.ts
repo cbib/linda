@@ -27,7 +27,7 @@ export class WizardService {
         //console.log(this.currentUser)
     }
     turn_off(currentUser:UserInterface){
-        this.globalService.update_user(true, currentUser['_key'], 'tutoriel_done', 'person').toPromise().then(
+        this.globalService.update_user(true, currentUser['_key'], 'tutoriel_done').toPromise().then(
             data => {
                 ////console.log(data['user'])
                 localStorage.setItem('currentUser', JSON.stringify(data['user']));

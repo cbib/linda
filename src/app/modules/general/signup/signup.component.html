@@ -55,8 +55,8 @@
                     <div *ngIf="personEmail.errors?.email">
                         must be valid email adress.
                     </div>
-                    <div *ngIf="personEmail.errors?.create">
-                        This value is already used.
+                    <div *ngIf="personEmail.errors?.alreadyThere">
+                        This email is already used.
                     </div>
                 </div>
                 <!-- <div *ngIf="submitted && f['Person email'].errors" class="invalid-feedback">
@@ -78,10 +78,10 @@
                     <div *ngIf="personID.errors?.required">
                         Person ID is required.
                     </div>
-                    <div *ngIf="personID.errors?.minLength">
+                    <div *ngIf="personID.errors?.minlength">
                         minimum length ID is 12 characters (as for ORCID ID).
                     </div>
-                    <div *ngIf="personID.errors?.create">
+                    <div *ngIf="personID.errors?.alreadyThere">
                         This ORCID ID is already used.
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <div *ngIf="password.errors?.required">
                         Password is required.
                     </div>
-                    <div *ngIf="password.errors?.minLength">
+                    <div *ngIf="password.errors?.minlength">
                         Password must be at least 6 characters.
                     </div>
                 </div>

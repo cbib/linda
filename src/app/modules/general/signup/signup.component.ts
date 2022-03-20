@@ -37,8 +37,8 @@ export class SignupComponent implements OnInit {
         'username': [''],
         'Person affiliation': ['', Validators.required],
         'Person role': [''],
-        'Person ID': ['', [Validators.required, Validators.minLength(12)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", "Person ID")],
-        'Person email': ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", "Person email")],
+        'Person ID': ['', [Validators.required, Validators.minLength(12)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", "Person ID")],
+        'Person email': ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", "Person email")],
         'password': ['', [Validators.required, Validators.minLength(6)]],
         'confirmpassword': ['', Validators.required],
 
@@ -121,14 +121,14 @@ export class SignupComponent implements OnInit {
             if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
                 if (attr["key"].includes("ID")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", attr["key"])];
+                    //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", attr["key"])];
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
                 }
                 else if (attr["key"].includes("email")){
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", attr["key"])];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", attr["key"])];
                 }
                 else if (attr["key"].includes("password")){
                     attributeFilters[attr["key"]] =  ['', [Validators.required, Validators.minLength(6)]]

@@ -10,8 +10,8 @@
 <div mat-dialog-content>
     <form [formGroup]="get_editForm" (ngSubmit)="OnEdit()">        
         <div class="form-group">
-            <label for="field">Field to update: {{get_field_to_edit}}</label>
-            <input type="text" id="field" placeholder="field*" formControlName="{{get_field_to_edit}}" class="form-control" required>
+            <label for="field">{{get_field_to_edit}}</label>
+            <input type="text" id="field" placeholder="{{get_field_to_edit}}*" formControlName="{{get_field_to_edit}}" class="form-control" required>
             <div *ngIf="field.invalid && (field.dirty || field.touched)" class="alert alert-danger">
                 <div *ngIf="field.errors?.required">
                     {{get_field_to_edit}} is required.
@@ -44,7 +44,7 @@
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button  (click)="onOkClick()">Add</button>
+    <button mat-button  (click)="onOkClick()">Update {{get_field_to_edit}}</button>
   </div>
   
 

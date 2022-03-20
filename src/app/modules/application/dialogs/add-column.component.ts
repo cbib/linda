@@ -10,6 +10,7 @@ import { StudyInterface } from 'src/app/models/linda/study';
 import { SelectionModel } from '@angular/cdk/collections';
 import { first } from 'rxjs/operators';
 import { timeStamp } from 'console';
+import { isBuffer } from 'util';
 
 interface DialogData {
   data_file: DataFileInterface;
@@ -30,6 +31,9 @@ export function forbiddenFieldValidator(_data_file: DataFileInterface): Validato
   return (control: AbstractControl): ValidationErrors | null => {
     if (control.value===''){
       return null;
+    }
+    else if(control.value!=="Study unique ID"){
+      return null
     }
     else{
       const forbidden=_data_file.associated_headers.filter(associated_header=>associated_header.associated_component_field===control.value).length>0
@@ -112,6 +116,14 @@ export class AddColumnComponent implements OnInit {
           'Experimental Factor values',
           'Experimental Factor accession number',
           'Experimental Factor type'
+        ]
+      },
+      {
+        disabled: false, header: "", associated_linda_id: "", name: 'Event', value: 'event', fields: [
+          'Event type',
+          'Event date',
+          'Event accession number',
+          'Event description'
         ]
       },
       {
@@ -230,6 +242,8 @@ export class AddColumnComponent implements OnInit {
   onLink(values: string): void {
     console.log(values)
     console.log(this.linkTerm.value.values.length)
+    console.log(this.linkTerm.value.ids)
+    this.data_file.associated_headers.filter(associated_header=> associated_header.header===values['he'])
     while (this.aliases.length!==this.linkTerm.value.values.length){
       this.aliases.push(this.formBuilder.control('', Validators.required));
     }
@@ -270,7 +284,7 @@ export class AddColumnComponent implements OnInit {
             header: this.header.value,
             selected: true,
             associated_component: this.get_component(this.standardTerm.value),
-            associated_linda_id: [],
+            associated_linda_id: this.linkTerm.value.ids,
             associated_term_id: "",
             associated_values: [],
             associated_component_field:this.standardTerm.value,
@@ -319,14 +333,14 @@ export class AddColumnComponent implements OnInit {
     } */
    
     console.log(this.data_file)
-    //this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { console.log(data); })
+    //this.globalService.update_document(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { console.log(data); })
 
     /* this.Value.value
     this.generalForm.get('standardTerm').value
     this.generalForm.get('linkTerm').value */
   }
   get isDate(){
-    return ['Start date of study','End date of study'].includes(this.generalForm.get('standardTerm').value)
+    return ['Start date of study','End date of study', 'Event date'].includes(this.generalForm.get('standardTerm').value)
   }
   get header() { return this.generalForm.get('header'); }
   get column_value() { return this.generalForm.get('column_value'); }
@@ -369,7 +383,7 @@ export class AddColumnComponent implements OnInit {
     this.dialogRef.close({event:"Cancelled", data_file: this.data_file});
   }
   onOkClick(): void {
-    this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { 
+    this.globalService.update_document(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { 
       console.log(data); 
       this.dialogRef.close({event:"Confirmed", data_file: this.data_file});
     })

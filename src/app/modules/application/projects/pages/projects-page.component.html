@@ -59,13 +59,12 @@
               <a class="nav-link" href="#consort" aria-controls="consort" role="tab" data-toggle="tab">Consortium User</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Adminitrator User</a>
+              <a class="nav-link" href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Administrative User</a>
             </li> -->
         </ul>
         <div class="tab-content">
             <div [ngClass]="{ 'active':activeTab==='Guests'}" role="tabpanel" class="tab-pane active" id="Guests">
                 <h2>My current projects</h2>
-                
                 <mat-divider></mat-divider>
                     <mat-card *ngIf="activeTab==='Guests'" style="width: 95%;">
                         <div *ngIf="get_user_group('Guests')">
@@ -81,22 +80,26 @@
                                 </mat-menu>
                                 <mat-menu #HelpSubMenu="matMenu">
                                     <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
-    <!--                                 <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+                                <!-- <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
                                     <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
                                     <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
                                     <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
                                     <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
-                                    <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+                                    <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> 
+                                -->
                                 </mat-menu>
                                 <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
                                     [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
                                 </div>
                                 <mat-menu #contextMenu="matMenu">
-                                    <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add</button>
+                                    <button mat-menu-item [matMenuTriggerFor]="AddSubMenu" class="btn btn-light fas fa-tools">Add</button>
+                                    <button mat-menu-item [matMenuTriggerFor]="ImportSubMenu" class="btn btn-light fas fa-tools">Import</button>
                                 </mat-menu>
                                 
-                                <mat-menu #contextSubMenu="matMenu">
+                                <mat-menu #AddSubMenu="matMenu">
                                     <button mat-menu-item (click)="onAdd()">new project</button>
+                                </mat-menu>
+                                <mat-menu #ImportSubMenu="matMenu">
                                     <button mat-menu-item (click)="onImport()">from files</button>
                                 </mat-menu>
                                 <span class="span-project"></span>
@@ -138,6 +141,9 @@
                             <button mat-menu-item (click)="onAccessGroup('Guests')" >ACCESS</button>
                         </div>
                     </mat-card>
+                <!-- <h2>Gantt </h2>
+                <mat-divider></mat-divider>
+                <app-gantt group_key="'Guests'"></app-gantt> -->
             </div>
             <div [ngClass]="{ 'active':activeTab==='BFP'}" role="tabpanel" class="tab-pane active" id="BFP">
                 <h2>BFP projects</h2>
@@ -186,11 +192,11 @@
                                     
                                     <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
                                         <ng-container *ngIf="column!=='edit'">
-                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                        <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                            <td mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
                                         </ng-container>
                                         <ng-container  *ngIf="column==='edit'">
-                                            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                            <th class="edit_col" mat-header-cell *matHeaderCellDef> {{column}} </th>
                                             <td mat-cell *matCellDef="let element"> 
                                                 <div class="btn-group" style="float: right;">
                                                     <button title="Edit project" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
@@ -216,34 +222,6 @@
                         </div>
                     </mat-card>
             </div>
-            <!-- <div role="tabpanel" class="tab-pane" id="consort">
-                <h2>My current projects</h2>
-                <mat-divider></mat-divider>
-                    <mat-card style="width: 80%;">
-                        <div *ngIf="get_group('consort')">
-
-                        </div>
-                        <div *ngIf="get_group('consort')">
-                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
-                            <button mat-menu-item (click)="onAccessGroup('consort')" >ACCESS</button>
-                        </div>
-                    </mat-card>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="admin">
-                <h2>Admin projects</h2>
-                <mat-divider></mat-divider>
-                    <mat-card style="width: 80%;">
-                        <div *ngIf="get_group('admin')">
-
-                        </div>
-                        <div *ngIf="get_group('admin')">
-                            <p>You do not have access to this group. Please contact site administrator or group member to request login credentials</p>
-                            <button mat-menu-item (click)="onAccessGroup('admin')" >ACCESS</button>
-                        </div>
-                    </mat-card>
-            </div> -->
-        
-        <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
         </div>
         
         </div>

@@ -5,23 +5,28 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { ObservedVariableInterface, ObservedVariable} from 'src/app/models/linda/observed-variable';
-import { UserInterface } from 'src/app/models/linda/person';
+import { EventInterface, LindaEvent } from 'src/app/models/linda/event';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
+import { UserInterface } from 'src/app/models/linda/person';
 
 @Component({
-  selector: 'app-observed-variable-page',
-  templateUrl: './observed-variable-page.component.html',
-  styleUrls: ['./observed-variable-page.component.css']
+  selector: 'app-events-page',
+  templateUrl: './events-page.component.html',
+  styleUrls: ['./events-page.component.css']
 })
-export class ObservedVariablePageComponent implements OnInit {
+export class EventsPageComponent implements OnInit {
   @Input('level') level: number;
   @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
+  @Input('role') role: string;
+  @Input('grand_parent_id') grand_parent_id: string;
+  @Input('group_key') group_key: string;
+
+
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
@@ -30,8 +35,8 @@ export class ObservedVariablePageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  private dataSource: MatTableDataSource<ObservedVariableInterface>;
-  private displayedColumns: string[] = ['Variable name', 'Variable accession number', 'edit'];
+  private dataSource: MatTableDataSource<EventInterface>;
+  private displayedColumns: string[] = ['Event type', 'Event date', 'Event description','Event accession number','edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -39,6 +44,7 @@ export class ObservedVariablePageComponent implements OnInit {
   investigationMenuPosition = { x: '0px', y: '0px' };
   helpMenuPosition = { x: '0px', y: '0px' };
   private currentUser: UserInterface
+
   constructor(
     public globalService: GlobalService,
     public ontologiesService: OntologiesService,
@@ -49,10 +55,13 @@ export class ObservedVariablePageComponent implements OnInit {
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
-        this.model_type = params['model_type'];
-        this.model_key = params['model_key'];
-        this.mode = params['mode'];
-        this.parent_id = params['parent_id']
+          this.model_type = params['model_type'];
+          this.model_key = params['model_key'];
+          this.mode = params['mode'];
+          this.parent_id = params['parent_id']
+          this.group_key = params['group_key']
+          this.role=params['role']
+          this.grand_parent_id=params['grand_parent_id']
       }
     );
   }
@@ -61,20 +70,17 @@ export class ObservedVariablePageComponent implements OnInit {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     console.log(this.parent_id)
     //await this.get_vertices()
-    this.get_all_observed_variables()
+    await this.set_all_events()
     this.loaded = true
 
   }
-  async get_all_observed_variables() {
-    return this.globalService.get_all_observed_variables(this.parent_id.split('/')[1]).toPromise().then(
-      data => {
-        console.log(data)
-        this.dataSource = new MatTableDataSource(data);
-        console.log(this.dataSource)
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      }
-    )
+  async set_all_events() {
+    const data = await this.globalService.get_all_events(this.parent_id.split('/')[1]).toPromise();
+    console.log(data);
+    this.dataSource = new MatTableDataSource(data);
+    console.log(this.dataSource);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;
@@ -96,7 +102,7 @@ export class ObservedVariablePageComponent implements OnInit {
     return this.dataSource
   }
 
-  onRemove(element: ObservedVariableInterface) {
+  onRemove(element: EventInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
           ////console.log(data)
@@ -127,13 +133,13 @@ export class ObservedVariablePageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess" } });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {
           console.log(result)
-          let obs_variable: ObservedVariable= result["formData"]["form"]
-          this.globalService.add(obs_variable, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+          let event: LindaEvent= result["formData"]["form"]
+          this.globalService.add(event, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
         data => {
             if (data["success"]) {
                 console.log(data)
@@ -143,8 +149,17 @@ export class ObservedVariablePageComponent implements OnInit {
         }
       }
     });
+
+
   }
-  onEdit(element: ObservedVariableInterface) {
+
+  onEdit(element:EventInterface){
+    console.warn("a study has been selected")
+    console.warn(element)
+    //this.notify.emit(elem)
+    //let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
+    this.router.navigate(['/event_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.parent_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "event_info", role: this.role, group_key: this.group_key } });
 
   }
 }
+

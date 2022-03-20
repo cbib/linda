@@ -56,11 +56,11 @@ export class ObservationUnitPageComponent implements OnInit {
   async ngOnInit() {
     console.log(this.parent_id)
     //await this.get_vertices()
-    this.get_all_biological_materials()
+    this.get_all_observation_units()
     this.loaded = true
 
   }
-  async get_all_biological_materials() {
+  async get_all_observation_units() {
     return this.globalService.get_all_observation_units(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         console.log(data)

@@ -17,6 +17,7 @@ export class BiologicalMaterialTableComponent implements OnInit {
     this.route.queryParams.subscribe(
       params => {
           this.data = params['data'];
+          console.log(this.data)
       }
   );
    }

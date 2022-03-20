@@ -506,26 +506,26 @@
                                                         </td>
                                                         <td *ngIf="key.includes('file link')"
                                                             style="font-size:14px;text-align: center; color: blue; "
-                                                            scope="row"><a href="{{get_current_data_array(node)[key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
+                                                            scope="row"><a href="{{get_current_data_object(node)[key]}}"
+                                                                target="_blank">{{get_current_data_object(node)[key]}}</a>
                                                         </td>
                                                         <td *ngIf="!key.includes('file link')"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            <div *ngIf="isArray(get_current_data_array(node)[key])">
+                                                            <div *ngIf="isArray(get_current_data_object(node)[key])">
                                                                 <mat-chip-list>
                                                                     <mat-chip class="example-box"
-                                                                        *ngFor="let id of get_current_data_array(node)[key][0]">
+                                                                        *ngFor="let id of get_current_data_object(node)[key][0]">
                                                                         {{id}} </mat-chip>
                                                                 </mat-chip-list>
                                                             </div>
-                                                            <div *ngIf="!isArray(get_current_data_array(node)[key])">
-                                                                {{get_current_data_array(node)[key]}}
+                                                            <div *ngIf="!isArray(get_current_data_object(node)[key])">
+                                                                {{get_current_data_object(node)[key]}}
                                                             </div>
-                                                            <!-- <div *ngIf="get_current_data_array(node)[key][0] && !isArray(get_current_data_array(node)[key][0])">
-                                                            {{get_current_data_array(node)[key][0]}}
+                                                            <!-- <div *ngIf="get_current_data_object(node)[key][0] && !isArray(get_current_data_object(node)[key][0])">
+                                                            {{get_current_data_object(node)[key][0]}}
                                                         </div> -->
     
-                                                            <!-- <mat-chip>{{get_current_data_array(node)[key]}}</mat-chip> -->
+                                                            <!-- <mat-chip>{{get_current_data_object(node)[key]}}</mat-chip> -->
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -536,7 +536,7 @@
                                             <app-biological-material-table [data]="get_bm_dataSource(node.id)"></app-biological-material-table>
                                         </ng-container>
                                         <ng-container *ngIf="node.id.includes('observation_units') ">
-                                            <app-observation-unit-table [data]="get_ou_dataSource(node.id)" [vertice]="get_current_data_array(node)"></app-observation-unit-table>
+                                            <app-observation-unit-table [data]="get_ou_dataSource(node.id)" [vertice]="get_current_data_object(node)"></app-observation-unit-table>
                                         </ng-container>
                                     </mat-expansion-panel>
                                     <mat-expansion-panel *ngIf="node.id.includes('metadata_files')"
@@ -585,13 +585,13 @@
                                                         <td *ngIf="key.includes('file link')"
                                                             style="font-size:14px;text-align: center; color: blue; "
                                                             scope="row"><a
-                                                                href="{{get_current_data_array(node)[key]}}"
-                                                                target="_blank">{{get_current_data_array(node)[key]}}</a>
+                                                                href="{{get_current_data_object(node)[key]}}"
+                                                                target="_blank">{{get_current_data_object(node)[key]}}</a>
                                                         </td>
 
                                                         <td *ngIf="key.includes('file version') || key.includes('file description')"
                                                             style="font-size:14px;text-align: center;" scope="row">
-                                                            {{get_current_data_array(node)[key]}}
+                                                            {{get_current_data_object(node)[key]}}
                                                         </td>
                                                         <td *ngIf="key === 'Data'"
                                                             style="font-size:14px;text-align: center;" scope="row">
@@ -1220,7 +1220,7 @@
                                                     <td style="font-size:14px;text-align: center; " scope="row">{{key}}
                                                     </td>
                                                     <td style="font-size:14px;text-align: center; " scope="row">
-                                                        <mat-chip>{{get_current_data_array(node)[key]}}</mat-chip>
+                                                        <mat-chip>{{get_current_data_object(node)[key]}}</mat-chip>
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -11,7 +11,6 @@ import { MediaObserver } from "@angular/flex-layout";
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort'
 import { MatTableDataSource} from '@angular/material/table';
-import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { first } from 'rxjs/operators';
 import { animate, state, style, transition, trigger} from '@angular/animations';
 import { UserInterface } from 'src/app/models/linda/person';

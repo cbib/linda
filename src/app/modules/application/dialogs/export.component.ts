@@ -17,10 +17,11 @@ export class ExportComponent implements OnInit {
 //    public files: Set<File> = new Set()
     public file_format = []
     is_investigation:boolean;
-    public selected_format = {'.csv': {'selected':false, separator:',',type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
+    public selected_format = {'.csv': {'selected':false, separator:',', type: 'text/csv;charset=utf-8;'}, '.tsv':{'selected':false, separator:'\t',type: 'text/tsv;charset=utf-8;'}, '.json':{'selected':false, separator:':', type: 'application/json'}}
     private recursive_check:boolean =false
-    private is_checked:boolean=false
+    private formatSelected:boolean=false
     is_expandable_node:boolean=false;
+    
     constructor(private globalService: GlobalService,
                 private alertService: AlertService,
                 public dialogRef: MatDialogRef<ExportComponent>,
@@ -35,7 +36,7 @@ export class ExportComponent implements OnInit {
     }
 
     ngOnInit() {
-        
+        this.selected_format['.csv']['selected']=true 
     }
     
     set_check_recursive(completed: boolean) {
@@ -49,33 +50,37 @@ export class ExportComponent implements OnInit {
         for( var i = 0; i < keys.length; i++){
             console.log(this.selected_format[keys[i]]['selected'])
             if (this.selected_format[keys[i]]['selected']){
-                this.is_checked=true
+                this.formatSelected=true
             }
         }
     }
-//    is_checked(){
-//        var keys=Object.keys(this.selected_format);
-//        for( var i = 0; i < keys.length; i++){
-//            if (this.selected_format[keys[i]]){
-//                this.is_checked=true
-//            }
-//        }
-//    }
-    
+    //    is_checked(){
+    //        var keys=Object.keys(this.selected_format);
+    //        for( var i = 0; i < keys.length; i++){
+    //            if (this.selected_format[keys[i]]){
+    //                this.is_checked=true
+    //            }
+    //        }
+    //    }
+    get Checked(){
+        return this.recursive_check
+    }
+    onFormatChange(_format:string){
+        this.selected_format[_format]['selected']=true 
+        Object.keys(this.selected_format).forEach(format => {
+            if (format!==_format){
+                this.selected_format[format]['selected']=false
+            }
+        });
+    }    
     onNoClick(): void {
         this.dialogRef.close({event:"Cancelled"});
         this.alertService.clear();
     }
     
     onOkClick(): void {
-
-        if (this.is_checked){
-            this.dialogRef.close({event:"Confirmed",selected_format:this.selected_format, recursive_check:this.recursive_check});
-            this.alertService.clear();
-        }
-        else{
-            this.alertService.error("you need to select a format");
-        }  
+        this.dialogRef.close({event:"Confirmed",selected_format:this.selected_format, recursive_check:this.recursive_check});
+        this.alertService.clear();
     }
     
     

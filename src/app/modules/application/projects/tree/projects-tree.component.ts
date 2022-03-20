@@ -129,7 +129,7 @@ import { UserInterface } from 'src/app/models/linda/person';
          this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
           //console.log(this.currentUser)
           await this.get_vertices()
-          this.get_projects()
+         // this.get_projects()
           // this.dtOptions = {
           //     pagingType: 'full_numbers',
           //     pageLength: 5,
@@ -196,6 +196,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
           edges.forEach(
               e => {
+                console.log(e)
                   var _from: string;
                   var _to: string;
   
@@ -231,8 +232,8 @@ import { UserInterface } from 'src/app/models/linda/person';
                       short_name = _to
                   }
   
-                  var vertice_data= vertices.filter(component => component['_id'] == _to)[0]
-                  var vertice_data_keys = Object.keys(vertice_data).filter(component => !component.startsWith("_"))
+                  var vertice_data:{}= vertices.filter(vertice => vertice['_id'] == _to)[0]
+                  var vertice_data_keys = Object.keys(vertice_data).filter(key => !key.startsWith("_"))
                   var bm_vertice_data:{}[]=[]
                   if (_to.includes("biological_material")){
                       // var bm_vertice= vertices.filter(component => component['_id'] == _to)
@@ -1127,7 +1128,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                       // this.current_data_keys=Object.keys(data);
                       // this.current_data_array.push(data);
                       node["term"].set_current_observation_unit_data(return_data)
-                      //node["term"].set_current_data_array(this.current_data_array)
+                      //node["term"].set_current_data_object(this.current_data_array)
                       node["term"].set_model_key(node.id.split("/")[1])
   
                       // for( var i = 0; i < this.current_data_keys.length; i++){ 
@@ -1160,9 +1161,9 @@ import { UserInterface } from 'src/app/models/linda/person';
           //             //     //////console.log(this.current_data_array[0]['Biological material ID'][i][0])
           //             // }
                           
-          //             node["term"].set_current_data_array(this.current_data_array)
+          //             node["term"].set_current_data_object(this.current_data_array)
           //             this.getBiologicalDataFromSource(data)
-          //             ////console.log(node["term"].get_current_data_array())
+          //             ////console.log(node["term"].get_current_data_object())
           //             for (var i = 0; i < this.current_data_keys.length; i++) {
           //                 if (this.current_data_keys[i].startsWith("_")) {
           //                     this.current_data_keys.splice(i, 1);
@@ -1185,7 +1186,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           //         data => {
           //             this.current_data_keys = Object.keys(data);
           //             this.current_data_array.push(data);
-          //             node["term"].set_current_data_array(this.current_data_array)
+          //             node["term"].set_current_data_object(this.current_data_array)
           //             for (var i = 0; i < this.current_data_keys.length; i++) {
           //                 if (this.current_data_keys[i].startsWith("_")) {
           //                     this.current_data_keys.splice(i, 1);
@@ -1208,7 +1209,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           //         data => {
           //             this.current_data_keys = Object.keys(data);
           //             this.current_data_array.push(data);
-          //             node["term"].set_current_data_array(this.current_data_array)
+          //             node["term"].set_current_data_object(this.current_data_array)
           //             for (var i = 0; i < this.current_data_keys.length; i++) {
           //                 if (this.current_data_keys[i].startsWith("_")) {
           //                     this.current_data_keys.splice(i, 1);
@@ -1326,18 +1327,18 @@ import { UserInterface } from 'src/app/models/linda/person';
       get_bm_dataSource(node_id:string){
           return this.bm_datasources[node_id]
       }
-      get_bm_current_data_array(node: MiappeNode){
-          return node["term"].get_bm_current_data_array()
+      get_bm_current_data_object(node: MiappeNode){
+          return node["term"].get_bm_current_data_object()
       }
       get_current_data(node: MiappeNode) {
           return node["term"].get_current_data()
       }
-      get_current_data_array(node: MiappeNode) {
-          return node["term"].get_current_data_array()
+      get_current_data_object(node: MiappeNode) {
+          return node["term"].get_current_data_object()
       }
       get_current_data_file_headers(node: MiappeNode) {
-          ////console.log(node["term"].get_current_data_array())
-          let ass_headers=node["term"].get_current_data_array()['associated_headers']
+          ////console.log(node["term"].get_current_data_object())
+          let ass_headers=node["term"].get_current_data_object()['associated_headers']
   
           var associated_component=[]
           ass_headers.forEach(element => {

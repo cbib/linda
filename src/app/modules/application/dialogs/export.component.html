@@ -3,9 +3,12 @@
 <div mat-dialog-content >
     <p> Which formats do you want to use ? </p>
   
-    <section *ngFor="let format of file_format;let i= index"  class="format-section">
+    <select  name="select_filename" size="1" (change)="onFormatChange($event.target.value)" >
+        <option *ngFor="let format of file_format;let i= index" [value]="format">{{format}}</option>
+    </select> 
+    <!-- <section *ngFor="let format of file_format;let i= index"  class="format-section">
         <mat-checkbox class="example-margin" [checked]="Checked" (change)="set_check_format($event.checked, format)" >{{format}}</mat-checkbox>
-    </section>
+    </section> -->
    
     <section *ngIf="is_expandable_node" class="format-section">
         <p > How do you want to save your model ? </p>

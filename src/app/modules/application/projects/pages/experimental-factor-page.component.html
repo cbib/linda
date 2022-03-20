@@ -1,62 +1,24 @@
-<mat-card>
-<div>
-    <button title="Add a new experimental factor" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
-    <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
-    <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
-        [matMenuTriggerFor]="helpMenu">
+<div id="expfactor-page">
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
+     Factor</button>
+    <div>
+        <!-- Nav pills -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" [ngClass]="{ 'active':activeTab==='exp_factor_info'}" (click)="changeTab('exp_factor_info')"
+            aria-controls="exp_factor_info" role="tab" data-toggle="tab" href="#exp_factor_info">1. Factor informations</a>
+        </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div [ngClass]="{ 'active':activeTab==='exp_factor_info'}" role="tabpanel" class="tab-pane active" id="expfactorinfo">
+            <h3>Describe your experimental factor</h3>
+            <mat-card style="width: 98%;">
+                <app-form *ngIf="activeTab==='exp_factor_info'" id="exp_factor_form" (notify)="get_output_from_child($event)"
+                [model_type]="'experimental_factor'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+                inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form>    
+            </mat-card>
+            </div>
+        </div>
     </div>
-    <mat-menu #helpMenu="matMenu">
-        <button style="float: right;" class="btn btn-light" mat-menu-item
-            [matMenuTriggerFor]="HelpSubMenu">Help</button>
-    </mat-menu>
-    <mat-menu #HelpSubMenu="matMenu">
-<!--         <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
-                                <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
-        <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
-        <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
-        <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
-        <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
-        <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
-    </mat-menu>
-    <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-        [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
-    </div>
-    <mat-menu #contextMenu="matMenu">
-        <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Experimental factor</button>
-    </mat-menu>
-    
-    <mat-menu #contextSubMenu="matMenu">
-        <button mat-menu-item (click)="add(false)">from original model template</button>
-        <button mat-menu-item (click)="add(true)">from saved templates</button>
-    </mat-menu>
-
-    <span class="span-project"></span>
-    <mat-form-field appearance="standard">
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-    </mat-form-field>
-    
-    <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
-        
-        <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
-            <ng-container *ngIf="column!=='edit'">
-            <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-            <td mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
-            </ng-container>
-            <ng-container *ngIf="column==='edit'">
-                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                <td mat-cell *matCellDef="let element"> 
-                    <div class="btn-group" style="float: right;">
-                        <button title="Edit experimental factor" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                        <button title="Remove experimental factor" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
-                    </div>
-                </td>
-            </ng-container>
-        </ng-container>
-        
-        <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
-        <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
-    </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
 </div>
-</mat-card>

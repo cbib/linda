@@ -291,21 +291,24 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
         for (var block=1;block<(this.total_block_number+1);block++){
             var block_design:BlockDesign=new BlockDesign(block, this.total_block_number)
             for (var column=1;column<this.total_column_per_block+1;column++){  
+                var plot_design:PlotDesign=new PlotDesign()
+                plot_design.set_column_number(column)
+                plot_design.set_plot_number(plot)
                 for (var row=1;row<this.total_row_per_block+1;row++){
-                    plot++
-                    var plot_design:PlotDesign=new PlotDesign()
-                    plot_design.set_column_number(column)
-                    plot_design.set_plot_number(plot)
                     var row_design:RowDesign=new RowDesign()
                     row_design.set_row_number(row)
                     row_design.set_row_per_plot(this.total_row_per_plot)
                     plot_design.add_row_design(row_design)
-                    if (plot%this.total_row_per_plot===0){
+                    if (row%this.total_row_per_plot===0){
                         block_design.add_plot_design(plot_design)
+                        var plot_design:PlotDesign=new PlotDesign()
+                        
                     }
-                    
-                    
+                    /* else{
+                        block_design.add_plot_design(plot_design)
+                    } */
                 }
+                plot++
                 
             }
             //console.log(block_design)

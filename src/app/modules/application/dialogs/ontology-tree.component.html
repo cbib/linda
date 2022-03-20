@@ -4,8 +4,12 @@
         </h3>
     </div>
 <h1 mat-dialog-title>Please select a term in {{data['ontology_type']}} Ontology</h1>
-<input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)">
-<button type="submit" (click)="onSearch()">Search</button>
+<input placeholder="Search" aria-label="Search" (keyup)="searchStart($event)" list="dynamicNodes">
+
+    <datalist id="dynamicNodes">
+        <option *ngFor="let node of get_selected_nodes" [value]="node.name">{{node.name}}</option>
+     </datalist>
+    <button type="submit" (click)="onSearch()">Search</button>
 <!-- <mat-spinner mode="determinate" value="{{ontologytree.fill_percentage}}"></mat-spinner> -->
 <!-- <mat-progress-spinner *ngIf='show_spinner' mode="indeterminate"></mat-progress-spinner> -->
 <!-- <mat-progress-spinner class="progressSpinner" *ngIf='show_spinner' [value]="ontology_tree_loading_progress_value"></mat-progress-spinner> -->
@@ -17,7 +21,6 @@
     <!-- if search mode is active -->
     <ul *ngIf="active_list">
         <li *ngFor="let node of get_selected_nodes">
-
             <!-- <mat-tree-node  *matTreeNodeDef="let node" matTreeNodePadding title="{{node.def}}"> -->
                 <div [ngStyle]="getStyle()">
                 <!-- use a disabled button to provide padding for tree leaf -->
@@ -26,6 +29,9 @@
                             <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
                         </span> 
                     </button>
+                    <ng-container *ngIf="get_uncheckable">
+                        {{node.name}}
+                    </ng-container>
                     <!-- {{node.name}} -->
                     <mat-checkbox *ngIf="!get_uncheckable && node.namespace!='' && node.namespace.includes('Trait')" class="checklist-leaf-node" [checked]="get_checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                         {{node.name}} TRAIT
@@ -40,7 +46,7 @@
                         {{node.name}} SCALE
                     </mat-checkbox>
                     <mat-checkbox *ngIf="!get_uncheckable && node.namespace===''" class="checklist-leaf-node" [checked]="get_checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
-                        {{node.name}}
+                        {{node.name}} 
                     </mat-checkbox>
                     <mat-accordion>
                         <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
@@ -105,7 +111,7 @@
                         
                                         <select (change)="onUnitSelect($event.target.value, node)">
                                             <!--enum: {{searchTerm(get_ontologyEnum,get_context_term[j].enumeration).instances[l].name}}-->
-                                            <option *ngFor="let instance of get_context_term[j].instances ; index as l; trackBy: trackInstances " value="{{context_term[j].instances[l]._symbol}}">{{context_term[j].instances[l]._symbol}}</option>
+                                            <option *ngFor="let instance of get_context_term[j].instances ; index as l; trackBy: trackInstances " value="{{get_context_term[j].instances[l]._symbol}}">{{get_context_term[j].instances[l]._symbol}}</option>
                                         </select>
                             <!--            <p *ngFor="let instance of get_context_term[j].instances ; index as l; trackBy: trackInstances ">
                                             symbol: {{get_context_term[j].instances[l]._symbol}}
@@ -129,7 +135,11 @@
             <div [ngStyle]="getStyle(node)">
                 <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
                     <mat-icon class="mat-icon-rtl-mirror">{{get_treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}</mat-icon>
+                    
                 </button>
+                <span style="display:inline-block; margin-left: 10px;"> 
+                    <i style="color :lightblue" class="fa fa-info-circle" title="{{node.def}}"></i>
+                </span> 
                 <!-- {{node.name}} -->
                 <!-- <mat-checkbox *ngIf="!get_uncheckable"  class="checklist-leaf-node" [checked]="get_checklistSelection.isSelected(node)" (change)="todoLeafItemSelectionToggle(node)">
                     {{node.name}}

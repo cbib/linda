@@ -969,7 +969,7 @@ export class AssignComponent implements OnInit {
                 // mode extract with only data upload
                 if (this.labelPosition !== "only_data") {
                     //build study form for field 
-                    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} } });
+                    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {}  , mode: "preprocess"} });
                     formDialogRef.afterClosed().subscribe((result) => {
                         if (result) {
                             if (result.event == 'Confirmed') {
@@ -1131,7 +1131,7 @@ export class AssignComponent implements OnInit {
                 if (this.lines_arr.length !== 0) {
                     let user = JSON.parse(localStorage.getItem('currentUser'));
                     //let parent_id="studies/981995"
-                    this.globalService.update(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
+                    this.globalService.update_document(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
                     this.router.navigate(['/projects_tree']);
                 }
                 else {

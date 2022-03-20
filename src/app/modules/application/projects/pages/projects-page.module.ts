@@ -32,6 +32,10 @@ import { DataFilesPageComponent } from './data-files-page.component';
 import { ObservedVariablePageComponent } from './observed-variable-page.component';
 import { ExperimentalDesignPageComponent } from './experimental-design-page.component';
 import { PersonsPageComponent } from './persons-page.component';
+import { EventPageComponent } from './event-page.component'
+import { ObservationsPageComponent } from './observations-page.component';
+import { ExperimentalFactorsPageComponent } from './experimental-factors-page.component';
+import { EventsPageComponent } from './events-page.component';
 
 // Mu entry module
 import { DownloadModule } from '../../file_handlers/download.module';
@@ -43,6 +47,8 @@ import { GanttModule } from '../../gantt/gantt.module';
 import { ProjectsTreeModule} from  '../../projects/tree/projects-tree.module'
 import { AssignModule } from '../../assign/assign.module';
 import { TableModule } from '../../tables/table.module';
+
+
 
 @NgModule({
   declarations: [
@@ -56,7 +62,11 @@ import { TableModule } from '../../tables/table.module';
     DataFilesPageComponent, 
     ObservedVariablePageComponent,
     ExperimentalDesignPageComponent,
-    PersonsPageComponent],
+    PersonsPageComponent,
+    EventPageComponent,
+    ObservationsPageComponent,
+    ExperimentalFactorsPageComponent,
+    EventsPageComponent],
   imports: [
     CommonModule,
     ProjectsPageRoutingModule,
@@ -95,7 +105,11 @@ import { TableModule } from '../../tables/table.module';
     DataFilesPageComponent,
     ObservedVariablePageComponent,
     ExperimentalDesignPageComponent,
-    PersonsPageComponent
+    PersonsPageComponent,
+    EventPageComponent,
+    ObservationsPageComponent,
+    ExperimentalFactorsPageComponent,
+    EventsPageComponent
   ],
   providers: [
     JoyrideService,
@@ -114,7 +128,11 @@ import { TableModule } from '../../tables/table.module';
     DataFilesPageComponent,
     ObservedVariablePageComponent,
     ExperimentalDesignPageComponent,
-    PersonsPageComponent
+    PersonsPageComponent,
+    EventPageComponent,
+    ObservationsPageComponent,
+    ExperimentalFactorsPageComponent,
+    EventsPageComponent
   ]
 })
 export class ProjectsPageModule { }

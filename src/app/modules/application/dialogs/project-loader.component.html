@@ -2,52 +2,68 @@
     <div class="border-head">
         <nav class="navbar navbar-expand-sm navbar-dark">
             <h3>
-                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b></a>
+                <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                        meta<span>D</span>at<span>A</span></b></a>
             </h3>
         </nav>
     </div>
 </h1>
-<div mat-dialog-content >
+<div mat-dialog-content>
     <alert></alert>
-    <div>
-        <!--<app-upload-file ></app-upload-file>-->
-        <div *ngIf="error">
-            {{ error.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'error'">
-            {{ uploadResponse.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'progress'">
-            <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0"
-                aria-valuemax="100">
-                {{uploadResponse.message}}%
-            </div>
-        </div>
-        <div>
-            <form [formGroup]="form" (ngSubmit)="Upload()">
-                <label style="float: right;" class="btn btn-default btn-file">Browse <input type="file"
-                        style="display: none;" accept=".xlsx,.csv,.zip" (change)="onFileChange($event)"></label>
-                <button [disabled]="!get_project_loaded" class="btn btn-default btn-info" type="submit"
-                    style="float: right;">
-                    Upload
-                </button>
-
-                <button [disabled]="!get_studies_loaded" (click)="onGiveUp()" style="float: right;" class="btn btn-danger">Cancel</button>
-            </form>
-        </div>
-        <h2>Download Project</h2>
-        <p>Here you can integrate a whole project previously saved with Linda. You only have to download the zip file produced when you saved your project from Linda and that's it. </p>
-        <section>
-            <h3>Project found</h3>
-            <app-table *ngIf="get_project_loaded" [data]="get_project_model" [data_columns]="get_project_columns"></app-table>
-            <h3>Studies found</h3>
-            <app-table *ngIf="get_studies_loaded" [data]="get_studies_model" [data_columns]="get_study_columns"></app-table>
-        </section>
-        
-
+    <h2>Download Project</h2>
+    <p>Here you can integrate a whole project previously saved with Linda. You only have to download the zip file
+        produced when you saved your project from Linda and that's it. </p>
+    <mat-divider></mat-divider>
+    <div *ngIf="error">
+        {{ error.message }}
     </div>
+    <div *ngIf="uploadResponse.status === 'error'">
+        {{ uploadResponse.message }}
+    </div>
+    <div *ngIf="uploadResponse.status === 'progress'">
+        <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0"
+            aria-valuemax="100">
+            {{uploadResponse.message}}%
+        </div>
+    </div>
+    <div>
+        <form [formGroup]="form" (ngSubmit)="Upload()">
+            <label style="float: right;" class="btn btn-default btn-file">Browse <input type="file"
+                    style="display: none;" accept=".xlsx,.csv,.zip" (change)="onFileChange($event)"></label>
+            <button [disabled]="!get_project_loaded" class="btn btn-default btn-info" type="submit"
+                style="float: right;">
+                Upload
+            </button>
+
+            <button [disabled]="!get_studies_loaded" (click)="onGiveUp()" style="float: right;"
+                class="btn btn-danger">Cancel</button>
+        </form>
+    </div>
+    <div *ngIf="!already_there">
+        <div *ngIf="fileLoaded">
+            <section style="min-height: 50px;">
+                <button (click)="onLoadProject()" style="float: left;" class="btn btn-danger">Load project</button>
+                <button [disabled]="!get_project_loaded" (click)="importProject()" style="float: left;"
+                    class="btn btn-danger">Import project</button>
+                <div *ngIf="get_project_loaded">
+                    <h3>Project found</h3>
+                    <app-table [data]="get_project_model" [data_columns]="get_project_columns"></app-table>
+                </div>
+                <br>
+            </section>
+            <section style="min-height: 50px;">
+                <button (click)="onLoadStudies()" style="float: left;" class="btn btn-danger">Load studies</button>
+                <button [disabled]="!get_studies_loaded" (click)="importStudies()" style="float: left;"
+                    class="btn btn-danger">Import studies</button>
+                <div *ngIf="get_studies_loaded">
+                    <h3>Studies found</h3>
+                    <app-table [data]="get_studies_model" [data_columns]="get_study_columns"></app-table>
+                </div>
+            </section>
+        </div>
+    </div>
+
 </div>
 <div mat-dialog-actions>
-    <button mat-button class="btn btn-default btn-danger" (click)="onNoClick()">Cancel</button>
-    <button mat-button class="btn btn-default btn-success" (click)="onSubmit()">Import Data</button>
+    <button mat-button class="btn btn-default btn-success" (click)="onClose()">Close</button>
 </div>

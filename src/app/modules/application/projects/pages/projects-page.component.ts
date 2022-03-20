@@ -75,7 +75,7 @@ export class ProjectsPageComponent implements OnInit {
     private model_key: string;
     private model_selected: string
     private roles: { project_id: string, role: string }[] = []
-    private group_keys: { project_id: string, group_keys: string[] }[] = []
+    private groups: { project_id: string, group_keys: string[] }[] = []
 
     //private dataSource
     private dataSource: MatTableDataSource<InvestigationInterface>;
@@ -172,12 +172,13 @@ export class ProjectsPageComponent implements OnInit {
                     data => {
                         console.log("data", data)
                         this.roles = data.map(project => project['roles']);
-                        this.group_keys = data.map(project => project['groups']);
+                        this.groups = data.map(project => project['groups']);
                         const projects = data.map(project => project['project']);
                         /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
                         const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
                         //projects.filter((data) => data.projec.includes(this.group_key));
-                        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.group_keys[i]));
+                        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
+                        console.log(projects_groups)
                         const getProjects = projects_groups.filter((data) => data.group_keys.includes(this.group_key));
                         /* console.log("arr3", arr3)
                         console.log("getProjects",getProjects)
@@ -275,7 +276,7 @@ export class ProjectsPageComponent implements OnInit {
         });
     }
     onImport() {
-        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id } });
+        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, group_key:this.group_key } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -289,7 +290,26 @@ export class ProjectsPageComponent implements OnInit {
             }
         });
     }
-    onExport(element: InvestigationInterface) {
+    onExport(element: InvestigationInterface){
+        console.log(element)
+        const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: true, is_investigation: true } });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.event == 'Confirmed') {
+                    var collection_name = element._id.split("/")[0];
+                    if ((result.recursive_check)) {
+                        this.globalService.get_all_childs_by_model(collection_name, element._key).toPromise().then(submodel_data => {
+                            this.fileService.saveFiles(element, submodel_data, collection_name, element._id, result.selected_format);
+                        });
+                    }
+                    else {
+                        this.fileService.saveFile(element, element._id, "investigation", result.selected_format);
+                    }
+                }
+            }   
+        });
+    }
+    onExport_bak(element: InvestigationInterface) {
         var model_type = this.globalService.get_model_type(element._id)
         this.globalService.get_parent(element._id).toPromise().then(parent_data => {
             var is_investigation = parent_data["_from"].includes("users")

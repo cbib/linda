@@ -5,6 +5,7 @@ export interface InvestigationInterface {
     '_rev':string;
     'Definition': string;
     'Investigation unique ID': string;
+    'Project Name':string;
     'Investigation title': string;
     'Investigation description': string;
     'Submission date': string;
@@ -19,6 +20,7 @@ export class Investigation implements InvestigationInterface {
     '_rev':string;
     'Definition': string;
     'Investigation unique ID': string;
+    'Project Name':string;
     'Investigation title': string;
     'Investigation description': string;
     'Submission date': string;
@@ -32,6 +34,7 @@ export class Investigation implements InvestigationInterface {
         this["Investigation description"]=""
         this["Investigation title"]=""
         this["Investigation unique ID"]=""
+        this["Project Name"]=""
         this["License"]=""
         this["Public release date"]=""
         this["Submission date"]=""

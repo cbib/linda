@@ -299,17 +299,17 @@ const telegram = require("./queries/telegram-chat");
 
 
 router.get("/admin-username", (req, res) => {
-  res.json(getUserName(true));
+    res.json(getUserName(true));
 });
 
 router.get("/all-username", (req, res) => {
-  res.json(getUserName(false));
+    res.json(getUserName(false));
 });
 
 router.post("/send-telegram", (req, res) => {
     const email = req.body.email
     res.json(telegram);
-  });
+});
 
 
 router.post('/reset-password', (req, res) => {
@@ -322,27 +322,27 @@ router.post('/reset-password', (req, res) => {
             filter user['token']== ${resettoken}
                 return {user:user}
     `).toArray();
-    if (result[0] === null){
-        res.send({success:false})
+    if (result[0] === null) {
+        res.send({ success: false })
     }
-    else{
-        let personId= result[0]['user']['Person ID']
+    else {
+        let personId = result[0]['user']['Person ID']
         var update_passwordd = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'password':${newPassword}}  IN ${users} RETURN NEW `);
         var update_token = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':""}  IN ${users} RETURN NEW `);
-        res.send({success:true})
+        res.send({ success: true })
     }
 }).body(joi.object({
-    resettoken :joi.string().required(),
-    newPassword :joi.string().required(),
-    confirmPassword :joi.string().required()
+    resettoken: joi.string().required(),
+    newPassword: joi.string().required(),
+    confirmPassword: joi.string().required()
 }).required(), 'Values to check.')
-.response(
-    joi.object({
-        success: joi.boolean().required()
-    }
-    ).required(), 'List of entry keys.')
-.summary('List entry keys')
-.description('check if user exist.');
+    .response(
+        joi.object({
+            success: joi.boolean().required()
+        }
+        ).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('check if user exist.');
 
 
 router.post('/valid-password-token', (req, res) => {
@@ -353,22 +353,22 @@ router.post('/valid-password-token', (req, res) => {
             filter user['token']== ${resettoken}
                 return {user:user}
     `).toArray();
-    if (result[0] === null){
-        res.send({success:false})
+    if (result[0] === null) {
+        res.send({ success: false })
     }
-    else{
-        res.send({success:true})
+    else {
+        res.send({ success: true })
     }
 }).body(joi.object({
-    resettoken :joi.string().required()
+    resettoken: joi.string().required()
 }).required(), 'Values to check.')
-.response(
-    joi.object({
-        success: joi.boolean().required()
-    }
-    ).required(), 'List of entry keys.')
-.summary('List entry keys')
-.description('check if user exist.');
+    .response(
+        joi.object({
+            success: joi.boolean().required()
+        }
+        ).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('check if user exist.');
 
 //const sendMail = require("./queries/send-mail");
 router.post('/request-reset', (req, res) => {
@@ -392,12 +392,12 @@ router.post('/request-reset', (req, res) => {
         console.log("user found with this email", result[0]['user'])
         console.log("person found with this email", result[0]['person'])
         // Update user 
-        let personId= result[0]['person']['Person ID']
+        let personId = result[0]['person']['Person ID']
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
 
 
-        res.send({success:true});
+        res.send({ success: true });
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
@@ -406,10 +406,10 @@ router.post('/request-reset', (req, res) => {
         res.throw(404, 'The entry does not exist', e);
     }
 
-    
-    
 
-    
+
+
+
 
     // Here must call .sh script that run mail tool to send to email
     // Script exists on VM in /var/www/html
@@ -417,20 +417,20 @@ router.post('/request-reset', (req, res) => {
 
     //sendMail({'email':email})
     //res.json(sendMail({'email':email}));
-    res.send({success:true})
-  })    
-  .body(joi.object({
-    email: joi.string().required(),
-    token :joi.string().required()
-}).required(), 'Values to check.')
-.response(
-    joi.object({
-        success: joi.boolean().required()
+    res.send({ success: true })
+})
+    .body(joi.object({
+        email: joi.string().required(),
+        token: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(
+        joi.object({
+            success: joi.boolean().required()
 
-    }
-    ).required(), 'List of entry keys.')
-.summary('List entry keys')
-.description('check if user exist.');
+        }
+        ).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('check if user exist.');
 
 /*****************************************************************************************
  ******************************************************************************************
@@ -876,7 +876,6 @@ router.post('/register', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist.');
 
-
 router.post('/search', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -898,10 +897,12 @@ router.post('/search', function (req, res) {
         //var data=[{"search_string":search_string, 'user_key':user[0]}];
         var data = []
         var user_id = user[0]["_id"];
+        console.log(user_id)
         var all_descendants_nodes = db._query(aql`FOR v, e, s IN 1..5 OUTBOUND ${user_id} GRAPH 'global'  RETURN {v:v, e:e}`).toArray();
         all_descendants_nodes.forEach(
             descendants_node => {
                 var descendants_node_values = descendants_node["v"]
+                console.log(descendants_node_values)
                 var descendants_node_id = descendants_node["v"]["_id"]
                 Object.keys(descendants_node_values).forEach(
                     descendants_node_key => {
@@ -912,7 +913,6 @@ router.post('/search', function (req, res) {
                             }
                             //descendants_node_value type metadata file
                             else {
-
                                 if (descendants_node_key === "headers") {
                                     if (descendants_node_value.includes(search_string)) {
                                         data.push({ 'search_string': search_string, 'id': descendants_node_id, 'found_as': descendants_node_key, 'data': descendants_node_values, parent_id: descendants_node["e"]["_from"] });
@@ -933,25 +933,19 @@ router.post('/search', function (req, res) {
                                                     }
                                                 )
                                             }
-
                                         }
-
                                     )
                                 }
                                 //here search in data key : need to add it if data are not numerical
                                 else {
                                     //console.log(descendants_node_key)
                                 }
-
                             }
                         }
-
                     }
                 )
-
             }
         );
-
         res.send(data);
     }
 })
@@ -1085,7 +1079,7 @@ router.get('/get_childs/:model_type/:model_key', function (req, res) {
 router.get('/get_all_vertices/:user_key', function (req, res) {
     var user_id = "users/" + req.pathParams.user_key;
     var data = [];
-    data = db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${user_id} GRAPH 'global'  RETURN {e:e,s:s}`);
+    data = db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
     res.send(data);
 })
     .pathParam('user_key', joi.string().required(), 'user id of the entry.')
@@ -1093,11 +1087,29 @@ router.get('/get_all_vertices/:user_key', function (req, res) {
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
 
+router.get('/get_vertice/:person_key/:investigation_key', function (req, res) {
+        var person_id = "persons/" + req.pathParams.person_key;
+        var investigation_id = "investigations/" + req.pathParams.investigation_key;
+        var data = [];
+        data = db._query(aql`FOR edge IN investigations_edge FILTER edge._from==${investigation_id}
+        FOR v, e, s IN 1..3 INBOUND ${person_id} GRAPH 'global' PRUNE e._to ==${person_id} FILTER e._from==edge._to 
+            RETURN {study:s.vertices[1],role:e.role, roles:{study_id:v._id, role:e.role}}`);
+        res.send(data);
+       /*  data = db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
+        res.send(data); */
+    })
+        .pathParam('person_key', joi.string().required(), 'user id of the entry.')
+        .pathParam('investigation_key', joi.string().required(), 'user id of the entry.')
+        .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+        .summary('List entry keys')
+        .description('Assembles a list of keys of entries in the collection.');
+    
+
 
 router.get('/get_inv_stud_vertices/:user_key', function (req, res) {
     var user_id = "users/" + req.pathParams.user_key;
     var data = [];
-    data = db._query(aql`FOR v, e, s IN 1..2 OUTBOUND "users/32010799" GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
+    data = db._query(aql`FOR v, e, s IN 1..2 OUTBOUND ${user_id} GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
     res.send(data);
 })
     .pathParam('user_key', joi.string().required(), 'user id of the entry.')
@@ -1240,6 +1252,19 @@ router.get('/get_all_observed_variables/:study_key', function (req, res) {
 
 
 
+router.get('/get_all_events/:study_key', function (req, res) {
+    var study_id = "studies/" + req.pathParams.study_key;
+    var data = [];
+    data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${study_id} GRAPH 'global' FILTER e._from==${study_id} AND CONTAINS(e._to, "events") RETURN v`);
+    res.send(data);
+})
+    .pathParam('study_key', joi.string().required(), 'study key of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    //.response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+
 
 router.get('/get_all_experimental_factors/:study_key', function (req, res) {
     var study_id = "studies/" + req.pathParams.study_key;
@@ -1289,7 +1314,7 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
     //var data=[];
 
     var final_obj = { "models_data": [] }
-    var childs_data = db._query(aql`FOR v,e IN 1..4 OUTBOUND ${model_id} GRAPH 'global' RETURN {v:v,e:e}`).toArray();
+    var childs_data = db._query(aql`FOR v,e IN 1..4 OUTBOUND ${model_id} GRAPH 'global' FILTER NOT CONTAINS(e._to ,"persons") RETURN {v:v,e:e}`).toArray();
     final_obj["models_data"] = childs_data
     //childs_model=[]
     childs_data.forEach(
@@ -1855,7 +1880,6 @@ router.get('/get_by_parent_key/:model_type/:parent_key', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
-
 router.post('/upload_data', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -1906,8 +1930,6 @@ router.post('/upload_data', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and add metadata file in MIAPPE model.');
-
-
 
 router.post('/upload', function (req, res) {
     var username = req.body.username;
@@ -1964,7 +1986,6 @@ router.post('/upload', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and add metadata file in MIAPPE model.');
 
-
 router.post('/compare_component', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2015,10 +2036,6 @@ router.post('/compare_component', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and add metadata file in MIAPPE model.');
-
-
-
-
 
 router.post('/remove_associated_headers_linda_id', function (req, res) {
     var username = req.body.username;
@@ -2082,6 +2099,9 @@ router.post('/remove_associated_headers_linda_id', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
+/* **************************************************
+// UPDATE  ROUTINES
+************************************************** */ 
 router.post('/update_associated_headers_linda_id', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2171,9 +2191,6 @@ router.post('/update_associated_headers_linda_id', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
-
-
-
 router.post('/update_associated_headers', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2250,8 +2267,6 @@ router.post('/update_associated_headers', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
-
-
 
 router.post('/update_template', function (req, res) {
     var username = req.body.username;
@@ -2333,9 +2348,7 @@ router.post('/update_template', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
-
-
-router.post('/update', function (req, res) {
+router.post('/update_document', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var _key = req.body._key;
@@ -2422,7 +2435,6 @@ router.post('/update', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
-
 router.post('/update_field', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2464,6 +2476,18 @@ router.post('/update_field', function (req, res) {
         else if (model_type === 'data_file') {
             _id = 'data_files/' + _key;
             update = db._query(aql` FOR entry IN ${data_files} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${data_files} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'experimental_factor') {
+            _id = 'experimental_factors/' + _key;
+            update = db._query(aql` FOR entry IN ${experimental_factors} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${experimental_factors} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'observed_variable') {
+            _id = 'observed_variables/' + _key;
+            update = db._query(aql` FOR entry IN ${observed_variables} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${observed_variables} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'biological_material') {
+            _id = 'biological_materials/' + _key;
+            update = db._query(aql` FOR entry IN ${biological_materials} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${biological_materials} RETURN NEW.${field}`).toArray();
         }
         else {
             _id = 'observation_units/' + _key;
@@ -2551,15 +2575,12 @@ router.post('/update_step', function (req, res) {
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
-
-
-router.post('/update_user', function (req, res) {
+router.post('/update_person', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
-    var _key = req.body._key;
+    var person_id = req.body.person_id;
     var field = req.body.field;
     var value = req.body.value;
-    var model_type = req.body.model_type;
     /////////////////////////////
     //first check if user exist
     /////////////////////////////
@@ -2576,39 +2597,92 @@ router.post('/update_user', function (req, res) {
         /////////////////////////////
         //now check if investigation exists else modify field
         /////////////////////////////
-        var update = [];
-        var _id = '';
-        if (model_type === 'user') {
-            _id = 'users/' + _key;
-            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
-        }
+        //var update = [];
+        //var _id = 'persons/' + _key;
+        var update = db._query(aql` FOR entry IN ${persons} FILTER entry["Person ID"] == ${person_id} UPDATE entry WITH {${field}: ${value}} IN ${persons} RETURN NEW`).toArray();
+        console.log(update)
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
         if (update[0][field] === value) {
-            res.send({ success: true, message: 'document has been updated ', user: update[0] });
+            res.send({ success: true, message: 'document has been updated ', person: update[0] });
         }
         //No changes
         else {
-            res.send({ success: false, message: 'document cannot be updated', user: user });
+            res.send({ success: false, message: 'document cannot be updated', person: user });
         }
     };
 }).body(joi.object({
     username: joi.string().required(),
     password: joi.string().required(),
-    _key: joi.string().required(),
+    person_id: joi.string().required(),
     field: joi.string().required(),
-    value: joi.boolean().required(),
-    model_type: joi.string().required()
+    value: joi.string().required(),
 }).required(), 'Values to check.')
     .response(joi.object({
-        success: true,
+        success: joi.boolean().required(),
         message: joi.string().required(),
-        user: joi.object().required()
+        person: joi.object().required()
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
 
 
+router.post('/update_user', function (req, res) {
+        var username = req.body.username;
+        var password = req.body.password;
+        var _key = req.body._key;
+        var field = req.body.field;
+        var value = req.body.value;
+        /////////////////////////////
+        //first check if user exist
+        /////////////////////////////
+        const user = db._query(aql`
+                FOR entry IN ${users}
+                FILTER entry.username == ${username}
+                FILTER entry.password == ${password}
+                RETURN entry
+            `);
+        if (user.next() === null) {
+            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+        }
+        else {
+            /////////////////////////////
+            //now check if investigation exists else modify field
+            /////////////////////////////
+            var update = [];
+            var _id = '';
+            _id = 'users/' + _key;
+            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
+            
+            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+            //Document has been updated
+            if (update[0][field] === value) {
+                res.send({ success: true, message: 'document has been updated ', user: update[0] });
+            }
+            //No changes
+            else {
+                res.send({ success: false, message: 'document cannot be updated', user: user });
+            }
+        };
+    }).body(joi.object({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        _key: joi.string().required(),
+        field: joi.string().required(),
+        value: joi.alternatives().try(joi.boolean(), joi.string(), joi.number()).required()    
+    }).required(), 'Values to check.')
+        .response(joi.object({
+            success: true,
+            message: joi.string().required(),
+            user: joi.object().required()
+        }).required(), 'response.')
+        .summary('List entry keys')
+        .description('check if user exist and update specific field in MIAPPE model.');
+    
+
+/* **************************************************
+// REMOVE  ROUTINES
+************************************************** */ 
 router.post('/remove_childs', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2700,8 +2774,6 @@ router.post('/remove_childs', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
-
-
 
 
 router.post('/remove_association', function (req, res) {
@@ -2879,7 +2951,6 @@ router.post('/remove_childs_by_type_and_id', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
-
 router.post('/remove_childs_by_type', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -3020,6 +3091,10 @@ router.post('/remove_template', function (req, res) {
     var password = req.body.password;
     var id = req.body.id;
 
+    if (!db._collection('users_edge')) {
+        db._createEdgeCollection('users_edge');
+    }
+    var users_edge_coll = db._collection('users_edge')
     const user = db._query(aql`
                 FOR entry IN ${users}
                 FILTER entry.username == ${username}
@@ -3039,12 +3114,20 @@ router.post('/remove_template', function (req, res) {
         //Remove relation to parent of selected node in edge collection
 
         try {
-            var parent = db._query(aql`FOR u IN ${template_edge_coll} FILTER u._to==${id} REMOVE u IN ${template_edge_coll}`).toArray();
+            var template_edge = db._query(aql`FOR u IN ${template_edge_coll} FILTER u._from==${id} REMOVE u IN ${template_edge_coll}`).toArray();
 
         }
         catch (e) {
             errors.push(e + "refdvdrx " + id);
         }
+        try {
+            var user_edge = db._query(aql`FOR u IN ${users_edge_coll} FILTER u._to==${id} REMOVE u IN ${users_edge_coll}`).toArray();
+
+        }
+        catch (e) {
+            errors.push(e + "refdvdrx " + id);
+        }
+        
 
 
         //Remove selected node
@@ -3076,7 +3159,6 @@ router.post('/remove_template', function (req, res) {
     }).required(), 'response.')
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
-
 
 router.post('/remove', function (req, res) {
     var username = req.body.username;
@@ -3203,6 +3285,8 @@ router.post('/remove', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
+
+// ADD ROUTINES
 //Post new data
 router.post('/add_edge', function (req, res) {
     //posted variables
@@ -3328,7 +3412,7 @@ router.post('/add_template', function (req, res) {
 
         var data = [];
         //var cleaned_values = { ...values }
-        values["_model_type"]=model_type
+        values["_model_type"] = model_type
         data = db._query(aql`INSERT ${values} IN ${template_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
 
         //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
@@ -3337,7 +3421,7 @@ router.post('/add_template', function (req, res) {
                 "_from": user[0]._id,
                 "_to": data[0].id
             };
-            
+
             const edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${users_edge} RETURN NEW `);
             //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
             var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
@@ -3370,7 +3454,7 @@ router.post('/add_template', function (req, res) {
         password: joi.string().required(),
         values: joi.object().required(),
         model_type: joi.string().required(),
-        role:joi.string().required()
+        role: joi.string().required()
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
@@ -3412,6 +3496,7 @@ router.post('/add', function (req, res) {
     if (!db._collection(edge_coll)) {
         db._createEdgeCollection(edge_coll);
     }
+    console.log(edge_coll)
     const edge = db._collection(edge_coll);
 
     var investigations_edge_coll = 'investigations_edge'
@@ -5300,7 +5385,7 @@ router.post('/update_observation_unit', function (req, res) {
  ******************************************************************************************/
 
 
- router.get('/get_templates/:person_key', function (req, res) {
+router.get('/get_templates/:person_key', function (req, res) {
     var person_id = "persons/" + req.pathParams.person_key;
     var data = [];
     data = db._query(aql`FOR v, e, s IN 1..3 INBOUND ${person_id} GRAPH 'global' PRUNE e._to ==${person_id} FILTER CONTAINS(e._from, "templates") RETURN {template:s.vertices[1],role:e.role, groups:{template_id:v._id, group_keys:e.group_keys}, roles:{template_id:v._id, role:e.role}}`);
@@ -5362,29 +5447,29 @@ router.get('/get_templates_by_user/:user_key/:model_coll/', function (req, res) 
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 router.get('/get_template_by_key/:key', function (req, res) {
-        try {
-            var key = req.pathParams.key;
-            var data = [];
-            var datatype = 'templates';
-            const coll = db._collection(datatype);
-            if (!coll) {
-                db._createDocumentCollection(datatype);
-            }
-            data = coll.firstExample('_key', key);
-            res.send(data);
+    try {
+        var key = req.pathParams.key;
+        var data = [];
+        var datatype = 'templates';
+        const coll = db._collection(datatype);
+        if (!coll) {
+            db._createDocumentCollection(datatype);
         }
-        catch (e) {
-            if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
-                throw e;
-            }
-            res.throw(404, 'The entry does not exist', e);
+        data = coll.firstExample('_key', key);
+        res.send(data);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            throw e;
         }
-    
-    }).pathParam('key', joi.string().required(), 'unique key.')
-        .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
-        .summary('Retrieve an entry')
-        .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
-    
+        res.throw(404, 'The entry does not exist', e);
+    }
+
+}).pathParam('key', joi.string().required(), 'unique key.')
+    .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
 
 //Get templates
 /* router.get('/get_all_templates/:user_key/', function (req, res) {

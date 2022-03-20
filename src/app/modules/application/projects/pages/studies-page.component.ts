@@ -156,19 +156,16 @@ export class StudiesPageComponent implements OnInit {
     async get_studies() {
         //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
         return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-            person_id => {
+            async person_id => {
                 console.log(person_id)
-                return this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise().then(
-                    data => {
-                        console.log(data)
-                        this.roles = data.map(study => study['roles']);
-                        const studies = data.map(study => study['study']);
-                        this.dataSource = new MatTableDataSource(studies);
-                        console.log(this.dataSource)
-                        this.dataSource.paginator = this.paginator;
-                        this.dataSource.sort = this.sort;
-                    }
-                );
+                const data = await this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise();
+                console.log(data);
+                this.roles = data.map(study => study['roles']);
+                const studies = data.map(study_1 => study_1['study']);
+                this.dataSource = new MatTableDataSource(studies);
+                console.log(this.dataSource);
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
             }
         )
     }

@@ -7,17 +7,17 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource} from '@angular/material/table';
 import { ExperimentalFactorInterface } from 'src/app/models/linda/experimental_factor';
 import { UserInterface } from 'src/app/models/linda/person';
-import { ExperimentalFactor } from 'src/app/models/linda/experimental_factor';
+import { LindaEvent } from 'src/app/models/linda/event';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-experimental-factor-page',
-  templateUrl: './experimental-factor-page.component.html',
-  styleUrls: ['./experimental-factor-page.component.css']
+  selector: 'app-event-page',
+  templateUrl: './event-page.component.html',
+  styleUrls: ['./event-page.component.css']
 })
-export class ExperimentalFactorPageComponent implements OnInit {
+export class EventPageComponent implements OnInit {
   @Input('level') level: number;
     @Input('parent_id') parent_id:string;
     @Input('model_id') model_id: string;
@@ -99,7 +99,7 @@ export class ExperimentalFactorPageComponent implements OnInit {
 }
 
 close(){
-  this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "expfac", role: this.role, group_key: this.group_key } });
+  this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "events", role: this.role, group_key: this.group_key } });
 
     //this.notify.emit("close_study")
     //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.get_role, group_key: this.group_key} });

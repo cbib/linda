@@ -16,6 +16,9 @@ import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-d
 import { User } from '../models';
 import { UserInterface } from '../models/linda/person';
 import { PersonInterface } from '../models/linda/person';
+import { EventInterface } from '../models/linda/event';
+import { Md5 } from 'ts-md5/dist/md5'
+
 
 @Injectable({
     providedIn: 'root'
@@ -131,6 +134,9 @@ export class GlobalService {
     get_all_vertices(user_key: string) {
         return this.http.get(this.APIUrl + "get_all_vertices/" + user_key).pipe(catchError(this.handleError));
     }
+    get_vertice(person_key: string, investigation_key:string) {
+        return this.http.get(this.APIUrl + "get_vertice/" + person_key+ "/" + investigation_key).pipe(catchError(this.handleError));
+    }
     //used in header component 
     get_inv_stud_vertices(user_key: string){
         return this.http.get(this.APIUrl + "get_inv_stud_vertices/" + user_key).pipe(catchError(this.handleError));
@@ -138,6 +144,9 @@ export class GlobalService {
     get_projects(person_key: string) : Observable<InvestigationInterface[]>{
         return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_projects/" + person_key).pipe(catchError(this.handleError));
     }
+    /* get_project(person_key: string, investigation_key:string) : Observable<InvestigationInterface[]>{
+        return this.http.get<InvestigationInterface[]>(this.APIUrl + "get_project/" + person_key + "/" + investigation_key).pipe(catchError(this.handleError));
+    } */
     get_templates(person_key: string) : Observable<{}[]>{
         return this.http.get<{}[]>(this.APIUrl + "get_templates/" + person_key).pipe(catchError(this.handleError));
     }
@@ -176,6 +185,9 @@ export class GlobalService {
     }
     get_all_observation_units(study_key: string) : Observable<ObservationUnitInterface[]>{
         return this.http.get<ObservationUnitInterface[]>(this.APIUrl + "get_all_observation_units/" + study_key).pipe(catchError(this.handleError));
+    }
+    get_all_events(study_key: string) : Observable<EventInterface[]>{
+        return this.http.get<EventInterface[]>(this.APIUrl + "get_all_events/" + study_key).pipe(catchError(this.handleError));
     }
     get_data_files(model_key: string, collection:string): Observable<DataFileInterface[]>{
         return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + model_key + "/" +  collection).pipe(catchError(this.handleError));
@@ -223,12 +235,16 @@ export class GlobalService {
         if (model_type==="person"){
             console.log(field)
             console.log(value)
+            if (field.includes("ID")){
+                value= Md5.hashStr(value)
+            }
             console.log(model_type)
             let obj2send = {
                 'field': field,
                 'value': value,
                 'model_type': model_type
             };
+            console.log(obj2send)
             return this.http.post(`${this.APIUrl + "checkID"}`, obj2send).pipe(catchError(this.handleError));
         }
         else{
@@ -294,6 +310,7 @@ export class GlobalService {
             'model_type': model_type
 
         };
+        console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
 
@@ -308,18 +325,30 @@ export class GlobalService {
 
     //http://localhost:8529/_db/linda/xeml/_api/foxx/scripts/test.js
 
-    update_user(value: boolean, key: string, field: string, model_type: string) {
+    update_user(value: any, key: string, field: string) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
             '_key': key,
             'field': field,
-            'value': value,
-            'model_type': model_type
+            'value': value
 
         };
         return this.http.post(`${this.APIUrl + "update_user"}`, obj2send);
+    }
+    update_person(value: boolean, person_id: string, field: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'person_id': person_id,
+            'field': field,
+            'value': value
+
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "update_person"}`, obj2send);
     }
     update_step(value: string, key: string, field: string, model_type: string) {
         let user = this.get_user();
@@ -334,8 +363,7 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "update_step"}`, obj2send);
     }
-
-    update(key: string, values: {}, model_type: string, template:boolean=false) {
+    update_document(key: string, values: {}, model_type: string, template:boolean=false) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
@@ -349,7 +377,7 @@ export class GlobalService {
             return this.http.post(`${this.APIUrl + "update_template"}`, obj2send);
         }
         else{
-            return this.http.post(`${this.APIUrl + "update"}`, obj2send);
+            return this.http.post(`${this.APIUrl + "update_document"}`, obj2send);
         }
     }
     update_observation_units(values: {}, key: string, model_type: string, parent_id: string) {
@@ -473,7 +501,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_template"}`, obj2send);
     }
-    
     remove_childs(id) {
         let user = this.get_user();
         let obj2send = {
@@ -483,7 +510,6 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "remove_childs"}`, obj2send);
     }
-
     remove_childs_by_type(id:string, model_type:string) {
         let user = this.get_user();
         let obj2send = {
@@ -505,7 +531,6 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "remove_associated_headers_linda_id"}`, obj2send);
     }
-
     remove_association(id:string, datafile_id:string) {
         let user = this.get_user();
         let obj2send = {
@@ -517,7 +542,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_association"}`, obj2send);
     }
-
     remove_childs_by_type_and_id(id:string, model_type:string, model_id:string) {
         let user = this.get_user();
         let obj2send = {
@@ -540,7 +564,6 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "remove_observation_unit"}`, obj2send);
     }
     
-
     // ADD REQUESTS 
     // return object like that
     // {

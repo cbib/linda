@@ -5,10 +5,11 @@ import { GlobalService, AlertService, UserService } from '../../../services';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { UniqueIDValidatorComponent } from '../../application/validators/unique-id-validator.component'
 import { first } from 'rxjs/operators';
+import { Md5} from 'ts-md5/dist/md5';
 
 interface DialogData {
   field_to_edit: string;
-  person_id: string;
+  person: PersonInterface;
 }
 
 export function MustMatch(controlName: string, matchingControlName: string) {
@@ -37,28 +38,32 @@ export function MustMatch(controlName: string, matchingControlName: string) {
 })
 export class EditFormComponent implements OnInit {
   editForm: FormGroup ;
-  private person_id: string;
+  private person: PersonInterface;
   private field_to_edit:string
+  currentUser: UserInterface
+
   constructor(    private globalService: GlobalService,
     private formBuilder: FormBuilder,
     private userService:UserService,
     private alertService: AlertService,
     public dialogRef: MatDialogRef<EditFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData) { 
-      this.person_id = this.data.person_id
+      this.person = this.data.person
       this.field_to_edit = this.data.field_to_edit
+      console.log(this.person)
     }
 
   ngOnInit() {
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     console.log(this.field_to_edit)
-    if (this.field_to_edit==='email'){
+    if (this.field_to_edit==='Person email'){
       this.editForm = this.formBuilder.group({
-        'email': ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "person", "Person email")],
+        'Person email': ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", "Person email")],
       });
     }
-    else if(this.field_to_edit==='name'){
+    else if(this.field_to_edit==='Person name'){
       this.editForm = this.formBuilder.group({
-        'name': ['',Validators.required],
+        'Person name': ['',Validators.required],
       });
     }
     else if(this.field_to_edit==='username'){
@@ -66,9 +71,9 @@ export class EditFormComponent implements OnInit {
         'username': ['',Validators.required],
       });
     }
-    else if(this.field_to_edit==='affiliation'){
+    else if(this.field_to_edit==='Person affiliation'){
       this.editForm = this.formBuilder.group({
-        'affiliation': ['',Validators.required],
+        'Person affiliation': ['',Validators.required],
       });
     }
     else if(this.field_to_edit==='password'){
@@ -93,10 +98,13 @@ export class EditFormComponent implements OnInit {
     else if (this.field_to_edit==='password'){
 
     }
-    else if (this.field_to_edit==='affiliation'){
+    else if (this.field_to_edit==='Person affiliation'){
 
     }
-    else if (this.field_to_edit==='name'){
+    else if (this.field_to_edit==='Person name'){
+
+    }
+    else if (this.field_to_edit==='Person email'){
 
     }
     //email
@@ -119,7 +127,28 @@ export class EditFormComponent implements OnInit {
     this.dialogRef.close({event:"Cancelled"});
   }
   onOkClick(): void {
-    //this.globalService.update(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { 
+    if (this.field_to_edit.includes("Person")){
+      console.log(this.field.value)
+      console.log(this.person['Person ID'])
+      console.log(this.field_to_edit )
+      let data=this.globalService.update_person(this.field.value, this.person['Person ID'], this.field_to_edit).toPromise()
+      console.log(data); 
+    }
+    else{
+      if (this.field_to_edit==='password'){
+        console.log(Md5.hashStr(this.field.value))
+        let data=this.globalService.update_user(Md5.hashStr(this.field.value), this.currentUser._key, this.field_to_edit).toPromise()
+        console.log(data);
+      }
+      else{
+        let data=this.globalService.update_user(this.field.value, this.currentUser._key, this.field_to_edit).toPromise()
+        console.log(data);
+      }
+
+       
+    }
+    
+    //this.globalService.update_(this.data_file._key, this.field_to_edit , 'person').pipe(first()).toPromise().then(data => { 
     //console.log(data); 
     this.dialogRef.close({event:"Confirmed"});
 

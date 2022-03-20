@@ -226,6 +226,8 @@
                                 [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
                         </span>
                     </div>
+
+                    
                     <ng-template style="min-height: 800px;max-height: 800px;" #formOntologyContent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
                         <div>
                           <nav class="navbar navbar-expand-sm navbar-dark">
@@ -501,7 +503,7 @@
                                     required</div>
                                 <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is
                                     required</div>
-                                <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required -
+                                <div style="color :red" *ngIf="f[field['key']].errors.alreadyThere">Unique ID is required -
                                     already used !! </div>
                             </div>
                         </div>
@@ -665,7 +667,7 @@
                                     required</div>
                                 <div style="color :red" *ngIf="f[field['key']].errors.minlength">minimum length is
                                     required</div>
-                                <div style="color :red" *ngIf="f[field['key']].errors.create">Unique ID is required -
+                                <div style="color :red" *ngIf="f[field['key']].errors.alreadyThere">Unique ID is required -
                                     already used !! </div>
                             </div>
                         </div>

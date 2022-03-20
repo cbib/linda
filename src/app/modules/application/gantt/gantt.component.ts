@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { GanttEditorComponent, GanttEditorOptions } from "ng-gantt/";
-import { GlobalService} from '../../../services';
+import { GlobalService, UserService } from '../../../services';
 import { MiappeNode } from '../../../models';
 import { GantElement } from './GantElement';
 import { ModelGant } from './GantElement';
 import { UserInterface } from 'src/app/models/linda/person';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-gantt',
@@ -13,143 +14,242 @@ import { UserInterface } from 'src/app/models/linda/person';
 })
 
 export class GanttComponent implements OnInit {
+  @Input('level') level: number;
+    @Input('parent_id') parent_id:string;
+    @Input('model_id') model_id: string;
+    @Input('model_key') model_key: string;
+    @Input('model_type') model_type: string;
+    @Input('activeTab') activeTab: string;
+    @Input('role') role: string;
+    @Input('group_key') group_key: string;
   @ViewChild(GanttEditorComponent, { static: false }) editor: GanttEditorComponent;
   public editorOptions: GanttEditorOptions;
   public data: any;
   public vertices: any = []
   public statistics: {};
   private nodes: MiappeNode[]
-  private  myListmg = [] as Array<ModelGant>
-  private  mylistobjmg = [] as Array<GantElement>
-  constructor(private globalService: GlobalService) { }
+  private myListmg = [] as Array<ModelGant>
+  private mylistobjmg = [] as Array<GantElement>
+  currentUser:UserInterface
+  constructor(
+    private globalService: GlobalService,
+    private userService:UserService,
+    private route: ActivatedRoute,
+    private router: Router) {
+    this.route.queryParams.subscribe(
+      params => {
+        this.level = params['level'];
+        this.model_id = params['model_id'];
+        this.parent_id = params['parent_id']
+        this.model_key= params['model_key']
+        this.model_type=params['model_type']
+        this.role=params['role']
+        this.group_key=params['group_key']
+
+      }
+    );
+   }
 
   async ngOnInit() {
+    this.currentUser  = JSON.parse(localStorage.getItem('currentUser'));
+    await this.get_project_vertices()
     await this.get_vertices()
     console.log(this.vertices)
     this.nodes = this.build_hierarchy(this.vertices)
     console.log(this.nodes)
     this.data = this.build_gantt(this.nodes)
-    //this.data = this.initialData();
+    //this.data = this.initialData2();
     console.log(this.data)
+    
 
     //this.data = this.nodes
     this.editorOptions = {
       vFormat: "day",
-      vEditable: true,
+      vEditable: false,
+      // EventsClickCell
       vEventsChange: {
         taskname: () => {
           console.log("taskname");
 
         }
-      }
+      },
+      // EventsClickCell
+      vEvents: {
+        /* taskname: () => {
+          console.log("taskname");
+
+        }, */
+        taskname:function(task){
+          console.log(task.getID());
+          console.log(task.getName());
+          console.log(task.getOriginalID())
+        }
+        /* taskname: console.log,
+        res: console.log,
+        dur: console.log,
+        comp: console.log,
+        start: console.log,
+        end: console.log,
+        planstart: console.log,
+        planend: console.log,
+        cost: console.log,
+        additional_category: console.log, // for additional fields
+        beforeDraw: ()=>console.log('before draw listener'),
+        afterDraw: ()=>console.log('before after listener') */
+      }//,
+      /* vEventClickRow: console.log,
+      vEventClickCollapse: console.log */
     };
+    this.editor.setOptions(this.editorOptions)
   }
-  /* {
-    pID: 1,
-    pName: "Define Chart API",
-    pStart: "",
-    pEnd: "",
-    pClass: "ggroupblack",
-    pLink: "",
-    pMile: 0,
-    pRes: "Brian",
-    pComp: 0,
-    pGroup: 1,
-    pParent: 0,
-    pOpen: 1,
-    pDepend: "",
-    pCaption: "",
-    pNotes: "Some Notes text"
-  }, */
-  build_gantt2(_nodes: MiappeNode[]){
+  async get_project_vertices(){
+    const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
+    console.log(person_id);
+    const data = await this.globalService.get_vertice(person_id[0].split("/")[1], this.model_key).toPromise();
+    console.log(data);
+  }
+  async get_vertices() {
+    let user: UserInterface = JSON.parse(localStorage.getItem('currentUser'));
+    console.log(user)
+    const data = await this.globalService.get_all_vertices(user._key).toPromise();
+    this.vertices = data;
+    console.log(data);
+    this.statistics = {
+      "investigations": 0,
+      "studies": 0,
+      "experimental_factors": 0,
+      "environments": 0,
+      "metadata_files": 0,
+      "observation_units": 0,
+      "samples": 0,
+      "events": 0,
+      "data_files": 0,
+      "biological_materials": 0,
+      "observed_variables": 0
+    };
+    this.vertices.forEach(
+      attr => {
+        this.statistics[attr["e"]["_to"].split("/")[0]] += 1;
+
+      }
+    );
+  }
+  build_gantt2(_nodes: MiappeNode[]) {
     this.mylistobjmg
     _nodes.forEach(
       n => {
         let investigations = n.children
         investigations.forEach(
-          i=> {
+          i => {
             //var mgi= new GantElement(_pID=parseInt(i.model_key),_pName=i.name)
             console.log(i)
           });
       }
     )
   }
-  build_gantt(_nodes: MiappeNode[]){
+  build_gantt(_nodes: MiappeNode[]) {
     let mymgs = [] as Array<ModelGant>
     _nodes.forEach(
       n => {
         let investigations = n.children
-        
-        investigations.forEach(
-          i=> {
-            var mgi = {} as ModelGant
-            mgi.pID=parseInt(i.model_key)     
-            mgi.pName=i.name
-            mgi.pStart=""
-            mgi.pEnd=""
-            mgi.pClass= "ggroupblack"
-            mgi.pLink= ""
-            mgi.pMile= 0
-            mgi.pRes=i.parent_id
-            mgi.pComp=0
-            mgi.pGroup= 1
-            mgi.pParent= 0
-            mgi.pOpen= 1
-            mgi.pDepend= ""
-            mgi.pCaption= ""
-            mgi.pNotes= "Some Notes text"
-            mymgs.push(mgi)
-            
-            let studies = i.children
-            console.log(studies)
-            let cpt=0
+        for (let i = 0; i < investigations.length; i++) {
+          //const element = investigations[index];
+          /* investigations.forEach(
+            i => { */
+          var investigation = investigations[i];
+          //if (investigation)
+          console.log(investigation)
+          var mgi = {} as ModelGant
+          mgi.pID = parseInt(investigation.model_key)
+          mgi.pName = investigation.name
+          mgi.pStart = ""
+          mgi.pEnd = ""
+          mgi.pClass = "ggroupblack"
+          mgi.pLink = ""
+          mgi.pMile = 0
+          mgi.pRes = investigation.parent_id
+          mgi.pComp = 14
+          mgi.pGroup = 1
+          mgi.pParent = 0
+          mgi.pOpen = 1
+          mgi.pDepend = ""
+          mgi.pCaption = ""
+          mgi.pNotes = "Some Notes text"
+          mymgs.push(mgi)
+          let studies = investigation.children
+          console.log(studies)
+          let cpt = 0
+          
             studies.forEach(
-              s=> {
-
-                var mgs = {} as ModelGant
-                mgs.pID=parseInt(s.model_key)
-                mgs.pName=s.name
-                mgs.pStart="2017-02-21"
-                mgs.pEnd="2017-03-09"
-                mgs.pClass= "gtaskblue",
-                mgi.pLink= ""
-                mgi.pMile= 1
-                mgs.pRes=i.parent_id
-                mgs.pComp=s.fill_percentage
-                mgi.pGroup= 1
-                mgs.pParent=parseInt(i.model_key)
-                mgs.pOpen= 1
-                mgs.pDepend= ""
-                mgs.pCaption= ""
-                
-                mymgs.push(mgs)
-                //test observation unit
-                /* var mgou = {} as ModelGant
-                let pname= "obsunit_" + s.model_key
-                mgou.pID=cpt
-                mgou.pName=pname
-                mgou.pStart="2017-02-21"
-                mgou.pEnd="2017-03-09"
-                mgou.pClass= "gtaskblue",
-                mgou.pLink= ""
-                mgou.pMile= 1
-                mgou.pRes="fgvedwv"
-                mgou.pComp=34
-                mgou.pGroup= 1
-                mgou.pParent=parseInt(s.model_key)
-                mgou.pOpen= 1
-                mgou.pDepend= ""
-                mgou.pCaption= ""
-                
-                mymgs.push(mgou) */
-              });
-              cpt+=1
-            
-          });
+              s => {
+                if (s.children.length > 0) {
+                  var mgs = {} as ModelGant
+                  mgs.pID = parseInt(s.model_key)
+                  mgs.pName = s.name
+                  mgs.pStart = s.current_data_object['Start date of study']
+                  mgs.pEnd = s.current_data_object['End date of study']
+                  mgs.pClass = "gtaskblue"
+                  mgs.pLink = ""
+                  mgs.pMile = 0
+                  mgs.pRes = investigation.name
+                  mgs.pComp = s.fill_percentage
+                  mgs.pGroup = 1
+                  mgs.pParent = parseInt(investigation.model_key)
+                  mgs.pOpen = 1
+                  mgs.pDepend = ""
+                  mgs.pCaption = ""
+                  mymgs.push(mgs)
+                  
+                  console.log(s.children)
+                  s.children.forEach(child => {
+                    
+                    if (child.get_id().includes("events")) {
+                      var mge = {} as ModelGant
+                      let pname = "obsvar_" + child.model_key
+                      mge.pID = parseInt(child.model_key)
+                      mge.pName = child.current_data_object['Event type']
+                      mge.pStart = child.current_data_object['Event date']
+                      mge.pEnd = child.current_data_object['Event date']
+                      mge.pClass = "gmilestone"
+                      mge.pLink = ""
+                      mge.pMile = 1;
+                      mge.pRes = s.name
+                      mge.pComp = 100;
+                      mge.pGroup = 0
+                      mge.pParent = parseInt(s.model_key)
+                      mge.pOpen = 1
+                      mge.pDepend = s.model_key
+                      mge.pCaption = child.current_data_object['Event type']
+                      mge.pNotes = child.current_data_object['Event type'] + " " + child.current_data_object['Event accession number']
+                      mymgs.push(mge)
+                    }
+                  });
+                }
+                else{
+                  var mgs = {} as ModelGant
+                  mgs.pID = parseInt(s.model_key)
+                  mgs.pName = s.name
+                  mgs.pStart = s.current_data_object['Start date of study']
+                  mgs.pEnd = s.current_data_object['End date of study']
+                  mgs.pClass = "gtaskblue"
+                  mgs.pLink = ""
+                  mgs.pMile = 0
+                  mgs.pRes = investigation.name
+                  mgs.pComp = s.fill_percentage
+                  mgs.pGroup = 0
+                  mgs.pParent = parseInt(investigation.model_key)
+                  mgs.pOpen = 1
+                  mgs.pDepend = ""
+                  mgs.pCaption = ""
+                  mymgs.push(mgs)
+                }
+            });
+            cpt += 1
+          }
           console.log(mymgs)
-      });
-      return mymgs
-      
+        });
+    return mymgs
+
 
   }
   build_hierarchy(edges: []): MiappeNode[] {
@@ -159,13 +259,20 @@ export class GanttComponent implements OnInit {
     tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
     edges.forEach(
       e => {
+
+        console.log(e)
         var vertices: [] = e["s"]["vertices"]
         var parent_id: string = e["e"]["_from"]
+        var vertice_id: string = e["e"]["_to"]
         var percent = 0.0
         var short_name = ""
+        //var vertice_data={}
+        //var  vertice_keys=[]
         vertices.forEach(
           vertice => {
+            console.log(vertice)
             if (vertice['_id'] === e["e"]["_to"]) {
+              //vertice_data=vertice
               var vertice_keys = Object.keys(vertice)
               var total = 0
               for (var i = 0; i < vertice_keys.length; i++) {
@@ -174,29 +281,35 @@ export class GanttComponent implements OnInit {
                 }
               }
               percent = Math.round(100 * ((total - 3) / (vertice_keys.length - 3)))
-              if (parent_id.includes('investigation')){
+              console.warn(parent_id)
+              if (parent_id.includes('users')) {
                 short_name = vertice['Project Name']
               }
-              else{
+              else if (parent_id.includes('investigations')) {
                 short_name = vertice['Study Name']
               }
+              else {
+                short_name = e["e"]["_to"]
+              }
+              console.warn(short_name)
             }
           }
         )
         if (short_name === "" || short_name === undefined) {
           short_name = e["e"]["_to"]
         }
+        var vertice_data:{}= vertices.filter(vertice => vertice['_id'] == vertice_id)[0]
+        var vertice_data_keys = Object.keys(vertice_data).filter(key => !key.startsWith("_"))
         if (parent_id.includes("users")) {
-
           if (cpt === 0) {
-            tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+            tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id, vertice_data_keys, vertice_data))
           }
           else {
-            tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+            tmp_nodes[0].add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id, vertice_data_keys, vertice_data))
           }
         }
         else {
-          this.searchTerm(tmp_nodes, e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id))
+          this.searchTerm(tmp_nodes, e["e"]["_from"]).add_children(new MiappeNode(e["e"]["_to"], short_name, "", percent, parent_id, vertice_data_keys, vertice_data))
         }
         cpt += 1
       }
@@ -221,40 +334,7 @@ export class GanttComponent implements OnInit {
     )
     return term
   }
-  get_vertices() {
-    let user:UserInterface = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(user)
-    return this.globalService.get_all_vertices(user._key).toPromise().then(
-      data => {
-        this.vertices = data;
-        console.log(data)
-        this.statistics = {
-          "investigations": 0,
-          "studies": 0,
-          "experimental_factors": 0,
-          "environments": 0,
-          "metadata_files": 0,
-          "observation_units": 0,
-          "samples": 0,
-          "events": 0,
-          "data_files": 0,
-          "biological_materials": 0,
-          "observed_variables": 0
-        }
-
-        this.vertices.forEach(
-          attr => {
-            this.statistics[attr["e"]["_to"].split("/")[0]] += 1
-
-          }
-        );
-        //console.log(this.statistics)
-
-
-
-      }
-    )
-  }
+  
 
   changeData() {
     this.data = [... this.data,
@@ -265,7 +345,78 @@ export class GanttComponent implements OnInit {
     }];
   }
 
-
+  initialData2() {
+    return [
+      {
+        pID: 1,
+        pName: "Define Chart API",
+        pStart: "",
+        pEnd: "",
+        pClass: "ggroupblack",
+        pLink: "",
+        pMile: 0,
+        pRes: "Brian",
+        pComp: 0,
+        pGroup: 1,
+        pParent: 0,
+        pOpen: 1,
+        pDepend: "",
+        pCaption: "",
+        pNotes: "Some Notes text"
+      },
+      {
+        pID: 11,
+        pName: "Chart Object",
+        pStart: "2017-02-18",
+        pEnd: "2017-02-20",
+        pClass: "gmilestone",
+        pLink: "",
+        pMile: 1,
+        pRes: "Shlomy",
+        pComp: 80,
+        pGroup: 0,
+        pParent: 1,
+        pOpen: 1,
+        pDepend: "",
+        pCaption: "",
+        pNotes: ""
+      },
+      {
+        pID: 12,
+        pName: "Task Objects",
+        pStart: "",
+        pEnd: "",
+        pClass: "ggroupblack",
+        pLink: "",
+        pMile: 0,
+        pRes: "Shlomy",
+        pComp: 40,
+        pGroup: 1,
+        pParent: 1,
+        pOpen: 0,
+        pDepend: "",
+        pCaption: "",
+        pNotes: ""
+      },
+      {
+        pID: 121,
+        pName: "Constructor Proc #1234 of February 2017",
+        pStart: "2017-02-21",
+        pEnd: "2017-03-09",
+        pClass: "gtaskblue",
+        pLink: "",
+        pMile: 0,
+        pRes: "Brian T.",
+        pComp: 60,
+        pGroup: 0,
+        pParent: 12,
+        pOpen: 1,
+        pDepend: "",
+        pCaption: "",
+        pNotes: ""
+      }
+    ]
+  }
   initialData() {
     return [
       {

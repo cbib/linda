@@ -9,7 +9,8 @@ import { UniqueIDValidatorComponent } from '../../application/validators/unique-
 import { StudyInterface } from 'src/app/models/linda/study';
 import { SelectionModel } from '@angular/cdk/collections';
 import { first } from 'rxjs/operators';
-
+import { LindaEvent } from 'src/app/models/linda/event';
+ 
 interface DialogData {
   column_original_label: string;
   data_file: DataFileInterface;
@@ -60,7 +61,9 @@ export class DefineComponent implements OnInit, OnDestroy {
   private group_key: string;
   private extraction_component: string = ""
   private extraction_component_field: string = ""
+  private cleaned_event_model = []
   private cleaned_study_model = []
+  private cleaned_experimental_factor_model = []
   //private associated_header: AssociatedHeadersInterface
   private component_extracted: boolean = false
   private study_original_column_label: string = ""
@@ -74,7 +77,7 @@ export class DefineComponent implements OnInit, OnDestroy {
   definecolumnForm: FormGroup = this.formBuilder.group({
     'Detected studies': [''],
     'test': [''],
-    'Study IDs': ['', [Validators.required, Validators.minLength(6)], UniqueIDValidatorComponent.create(this.globalService, this.alertService, "user", "Person ID")],
+    'Study IDs': ['', [Validators.required, Validators.minLength(6)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "user", "Person ID")],
   }, { validator: MustNotMatch('Study IDs', 'Detected studies') }
   );
   generalForm: FormGroup = this.formBuilder.group({
@@ -120,6 +123,14 @@ export class DefineComponent implements OnInit, OnDestroy {
           'Experimental Factor values',
           'Experimental Factor accession number',
           'Experimental Factor type'
+        ]
+      },
+      {
+        disabled: false, header: "", associated_linda_id: "", name: 'Event', value: 'event', fields: [
+          'Event type',
+          'Event date',
+          'Event accession number',
+          'Event description'
         ]
       },
       {
@@ -185,6 +196,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     this.parent_id = this.data.parent_id
     this.group_key = this.data.group_key
   }
+
   ngOnInit() {
     this.dtOptions = {
       pagingType: 'full_numbers',
@@ -199,8 +211,9 @@ export class DefineComponent implements OnInit, OnDestroy {
     this.studyPersons = { 'studies': [], 'persons': [], 'roles': [] }
     this.projectPersons = { 'project_ids': [], 'persons': [], 'roles': [], 'groups': [] }
     this.cleaned_study_model = this.get_model('study');
+    this.cleaned_experimental_factor_model = this.get_model('experimental_factor');
+    this.cleaned_event_model = this.get_model('event');
     this.existing_studies_ids = []
-   
     this.globalService.get_studies_and_persons(this.parent_id.split('/')[1]).toPromise().then(
       edges => {
         console.log(edges)
@@ -224,9 +237,6 @@ export class DefineComponent implements OnInit, OnDestroy {
 
       }
     );
-
-
-
 
     // Parse data in selected column
     this.cells = []
@@ -348,7 +358,7 @@ export class DefineComponent implements OnInit, OnDestroy {
 
 
   }
-  onExtract(component_value, index: number): void {
+  async onExtract(component_value, index: number) {
     console.log(component_value)
     console.log(this.extraction_component)
     console.log(this.extraction_component_field)
@@ -399,20 +409,8 @@ export class DefineComponent implements OnInit, OnDestroy {
                 this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
                   data => {
                     console.log(data['doc']);
-                    //this.Selection = []
                     this.data_file = data['doc']
-                    //this.checklistSelection = new SelectionModel<string>(true, this.Selection);
                     this.alertService.success("you have created item type " + this.extraction_component + " called " + component_value)
-                    //this.studies_to_remove = []
-                    console.warn("after update associated header ")
-                    console.warn("data file= ", this.data_file)
-                    console.warn("has study column= ", this.has_study_associated_header())
-                    console.warn("has associated header selected= ", this.associated_header.selected)
-                    console.warn("detected studies= ", this.detected_studies)
-                    console.warn("detected ids= ", this.detected_ids)
-                    console.warn("detected values= ", this.detected_values)
-                    console.warn("detected associated header= ", this.associated_header)
-                    console.warn("detected study associated header= ", this.study_associated_header)
                     this.component_extracted = true
 
                   }
@@ -426,23 +424,86 @@ export class DefineComponent implements OnInit, OnDestroy {
         }
       }
     }
-    else if (this.extraction_component === "experimental_factor"){
+    else if (this.extraction_component === "experimental_factor") {
+      if (this.extraction_component_field === "Experimental Factor accession number") {
+        let experimental_factor_model_dict = {};
+        this.cleaned_experimental_factor_model.forEach(attr => { experimental_factor_model_dict[attr["key"]] = "" });
+        var experimental_factor_model = { ...experimental_factor_model_dict };
+        // filter lines_dict to keep lines that match unique_study_label
+        var experimental_factor_lines = this.data_file.Data.filter(line => {
+          return line[this.column_original_label] === component_value;
+        });
 
+        experimental_factor_model['Experimental Factor accession number'] = component_value
+        if (!(await this.check_exists(component_value, 'Experimental Factor accession number', 'experimental_factor'))) {
+          this.globalService.add(experimental_factor_model, 'experimental_factor', this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(this.get_existing_studies_ids[index])], false, this.group_key).pipe(first()).toPromise().then(
+            res => {
+              if (res["success"]) {
+                let component_id = res["_id"]
+                this.data_file.associated_headers.filter(prop => prop.header === this.column_original_label)[0].associated_linda_id.push(component_id)
+                this.data_file.associated_headers.filter(prop => prop.header === this.column_original_label)[0].associated_values.push(component_value)
+                this.update_associated_headers(this.extraction_component_field)
+                var data_model = { ...this.data_file };
+                this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                  data => {
+                    this.data_file = data['doc']
+                    this.alertService.success("you have created item type " + this.extraction_component + " called " + component_value)
+                    this.component_extracted = true
+
+                  }
+                );
+              }
+            }
+          );
+        }
+
+      }
+    }
+    else if (this.extraction_component === "event") {
+      if (this.extraction_component_field === "Event type") {
+        //let event_model_dict = {};
+        //this.cleaned_event_model.forEach(attr => { event_model_dict[attr["key"]] = "" });
+       //var event_model = { ...event_model_dict };
+        //event_model['Event type'] = component_value
+
+        let event_model = new LindaEvent()
+        event_model['Event type'] = component_value
+
+        this.globalService.add(event_model, 'event', this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(this.detected_studies[index])], false, this.group_key).pipe(first()).toPromise().then(
+          res => {
+            if (res["success"]) {
+              let component_id = res["_id"]
+              this.data_file.associated_headers.filter(prop => prop.header === this.column_original_label)[0].associated_linda_id.push(component_id)
+              this.data_file.associated_headers.filter(prop => prop.header === this.column_original_label)[0].associated_values.push(component_value)
+              this.update_associated_headers(this.extraction_component_field)
+              var data_model = { ...this.data_file };
+              this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                data => {
+                  this.data_file = data['doc']
+                  this.alertService.success("you have created item type " + this.extraction_component + " called " + component_value)
+                  this.component_extracted = true
+                });
+            }
+          });
+      }
     }
   }
-  onLink(component_value, _study_id: string, index: number): void {
+  onLink(component_value, _component_id: string, index: number): void {
     console.log(component_value)
     console.log(this.extraction_component)
     console.log(this.extraction_component_field)
     if (this.extraction_component === "study") {
       if (["Experimental site name", "Start date of study", "Study title", "End date of study", "Study Name", "Study description", "Contact institution", "Geographic location (latitude)", "Geographic location (altitude)", "Geographic location (longitude)"].includes(this.extraction_component_field)) {
         // update field Experimental site name with values in column using study name
-        let study_id = this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(_study_id)]
+        let study_id = this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(_component_id)]
         // update field Experimental site name with values in column
         this.globalService.update_field(component_value, study_id.split("/")[1], this.extraction_component_field, "study").pipe(first()).toPromise().then(
           data => {
             console.log(data);
-            this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(study_id)
+            // when user add column, id was already added
+            if (this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id[index]!==study_id){
+              this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(study_id)
+            }
             this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_values.push(component_value)
             this.update_associated_headers(this.extraction_component_field)
             var data_model = { ...this.data_file };
@@ -462,10 +523,123 @@ export class DefineComponent implements OnInit, OnDestroy {
           });
       }
     }
-    else if (this.extraction_component === "experimental_factor"){
+    else if (this.extraction_component === "experimental_factor") {
+      if (["Experimental Factor description", "Experimental Factor type"].includes(this.extraction_component_field)) {
+        //let exp_factor_id = this.associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(_component_id)]
+        if (this.has_experimental_factor_associated_header()) {
+          // more than one experimental factor is defined in this file
+          if (this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number').length>1){
+            console.log(this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number'));
+
+          }
+          else{
+            let exp_factor_id = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number')[0].associated_linda_id[index]
+            console.log("exp_factor_id", exp_factor_id)
+            this.globalService.update_field(component_value, exp_factor_id.split("/")[1], this.extraction_component_field, this.extraction_component).pipe(first()).toPromise().then(
+              data => {
+                console.log(data);
+                if (this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id[index]!==exp_factor_id){
+                  this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(exp_factor_id)
+                }
+                this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_values.push(component_value)
+                this.update_associated_headers(this.extraction_component_field)
+                var data_model = { ...this.data_file };
+                this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                  data => {
+                    console.log(data);
+                    this.data_file = data['doc']
+                    ///this.Selection = []
+                    //this.checklistSelection = new SelectionModel<string>(true, this.Selection);
+                    this.alertService.success("you have updated " + this.extraction_component + " for field: " + this.extraction_component_field + " with value: " + component_value)
+                    /* this.studies_to_remove = [] */
+                    this.component_extracted = true
+                  });
+              });
+            }
+        }
+        else {
+          this.alertService.error('You do not have any factor defined')
+        }
+      }
+      // Experimental Factor values
+      else {
+        console.log(_component_id)
+        console.log(component_value)
+        let values = ''
+        for (let index = 0; index < component_value.length; index++) {
+          if (index === 0) {
+            values += component_value[index] + ''
+          }
+          else {
+            values += ';' + component_value[index]
+          }
+        }
+        console.log(values)
+        console.log(this.associated_header)
+        if (this.has_experimental_factor_associated_header()) {
+          let exp_factor_id = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number')[0].associated_linda_id[index]
+          console.log("exp_factor_id", exp_factor_id)
+          this.globalService.update_field(values, exp_factor_id.split("/")[1], this.extraction_component_field, this.extraction_component).pipe(first()).toPromise().then(
+            data => {
+              console.log(data);
+              this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(exp_factor_id)
+              this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_values.push(component_value)
+              this.update_associated_headers(this.extraction_component_field)
+              var data_model = { ...this.data_file };
+              this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                data => {
+                  console.log(data);
+                  this.data_file = data['doc']
+                  this.alertService.success("you have updated " + this.extraction_component + " for field: " + this.extraction_component_field + " with value: " + component_value)
+                  this.component_extracted = true
+                }
+              );
+            });
+        }
+        else {
+          this.alertService.error('You do not have any factor defined')
+        }
+
+      }
+    }
+    else if (this.extraction_component === "event"){
+      if (["Event date", "Event accession number", "Event description"].includes(this.extraction_component_field)) {
+        if (this.has_event_associated_header()) {
+          // more than one event is defined in this file
+          if (this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type').length>1){
+            console.log(this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type'));
+          }
+          else{
+            let event_id = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type')[0].associated_linda_id[index]
+            this.globalService.update_field(component_value, event_id.split("/")[1], this.extraction_component_field, this.extraction_component).pipe(first()).toPromise().then(
+              data => {
+                console.log(data);
+                if (this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id[index]!==event_id){
+                  this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_linda_id.push(event_id)
+                }
+
+                this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label)[0].associated_values.push(component_value)
+                this.update_associated_headers(this.extraction_component_field)
+                var data_model = { ...this.data_file };
+                this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').pipe(first()).toPromise().then(
+                  data => {
+                    console.log(data);
+                    this.data_file = data['doc']
+                    ///this.Selection = []
+                    //this.checklistSelection = new SelectionModel<string>(true, this.Selection);
+                    this.alertService.success("you have updated " + this.extraction_component + " for field: " + this.extraction_component_field + " with value: " + component_value)
+                    /* this.studies_to_remove = [] */
+                    this.component_extracted = true
+                  });
+              });
+          }
+          //let event_id = this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type')[0].associated_linda_id[index]
+
+        }
+
+      }
 
     }
-
   }
   onRemove(component_value: string, index: number) {
     if (this.extraction_component === "study") {
@@ -493,10 +667,10 @@ export class DefineComponent implements OnInit, OnDestroy {
               this.associated_header.associated_linda_id = this.associated_header.associated_linda_id.filter(linda_id => linda_id !== study_id);
               this.associated_header.associated_values = this.associated_header.associated_values.filter(associated_value => associated_value !== component_value);
               //this.data_file.associated_headers.filter(prop => prop.header == this.column_original_label).forEach(prop => { prop.associated_values.filter(value=>value!==this.associated_header.associated_values[index]); });
-              
-              
-              
-              
+
+
+
+
               this.data_file.associated_headers.filter(prop => prop.associated_component === "study").forEach(associated_header => {
                 this.clean_associated_header(associated_header, study_id, component_value)
               })
@@ -558,14 +732,25 @@ export class DefineComponent implements OnInit, OnDestroy {
           }
         })
       }
-      else{
+      else {
 
       }
     }
   }
-  has_study_associated_header(): boolean {
-    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID').length > 0
+  async check_exists(model_id: string, field: string, model_type: string) {
+    console.log(model_id)
+    const data = await this.globalService.is_exist(field, model_id, model_type).pipe(first()).toPromise();
+    console.log(data)
+    if (model_id === "") {
+      return false;
+    }
+    if (!data["success"]) {
+      //this.component_already_there = true
+      this.alertService.error("this " + field + " is already used. You cannot integrate this project in Linda cause a project with the same unique id exists !! ");
+    }
+    return data["success"] ? false : data["success"];
   }
+  
   get_data_by_header(header: string) {
     let column_values = []
     this.data_file.Data.forEach(row => {
@@ -581,6 +766,24 @@ export class DefineComponent implements OnInit, OnDestroy {
       }
     })
     return column_values
+  }
+  has_event_associated_header(): boolean {
+    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type').length > 0
+  }
+  has_experimental_factor_associated_header(): boolean {
+    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number').length > 0
+  }
+  has_study_associated_header(): boolean {
+    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID').length > 0
+  }
+
+  get detected_experimental_factor() {
+    if (this.has_experimental_factor_associated_header()) {
+      return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number')[0].associated_values
+    }
+    else {
+      return []
+    }
   }
   get detected_studies() {
     if (this.has_study_associated_header()) {
@@ -621,16 +824,31 @@ export class DefineComponent implements OnInit, OnDestroy {
   get study_associated_header() {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID')[0]
   }
+ get detected_events(){
+  if (this.has_event_associated_header()) {
+    if (this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type').length>1){
+        // return which ???
+    }
+    else{
+      return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event type')[0].associated_values
+
+    }
+  }
+  else {
+    return []
+  }
+ }
+
   get detected_ids() {
     return this.data_file.associated_headers.filter(associated_header => associated_header.header === this.column_original_label)[0].associated_linda_id
   }
   clean_associated_header(_associated_header: AssociatedHeadersInterface, _study_id: string, _component_value) {
     console.log(_associated_header)
-    
-    if (this.extraction_component_field==='Study unique ID'){
+
+    if (this.extraction_component_field === 'Study unique ID') {
       _associated_header.associated_values = this.associated_header.associated_values.filter(associated_value => associated_value !== _component_value);
     }
-    else{
+    else {
       _associated_header.associated_values.splice(this.associated_header.associated_linda_id.indexOf(_study_id), 1)
       console.log(_associated_header)
     }
@@ -740,10 +958,15 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
   }
   get_associated_header_linda_id_by_value(key: string, index: number) {
-    if (this.associated_header.associated_values.filter(value => value === key).length > 0) {
-      return this.associated_header.associated_linda_id[index]
-      //return this.associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(this.associated_header.associated_values.filter(value => value === key)[0])]
+    if (this.data_file.associated_headers.filter(associated_header => associated_header.associated_values.includes(key)).length > 0) {
+
+      return this.data_file.associated_headers.filter(associated_header => associated_header.associated_values.includes(key))[0].associated_linda_id[index]
     }
+    /*     if (this.associated_header.associated_values.filter(value => value === key).length > 0) {
+          console.log(this.associated_header.associated_values.filter(value => value === key))
+          return this.associated_header.associated_linda_id[index]
+          //return this.associated_header.associated_linda_id[this.associated_header.associated_values.indexOf(this.associated_header.associated_values.filter(value => value === key)[0])]
+        } */
     else {
       return ""
     }
@@ -765,13 +988,19 @@ export class DefineComponent implements OnInit, OnDestroy {
   }
 
   get_associated_header_linda_id_by_study_id(study_unique_id: string, index: number) {
+    //console.log(this.study_associated_header)
     let study_linda_id = this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(study_unique_id)]
     return this.associated_header.associated_linda_id.filter(linda_id => linda_id === study_linda_id)
+  }
+
+  has_associated_header_value(key: string, study_unique_id: string, index: number){
+    return this.associated_header.associated_values.filter(value => value === key).length > 0 && this.associated_header.associated_values[index]===key
   }
   has_associated_header_linda_id_by_study_id(study_unique_id: string, index: number) {
     let study_linda_id = this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(study_unique_id)]
     return this.associated_header.associated_linda_id.filter(linda_id => linda_id === study_linda_id).length > 0
   }
+
   has_associated_header_linda_id_by_value(key: string, index: number) {
     //console.log(key)
     ///console.log(this.associated_header.associated_linda_id.filter(value => value === key))
@@ -782,7 +1011,20 @@ export class DefineComponent implements OnInit, OnDestroy {
     else {
       return false
     }
-    return this.associated_header.associated_linda_id.filter(value => value === key).length !== 0
+    //return this.associated_header.associated_linda_id.filter(value => value === key).length !== 0
+  }
+  has_associated_header_linda_id_by_index(key: string, index: number) {
+    //console.log(key)
+    ///console.log(this.associated_header.associated_linda_id.filter(value => value === key))
+    if (this.associated_header.associated_linda_id[index]) {
+      console.log(this.associated_header.associated_linda_id[index])
+      return true
+      //return this.associated_header.associated_linda_id.filter(value => value === key)[0]
+    }
+    else {
+      return false
+    }
+    //return this.associated_header.associated_linda_id.filter(value => value === key).length !== 0
   }
   has_associated_headers_linda_id_by_value(key: string, index: number) {
     //console.log(key)

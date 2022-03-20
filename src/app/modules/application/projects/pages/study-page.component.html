@@ -7,8 +7,6 @@
         </h3>           
             <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
     </div> -->
-  <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save
-    Changes</button>
   <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close
     Study</button>
   <div>
@@ -16,7 +14,7 @@
   <ul class="nav nav-pills">
     <li class="nav-item">
       <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studyinfo'}" (click)="changeTab('studyinfo')"
-        aria-controls="studyinfo" role="tab" data-toggle="tab" href="#studyinfo">1. Administrative informations</a>
+        aria-controls="studyinfo" role="tab" data-toggle="tab" href="#studyinfo">1. Study informations</a>
     </li>
     <li class="nav-item">
       <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studysite'}" (click)="changeTab('studysite')"
@@ -32,19 +30,23 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsunit'}" (click)="changeTab('obsunit')" href="#obsunit"
-        aria-controls="obsunit" role="tab" data-toggle="tab">5. Observations Units</a>
+        aria-controls="obsunit" role="tab" data-toggle="tab">5. Observations</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='expfac'}" (click)="changeTab('expfac')" href="#expfac"
         aria-controls="expfac" role="tab" data-toggle="tab">6. Experimental Factors</a>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsvar'}" (click)="changeTab('obsvar')" href="#obsvar"
         aria-controls="obsvar" role="tab" data-toggle="tab">7. Observed variables</a>
+    </li> -->
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='events'}" (click)="changeTab('events')" href="#events"
+        aria-controls="events" role="tab" data-toggle="tab">8. Events</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='data_files'}" (click)="changeTab('data_files')" href="#data_files"
-        aria-controls="expfac" role="tab" data-toggle="tab">8. Data files</a>
+        aria-controls="expfac" role="tab" data-toggle="tab">9. Data files</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" (click)="changeTab('People')" aria-controls="People" role="tab" data-toggle="tab">9. Study members</a>
@@ -77,8 +79,8 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <!--         <app-form *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-form>
- -->        <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_model_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
+          <app-form *ngIf="activeTab==='studydesign'" id="study_form_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-form>
+          <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_model_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
         </div>
 
       </mat-card>
@@ -105,16 +107,20 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
+          <app-observations-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
           [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-        </app-observation-unit-page>
+          [role]="get_role" </app-observations-page>
+          
+          <!-- <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
+          [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-observation-unit-page> -->
        </div>
         
         <!-- observation unit form -->
       </mat-card>
     </div>
 
-    <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
+    <!-- <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
       <h3>Observed variables</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
@@ -124,24 +130,36 @@
           <app-observed-variable-page *ngIf="activeTab==='obsvar'" (notify)="get_output_from_child($event)"
           [model_type]="'observed_variable'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
         </app-observed-variable-page>
-       </div>
-
-       
-        <!-- observation unit form -->
+       </div>       
       </mat-card>
-    </div>
+    </div> -->
     <div [ngClass]="{ 'active':activeTab==='expfac'}" role="tabpanel" class="tab-pane" id="expfac">
       <h3>Describe experimental factors</h3>
+      <mat-card style="width: 98%;">
+        <p>The object of a study is to ascertain the impact of one or more factors on the biological material. Thus, a factor is, by definition a condition that varies between observation units, which may be biotic (pest, disease interaction) or abiotic (treatment and cultural practice) in nature. Depending on the level of the data, an experimental factor can be either  'what is the factor applied to the plant' (i.e. Unwatered), or the 'environmental characterisation' (i.e. if no rain on unwatered plant : Drought ;  if rain on unwatered plant: Irrigated) </p>
+
+        <div *ngIf="get_role!=='owner'">
+          <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
+        </div>
+        <div *ngIf="get_role==='owner'">
+          <app-experimental-factors-page *ngIf="activeTab==='expfac'" (notify)="get_output_from_child($event)"
+          [model_type]="'experimental_factor'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode" [role]="get_role">
+        </app-experimental-factors-page>
+       </div>
+      </mat-card>
+    </div>
+
+    <div [ngClass]="{ 'active':activeTab==='events'}" role="tabpanel" class="tab-pane" id="events">
+      <h3>Describe events</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-experimental-factor-page *ngIf="activeTab==='expfac'" (notify)="get_output_from_child($event)"
-          [model_type]="'experimental_factor'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-        </app-experimental-factor-page>
+          <app-events-page *ngIf="activeTab==='events'" (notify)="get_output_from_child($event)"
+          [model_type]="'event'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+        </app-events-page>
        </div>
-        
       </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='data_files'}" role="tabpanel" class="tab-pane" id="data_files">
@@ -172,12 +190,12 @@
             </td>
 
             <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
-              <a href="{{get_current_data_array(node)[key]}}" target="_blank">{{get_current_data_array(node)[key]}}</a>
+              <a href="{{get_current_data_object(node)[key]}}" target="_blank">{{get_current_data_object(node)[key]}}</a>
             </td>
 
             <td *ngIf="key.includes('file version') || key.includes('file description')"
               style="font-size:14px;text-align: center;" scope="row">
-              {{get_current_data_array(node)[key]}}
+              {{get_current_data_object(node)[key]}}
             </td>
             <td *ngIf="key === 'Data'" style="font-size:14px;text-align: center;" scope="row">
               <button (click)="show_datatable(node)" class="btn btn-primary btn-xs" title="{{node.id}}">Show

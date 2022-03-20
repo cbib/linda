@@ -1,0 +1,24 @@
+<div id="event-page">
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
+     Event</button>
+    <div>
+        <!-- Nav pills -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" [ngClass]="{ 'active':activeTab==='event_info'}" (click)="changeTab('event_info')"
+            aria-controls="event_info" role="tab" data-toggle="tab" href="#event_info">1. Event informations</a>
+        </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div [ngClass]="{ 'active':activeTab==='event_info'}" role="tabpanel" class="tab-pane active" id="eventinfo">
+            <h3>Describe your Event</h3>
+            <mat-card style="width: 98%;">
+                <app-form *ngIf="activeTab==='event_info'" id="event_form" (notify)="get_output_from_child($event)"
+                [model_type]="'event'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+                inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form>    
+            </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

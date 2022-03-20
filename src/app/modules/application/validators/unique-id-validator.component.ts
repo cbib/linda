@@ -11,9 +11,9 @@ import { Injectable } from '@angular/core';
 })
 
 export class UniqueIDValidatorComponent{
-  create= UniqueIDValidatorComponent.create;
+  alreadyThere= UniqueIDValidatorComponent.alreadyThere;
   
-  static create(globalService: GlobalService, alertService: AlertService, model_type:string, field:string){
+  static alreadyThere(globalService: GlobalService, alertService: AlertService, model_type:string, field:string){
     
     return (control: FormControl) => {
         //return globalService.is_exist(field, control.value, model_type).subscribe(
@@ -21,14 +21,14 @@ export class UniqueIDValidatorComponent{
         return globalService.is_exist(field, control.value, model_type).pipe(first()).toPromise().then(
             data => {
                     if (control.value ===""){
-                        return { 'create': true };
+                        return { 'alreadyThere': true };
                     }
                     if (data["success"]){
                         alertService.clear()
                     }else{
                         alertService.error("this "+field+" is already used. Please select new one ! ");
                     }
-            return data["success"] ? null : { 'create': true };
+            return data["success"] ? null : { 'alreadyThere': true };
 
         });
     };

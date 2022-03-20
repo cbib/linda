@@ -117,3 +117,11 @@
     color: #0d6efd;
     text-decoration: none;
   }
+
+  th.mat-header-cell.edit_col {
+     text-align: right;
+  }
+
+ /*  th.mat-header-cell{
+    text-align: right;
+  } */

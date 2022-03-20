@@ -45,10 +45,10 @@
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Explore'}" href="#Explore" (click)="changeTab('Explore')"
         aria-controls="Explore" role="tab" data-toggle="tab">4. Explore</a>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Download'}" href="#Download"
         (click)="changeTab('Download')" aria-controls="Download" role="tab" data-toggle="tab">5. Download</a>
-    </li>
+    </li> -->
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='Gantt'}" href="#Gantt" (click)="changeTab('Gantt')"
         aria-controls="Gantt" role="tab" data-toggle="tab">6. Gantt</a>
@@ -65,7 +65,7 @@
       <h3>Describe your project</h3>
       <mat-card style="width: 98%;">
         <app-form *ngIf="activeTab==='identifiers'" (notify)="get_output_from_child($event)"
-          [model_type]="get_model_type" [level]="1" [parent_id]="" [model_key]="model_key" [mode]="get_mode"
+          [model_type]="get_model_type" [level]="1" [parent_id]="get_parent_id" [model_key]="model_key" [mode]="get_mode"
           inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role" ></app-form>
       </mat-card>
     </div>
@@ -129,7 +129,7 @@
         </div>
       </mat-card>
     </div>
-    <div [ngClass]="{ 'active':activeTab==='Download'}" role="tabpanel" class="tab-pane" id="Download">
+    <!-- <div [ngClass]="{ 'active':activeTab==='Download'}" role="tabpanel" class="tab-pane" id="Download">
       <h3>Download project metadata files</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
@@ -141,7 +141,7 @@
             model_type="metadata_file" mode="create"></app-download>
         </div>
       </mat-card>
-    </div>
+    </div> -->
     <div [ngClass]="{ 'active':activeTab==='Gantt'}" role="tabpanel" class="tab-pane" id="Gantt">
       <h3>Gantt</h3>
       <mat-card style="width: 98%;">
@@ -151,7 +151,17 @@
         </div>
         <div *ngIf="get_role==='owner'">
           <!-- add filter in gantt as in redmine -->
-          <app-gantt *ngIf="activeTab==='Gantt'" model_type="metadata_file" mode="create"></app-gantt>
+          <app-gantt *ngIf="activeTab==='Gantt'" 
+          [level]= "1"
+          [parent_id]="get_parent_id"
+          [model_type]= "'investigation'"
+          [model_key]="get_model_key"
+          [model_id]="get_model_id"
+          [activeTab]="'Gantt'"
+          [role]="get_role" 
+          [group_key]="get_group_key"
+          >
+        </app-gantt>
         </div>
       </mat-card>
     </div>
