@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { GlobalService, AlertService, FileService, SearchService, UserService } from '../../../../services';
 import { WizardService } from '../services/wizard.service';
@@ -62,7 +62,7 @@ export class StudiesPageComponent implements OnInit {
     private parent_key: string;
     private model_selected: string
     public vertices: any = []
-    public studies: any = []
+    public studies: StudyInterface[] = []
     private roles: { study_id: string, role: string }[] = []
 
 
@@ -82,11 +82,12 @@ export class StudiesPageComponent implements OnInit {
         private searchService: SearchService,
         private userService: UserService,
         private router: Router,
+        private route: ActivatedRoute,
         private alertService: AlertService,
         private wizardService: WizardService,
-        private route: ActivatedRoute,
         public media: MediaObserver,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private _cdr: ChangeDetectorRef
     ) {
         this.route.queryParams.subscribe(
             params => {
@@ -110,7 +111,6 @@ export class StudiesPageComponent implements OnInit {
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
-
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
         }
@@ -118,7 +118,8 @@ export class StudiesPageComponent implements OnInit {
     async ngOnInit() {
 
         //await this.get_vertices()
-        this.get_studies()
+        await this.get_studies()
+        this.dataSource = new MatTableDataSource(this.studies);
         this.loaded = true
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
@@ -129,8 +130,15 @@ export class StudiesPageComponent implements OnInit {
         console.log(this.parent_id)
         //this.extract_design(36,7,3)
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
-
     }
+
+    ngAfterViewInit() {
+        //this.dataSource.sort = this.sort;
+        //this.dataSource.paginator = this.paginator;
+        //this.dataSource.paginator = this.paginator;
+        //this.dataSource.sort = this.sort;
+        this._cdr.detectChanges()
+      } 
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         //////console.log(user)
@@ -161,11 +169,7 @@ export class StudiesPageComponent implements OnInit {
                 const data = await this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise();
                 console.log(data);
                 this.roles = data.map(study => study['roles']);
-                const studies = data.map(study_1 => study_1['study']);
-                this.dataSource = new MatTableDataSource(studies);
-                console.log(this.dataSource);
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
+                this.studies = data.map(study_1 => study_1['study']);   
             }
         )
     }
@@ -182,27 +186,54 @@ export class StudiesPageComponent implements OnInit {
     onNext(node: string) {
         ////console.log(node)
     }
-    onRemove(element: StudyInterface) {
+    async onRemove(element: StudyInterface) {
+        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
+        dialogRef.afterClosed().subscribe(async (result) => {
+            if (result) {
+                if (result.event == 'Confirmed') {
+                    // Remove only childs from the seleccted node
+                    const data = await this.globalService.remove(element._id).toPromise()
+                    console.log(data)
+                    if (data["success"]) {
+                        console.log(data["message"])
+                        var message = element._id + " has been removed from your history !!"
+                        this.alertService.success(message)
+                        this.reloadComponent()
+                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
+
+                        //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
+                        //window.location.reload();
+                        ///this.router.navigate(['/projects_tree']);
+                    }
+                    else {
+                        this.alertService.error("this form contains errors! " + data["message"]);
+                    }
+                }
+            }
+            //this.reloadComponent(['/projects'])
+        });
+
+    }
+    /* async onRemove(element: StudyInterface) {
         const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
                     // Remove only childs from the seleccted node
                     if (result.all_childs) {
-                        this.globalService.remove_childs(element._key).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]) {
+                        let data= this.globalService.remove_childs(element._key).toPromise()
+                        
+                        if (data["success"]) {
                                     ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
-                                    this.alertService.success(message)
+                            var message = "child nodes of " + element._id + " have been removed from your history !!"
+                            this.alertService.success(message)
+                            this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
+
                                     //this.reloadComponent()
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
-                            }
-                        );
-                        this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
+                        }
+                        else {
+                            this.alertService.error("this form contains errors! " + data["message"]);
+                        }
 
                         //window.location.reload();
 
@@ -279,7 +310,7 @@ export class StudiesPageComponent implements OnInit {
             //this.reloadComponent(['/projects'])
         });
 
-    }
+    } */
     onAdd(template: boolean = false) {
 
         let user = JSON.parse(localStorage.getItem('currentUser'));

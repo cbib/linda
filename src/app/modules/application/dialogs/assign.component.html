@@ -1,59 +1,92 @@
-<div class="border-head">
-    <h3 mat-dialog-title >
+<!-- <div class="border-head">
+    <h3 mat-dialog-title>
         <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
                 meta<span>D</span>at<span>A</span></b></a>
     </h3>
+</div> -->
+<div mat-dialog-title>
+        <button mat-button class="btn btn-primary btn-xs" (click)="add_column()">Add a new column</button>
+        <!-- <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_composite()">Build composite
+            column</button> -->
+        <button mat-button style="float: top-right;" class="btn btn-info btn-xs" (click)="refresh()">Refresh table</button>
 </div>
-<div mat-dialog-content >
-    <alert></alert>
-    <section class="format-section">
-        <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_column()">Add a new column</button>
-        <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_composite()">Build composite column</button>
-        <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="refresh()">Refresh file</button>
-        <br>
-    </section>
+<div mat-dialog-content>
     <section *ngIf="!get_loaded" class="format-section">
         <div id="loader">
             <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="loading"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="loading"></div>
         </div>
     </section>
-
-    <section class="format-section">   
-        <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"  #dataTable >
-            <thead>
+    <section class="format-section">
+        <alert id="assign-alert"></alert>
+        <!-- <table  class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"  #dataTable >
+            <thead *ngIf="get_loaded">
                 <tr>
                     <th *ngFor="let column of get_tableData_columns ; index as j;">
-                        <button style="background-color: #4ECDC4" *ngIf="!get_data_file.associated_headers[j].selected" mat-button class="btn-primary" (click)="onDefine(column)">Define column</button>
-                        <button style="background-color: #4ECDC4" *ngIf="get_data_file.associated_headers[j].selected && get_data_file.associated_headers[j].associated_linda_id.length==0" mat-button class="btn-primary" (click)="onDefine(column)">Define column again</button>
-                        <button style="background-color: #25995f" *ngIf="get_data_file.associated_headers[j].selected && get_data_file.associated_headers[j].associated_linda_id.length>0" mat-button class="btn-success" (click)="onDefine(column)">Extract column again</button>
 
+                        <button [style.background-color]="get_style(column)" mat-button class="btn-primary" (click)="onDefine(column)">Extract column</button>
                         <br>
-                        <mat-card style="background-color: #4ECDC4; min-height: 20 px;" class="chips"  *ngIf="get_data_file.associated_headers[j].selected">{{get_data_file.associated_headers[j].associated_component_field}}</mat-card>
-                        <mat-card style="background-color: gray;" class="chips"  *ngIf="!get_data_file.associated_headers[j].selected">No term</mat-card>
+                        <mat-card style="background-color: #4ECDC4; min-height: 20 px;" class="chips"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                        <mat-card style="background-color: gray;" class="chips"  *ngIf="!is_column_extracted(column)">No term</mat-card>
                     </th>
                 </tr>
- <!--                <tr>
-                    <th *ngFor="let associated_header of get_data_file.associated_headers ; index as k;">
+            </thead>  
+        </table> -->
+        <!-- <table  [dtTrigger]="dtTrigger" datatable 
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            #dataTable>
+            <thead *ngIf="get_loaded">
+                <tr>
+                    <th *ngFor="let column of tableData_columns ; index as j;">
+                        <button  mat-button class="btn-primary" (click)="onDefine(column)">Extract column</button>
+                        <br>
                         
-                        <div *ngIf="associated_header.selected">{{associated_header.associated_component_field}}</div>
-                        <div *ngIf="!associated_header.selected">No term</div>
+                        <mat-card [style.background-color]="get_cell_style(column)" class="chips"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                        <mat-card [style.background-color]="get_style(column)" class="chips"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
                     </th>
-                </tr> -->
+                </tr>
             </thead>
-            
+        </table> -->
+        <table *ngIf="tableData.length != 0 && get_loaded" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable 
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center">
+            <thead>
+                <tr>
+                    <th style="padding: 4px;" *ngFor="let column of get_tableData_columns ; index as j;">
+                            <div class="button-group">
+                            <!-- <span id="close" (click)="onRemove(column)">X</span> -->
+                                <button style="margin-top: 10px; padding-top: 10px; position: relative;" mat-button class="btn-primary" (click)="onDefine(column)">Extract</button>
+                            </div>
+                            <!-- <button  mat-button class="btn-danger btn-xs" (click)="onDefine(column)">Extract column</button> -->
+                            <mat-card [style.background-color]="get_cell_style(column)" [style.color]="'white'" [style.min-width]="'80px'" class="chips"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                            <mat-card [style.background-color]="get_style(column)" class="chips" [style.min-width]="'80px'"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
+                        
+                    </th>
+                </tr>
+                <tr>
+                    <th *ngFor="let column of get_tableData_columns ; index as j;">
+                        {{column}}
+                    </th>
+                </tr>
+            </thead>
+            <!-- <tbody>
+                <tr *ngFor="let row of get_data_file.Data; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+                    <td [style.background-color]="get_cell_style(h)" *ngFor="let h of get_tableData_columns; index as j;">
+                        {{row[h]}}
+                    </td>
+                </tr>
+            </tbody> -->
         </table>
     </section>
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Close</button>
-  <button mat-button  (click)="onOkClick()">Ok</button>
+    <button mat-button (click)="onNoClick()">Close</button>
+    <button mat-button (click)="onOkClick()">Ok</button>
 </div>

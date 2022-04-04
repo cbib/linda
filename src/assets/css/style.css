@@ -6,10 +6,10 @@
   }
 }
 .carousel{
-    height: 300px;
+    min-height: 300px;
 }
 .carousel-item {
-    height: 300px;
+    min-height: 300px;
   }
   
 .carousel-item img {

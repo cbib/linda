@@ -285,7 +285,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 if (attr["key"].includes("ID")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                     //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
@@ -338,11 +338,11 @@ export class FormComponent implements OnInit//, AfterViewInit
                         this.validated_term[attr["key"]] = { selected: false, values: "" }
                         //if (attr["key"].includes("ID")) {
                         ///if (attr["format"] === "Unique identifier") {
-                        if (attr["key"].includes("ID")) {
+                        if (attr["key"].includes("unique ID")) {
                             //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
                             if (this.model_to_edit[attr["key"]]=== ""){
-                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
-                                if (this.role!=='owner'){
+                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"],this.parent_id)];
+                                if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
                                     this.disabled_id_keys.push(attr["key"])
                                 }
                             }
@@ -350,24 +350,25 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
                                 this.disabled_id_keys.push(attr["key"])
                             }
+
                         }
                         else if (attr["key"].includes("Project Name")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
-                            if (this.role!=='owner'){
+                            if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
                                 console.log(this.role)
                                 this.disabled_id_keys.push(attr["key"])
                             }
                         }
                         else if (attr["key"].includes("Study Name")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
-                            if (this.role!=='owner'){
+                            if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
                                 console.log(this.role)
                                 this.disabled_id_keys.push(attr["key"])
                             }
                         }
                         else {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]]];
-                            if (this.role!=='owner'){
+                            if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
                                 this.disabled_id_keys.push(attr["key"])
                             }
                         }

@@ -15,13 +15,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 export class GanttComponent implements OnInit {
   @Input('level') level: number;
-    @Input('parent_id') parent_id:string;
-    @Input('model_id') model_id: string;
-    @Input('model_key') model_key: string;
-    @Input('model_type') model_type: string;
-    @Input('activeTab') activeTab: string;
-    @Input('role') role: string;
-    @Input('group_key') group_key: string;
+  @Input('parent_id') parent_id: string;
+  @Input('model_id') model_id: string;
+  @Input('model_key') model_key: string;
+  @Input('model_type') model_type: string;
+  @Input('activeTab') activeTab: string;
+  @Input('role') role: string;
+  @Input('group_key') group_key: string;
   @ViewChild(GanttEditorComponent, { static: false }) editor: GanttEditorComponent;
   public editorOptions: GanttEditorOptions;
   public data: any;
@@ -30,10 +30,10 @@ export class GanttComponent implements OnInit {
   private nodes: MiappeNode[]
   private myListmg = [] as Array<ModelGant>
   private mylistobjmg = [] as Array<GantElement>
-  currentUser:UserInterface
+  currentUser: UserInterface
   constructor(
     private globalService: GlobalService,
-    private userService:UserService,
+    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router) {
     this.route.queryParams.subscribe(
@@ -41,17 +41,17 @@ export class GanttComponent implements OnInit {
         this.level = params['level'];
         this.model_id = params['model_id'];
         this.parent_id = params['parent_id']
-        this.model_key= params['model_key']
-        this.model_type=params['model_type']
-        this.role=params['role']
-        this.group_key=params['group_key']
+        this.model_key = params['model_key']
+        this.model_type = params['model_type']
+        this.role = params['role']
+        this.group_key = params['group_key']
 
       }
     );
-   }
+  }
 
   async ngOnInit() {
-    this.currentUser  = JSON.parse(localStorage.getItem('currentUser'));
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     await this.get_project_vertices()
     await this.get_vertices()
     console.log(this.vertices)
@@ -60,7 +60,7 @@ export class GanttComponent implements OnInit {
     this.data = this.build_gantt(this.nodes)
     //this.data = this.initialData2();
     console.log(this.data)
-    
+
 
     //this.data = this.nodes
     this.editorOptions = {
@@ -79,7 +79,7 @@ export class GanttComponent implements OnInit {
           console.log("taskname");
 
         }, */
-        taskname:function(task){
+        taskname: function (task) {
           console.log(task.getID());
           console.log(task.getName());
           console.log(task.getOriginalID())
@@ -102,7 +102,7 @@ export class GanttComponent implements OnInit {
     };
     this.editor.setOptions(this.editorOptions)
   }
-  async get_project_vertices(){
+  async get_project_vertices() {
     const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
     console.log(person_id);
     const data = await this.globalService.get_vertice(person_id[0].split("/")[1], this.model_key).toPromise();
@@ -147,6 +147,7 @@ export class GanttComponent implements OnInit {
       }
     )
   }
+  //gtaskpink, gtaskpurple, gtaskyellow, gtaskgreen, gtaskred, gtaskblue
   build_gantt(_nodes: MiappeNode[]) {
     let mymgs = [] as Array<ModelGant>
     _nodes.forEach(
@@ -167,7 +168,7 @@ export class GanttComponent implements OnInit {
           mgi.pClass = "ggroupblack"
           mgi.pLink = ""
           mgi.pMile = 0
-          mgi.pRes = investigation.parent_id
+          mgi.pRes = "Project"
           mgi.pComp = 14
           mgi.pGroup = 1
           mgi.pParent = 0
@@ -179,53 +180,115 @@ export class GanttComponent implements OnInit {
           let studies = investigation.children
           console.log(studies)
           let cpt = 0
-          
-            studies.forEach(
-              s => {
-                if (s.children.length > 0) {
-                  var mgs = {} as ModelGant
-                  mgs.pID = parseInt(s.model_key)
-                  mgs.pName = s.name
-                  mgs.pStart = s.current_data_object['Start date of study']
-                  mgs.pEnd = s.current_data_object['End date of study']
-                  mgs.pClass = "gtaskblue"
-                  mgs.pLink = ""
-                  mgs.pMile = 0
-                  mgs.pRes = investigation.name
-                  mgs.pComp = s.fill_percentage
-                  mgs.pGroup = 1
-                  mgs.pParent = parseInt(investigation.model_key)
-                  mgs.pOpen = 1
-                  mgs.pDepend = ""
-                  mgs.pCaption = ""
-                  mymgs.push(mgs)
-                  
-                  console.log(s.children)
-                  s.children.forEach(child => {
-                    
-                    if (child.get_id().includes("events")) {
-                      var mge = {} as ModelGant
-                      let pname = "obsvar_" + child.model_key
-                      mge.pID = parseInt(child.model_key)
-                      mge.pName = child.current_data_object['Event type']
-                      mge.pStart = child.current_data_object['Event date']
-                      mge.pEnd = child.current_data_object['Event date']
-                      mge.pClass = "gmilestone"
-                      mge.pLink = ""
-                      mge.pMile = 1;
-                      mge.pRes = s.name
-                      mge.pComp = 100;
-                      mge.pGroup = 0
-                      mge.pParent = parseInt(s.model_key)
-                      mge.pOpen = 1
-                      mge.pDepend = s.model_key
-                      mge.pCaption = child.current_data_object['Event type']
-                      mge.pNotes = child.current_data_object['Event type'] + " " + child.current_data_object['Event accession number']
-                      mymgs.push(mge)
+
+          studies.forEach(
+            s => {
+              if (s.children.length > 0 && !s.get_id().includes("data_files")) {
+                var mgs = {} as ModelGant
+                mgs.pID = parseInt(s.model_key)
+                mgs.pName = s.name
+                mgs.pStart = s.current_data_object['Start date of study']
+                mgs.pEnd = s.current_data_object['End date of study']
+                mgs.pClass = "gtaskblue"
+                mgs.pLink = ""
+                mgs.pMile = 0
+                mgs.pRes = "Study"
+                mgs.pComp = s.fill_percentage
+                mgs.pGroup = 1
+                mgs.pParent = parseInt(investigation.model_key)
+                mgs.pOpen = 1
+                mgs.pDepend = ""
+                mgs.pCaption = ""
+                mymgs.push(mgs)
+
+                console.log(s.children)
+                s.children.forEach(child => {
+
+                  if (child.get_id().includes("events")) {
+                    var mge = {} as ModelGant
+                    let pname = "obsvar_" + child.model_key
+                    mge.pID = parseInt(child.model_key)
+                    //mge.pName = child.current_data_object['Event type']
+                    if (child.current_data_object['Event type']===""){
+                      mge.pName = child.current_data_object['Event accession number']
                     }
-                  });
-                }
-                else{
+                    else{
+                      mge.pName = child.current_data_object['Event type']
+                    }
+                    mge.pStart = child.current_data_object['Event date']
+                    mge.pEnd = child.current_data_object['Event date']
+                    mge.pClass = "gmilestone"
+                    mge.pLink = ""
+                    mge.pMile = 1;
+                    mge.pRes = "Event"
+                    mge.pComp = 100;
+                    mge.pGroup = 0
+                    mge.pParent = parseInt(s.model_key)
+                    mge.pOpen = 1
+                    mge.pDepend = s.model_key
+                    mge.pCaption = child.current_data_object['Event type']
+                    mge.pNotes = child.current_data_object['Event type'] + " " + child.current_data_object['Event description'] + " " + child.current_data_object['Event accession number']
+                    mymgs.push(mge)
+                  }
+                  else if (child.get_id().includes("environments")) {
+                    var mge = {} as ModelGant
+                    let pname = "obsvar_" + child.model_key
+                    mge.pID = parseInt(child.model_key)
+                    //mge.pName = child.current_data_object['Environment parameter']
+                    if (child.current_data_object['Environment parameter']===""){
+                      mge.pName = child.current_data_object['Environment parameter accession number']
+                    }
+                    else{
+                      mge.pName = child.current_data_object['Environment parameter']
+                    }
+                    mge.pStart = s.current_data_object['Start date of study']
+                    mge.pEnd = s.current_data_object['End date of study']
+                    mge.pClass = "gtaskgreen"
+                    mge.pLink = ""
+                    mge.pMile = 0;
+                    mge.pRes = "Environmental parameter"
+                    mge.pComp = 100;
+                    mge.pGroup = 0
+                    mge.pParent = parseInt(s.model_key)
+                    mge.pOpen = 1
+                    mge.pDepend = s.model_key
+                    mge.pCaption = child.current_data_object['Environment parameter']
+                    mge.pNotes = child.current_data_object['Environment parameter'] + " " + child.current_data_object['Environment parameter accession number'] + " - value(s): " + child.current_data_object['Environment parameter value']
+                    mymgs.push(mge)
+
+                  }
+                  else if (child.get_id().includes("experimental_factors")) {
+                    console.log(child.current_data_object)
+                    var mge = {} as ModelGant
+                    let pname = "obsvar_" + child.model_key
+                    mge.pID = parseInt(child.model_key)
+                    if (child.current_data_object['Experimental Factor type']===""){
+                      mge.pName = child.current_data_object['Experimental Factor accession number']
+                    }
+                    else{
+                      mge.pName = child.current_data_object['Experimental Factor type']
+                    }
+                    //mge.pName = child.current_data_object['Experimental Factor type']
+                    mge.pStart = s.current_data_object['Start date of study']
+                    mge.pEnd = s.current_data_object['End date of study']
+                    mge.pClass = "gtaskpurple"
+                    mge.pLink = ""
+                    mge.pMile = 0;
+                    mge.pRes = "Experimental Factor"
+                    mge.pComp = 100;
+                    mge.pGroup = 0
+                    mge.pParent = parseInt(s.model_key)
+                    mge.pOpen = 1
+                    mge.pDepend = s.model_key
+                    mge.pCaption = child.current_data_object['Experimental Factor type']
+                    mge.pNotes = "Description: " + child.current_data_object['Experimental Factor description'] + " " + child.current_data_object['Experimental Factor type'] + " " + child.current_data_object['Experimental Factor accession number'] + " - value(s): " + child.current_data_object['Experimental Factor values']
+                    mymgs.push(mge)
+                  }
+
+                });
+              }
+              else {
+                if (!s.get_id().includes("data_files")){
                   var mgs = {} as ModelGant
                   mgs.pID = parseInt(s.model_key)
                   mgs.pName = s.name
@@ -234,7 +297,7 @@ export class GanttComponent implements OnInit {
                   mgs.pClass = "gtaskblue"
                   mgs.pLink = ""
                   mgs.pMile = 0
-                  mgs.pRes = investigation.name
+                  mgs.pRes = "Study"
                   mgs.pComp = s.fill_percentage
                   mgs.pGroup = 0
                   mgs.pParent = parseInt(investigation.model_key)
@@ -242,12 +305,14 @@ export class GanttComponent implements OnInit {
                   mgs.pDepend = ""
                   mgs.pCaption = ""
                   mymgs.push(mgs)
-                }
+                } 
+                
+              }
             });
-            cpt += 1
-          }
-          console.log(mymgs)
-        });
+          cpt += 1
+        }
+        console.log(mymgs)
+      });
     return mymgs
 
 
@@ -298,7 +363,7 @@ export class GanttComponent implements OnInit {
         if (short_name === "" || short_name === undefined) {
           short_name = e["e"]["_to"]
         }
-        var vertice_data:{}= vertices.filter(vertice => vertice['_id'] == vertice_id)[0]
+        var vertice_data: {} = vertices.filter(vertice => vertice['_id'] == vertice_id)[0]
         var vertice_data_keys = Object.keys(vertice_data).filter(key => !key.startsWith("_"))
         if (parent_id.includes("users")) {
           if (cpt === 0) {
@@ -334,7 +399,7 @@ export class GanttComponent implements OnInit {
     )
     return term
   }
-  
+
 
   changeData() {
     this.data = [... this.data,
@@ -761,5 +826,6 @@ export class GanttComponent implements OnInit {
       }
     ];
   }
+  
 
 }

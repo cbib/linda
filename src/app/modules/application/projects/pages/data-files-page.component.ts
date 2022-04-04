@@ -13,6 +13,7 @@ import { first } from 'rxjs/operators';
 import { UserInterface } from 'src/app/models/linda/person';
 import { User } from 'src/app/models/user';
 import { AssignComponent } from '../../dialogs/assign.component';
+import { ConfirmationComponent } from '../../dialogs/confirmation.component';
 
 
 @Component({
@@ -33,14 +34,15 @@ export class DataFilesPageComponent implements OnInit {
   @Input('collection') collection: string;
   @Input('parent_id') parent_id: string;
   @Input('model_key') model_key: string;
-  @Input('group_key') group_key: string;
   @Input('role') role: string;
+  @Input('group_key') group_key: string;
+  
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
 
 
   private dataSource: MatTableDataSource<DataFileInterface>;
   private displayedColumns: string[] = ['Data file link', 'Data file description', 'edit'];
-  private data_files:DataFileInterface[]=[]
+  private data_files: DataFileInterface[] = []
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -56,6 +58,21 @@ export class DataFilesPageComponent implements OnInit {
     private alertService: AlertService,
     private route: ActivatedRoute,
     public dialog: MatDialog) {
+      this.route.queryParams.subscribe(
+        params => {
+            this.collection = params['collection'];
+            this.parent_id = params['parent_id'];
+            this.model_key = params['model_key'];
+            this.role == params['role'];
+            this.group_key = params['group_key'];
+            
+            
+            console.log(this.role)
+            console.log(this.group_key)
+            
+        }
+      );
+
 
   }
 
@@ -63,15 +80,16 @@ export class DataFilesPageComponent implements OnInit {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.load_data_files()
     this.loaded = true
+    console.log(this.parent_id)
   }
 
   async load_data_files() {
     /* console.log("model key get_data_files() in data-files.component", this.model_key )
     console.log("collection get_data_files() in data-files.component", this.collection ) */
-    return this.globalService.get_data_files(this.model_key, this.collection).toPromise().then(
+    return await this.globalService.get_data_files(this.model_key, this.collection).toPromise().then(
       data => {
-        console.log(data)
-        this.data_files=data
+        //console.log(data)
+        this.data_files = data
         this.dataSource = new MatTableDataSource(this.data_files);
         //console.log(this.dataSource)
         this.dataSource.paginator = this.paginator;
@@ -100,48 +118,73 @@ export class DataFilesPageComponent implements OnInit {
   get get_dataSource() {
     return this.dataSource
   }
-  get get_data_files(){
+  get get_data_files() {
     return this.data_files
   }
-  
 
-  onRemove(element: DataFileInterface) {
-    console.log(element._id)
-    ////console.log(this.active_node.id)
-    this.globalService.remove(element._id).pipe(first()).toPromise().then(
-      data => {
-        ////console.log(data)
-        if (data["success"]) {
-          ////console.log(data["message"])
-          var message = element._id + " has been removed from your history !!"
-          this.alertService.success(message)
-          //this.reloadComponent(['/projects_page'])
-          //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
-          //window.location.reload();
-          ///this.router.navigate(['/projects_tree']);
-        }
-        else {
-          this.alertService.error("this form contains errors! " + data["message"]);
-        }
-      }
-    );
-    let model_id = this.collection + '/' + this.model_key
-
-    if (this.collection === "investigations") {
-      this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: model_id, model_key: this.model_key, model_type: 'investigation', activeTab: 'project_data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+  reloadComponent(model_collection:string, _model_id:string) {
+    let currentUrl = this.router.url;
+    ////console.log(currentUrl)
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    //this.router.navigate(path);
+    if (model_collection === "investigations") {
+        
+      this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: _model_id, model_key: this.model_key, model_type: 'investigation', activeTab: 'project_data_files', mode: "edit", role: this.role, group_key: this.group_key } });
     }
     else {
-      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: model_id, model_key: this.model_key, model_type: 'study', activeTab: 'data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: _model_id, model_key: this.model_key, model_type: 'study', activeTab: 'data_files', mode: "edit", role: this.role, group_key: this.group_key } });
 
     }
+  }
+  async onRemove(element: DataFileInterface) {
+    console.log(element._id)
+    const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: "data_file" } });
+        dialogRef.afterClosed().subscribe(async (result) => {
+            if (result) {
+                if (result.event == 'Confirmed') {
+                  ////console.log(this.active_node.id)
+                  const data = await this.globalService.remove(element._id).toPromise()
+
+                  console.log(data)
+                  if (data["success"]) {
+                    ////console.log(data["message"])
+                    var message = element._id + " has been removed from your history !!"
+                    this.alertService.success(message)
+                    let model_id = this.collection + '/' + this.model_key
+                    //this.reloadComponent(['/projects_page'])
+                    //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
+                    //window.location.reload();
+                    ///this.router.navigate(['/projects_tree']);
+                    console.log(this.collection)
+                    this.reloadComponent(this.collection, model_id)
+                    if (this.collection === "investigations") {
+                      
+                      this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: model_id, model_key: this.model_key, model_type: 'investigation', activeTab: 'project_data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+                    }
+                    else {
+                      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: model_id, model_key: this.model_key, model_type: 'study', activeTab: 'data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+                
+                    }
+                  }
+                  else {
+                    this.alertService.error("this form contains errors! " + data["message"]);
+                  }
+
+                  let model_id = this.collection + '/' + this.model_key
+                }
+              }
+            });
+
+    
     //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: model_id, model_key: this.model_key, model_type:'study', activeTab: 'assStud', mode: "edit" , role: this.role  , group_key: this.group_key} });
     //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type:'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo' , role:"owner" } });
 
 
     // dependding on parent id, remove either in investigations_edge, studies_edeg
   }
-  onAdd() {
-    const dialogRef = this.dialog.open(FilesLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id } });
+  onAdd(mode:string) {
+    const dialogRef = this.dialog.open(FilesLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, mode:mode } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.event == 'Confirmed') {
@@ -167,7 +210,7 @@ export class DataFilesPageComponent implements OnInit {
   }
   onShow(elem: DataFileInterface) {
     console.log(elem)
-    const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: { model_key: elem._key, collection:this.collection } });
+    const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: { model_key: elem._key, collection: this.collection } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.event == 'Confirmed') {
@@ -181,9 +224,10 @@ export class DataFilesPageComponent implements OnInit {
     });
   }
   onAssign(elem: DataFileInterface) {
+    this.router.navigate(['/data_file_page'], { queryParams: { parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'],  role: this.role, group_key: this.group_key } });
 
-    console.log(elem)
-    const dialogRef = this.dialog.open(AssignComponent, { width: '1000px', data: {collection:this.collection , data_file: elem, parent_id:this.parent_id, group_key:this.group_key} });
+    /* console.log(elem)
+    const dialogRef = this.dialog.open(AssignComponent, { width: '1000px', data: { collection: this.collection, data_file: elem, parent_id: this.parent_id, group_key: this.group_key } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.load_data_files()
@@ -191,15 +235,8 @@ export class DataFilesPageComponent implements OnInit {
           let model_id = "studies/" + this.model_key
           console.log(result.data_file)
           this.loaded = true
-          /* this.data_files=this.data_files.filter(datafile=>datafile._id!==elem._id)
-          this.data_files.push(result.data_file)
-          this.dataSource = new MatTableDataSource(this.data_files); */
-          
-          ///this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: this.model_key, model_type:'study', model_id: model_id, mode: "edit", activeTab: 'data_files' , role:this.role, group_key:this.group_key} });
-
-          ////console.log("hello")
         }
       }
-    });
+    }); */
   }
 }

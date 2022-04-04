@@ -282,7 +282,7 @@ export class ProjectLoaderComponent implements OnInit {
             })
             
             this.project_loaded = true
-            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation')) {
+            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation', this.currentUser._id)) {
               console.log("already exist")
               this.project_loaded = false
             }
@@ -298,7 +298,7 @@ export class ProjectLoaderComponent implements OnInit {
               this.project_model[line.split('\t')[0]] = line.split('\t')[1]
             })
             this.project_loaded = true
-            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation')) {
+            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation', this.currentUser._id)) {
               console.log("already exist")
               this.project_loaded = false
             }
@@ -310,7 +310,7 @@ export class ProjectLoaderComponent implements OnInit {
           this.zipFile.files[filename].async('text').then(async (fileData) => {
             this.project_model= JSON.parse(fileData)
             this.project_loaded = true
-            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation')) {
+            if (await this.check_exists(this.project_model['Investigation unique ID'], 'Investigation unique ID', 'investigation', this.currentUser._id)) {
               this.project_loaded = false
             }
             
@@ -474,7 +474,7 @@ export class ProjectLoaderComponent implements OnInit {
     this.project_loaded = true
     // console.log(this.headers_by_filename[this.fileName])
     for (var i = 0; i < this.headers.length; i++) {
-      this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_values: [], associated_linda_id: [], is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
+      this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "", associated_component_field: "", associated_values: [], associated_linda_id: [],associated_parent_id: [], is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
     }
     console.log(this.csv_lines_dict)
     console.log(this.csv_lines_array)
@@ -517,9 +517,9 @@ export class ProjectLoaderComponent implements OnInit {
     this.data_model = { 'Data file description': "", 'Data file version': "", 'Data file link': "", 'Data': [], 'associated_headers': [], 'headers': [] }
 
   }
-  async check_exists(model_id: string, field: string, model_type: string) {
+  async check_exists(model_id: string, field: string, model_type: string, parent_id:string) {
     console.log(model_id)
-    const data = await this.globalService.is_exist(field, model_id, model_type).pipe(first()).toPromise();
+    const data = await this.globalService.is_exist(field, model_id, model_type, parent_id).pipe(first()).toPromise();
     console.log(data)
     if (model_id === "") {
       return false;

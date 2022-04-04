@@ -1,6 +1,6 @@
-<app-observed-variable-page (notify)="get_output_from_child($event)"
-          [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="get_mode">
-        </app-observed-variable-page>
+<app-observed-variables-page (notify)="get_output_from_child($event)" [grand_parent_id]="get_parent_id" 
+          [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="get_mode" [role]="get_role" [group_key]="get_group_key">
+        </app-observed-variables-page>
 <app-observation-unit-page (notify)="get_output_from_child($event)"
           [model_type]="'observation_unit'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="get_mode">
 </app-observation-unit-page>

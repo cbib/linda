@@ -133,7 +133,7 @@
                                     <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
                                     <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
                                 </table>
-                                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                                <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource.data ? get_dataSource.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
                             </div>
                         </div>
                         <div *ngIf="!get_user_group('Guests')">
@@ -189,7 +189,6 @@
                                 </mat-form-field>
                                 
                                 <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
-                                    
                                     <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
                                         <ng-container *ngIf="column!=='edit'">
                                             <th mat-header-cell *matHeaderCellDef> {{column}} </th>
@@ -213,7 +212,7 @@
                                     <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
                                     <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
                                 </table>
-                                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+                                <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource.data ? get_dataSource.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
                             </div>
                         </div>
                         <div *ngIf="!get_user_group('BFP')">

@@ -9,9 +9,11 @@
     <h1 style="text-align: center;">Add a new column</h1>
 </div>
 <div mat-dialog-content>
-    <form [formGroup]="get_generalForm" (ngSubmit)="onAdd()">
+    <!-- <form [formGroup]="get_generalForm" (ngSubmit)="onAdd()"> -->
+    <form [formGroup]="get_generalForm">
 
-        <button [disabled]="!get_generalForm.valid" class="btn btn-default btn-info" type="submit" style="float: right;">Update data file</button>
+
+    <!-- <button [disabled]="!get_generalForm.valid " class="btn btn-default btn-info" type="submit" style="float: right;">Create column</button> -->
         
         <div class="form-group">
             <label for="header">Header</label>
@@ -25,7 +27,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="total">total</label>
             <input type="number" placeholder="total*" formControlName="total" class="form-control" />
             <div *ngIf="total.invalid && (total.dirty || total.touched)" class="alert alert-danger">
@@ -33,20 +35,20 @@
                     total lines is required.
                 </div>
             </div>
-        </div>
-        <div class="form-group">
+        </div> -->
+        <!-- <div class="form-group">
             <label for="useSameNumber">Use same number of rows</label>
         <mat-checkbox [checked]="get_useSameNumberCheck.isSelected('usesameline')" formControlName="useSameNumber"  (change)="itemSelectionToggle('usesameline')"></mat-checkbox>
-        </div>
+        </div> -->
         
         <div class="form-group">
             <label for="linkTerm">Link with another column :  </label>
             <mat-form-field>
                 <mat-select formControlName="linkTerm" 
                     (selectionChange)="onLink($event.value)">
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let associated_header of get_data_file.associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
-                        {{associated_header.header}}
+                    <mat-option disabled>--</mat-option>
+                    <mat-option *ngFor="let associated_header of filter_associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
+                        {{associated_header.header + " (" +associated_header.associated_component_field + ")"}}
                     </mat-option>
                    <!--  <mat-optgroup *ngFor="let associated_header of get_data_file.associated_headers"
                         [label]="associated_header.header">
@@ -61,7 +63,21 @@
                     </div>
                 </div>
             </mat-form-field>
-            
+            <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            id="datatable_component_id" *ngIf="get_linked">
+                <thead>
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let value of linkTerm.value.values ; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{value}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="form-group">
             <label for="standardTerm">Select term and field :  </label>
@@ -71,7 +87,7 @@
                     <mat-option>--</mat-option>
                     <mat-optgroup *ngFor="let extract_option of get_extract_component_options.options"
                         [label]="extract_option.name" [disabled]="extract_option.disabled">
-                        <mat-option *ngFor="let value of extract_option.fields" [value]="value">
+                        <mat-option *ngFor="let value of extract_option.fields" [value]="{field:value, model:extract_option.value}">
                             {{value}}
                         </mat-option>
                     </mat-optgroup>
@@ -104,20 +120,46 @@
             <label for="column_value">Column value</label>
             <input type="text" placeholder="column value(s)*" formControlName="column_value" class="form-control" required>
         </div> -->
-            <div formArrayName="aliases">
+            <div *ngIf="this.field_submitted" formArrayName="aliases">
                 <h2>Column value</h2>
                <!--  <button type="button" (click)="addAlias()">+ Add another alias</button> -->
                 <div *ngFor="let alias of aliases.controls; let i=index">
                   <!-- The repeated alias template -->
-                    <label for="alias-{{ i }}">Value {{ i +1 }}:</label>
-                    <input *ngIf="isDate" id="date-{{ i }}" type="date" [formControlName]="i">
-                    <input *ngIf="!isDate" id="alias-{{ i }}" type="text" [formControlName]="i">
+                    <ng-container >
+                    <div *ngFor="let ont of get_associated_ontologies() ; index as j;" class="btn-group">
+                            <button class="btn btn-success btn-xs fa fa-plus"
+                                (click)="onOntologyTermSelection(ont, standardTerm.value.field,false, i)">
+                                {{ont}}
+                            </button>
+                    </div>
+                    </ng-container>
+                    
+                    <label *ngIf="!get_linked" for="alias-{{ i }}">Value {{ i +1 }}:</label>
+                    <label *ngIf="get_linked" for="alias-{{ i }}">{{linkTerm.value.values[i]}}:</label>
+                    
+                    <input *ngIf="isDate" id="date-{{ i }}" type="date" [formControlName]="i" class="form-control">
+
+                    <input *ngIf="!isDate && !isOntology && get_term_ids[i]===''" id="alias-{{ i }}" type="text" [formControlName]="i" class="form-control">
+                    <input *ngIf="!isDate && !isOntology && get_term_ids[i]!==''" id="alias-use-ont-{{ i }}" value="{{get_term_ids[i]}}" type="text" [formControlName]="i" class="form-control">
+                    
+                    <input *ngIf="isOntology" id="ontology-{{ i }}" type="text" [formControlName]="i" class="form-control">
+
+                    <!-- <input *ngIf="isOntology && get_term_ids[i]===''" id="ontology-{{ i }}" type="text" [formControlName]="i" class="form-control">
+                    <input *ngIf="isOntology && get_term_ids[i]!==''" style="color:black" mdbInput value="{{get_term_ids[i]}}" type="text" [formControlName]="i" class="form-control">
+                     -->
+                    <div *ngIf="alias.invalid && (alias.dirty || alias.touched)" class="alert alert-danger">
+                        <div *ngIf="alias.errors?.required">
+                            Values required.
+                        </div>
+                    </div>
                 </div>
+                
               </div>
+              <!-- <button [disabled]="!get_generalForm.valid " class="btn btn-default btn-info" type="submit" style="float: right;">Create column</button> -->
     </form>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [disabled]="!get_ready_to_add" (click)="onOkClick()">Add column</button>
+    <button mat-button (click)="onClose()">Cancel</button>
+    <button mat-button [disabled]="!get_ready_to_add && !get_generalForm.valid " type="submit" (click)="onAdd()">Update data file</button>
   </div>
   

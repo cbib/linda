@@ -16,7 +16,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
-import { TableModule } from '../../tables/table.module'
+import { TablesModule } from '../../tables/tables.module'
 import { DownloadModule } from '../../file_handlers/download.module';
 
 //import { AlertComponent } from '../../../../directives/alert.component';
@@ -36,7 +36,7 @@ import { DownloadModule } from '../../file_handlers/download.module';
     MatChipsModule,
     MatCheckboxModule,
     MatButtonModule,
-    TableModule,
+    TablesModule,
     DownloadModule
   ],
   exports: [

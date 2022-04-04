@@ -68,7 +68,6 @@ export class ProjectsPageComponent implements OnInit {
     group_key: string;
 
     public vertices: InvestigationInterface[] = []
-    public projects: any = []
     private currentUser: UserInterface
     private multiple_selection: boolean = false;
     private parent_id: string;
@@ -78,10 +77,12 @@ export class ProjectsPageComponent implements OnInit {
     private groups: { project_id: string, group_keys: string[] }[] = []
 
     //private dataSource
-    private dataSource: MatTableDataSource<InvestigationInterface>;
+    //private dataSource: MatTableDataSource<InvestigationInterface>;
     private user_groups = []
     private model_type: string = 'investigation'
     private displayedColumns: string[] = ['Investigation unique ID', 'Investigation description', 'edit'];
+    private dataSource: MatTableDataSource<InvestigationInterface>
+    private projects: InvestigationInterface[] = []
 
     constructor(
         private globalService: GlobalService,
@@ -112,7 +113,7 @@ export class ProjectsPageComponent implements OnInit {
         this.route.queryParams.subscribe(params => {
             this.activeTab = params['activeTab'];
             this._cdr.detectChanges()
-        });
+        }); 
     } */
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
@@ -124,35 +125,48 @@ export class ProjectsPageComponent implements OnInit {
     changeTab(tab: string) {
         this.activeTab = tab
         this.group_key = tab
-        console.log(this.activeTab)
-        this.get_projects()
+        //console.log(this.activeTab)
+        this.ngOnInit()
     }
     async ngOnInit() {
         //await this.get_vertices()
-        this.get_projects()
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
+        const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
+        this.set_projects(person_id, data)
+
+        this.dataSource = new MatTableDataSource(this.projects);
         this.loaded = true
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             this.search_string = data
         })
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
         this.get_user_groups()
         this.parent_id = this.currentUser['_id']
-        console.log(this.currentUser)
+        //console.log(this.currentUser)
 
     }
+    ngAfterViewInit() {
+        //this.dataSource.sort = this.sort;
+        //this.dataSource.paginator = this.paginator;
+        this._cdr.detectChanges()
+    }
+
     get_user_groups() {
         this.userService.get_groups(this.currentUser._key).toPromise().then(
             grps => {
-                console.log(grps)
+                //console.log(grps)
                 for (var g in grps) {
-                    console.log(g)
+                    //console.log(g)
                     this.user_groups.push(grps[g].split('/')[1])
                 }
-                console.log(this.user_groups)
-
+                /// console.log(this.user_groups)
             }
         );
+    }
+    get person_id() {
+        return this.userService.get_person_id2(this.currentUser._key);
     }
     get_role(element: InvestigationInterface): string {
         return this.roles.filter(inv => inv.project_id == element._id)[0]['role']
@@ -163,39 +177,42 @@ export class ProjectsPageComponent implements OnInit {
     get_user_group(group_key: string) {
         return this.user_groups.includes(group_key)
     }
-    async get_projects() {
+    set_projects(person_id: string, data: InvestigationInterface[]) {
         // get person linda db id 
-        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-            person_id => {
-                console.log(person_id)
-                return this.globalService.get_projects(person_id[0].split("/")[1]).toPromise().then(
-                    data => {
-                        console.log("data", data)
-                        this.roles = data.map(project => project['roles']);
-                        this.groups = data.map(project => project['groups']);
-                        const projects = data.map(project => project['project']);
-                        /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
-                        const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
-                        //projects.filter((data) => data.projec.includes(this.group_key));
-                        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
-                        console.log(projects_groups)
-                        const getProjects = projects_groups.filter((data) => data.group_keys.includes(this.group_key));
-                        /* console.log("arr3", arr3)
-                        console.log("getProjects",getProjects)
-                        console.log("getProjects1",getProjects1)
-                        console.log("getProjects2",getProjects2)
-                        console.log("this.group_keys",this.group_keys)
-                        console.log("projects",projects)
-                        console.log("this.roles",this.roles) */
+        //const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
+        //console.log(person_id)
+        //const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
+        //console.log("data", data);
+        this.roles = data.map(project => project['roles']);
+        this.groups = data.map(project_1 => project_1['groups']);
+        const projects = data.map(project_2 => project_2['project']);
+        /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
+        const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
+        //projects.filter((data) => data.projec.includes(this.group_key));
+        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
+        this.projects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
 
-                        this.dataSource = new MatTableDataSource(getProjects);
-                        console.log(this.dataSource)
-                        this.dataSource.paginator = this.paginator;
-                        this.dataSource.sort = this.sort;
-                    }
-                )
-            }
-        )
+        //console.log(this.dataSource)
+        //return getProjects
+        // this.dataSource.paginator = this.paginator;
+        //this.dataSource.sort = this.sort;
+
+
+        /* return this.userService.get_person_id(this.currentUser._key).toPromise().then(
+            async person_id => {
+                console.log(person_id)
+                const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
+                console.log("data", data);
+                this.roles = data.map(project => project['roles']);
+                this.groups = data.map(project_1 => project_1['groups']);
+                const projects = data.map(project_2 => project_2['project']);
+                //const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
+                //const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); 
+                //projects.filter((data) => data.projec.includes(this.group_key));
+                let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
+                console.log(projects_groups);
+                const getProjects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
+            }); */
     }
     // play_again() {
     //     this.wizardService.play_again(this.vertices, this.currentUser)
@@ -276,7 +293,7 @@ export class ProjectsPageComponent implements OnInit {
         });
     }
     onImport() {
-        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, group_key:this.group_key } });
+        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, group_key: this.group_key } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -290,7 +307,7 @@ export class ProjectsPageComponent implements OnInit {
             }
         });
     }
-    onExport(element: InvestigationInterface){
+    onExport(element: InvestigationInterface) {
         console.log(element)
         const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: true, is_investigation: true } });
         dialogRef.afterClosed().subscribe(result => {
@@ -306,7 +323,7 @@ export class ProjectsPageComponent implements OnInit {
                         this.fileService.saveFile(element, element._id, "investigation", result.selected_format);
                     }
                 }
-            }   
+            }
         });
     }
     onExport_bak(element: InvestigationInterface) {
@@ -349,78 +366,25 @@ export class ProjectsPageComponent implements OnInit {
     onExperimental_design() {
         this.router.navigate(['/design'])
     }
-    onRemove(element: InvestigationInterface) {
-
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
-        dialogRef.afterClosed().subscribe((result) => {
+    async onRemove(element: InvestigationInterface) {
+        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
+        dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
                     // Remove only childs from the seleccted node
-                    if (result.all_childs) {
-                        this.globalService.remove_childs(element._key).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]) {
-                                    ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
-                                    this.alertService.success(message)
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
-                            }
-                        );
-                        window.location.reload();
-                    }
-                    //Remove only observed variable or experimental factors
-                    // TODO add handler for observation units, biological materials, etc.
-                    else if (result.only != "") {
-                        ////console.log(result.only)
-                        this.globalService.remove_childs_by_type(element._id, result.only).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]) {
-                                    ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
-                                    //this.alertService.success(message)
-                                    var datafile_ids = data["datafile_ids"]
-                                    var removed_ids = data["removed_ids"]
-                                    // datafile_ids.forEach(datafile_id => {
-                                    //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-                                    //         data => { ////console.log(data); }
-                                    //       )
-                                    // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////console.log(data);})
-                                    // });
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
-                            }
-                        );
-                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                        // this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
+                    const data = await this.globalService.remove(element._id).toPromise()
+                    ////console.log(data)
+                    if (data["success"]) {
+                        ////console.log(data["message"])
+                        var message = element._id + " has been removed from your history !!"
+                        this.alertService.success(message)
                         this.reloadComponent(['/projects_page'])
+                        //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
                         //window.location.reload();
-
+                        ///this.router.navigate(['/projects_tree']);
                     }
                     else {
-                        ////console.log(this.active_node.id)
-                        this.globalService.remove(element._id).pipe(first()).toPromise().then(
-                            data => {
-                                ////console.log(data)
-                                if (data["success"]) {
-                                    ////console.log(data["message"])
-                                    var message = element._id + " has been removed from your history !!"
-                                    this.alertService.success(message)
-                                    this.reloadComponent(['/projects_page'])
-                                    //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
-                                    //window.location.reload();
-                                    ///this.router.navigate(['/projects_tree']);
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
-                            }
-                        );
-                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+                        this.alertService.error("this form contains errors! " + data["message"]);
                     }
                 }
             }

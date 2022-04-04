@@ -9,11 +9,12 @@ import * as XLSX from 'xlsx';
 import { AssociatedHeadersInterface}  from 'src/app/models/linda/data_files'
 import { DataFileInterface}  from 'src/app/models/linda/data_files'
 import { timeStamp } from 'console';
-
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 
 interface DialogData {
   parent_id: string;
+  mode:string;
 }
 
 @Component({
@@ -22,10 +23,12 @@ interface DialogData {
   styleUrls: ['./files-loader.component.css']
 })
 export class FilesLoaderComponent implements OnInit {
-  
+  //@ViewChild('autosize', {static: true}) autosize: CdkTextareaAutosize;
   errorMessage: string;
+  myTextarea=''
   successMessage: string;
   parent_id:string=""
+  mode:string=""
   currentUser:UserInterface
   fileUploaded: File;
   fileName: string = ""
@@ -55,7 +58,9 @@ export class FilesLoaderComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public delimdialog: MatDialog) {
       this.parent_id=this.data.parent_id
+      this.mode=this.data.mode
       console.log(this.parent_id)
+      console.log(this.mode)
       
      }
     ngOnInit() {
@@ -173,12 +178,12 @@ export class FilesLoaderComponent implements OnInit {
 
           if (line.length === this.headers.length) {
               let csv_arr = [];
-              let tmpAttributesGroups = {}
+             // let tmpAttributesGroups = {}
               for (let j = 0; j < this.headers.length; j++) {
 
-                  tmpAttributesGroups[this.headers[j]] = [this.headers[j]]
-                  let tmp = { header: "", associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
-                  tmp['header'] = this.headers[j]
+                  //tmpAttributesGroups[this.headers[j]] = [this.headers[j]]
+                  let tmp = { header: this.headers[j], associated_linda_id: "", name: "Assign MIAPPE components", value: "" }
+                  //tmp['header'] = this.headers[j]
 
                   csv_arr.push(line[j].replace(/['"]+/g, ''));
                   csv_dict[this.headers[j]] = line[j].replace(/['"]+/g, '')
@@ -191,6 +196,8 @@ export class FilesLoaderComponent implements OnInit {
                       }
                   }
               }
+              csv_arr.push("")
+              csv_dict["Study linda ID"] = ""
               this.csv_lines_array.push(csv_arr);
               this.csv_lines_dict.push(csv_dict)
 
@@ -199,11 +206,13 @@ export class FilesLoaderComponent implements OnInit {
       this.loaded = true
       // console.log(this.headers_by_filename[this.fileName])
       for (var i = 0; i < this.headers.length; i++) {
-          this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "",associated_component_field: "", associated_values:[], associated_linda_id: [], is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
+          this.associated_headers.push({ header: this.headers[i], selected: false, associated_term_id: "", associated_component: "",associated_component_field: "", associated_values:[], associated_linda_id: [], associated_parent_id: [], is_time_values: false, is_numeric_values: type_dict[this.headers[i]] })
       }
+      this.associated_headers.push({ header: "Study linda ID", selected: false, associated_term_id: "", associated_component: "",associated_component_field: "", associated_values:[], associated_linda_id: [],associated_parent_id: [], is_time_values: false, is_numeric_values: false })
+      this.headers.push("Study linda ID")
       this.selected_file = this.fileName
-      console.log(this.csv_lines_dict)
-      console.log(this.csv_lines_array)
+      //console.log(this.csv_lines_dict)
+      //console.log(this.csv_lines_array)
 
 
     } 
@@ -285,6 +294,9 @@ export class FilesLoaderComponent implements OnInit {
       this.data_model={'Data file description':"",'Data file version':"", 'Data file link':"", 'Data':[], 'associated_headers':[], 'headers':[]}
 
     }
+    get get_mode(){
+      return this.mode
+    }
     get get_loaded(){
       return this.loaded
     }   
@@ -300,12 +312,78 @@ export class FilesLoaderComponent implements OnInit {
     get get_columns(){
       return this.data_model.headers
     }
+    get_text_area(value){
+      console.log(value)
+      console.log(this.myTextarea=value )
+      this.added=this.myTextarea!=='' && this.fileName!=='' 
+      
+
+    }
+    get_filename(value){
+      this.fileName=value
+      this.added=this.myTextarea!=='' && this.fileName!=='' 
+    }
     onNoClick(): void {
       this.dialogRef.close({event:"Cancelled"});
     }
     onSubmit(): void {
-      this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(data => { console.log(data); })
-      this.dialogRef.close({event:"Confirmed"});
+      if (this.mode==='local_import'){
+        this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
+          data => { 
+            console.log(data); 
+            this.dialogRef.close({event:"Confirmed"});
+          })
+
+      }
+      else{
+        console.log(this.myTextarea.split('\n'))
+        //remove ddooublons
+
+        this.data_model['Data file description'] = 'Data have been extracted from ' + this.fileName
+        this.data_model['Data file version'] = '1.0'
+        this.data_model['Data file link'] = this.fileName
+        let model_data=[]
+        this.myTextarea.split('\n').forEach(_study_id=>{
+          model_data.push({'Study id':_study_id, 'Study linda ID':""})
+        })
+        this.data_model['Data'] = model_data
+        this.data_model['associated_headers'] = [
+          {
+            "header": "Study id",
+            "selected": true,
+            "associated_term_id": "",
+            "associated_component": "study",
+            "associated_component_field": "Study unique ID",
+            "associated_values": [],
+            "associated_linda_id": [],
+            "associated_parent_id": [],
+            "is_time_values": false,
+            "is_numeric_values": false
+          },
+          {
+            "header": "Study linda ID",
+            "selected": false,
+            "associated_term_id": "",
+            "associated_component": "",
+            "associated_component_field": "",
+            "associated_values": [],
+            "associated_linda_id": [],
+            "associated_parent_id": [],
+            "is_time_values": false,
+            "is_numeric_values": false
+          }
+        ]
+        this.data_model['headers'] = ["Study id"]
+        this.data_model['headers'].push('Study linda ID')
+        this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
+          data => { 
+            console.log(data); 
+            this.dialogRef.close({event:"Confirmed"});
+          })
+
+
+      }
+      
   
     }
 

@@ -32,7 +32,7 @@ loaded:boolean=false
     this.getDataFromSource()
   }
   getDataFromSource() {
-    this.globalService.get_data_file(this.model_key).subscribe(
+    this.globalService.get_data_file_table(this.model_key).subscribe(
       data => {
         console.log(data)
         this.tableData = data.data;

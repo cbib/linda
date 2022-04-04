@@ -6,7 +6,7 @@ import { GlobalService, AlertService, FileService, SearchService} from '../../..
 import { WizardService } from '../services/wizard.service';
 import { JoyrideModule, JoyrideService } from 'ngx-joyride';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { DataTablesModule } from 'angular-datatables';
 // Material modules
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule} from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list'; 
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 // My page components
 import { StudiesPageComponent } from './studies-page.component';
@@ -36,6 +37,10 @@ import { EventPageComponent } from './event-page.component'
 import { ObservationsPageComponent } from './observations-page.component';
 import { ExperimentalFactorsPageComponent } from './experimental-factors-page.component';
 import { EventsPageComponent } from './events-page.component';
+import { ObservedVariablesPageComponent } from './observed-variables-page.component';
+import { EnvironmentVariablesPageComponent } from './environment-variables-page.component';
+
+
 
 // Mu entry module
 import { DownloadModule } from '../../file_handlers/download.module';
@@ -46,7 +51,12 @@ import { ExplorationModule } from '../../statistics/exploration.module';
 import { GanttModule } from '../../gantt/gantt.module';
 import { ProjectsTreeModule} from  '../../projects/tree/projects-tree.module'
 import { AssignModule } from '../../assign/assign.module';
-import { TableModule } from '../../tables/table.module';
+import { TablesModule } from '../../tables/tables.module';
+import { EnvironmentVariablePageComponent } from './environment-variable-page.component';
+import { DataFilePageComponent } from './data-file-page.component';
+import { TableModule} from 'primeng/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -66,7 +76,11 @@ import { TableModule } from '../../tables/table.module';
     EventPageComponent,
     ObservationsPageComponent,
     ExperimentalFactorsPageComponent,
-    EventsPageComponent],
+    EventsPageComponent,
+    ObservedVariablesPageComponent,
+    EnvironmentVariablesPageComponent,
+    EnvironmentVariablePageComponent,
+    DataFilePageComponent],
   imports: [
     CommonModule,
     ProjectsPageRoutingModule,
@@ -83,16 +97,22 @@ import { TableModule } from '../../tables/table.module';
     MatPaginatorModule,
     MatSortModule,
     MatDividerModule,
+    MatIconModule,
     MatGridListModule,
     MatSelectModule,
+    MatProgressSpinnerModule,
     AlertModule,
     ExplorationModule,
     GanttModule,
     ProjectsTreeModule,
-    TableModule,
+    TablesModule,
     AssignModule,
     FormsModule, 
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DataTablesModule,
+    MatCheckboxModule,
+    // Primeng modules
+    TableModule
   ],
   exports: [
     ProjectsPageComponent,
@@ -109,7 +129,9 @@ import { TableModule } from '../../tables/table.module';
     EventPageComponent,
     ObservationsPageComponent,
     ExperimentalFactorsPageComponent,
-    EventsPageComponent
+    EventsPageComponent,
+    ObservedVariablesPageComponent,
+    EnvironmentVariablesPageComponent
   ],
   providers: [
     JoyrideService,
@@ -132,7 +154,9 @@ import { TableModule } from '../../tables/table.module';
     EventPageComponent,
     ObservationsPageComponent,
     ExperimentalFactorsPageComponent,
-    EventsPageComponent
+    EventsPageComponent,
+    ObservedVariablesPageComponent,
+    EnvironmentVariablesPageComponent
   ]
 })
 export class ProjectsPageModule { }

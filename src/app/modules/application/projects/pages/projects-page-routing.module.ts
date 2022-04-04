@@ -5,6 +5,9 @@ import { ProjectPageComponent } from './project-page.component';
 import { StudyPageComponent } from './study-page.component'
 import { ExperimentalFactorPageComponent } from './experimental-factor-page.component';
 import { EventPageComponent } from './event-page.component';
+import { ObservedVariablePageComponent } from './observed-variable-page.component';
+import { EnvironmentVariablePageComponent } from './environment-variable-page.component';
+import { DataFilePageComponent } from './data-file-page.component';
 
 const routes: Routes = [
   { path: '',children: [
@@ -13,7 +16,10 @@ const routes: Routes = [
                         { path: "project_page",component: ProjectPageComponent},
                         { path: "study_page",component: StudyPageComponent},
                         { path: "experimental_factor_page",component: ExperimentalFactorPageComponent},
-                        { path: "event_page",component: EventPageComponent}    
+                        { path: "event_page",component: EventPageComponent},
+                        { path: "observed_variable_page",component: ObservedVariablePageComponent},
+                        { path: "environmental_variable_page",component: EnvironmentVariablePageComponent},
+                        { path: "data_file_page",component: DataFilePageComponent}   
                        ]}
 ];
 

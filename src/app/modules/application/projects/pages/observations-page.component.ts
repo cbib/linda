@@ -20,6 +20,8 @@ export class ObservationsPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Input('role') role: string;
   @Input('group_key') group_key: string;
+  @Input('grand_parent_id') grand_parent_id: string;
+  
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   constructor(
     public globalService: GlobalService,
@@ -37,6 +39,7 @@ export class ObservationsPageComponent implements OnInit {
         this.mode = params['mode'];
         this.role=params['role']
         this.group_key=params['group_key']
+        this.grand_parent_id=params['grand_parent_id']
       }
     );
   }

@@ -9,8 +9,10 @@ import { UniqueIDValidatorComponent } from '../../application/validators/unique-
 import { StudyInterface } from 'src/app/models/linda/study';
 import { SelectionModel } from '@angular/cdk/collections';
 import { first } from 'rxjs/operators';
+
 import { timeStamp } from 'console';
 import { isBuffer } from 'util';
+import { OntologyTreeComponent } from './ontology-tree.component';
 
 interface DialogData {
   data_file: DataFileInterface;
@@ -54,7 +56,6 @@ export function isDateFormat(_date){
 // for link term
 export function emptyValuesValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    console.log(control.value)
     if (control.value===''){
       return null;
     }
@@ -77,14 +78,18 @@ export function emptyValuesValidator(): ValidatorFn {
 })
 export class AddColumnComponent implements OnInit {
   private data_file: DataFileInterface;
+  private tmp_data_file: DataFileInterface
   private parent_id: string;
   private group_key: string;
-  private total_lines:number
-  private use_same_total_lines
+  //private total_lines:number
+  //private use_same_total_lines
   private linked_values:any[]
   private ready_to_add:boolean=false
-   
-
+  private linked:boolean= false
+  field_submitted = false;
+  private ontologies={'study':["CO_715", "OBI"], 'experimental_factor':["CO_715","EFO","PECO","EO"], 'observed_variable':["CO_322 (Maize)","CO_325","CO_331","Solanacae","XEO"], 'event':["CO_715", "XEO"], 'environment':["XEO"]}
+  private term_ids:string[]=[]
+  private associated_model:string=""
   private extract_component_options = {
     'options': [
       { disabled: true, header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '', fields: [] },
@@ -116,6 +121,13 @@ export class AddColumnComponent implements OnInit {
           'Experimental Factor values',
           'Experimental Factor accession number',
           'Experimental Factor type'
+        ]
+      },
+      {
+        disabled: false, header: "", associated_linda_id: "", name: 'Environement parameter', value: 'environment', fields: [
+          'Environment parameter',
+          'Environment parameter value',
+          'Environment parameter accession number'
         ]
       },
       {
@@ -177,12 +189,8 @@ export class AddColumnComponent implements OnInit {
     'defaut': { name: 'Assing MIAPPE components', value: '', label: 'test' }
   };
   generalForm: FormGroup ;
-  private initialSelection = []
-  private useSameNumberCheck = new SelectionModel<string>(true, this.initialSelection /* multiple */);
-  dtOptions: DataTables.Settings = {};
- 
-  field_submitted = false;
-
+  //private initialSelection = []
+  //private useSameNumberCheck = new SelectionModel<string>(true, this.initialSelection /* multiple */);
 
   constructor(
     private globalService: GlobalService,
@@ -190,7 +198,8 @@ export class AddColumnComponent implements OnInit {
     private alertService: AlertService,
     public dialogRef: MatDialogRef<AddColumnComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public timedialog: MatDialog
+    public timedialog: MatDialog,
+    public ontologydialog: MatDialog
   ) {
     this.data_file = this.data.data_file
     this.parent_id = this.data.parent_id
@@ -202,8 +211,8 @@ export class AddColumnComponent implements OnInit {
     this.generalForm = this.formBuilder.group({
       'header': ['',[ Validators.required, forbiddenHeaderValidator(this.data_file)]],
       //'column_value': ['', Validators.required],
-      'total': [0, Validators.required],
-      'useSameNumber': [''],
+      //'total': [0, Validators.required],
+      //'useSameNumber': [''],
       'standardTerm': ['',[ Validators.required,  forbiddenFieldValidator(this.data_file)]],
       'linkTerm': ['',emptyValuesValidator()],
       'aliases': this.formBuilder.array([
@@ -211,44 +220,98 @@ export class AddColumnComponent implements OnInit {
       ])
     });
   }
+  get_associated_ontologies(){
+    return this.ontologies[this.associated_model]
+  }
+  onOntologyTermSelection(ontology_id: string, key: string, multiple: string, value_index:number){
+    /* console.log(ontology_id)
+    console.log(key)
+    console.log(multiple) */
+    const dialogRef = this.ontologydialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: ontology_id, selected_term: null, selected_key:"", selected_set: [], multiple: false, uncheckable: true, observed: true, mode_simplified:true } });
+    dialogRef.afterClosed().subscribe(result => {
+        if (result !== undefined) {
+            //console.log(result.ontology_id);
+            //console.log(result.selected_term);
+            //console.log(result.selected_set);
+            //console.log(result.selected_key);
+            //var term_ids = ""
+            this.term_ids.push(result.selected_key)
+           /*  for (var i = result.selected_set.length - 1; i >= 0; i--) {
+                this.term_ids.push(result.selected_key)
+            } */
+            this.aliases.controls[value_index].patchValue(result.selected_key)
+            //this.term_ids = this.term_ids.slice(0, -1);
+          }
+        }
+      );
+  }
   
-  itemSelectionToggle(key: string): void {
+  /* itemSelectionToggle(key: string): void {
     this.useSameNumberCheck.toggle(key);
     if (this.useSameNumberCheck.isSelected(key)) {
-        console.log(key, 'is selected')
+        //console.log(key, 'is selected')
         this.use_same_total_lines=true
         this.total.patchValue(this.data_file.Data.length)
     }
     else {
-       console.log(key, 'is unselected')
+       //console.log(key, 'is unselected')
        this.use_same_total_lines=false
        this.total.patchValue(0)
     }
-  }
+  } */
   
   onModify(values: string): void  {
+    this.field_submitted=true
+/*     console.log(this.standardTerm.value)
+    console.log(values) */
+    this.associated_model=this.standardTerm.value.model
     /* console.log(values)
     this.field_submitted=true
     console.log(this.generalForm)*/
-    if (['Start date of study', 'End date of study'].includes(values)){
+    if (['Start date of study', 'End date of study', 'Event date'].includes(values['field'])){
       console.log(("Date detected"))
     }
+    //this.ready_to_add=true
   }
 
   get_component(field: string) {
     return this.extract_component_options.options.filter(prop => prop.fields.includes(field))[0]['value']
   }
 
-  onLink(values: string): void {
-    console.log(values)
+  async onLink(values: string) {
+/*     console.log(values)
     console.log(this.linkTerm.value.values.length)
-    console.log(this.linkTerm.value.ids)
-    this.data_file.associated_headers.filter(associated_header=> associated_header.header===values['he'])
+    console.log(this.linkTerm.value.ids) */
+    /* const valuesDictionary = this.data_file.Data.reduce((prev, curr) => {
+      return {
+          ...prev,
+          //[curr[this.column_original_label]]: curr["Study linda ID"]
+          [curr["Study linda ID"]]: curr[this.linkTerm.value.header]
+      }
+    }, {})
+    console.log(valuesDictionary) */
+    //this.data_file.associated_headers.filter(associated_header=> associated_header.header===values['he'])
     while (this.aliases.length!==this.linkTerm.value.values.length){
       this.aliases.push(this.formBuilder.control('', Validators.required));
     }
+    this.linkTerm.value['parents']=[]
+    await Promise.all(this.linkTerm.value.ids.map(async (element, index) => {
+      if (element.includes("studies")){
+        this.linkTerm.value['parents'].push(element)
+        //this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
+      } 
+      else{
+        await this.globalService.get_parent(element).toPromise().then(parent_data=>
+          {
+            this.linkTerm.value['parents'].push(parent_data['_from'])
+          })
+      
+       // this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===parent_data['_from']).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});  
+      }
+    }));
+    console.log(this.linkTerm.value)
 
-    
+    this.linked=true
     /*
     this.linked_values= this.data_file.associated_headers.filter(associated_header=>associated_header.header===values)[0].associated_values
     if (this.linked_values.length===0){
@@ -256,70 +319,138 @@ export class AddColumnComponent implements OnInit {
     }
     console.log(this.linked_values) */
   }
-  onAdd(){
-    console.log(this.aliases.controls)
+
+  async onAdd(){
+    //delete this.tmp_data_file
+    this.tmp_data_file = { ...this.data_file };
+/*     console.log(this.aliases.controls)
+    console.log(this.linkTerm.value) */
     //header does not exist
     //if (this.data_file.headers.filter(header=>header===this.header.value).length===0){
     
-    
-    
-    if (this.linkTerm.value!==''){
+    if (this.linkTerm.value!== '' && this.linkTerm.value.header!==''){
         let header_to_link=this.linkTerm.value['header']
         if (this.linkTerm.value.values.length !== this.aliases.controls.length){
           this.alertService.error("Same number of values is required for link component and column values")
         }
         else{
+
+          for (let index = 0; index < this.linkTerm.value.parents.length; index++) {
+            const element = this.linkTerm.value.parents[index];
+            this.data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
+            
+          }
+          /* await Promise.all(this.linkTerm.value.ids.map(async (element, index) => {
+            if (element.includes("studies")){
+              this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
+            } 
+            else{
+              const parent_data=  await this.globalService.get_parent(element).toPromise()
+              this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===parent_data['_from']).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});  
+            }
+          })); */
           // Update Data 
-          this.linkTerm.value.values.forEach((linked_value, index)=>{
+          /* this.linkTerm.value.ids.forEach(async (element, index) => {
+            // get study Parent with component id
+            console.log(element)
+            if (element.includes("studies")){
+              this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
+            } 
+            else{
+              const parent_data=  await this.globalService.get_parent(element).toPromise()
+              console.log(parent_data)
+              this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===parent_data['_from']).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});  
+              
+            }  
+          }); */
+          // Update Data 
+          /* this.linkTerm.value.values.forEach((linked_value, index)=>{
             this.data_file.Data.forEach(line=>{
               if (line[header_to_link]===linked_value){
                 line[this.header.value]= this.aliases.controls[index].value
               }
             });
           });
+          */
           // Update headers
           this.data_file.headers.push(this.header.value)
           // Update associated_headers
-          var associated_header: AssociatedHeadersInterface = {
-            header: this.header.value,
-            selected: true,
-            associated_component: this.get_component(this.standardTerm.value),
-            associated_linda_id: this.linkTerm.value.ids,
-            associated_term_id: "",
-            associated_values: [],
-            associated_component_field:this.standardTerm.value,
-            is_numeric_values:false,
-            is_time_values:false
-          };
+          if(this.get_component(this.standardTerm.value.field)==='study' && this.standardTerm.value.field==='Study unique ID'){
+            var associated_header: AssociatedHeadersInterface = {
+              header: this.header.value,
+              selected: true,
+              associated_component: this.get_component(this.standardTerm.value.field),
+              associated_linda_id: this.linkTerm.value.ids,
+              associated_parent_id: [],
+              associated_term_id: "",
+              associated_values: [],
+              associated_component_field:this.standardTerm.value.field,
+              is_numeric_values:false,
+              is_time_values:false
+            };
+          }
+          else{
+            var associated_header: AssociatedHeadersInterface = {
+              header: this.header.value,
+              selected: true,
+              associated_component: this.get_component(this.standardTerm.value.field),
+              associated_linda_id: [],
+              associated_parent_id: [],
+              associated_term_id: "",
+              associated_values: [],
+              associated_component_field:this.standardTerm.value.field,
+              is_numeric_values:false,
+              is_time_values:false
+            };
+          }
+          
 
           this.data_file.associated_headers.push(associated_header)
-          this.alertService.success("data file has been modified ! Press OK to update data")
-          this.ready_to_add=true
+          this.alertService.success(" this.linkTerm.value.header!=='' case : data file has been modified ! Press OK to update data")
+          
         }
     }
     else{
       this.data_file.Data.forEach(line=>{
         line[this.header.value]=this.aliases.controls[0].value
       })
+
       // Update headers
       this.data_file.headers.push(this.header.value)
       // Update associated_headers
       var associated_header: AssociatedHeadersInterface = {
         header: this.header.value,
         selected: true,
-        associated_component: this.get_component(this.standardTerm.value),
+        associated_component: this.get_component(this.standardTerm.value.field),
         associated_linda_id: [],
+        associated_parent_id: [],
         associated_term_id: "",
         associated_values: [],
-        associated_component_field:this.standardTerm.value,
+        associated_component_field:this.standardTerm.value.field,
         is_numeric_values:false,
         is_time_values:false
       };
 
       this.data_file.associated_headers.push(associated_header)
-      this.alertService.success("data file has been modified ! Press OK to update data")
-      this.ready_to_add=true
+      //await this.globalService.update_document(this.data_file._key,  this.data_file, 'data_file').toPromise()
+
+      this.alertService.success(" else  case : data file has been modified ! Press OK to update data")
+      //this.ready_to_add=true
     }
+
+    let data: {} = await this.globalService.update_document(this.data_file._key,  this.data_file, 'data_file').toPromise()
+    console.log(data);
+            //let data = await this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').toPromise()
+    if (data) {
+      this.ready_to_add=true
+      this.dialogRef.close({event:"Confirmed", data_file:  this.data_file});
+      }
+    
+     
+
+    
+    
+    
 
 
 
@@ -332,7 +463,6 @@ export class AddColumnComponent implements OnInit {
       this.data_file.associated_headers.filter(associated_header=>associated_header.header===this.header.value)[0].associated_component_field=this.standardTerm.value
     } */
    
-    console.log(this.data_file)
     //this.globalService.update_document(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { console.log(data); })
 
     /* this.Value.value
@@ -340,32 +470,42 @@ export class AddColumnComponent implements OnInit {
     this.generalForm.get('linkTerm').value */
   }
   get isDate(){
-    return ['Start date of study','End date of study', 'Event date'].includes(this.generalForm.get('standardTerm').value)
+    return ['Start date of study','End date of study', 'Event date'].includes(this.generalForm.get('standardTerm').value.field)
+  }
+  get isOntology(){
+    return this.generalForm.get('standardTerm').value.field.includes('accession number')
   }
   get header() { return this.generalForm.get('header'); }
   get column_value() { return this.generalForm.get('column_value'); }
-  get total() { return this.generalForm.get('total'); }
-  get useSameNumber() { return this.generalForm.get('useSameNumber'); }
+  //get total() { return this.generalForm.get('total'); }
   get standardTerm() { return this.generalForm.get('standardTerm'); }
   get linkTerm() { return this.generalForm.get('linkTerm'); }
-
   get aliases() { return this.generalForm.get('aliases') as FormArray;}
 
   addAlias() {
     this.aliases.push(this.formBuilder.control(''));
   }
-
+  get get_term_ids(){
+    return this.term_ids
+  }
+  get filter_associated_headers(){ 
+    let accepted_component_field=["Study unique ID", "Experimental Factor accession number", "Event accession number", "Environment parameter accession number"]
+    return this.get_data_file.associated_headers.filter(associated_header=>accepted_component_field.includes(associated_header.associated_component_field) && associated_header.associated_linda_id.length>0)
+  }
+  get get_ontologies(){
+    return this.ontologies
+  }
+  get get_associated_model(){
+    return this.associated_model
+  }
+  get get_linked(){
+    return this.linked
+  }
   get get_ready_to_add(){
     return this.ready_to_add
   }
   get get_linked_values():any[]{
     return this.linked_values
-  }
-  get get_use_same_total_lines(){
-    return this.use_same_total_lines
-  }
-  get get_useSameNumberCheck() {
-    return this.useSameNumberCheck
   }
   get get_generalForm() {
     return this.generalForm
@@ -379,13 +519,10 @@ export class AddColumnComponent implements OnInit {
   get get_field_submitted(){
     return this.field_submitted
   }
-  onNoClick(): void {
+  onClose(): void {
     this.dialogRef.close({event:"Cancelled", data_file: this.data_file});
   }
-  onOkClick(): void {
-    this.globalService.update_document(this.data_file._key, this.data_file, 'data_file').pipe(first()).toPromise().then(data => { 
-      console.log(data); 
-      this.dialogRef.close({event:"Confirmed", data_file: this.data_file});
-    })
+  async onOkClick() {  
+      this.dialogRef.close({event:"Confirmed", data_file:  this.data_file});
   }
 }

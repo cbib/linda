@@ -13,12 +13,12 @@ import { Injectable } from '@angular/core';
 export class UniqueIDValidatorComponent{
   alreadyThere= UniqueIDValidatorComponent.alreadyThere;
   
-  static alreadyThere(globalService: GlobalService, alertService: AlertService, model_type:string, field:string){
+  static alreadyThere(globalService: GlobalService, alertService: AlertService, model_type:string, field:string, parent_id:string=""){
     
     return (control: FormControl) => {
         //return globalService.is_exist(field, control.value, model_type).subscribe(
 
-        return globalService.is_exist(field, control.value, model_type).pipe(first()).toPromise().then(
+        return globalService.is_exist(field, control.value, model_type, parent_id).pipe(first()).toPromise().then(
             data => {
                     if (control.value ===""){
                         return { 'alreadyThere': true };

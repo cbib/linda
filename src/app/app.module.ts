@@ -14,6 +14,7 @@ import { DragDropModule} from '@angular/cdk/drag-drop';
 import { ScrollingModule} from '@angular/cdk/scrolling';
 import { DataTablesModule } from 'angular-datatables';
 
+
 // CUSTOM MODULES
 import { HeaderModule } from './components/header/header.module';
 import { FooterModule } from './components/footer/footer.module';
@@ -21,7 +22,7 @@ import { SiderModule } from './components/sider/sider.module';
 import { FormModule } from './modules/application/forms/form.module';
 import { MaterialFormModule } from './modules/application/material-forms/material-form.module';
 import { ObservationUnitFormModule} from './modules/application/observation-unit-forms/observation-unit-form.module'
-import { TableModule } from './modules/application/tables/table.module'
+import { TablesModule } from './modules/application/tables/tables.module'
 import { ExplorationModule } from './modules/application/statistics/exploration.module';
 import { DownloadModule } from './modules/application/file_handlers/download.module';
 import { TemplatesModule } from './modules/application/templates/templates.module';
@@ -87,6 +88,7 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+
     // Material modules
     MatChipsModule,
     MatDividerModule,
@@ -105,7 +107,7 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
     FormModule,
     MaterialFormModule,
     ObservationUnitFormModule,
-    TableModule,
+    TablesModule,
     ExplorationModule,
     DownloadModule,
     TemplatesModule,

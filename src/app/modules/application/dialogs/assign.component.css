@@ -5,8 +5,7 @@
     justify-content: center;
     border: 1.0rem;
     border-color: black;
-    /*border-width: 10px;*/
-    
+    /*border-width: 10px;*/  
 }
 
 #loader {
@@ -154,3 +153,18 @@
   .spinner-message {
     text-align: center;
   }
+  #close {
+    float:right;
+    width: 20%;
+    display:inline-table;
+    padding:2px 5px;
+    background:Tomato;
+}
+
+#close:hover {
+        float:right;
+        display:inline-table;
+        padding:2px 5px;
+        background:red;
+    color:#fff;
+    }

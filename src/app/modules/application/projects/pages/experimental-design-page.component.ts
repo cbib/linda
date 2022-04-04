@@ -115,6 +115,11 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
         //Add 'implements OnDestroy' to the class.
         
     }
+    public handlePageBottom(event: PageEvent) {
+        this.paginator.pageSize = event.pageSize;
+        this.paginator.pageIndex = event.pageIndex;
+        this.paginator.page.emit(event);
+      }
     save(){
         
         this.globalService.add(this.design, this.model_type, this.study_id, false).pipe(first()).toPromise().then(

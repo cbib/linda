@@ -11,7 +11,7 @@ import { SearchResultComponent } from './search-result.component';
 import { ExportComponent } from './export.component'
 import { SelectionComponent } from './selection.component';
 import { FormGenericComponent } from './form-generic.component';
-import  {BiologicalMaterialComponent } from './biological-material.component'
+import { BiologicalMaterialComponent } from './biological-material.component'
 import { SampleSelectionComponent } from './sample-selection.component'
 import { HelpLoaderComponent } from './help-loader.component'
 import { ShareProject } from './share-project';
@@ -44,7 +44,7 @@ import { ObservationUnitFormModule } from '../observation-unit-forms/observation
 import { GroupLoginComponent } from './group-login.component';
 import { AlertModule } from '../alert/alert.module';
 import { FilesLoaderComponent } from './files-loader.component';
-import { TableModule} from '../tables/table.module';
+import { TablesModule} from '../tables/tables.module';
 import { AssignComponent } from './assign.component';
 import { MapColumnComponent } from './map-column.component';
 import { DefineComponent } from './define.component'
@@ -84,7 +84,6 @@ import { ProjectLoaderComponent } from './project-loader.component';
     MatDialogModule,
     MatButtonModule,
     MatButtonToggleModule,
-    MatCheckboxModule,
     ReactiveFormsModule,
     FormsModule,
     MatFormFieldModule,
@@ -104,9 +103,10 @@ import { ProjectLoaderComponent } from './project-loader.component';
     MaterialFormModule,
     ObservationUnitFormModule,
     AlertModule,
-    TableModule,
+    TablesModule,
     MatChipsModule,
     MatDividerModule,
+    MatCheckboxModule,
     DataTablesModule
     
     

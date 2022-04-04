@@ -5,10 +5,24 @@
     </h3>
 </div>
 <div mat-dialog-title>
-    <alert></alert>
-    <h1 style="text-align: center;">Define a column</h1>
+    <h1 class="text-center"  style="text-align: center;">Column definition</h1>
 </div>
 <div mat-dialog-content>
+    <alert id="define-alert"></alert>
+    <section *ngIf="get_while_added" class="format-section">
+        <div id="loader">
+            <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="loading"></div>
+        </div>
+    </section>
+    <section *ngIf="!get_while_added" class="format-section">
     <form [formGroup]="get_generalForm">
         <div class="form-group">
             <label for="lastName">Header</label>
@@ -32,6 +46,7 @@
 
     <mat-divider></mat-divider>
     <div *ngIf="get_extraction_component==='study'">
+        <!-- Add mat-accordion >
         <h4>Project informations</h4>
         <label for="lastName">People involved in this project</label>
         <table datatable [dtOptions]="dtOptions"
@@ -76,48 +91,42 @@
                 </tr>
             </tbody>
         </table>
-        <mat-divider></mat-divider>
-
+        <mat-divider></mat-divider> -->
         <!-- Specific STUDY Part-->
         <section *ngIf="get_extraction_component_field==='Study unique ID'">
             <h4>Column informations</h4>
+            <button (click)="onExtractAll()">test</button>
             <label for="lastName">Detected study unique ID(s) in this column</label>
             <table datatable [dtOptions]="dtOptions"
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_study_id">
                 <thead title="">
                     <tr>
-                        <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let key of detected_values ; index as i;"
+                    <tr *ngFor="let value of detected_values ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
-
-                        <!-- select check box for select component to create-->
-                        <!-- <th scope="col">
-                            <mat-checkbox [disabled]="get_associated_header.associated_values[i]" [checked]="get_checklistSelection.isSelected(key)"
-                                (change)="itemSelectionToggle(key)"></mat-checkbox>
-                        </th> -->
+                        <th scope="col" >
+                            <mat-checkbox [checked]="get_checklistSelection.isSelected(value)" (change)="itemSelectionToggle(value)"></mat-checkbox>
+                        </th>
                         <!-- Original headers column-->
                         <th scope="col">
-                            {{key}}
+                            {{value}}
                         </th>
                         <th scope="col">
                             <ng-container>
-                                <button [disabled]="has_associated_header_linda_id_by_value(key, i)"
-                                    (click)="onExtract(key,i)">Create</button>
+                                <button [disabled]="has_associated_header_linda_id_by_value(value)"
+                                    (click)="onExtractStudy(value,i)">Create</button>
                             </ng-container>
                         </th>
                         <th scope="col">
-                            <button [disabled]="!has_associated_header_linda_id_by_value(key, i)"
-                                (click)="onRemove(key,i)">Remove</button>
-                            <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" 
-                                [checked]="get_removeListSelection.isSelected(key)"
-                                (change)="itemRemoveToggle(key)"></mat-checkbox> -->
+                            <button [disabled]="!has_associated_header_linda_id_by_value(value)"
+                                (click)="onRemoveStudy(value,i)">Remove</button>
                         </th>
                     </tr>
                 </tbody>
@@ -130,7 +139,6 @@
                 <thead title="">
 
                     <tr>
-
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
@@ -140,7 +148,7 @@
                     <tr *ngFor="let key of detected_ids ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
 
-
+                        
                         <th scope="col">
                             {{detected_studies[i]}}
                         </th>
@@ -190,47 +198,32 @@
                     <thead title="">
                         <tr>
                             <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)
-                            </th>
-                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
-                            <ng-container *ngIf="get_extraction_component==='study'">
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted in
-                                </th>
-                            </ng-container>
-                            <ng-container *ngIf="get_extraction_component!=='study'">
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as
-                                </th>
-                            </ng-container>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let key of detected_values ; index as i;"
                             style="font-size:10px;text-align: center; cursor: move;">
-                            <th scope="col">
-                                {{key}}
-                            </th>
-                            <th scope="col">
-                                {{detected_studies[i]}}
-                            </th>
-                        
+                            <th scope="col">{{key}}</th>
+                            <th scope="col">{{detected_studies[i]}}</th>
                             <th scope="col">
                                 <ng-container>
-                                    
-                                    <button [disabled]="has_associated_header_value(key,detected_studies[i],i)" (click)="onLink(key,detected_studies[i],i)">Link</button>
+                                    <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i],i)" (click)="onLinkStudy(key,detected_studies[i],i)">Link</button>
                                     <!-- <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i], i)" (click)="onLink(key,detected_studies[i],i)">Link</button> -->
                                 </ng-container>
                             </th>
                             <th scope="col">
-                                <button [disabled]="!has_associated_header_value(key, detected_studies[i],i)" (click)="onRemove(key,i)">Unlink</button>
+                                <button [disabled]="!has_associated_header_linda_id_by_study_id(detected_studies[i],i)" (click)="onUnlinkStudy(key,detected_studies[i],i)">Unlink</button>
 
                                 <!-- <button [disabled]="!has_associated_header_linda_id_by_study_id(detected_studies[i], i)" (click)="onRemove(key,i)">Unlink</button> -->
                             </th>
                             <th scope="col">
-                                {{get_associated_header_linda_id_by_study_id(detected_studies[i], i)}}
+                                {{get_associated_header_linda_id_by_study_id(detected_studies[i])}}
                             </th>
-                        
                         </tr>
                     </tbody>
                 </table>
@@ -240,11 +233,202 @@
             </div>
         </section>
     </div>
-    <div *ngIf="get_extraction_component==='observed_variable'">
-        <app-form id="observed_variable_form" (notify)="get_output_from_child($event)"
-            [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="'create'"
-            inline="true" onlyTemplate="false" asTemplate="false" [role]="">
-        </app-form>
+    <div *ngIf="get_extraction_component==='event'">
+        <!-- <h4>Project informations</h4>
+        <label for="lastName">People involved in this project</label>
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            id="persontable" [ngClass]="{'table-dark': false}">
+            <thead class="text-nowrap">
+                <tr>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Name</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Project group</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:10px;text-align: center; cursor: move;"
+                    *ngFor="let person of get_projectPersons.persons ; index as i;">
+                    <td>{{person['Person name']}}</td>
+                    <td>{{get_projectPersons.groups[i]}}</td>
+                    <td>{{get_projectPersons.roles[i]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <mat-divider></mat-divider>
+        <h4>Studies informations</h4>
+        <label for="lastName">Persons and studies in your project</label>
+        <table datatable [dtOptions]="dtOptions"
+            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+            id="studytable" [ngClass]="{'table-dark': false}">
+            <thead class="text-nowrap">
+                <tr>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Study ID</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person name</td>
+                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="font-size:10px;text-align: center; cursor: move;"
+                    *ngFor="let person of get_studyPersons.persons ; index as i;">
+                    <td>{{get_studyPersons.studies[i]['Study unique ID']}}</td>
+                    <td>{{person['Person name']}}</td>
+                    <td>{{get_studyPersons.roles[i]}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <mat-divider></mat-divider>
+        <div *ngIf="has_study_associated_header()">
+            <h4>Study informations</h4>
+            <label for="lastName">Detected study unique ID(s) in this data file</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
+                id="datatable_study_detected_id">
+                <thead title="table">
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s) in this file
+                        </th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let key of detected_studies ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{key}}
+                        </th>
+                        <th scope="col">
+                            {{get_study_associated_header_values(key)}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+         <!-- Specific Experimental Factor Part-->
+         <section *ngIf="get_extraction_component_field==='Event accession number'">
+            <h4>Column informations</h4>
+            <label for="lastName">Detected event type in this column</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                id="datatable_event_id">
+                <thead title="">
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let value of get_associated_studies() ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{get_studyValuesDictionary[value]}}
+                        </th>
+                        <th scope="col">
+                            <ng-container>
+                                <button [disabled]="has_associated_header_parent_id_by_index(value, i)"
+                                    (click)="onExtractEvent(value,get_studyValuesDictionary[value],i)">Create</button>
+                            </ng-container>
+                        </th>
+                        <th scope="col">
+                            <button [disabled]="!has_associated_header_parent_id_by_index(value, i)"
+                                (click)="onRemoveEvent(value,get_studyValuesDictionary[value],i)">Remove</button>
+                        </th>
+                        <th scope="col">
+                            {{value}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Extraction informations</h4>
+            <label for="lastName">Extracted component from values in column</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                id="datatable_experimental_factor_component_id">
+                <thead title="">
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="detected_ids.length>0">
+                    <tr *ngFor="let key of detected_ids ; index as j;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{detected_studies[j]}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_value_by_linda_id(key, j)}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_linda_id(key, j)}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section *ngIf="get_extraction_component_field!=='Event accession number'">
+            <div *ngIf="has_event_associated_header()">
+                <h4>Event informations</h4>
+                <mat-card>
+                <label>Select event in this data file to link with</label>
+                <mat-select (selectionChange)="onLinkComponent($event.value)">
+                    <mat-option disabled>--</mat-option>
+                    <mat-option *ngFor="let associated_header of filter_event_associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
+                        {{associated_header.header + " (" +associated_header.associated_component_field + ")"}}
+                    </mat-option>
+                </mat-select>
+                </mat-card>
+                <div *ngIf="get_linked">
+                <h4>Extraction informations</h4>
+                    <label>Extracted component from values in column</label>
+                    <table datatable [dtOptions]="dtOptions"
+                        class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                        id="datatable_event_values_detected">
+                        <thead title="">
+                            <tr>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated component</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Child of</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let associated_header of filter_detected_events ; index as i;">
+                                <tr *ngFor="let key of associated_header.associated_values ; index as j;"
+                                    style="font-size:10px;text-align: center; cursor: move;">
+                                    <th scope="col">{{associated_header.associated_linda_id[j]}}</th>
+                                    <th scope="col">{{detected_values[j]}}</th>
+                                    <th scope="col">{{get_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])}}</th>
+                                    <th scope="col">{{associated_header.header}}</th>
+                                    <th scope="col">
+                                        <ng-container>
+                                            <button [disabled]="has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])"
+                                                (click)="onLinkEvent(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Link</button>
+                                        </ng-container>
+                                    </th>
+                                    <th scope="col">
+                                        <button [disabled]="!has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])" 
+                                        (click)="onUnlinkEvent(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Unlink</button>
+                                    </th>
+                                    <th scope="col">{{associated_header.associated_parent_id[j]}}</th>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="!has_event_associated_header()">
+                <p>You have no event(s) attached to this datafile</p>
+            </div>
+        </section>
+
     </div>
     <div *ngIf="get_extraction_component==='experimental_factor'">
         <h4>Project informations</h4>
@@ -333,33 +517,43 @@
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let key of detected_values ; index as i;"
+                    <!-- <tr *ngFor="let key of detected_values ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
-
-                        <!-- select check box for select component to create-->
-                        <!-- <th scope="col">
-                            <mat-checkbox [disabled]="get_associated_header.associated_values[i]" [checked]="get_checklistSelection.isSelected(key)"
-                                (change)="itemSelectionToggle(key)"></mat-checkbox>
-                        </th> -->
-                        <!-- Original headers column-->
                         <th scope="col">
                             {{key}}
                         </th>
                         <th scope="col">
                             <ng-container>
                                 <button [disabled]="has_associated_header_linda_id_by_index(key, i)"
-                                    (click)="onExtract(key,i)">Create</button>
+                                    (click)="onExtractExperimentalFactor(key,i)">Create</button>
                             </ng-container>
                         </th>
                         <th scope="col">
                             <button [disabled]="!has_associated_header_linda_id_by_index(key, i)"
-                                (click)="onRemove(key,i)">Remove</button>
-                            <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" 
-                                [checked]="get_removeListSelection.isSelected(key)"
-                                (change)="itemRemoveToggle(key)"></mat-checkbox> -->
+                                (click)="onRemoveExperimentalFactor(key,i)">Remove</button>
+                        </th>
+                    </tr> -->
+                    <tr *ngFor="let value of get_associated_studies() ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{get_studyValuesDictionary[value]}}
+                        </th>
+                        <th scope="col">
+                            <ng-container>
+                                <button [disabled]="has_associated_header_parent_id_by_index(value, i)"
+                                    (click)="onExtractExperimentalFactor(value,get_studyValuesDictionary[value],i)">Create</button>
+                            </ng-container>
+                        </th>
+                        <th scope="col">
+                            <button [disabled]="!has_associated_header_parent_id_by_index(value, i)"
+                                (click)="onRemoveExperimentalFactor(value,get_studyValuesDictionary[value],i)">Remove</button>
+                        </th>
+                        <th scope="col">
+                            {{value}}
                         </th>
                     </tr>
                 </tbody>
@@ -370,19 +564,16 @@
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_experimental_factor_component_id">
                 <thead title="">
-
                     <tr>
-
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let key of detected_ids ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
-
-
                         <th scope="col">
                             {{detected_studies[i]}}
                         </th>
@@ -399,131 +590,100 @@
         <section *ngIf="get_extraction_component_field!=='Experimental Factor accession number'">
             <div *ngIf="has_study_associated_header()">
                 <h4>Experimental factor informations</h4>
-                <label>Detected experimental factor accession(s) in this data file</label>
-                <table datatable [dtOptions]="dtOptions"
-                    class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
-                    id="datatable_experimental_factor_study_detected_id">
-                    <thead title="table">
-                        <tr>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected experimental factor(s) in this file
-                        </th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let key of detected_experimental_factor ; index as i;"
-                            style="font-size:10px;text-align: center; cursor: move;">
-                            <th scope="col">
-                                {{key}}
-                            </th>
-                            <th scope="col">
-                                {{get_associated_header_linda_id_by_value(key, i)}}
-                            </th>
-                        </tr>
-                    </tbody>
-                </table>
+                <mat-card>
+                    <label>Select event in this data file to link with</label>
+                    
+                    <mat-select (selectionChange)="onLinkComponent($event.value)">
+                        <mat-option disabled>--</mat-option>
+                        <mat-option *ngFor="let associated_header of filter_experimental_factor_associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
+                            {{associated_header.header + " (" +associated_header.associated_component_field + ")"}}
+                        </mat-option>
+                    </mat-select>
+                </mat-card>
                 <h4>Extraction informations</h4>
                 <div *ngIf="get_extraction_component_field==='Experimental Factor values'">
+                    <div *ngIf="get_linked">
                     <label>Extracted component from values in column</label>
                     <table datatable [dtOptions]="dtOptions"
-                        class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-                        id="datatable_experimental_factor_values_detected">
-                        <thead title="">
-                            <tr>
-                                <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)
-                                </th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
-                                <ng-container *ngIf="get_extraction_component==='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted in
-                                    </th>
+                            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                            id="datatable_event_values_detected">
+                            <thead title="">
+                                <tr>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated component</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link with</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated with</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Child of</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let associated_header of filter_detected_factors ; index as i;">
+                                    <tr *ngFor="let key of associated_header.associated_values ; index as j;"
+                                        style="font-size:10px;text-align: center; cursor: move;">
+                                        <th scope="col">{{associated_header.associated_linda_id[j]}}</th>
+                                        <th scope="col">{{detected_values[j]}}</th>
+                                        <th scope="col">{{get_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])}}</th>
+                                        <th scope="col">{{associated_header.header}}</th>
+                                        <th scope="col">
+                                            <ng-container>
+                                                <button [disabled]="has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])"
+                                                    (click)="onLinkExperimentalFactorValues(detected_values,associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Link</button>
+                                            </ng-container>
+                                        </th>
+                                        <th scope="col">
+                                            <button [disabled]="!has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])" 
+                                            (click)="onUnlinkExperimentalFactorValues(detected_values,associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Unlink</button>
+                                        </th>
+                                        <th scope="col">{{associated_header.associated_parent_id[j]}}</th>
+                                    </tr>
                                 </ng-container>
-                                <ng-container *ngIf="get_extraction_component!=='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as
-                                    </th>
-                                </ng-container>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let key of detected_studies ; index as j;"
-                                style="font-size:10px;text-align: center; cursor: move;">
-                                <th scope="col">
-                                    {{detected_values}}
-                                </th>
-                                <th scope="col">
-                                    {{detected_experimental_factor[j]}}
-                                </th>
-                            
-                                <th scope="col">
-                                    <ng-container>
-                                        <button [disabled]="has_associated_header_linda_id_by_study_id(key, j)"
-                                            (click)="onLink(detected_values,detected_experimental_factor[j],j)">Link</button>
-                                    </ng-container>
-                                </th>
-                                <th scope="col">
-                                    <button [disabled]="!has_associated_header_linda_id_by_study_id(key, j)"
-                                        (click)="onRemove(detected_values[j],j)">Unlink</button>
-                                </th>
-                                <th scope="col">
-                                    {{get_associated_header_linda_id_by_value(detected_experimental_factor[j], j)}}
-                                </th>
-                            
-                            </tr>
-                        </tbody>
+                            </tbody>
                     </table>
+                    </div>
                 </div>
-                <div *ngIf="get_extraction_component_field!=='Experimental Factor values'">
-                    <label>Extracted component from values in column</label>
-                    <table datatable [dtOptions]="dtOptions"
-                        class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-                        id="datatable_experimental_factor_values_detected">
-                        <thead title="">
-                            <tr>
-                                <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)
-                                </th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
-                                <ng-container *ngIf="get_extraction_component==='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted in
-                                    </th>
+                <div *ngIf="get_extraction_component_field!=='Experimental Factor values'">   
+                    <div *ngIf="get_linked">
+                        <label>Extracted component from values in column</label>
+                        <table datatable [dtOptions]="dtOptions"
+                            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                            id="datatable_event_values_detected">
+                            <thead title="">
+                                <tr>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated component</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link with</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated with</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
+                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Child of</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let associated_header of filter_detected_factors ; index as i;">
+                                    <tr *ngFor="let key of associated_header.associated_values ; index as j;"
+                                        style="font-size:10px;text-align: center; cursor: move;">
+                                        <th scope="col">{{associated_header.associated_linda_id[j]}}</th>
+                                        <th scope="col">{{detected_values[j]}}</th>
+                                        <th scope="col">{{get_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])}}</th>
+                                        <th scope="col">{{associated_header.header}}</th>
+                                        <th scope="col">
+                                            <ng-container>
+                                                <button [disabled]="has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])"
+                                                    (click)="onLinkExperimentalFactor(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Link</button>
+                                            </ng-container>
+                                        </th>
+                                        <th scope="col">
+                                            <button [disabled]="!has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])" 
+                                            (click)="onUnlinkExperimentalFactor(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Unlink</button>
+                                        </th>
+                                        <th scope="col">{{associated_header.associated_parent_id[j]}}</th>
+                                    </tr>
                                 </ng-container>
-                                <ng-container *ngIf="get_extraction_component!=='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as
-                                    </th>
-                                </ng-container>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let key of detected_values ; index as j;"
-                                style="font-size:10px;text-align: center; cursor: move;">
-                                <th scope="col">
-                                    {{key}}
-                                </th>
-                                <th scope="col">
-                                    {{detected_experimental_factor[j]}}
-                                </th>
-                            
-                                <th scope="col">
-                                    <ng-container>
-                                        <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[j], j)"
-                                            (click)="onLink(key,detected_experimental_factor[j],j)">Link</button>
-                                    </ng-container>
-                                </th>
-                                <th scope="col">
-                                    <button [disabled]="!has_associated_header_linda_id_by_study_id(detected_studies[j], j)"
-                                        (click)="onRemove(key,j)">Unlink</button>
-                                </th>
-                                <th scope="col">
-                                    {{get_associated_header_linda_id_by_study_id(detected_studies[j], j)}}
-                                </th>
-                            
-                            </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 
 
@@ -539,120 +699,39 @@
             inline="true" onlyTemplate="false" asTemplate="false" [role]="">
         </app-form> -->
     </div>
-    <div *ngIf="get_extraction_component==='observation_unit'">
-    </div>
-    <div *ngIf="get_extraction_component==='event'">
-        <h4>Project informations</h4>
-        <label for="lastName">People involved in this project</label>
-        <table datatable [dtOptions]="dtOptions"
-            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-            id="persontable" [ngClass]="{'table-dark': false}">
-            <thead class="text-nowrap">
-                <tr>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Name</td>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Project group</td>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="font-size:10px;text-align: center; cursor: move;"
-                    *ngFor="let person of get_projectPersons.persons ; index as i;">
-                    <td>{{person['Person name']}}</td>
-                    <td>{{get_projectPersons.groups[i]}}</td>
-                    <td>{{get_projectPersons.roles[i]}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <mat-divider></mat-divider>
-        <h4>Studies informations</h4>
-        <label for="lastName">Persons and studies in your project</label>
-        <table datatable [dtOptions]="dtOptions"
-            class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-            id="studytable" [ngClass]="{'table-dark': false}">
-            <thead class="text-nowrap">
-                <tr>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Study ID</td>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person name</td>
-                    <td scope="col" style="font-size:10px;text-align: center; cursor: move;">Person Role</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="font-size:10px;text-align: center; cursor: move;"
-                    *ngFor="let person of get_studyPersons.persons ; index as i;">
-                    <td>{{get_studyPersons.studies[i]['Study unique ID']}}</td>
-                    <td>{{person['Person name']}}</td>
-                    <td>{{get_studyPersons.roles[i]}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <mat-divider></mat-divider>
-        <div *ngIf="has_study_associated_header()">
-            <h4>Study informations</h4>
-            <label for="lastName">Detected study unique ID(s) in this data file</label>
-            <table datatable [dtOptions]="dtOptions"
-                class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
-                id="datatable_study_detected_id">
-                <thead title="table">
-                    <tr>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s) in this file
-                        </th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let key of detected_studies ; index as i;"
-                        style="font-size:10px;text-align: center; cursor: move;">
-                        <th scope="col">
-                            {{key}}
-                        </th>
-                        <th scope="col">
-                            {{get_study_associated_header_values(key)}}
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-         <!-- Specific Experimental Factor Part-->
-         <section *ngIf="get_extraction_component_field==='Event type'">
+    <div *ngIf="get_extraction_component==='environment'">
+        <section *ngIf="get_extraction_component_field==='Environment parameter accession number'">
             <h4>Column informations</h4>
-            <label for="lastName">Detected event type in this column</label>
+            <label for="lastName">Detected environment parameter type in this column</label>
             <table datatable [dtOptions]="dtOptions"
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-                id="datatable_experimental_factor_id">
+                id="datatable_event_id">
                 <thead title="">
                     <tr>
-                        <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let key of detected_values ; index as i;"
+                    <tr *ngFor="let value of get_associated_studies() ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
-
-                        <!-- select check box for select component to create-->
-                        <!-- <th scope="col">
-                            <mat-checkbox [disabled]="get_associated_header.associated_values[i]" [checked]="get_checklistSelection.isSelected(key)"
-                                (change)="itemSelectionToggle(key)"></mat-checkbox>
-                        </th> -->
-                        <!-- Original headers column-->
                         <th scope="col">
-                            {{key}}
+                            {{get_studyValuesDictionary[value]}}
                         </th>
                         <th scope="col">
                             <ng-container>
-                                <button [disabled]="has_associated_header_linda_id_by_index(key, i)"
-                                    (click)="onExtract(key,i)">Create</button>
+                                <button [disabled]="has_associated_header_parent_id_by_index(value, i)"
+                                    (click)="onExtractEnvironment(value,get_studyValuesDictionary[value],i)">Create</button>
                             </ng-container>
                         </th>
                         <th scope="col">
-                            <button [disabled]="!has_associated_header_linda_id_by_index(key, i)"
-                                (click)="onRemove(key,i)">Remove</button>
-                            <!-- <mat-checkbox [disabled]="!get_associated_header.associated_values[i]" 
-                                [checked]="get_removeListSelection.isSelected(key)"
-                                (change)="itemRemoveToggle(key)"></mat-checkbox> -->
+                            <button [disabled]="!has_associated_header_parent_id_by_index(value, i)"
+                                (click)="onRemoveEnvironment(value,get_studyValuesDictionary[value],i)">Remove</button>
+                        </th>
+                        <th scope="col">
+                            {{value}}
                         </th>
                     </tr>
                 </tbody>
@@ -663,122 +742,100 @@
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_experimental_factor_component_id">
                 <thead title="">
-
                     <tr>
-
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr *ngFor="let key of detected_ids ; index as i;"
+                <tbody *ngIf="detected_ids.length>0">
+                    <tr *ngFor="let key of detected_ids ; index as j;"
                         style="font-size:10px;text-align: center; cursor: move;">
-
-
                         <th scope="col">
-                            {{detected_studies[i]}}
+                            {{detected_studies[j]}}
                         </th>
                         <th scope="col">
-                            {{get_associated_header_value_by_linda_id(key, i)}}
+                            {{get_associated_header_value_by_linda_id(key, j)}}
                         </th>
                         <th scope="col">
-                            {{get_associated_header_linda_id(key, i)}}
+                            {{get_associated_header_linda_id(key, j)}}
                         </th>
                     </tr>
                 </tbody>
             </table>
         </section>
-        <section *ngIf="get_extraction_component_field!=='Event type'">
-            <div *ngIf="has_study_associated_header()">
-                <h4>Experimental factor informations</h4>
-                <label>Detected event(s) in this data file</label>
-                <table datatable [dtOptions]="dtOptions"
-                    class="dataTable table table-hover table-bordered  table-responsive-md table-striped text-center"
-                    id="datatable_event_study_detected_id">
-                    <thead title="table">
-                        <tr>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected event(s) in this file
-                        </th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let key of detected_events ; index as i;"
-                            style="font-size:10px;text-align: center; cursor: move;">
-                            <th scope="col">
-                                {{key}}
-                            </th>
-                            <th scope="col">
-                                {{get_associated_header_linda_id_by_value(key, i)}}
-                            </th>
-                        </tr>
-                    </tbody>
-                </table>
-                <h4>Extraction informations</h4>
-
-                <div *ngIf="get_extraction_component_field!=='Experimental Factor values'">
+        <section *ngIf="get_extraction_component_field!=='Environment parameter accession number'">
+            <div *ngIf="has_environment_associated_header()">
+                <h4>Event informations</h4>
+                <mat-card>
+                <label>Select environment parameter in this data file to link with</label>
+                <mat-select (selectionChange)="onLinkComponent($event.value)">
+                    <mat-option disabled>--</mat-option>
+                    <mat-option *ngFor="let associated_header of filter_environment_associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
+                        {{associated_header.header + " (" +associated_header.associated_component_field + ")"}}
+                    </mat-option>
+                </mat-select>
+                </mat-card>
+                <div *ngIf="get_linked">
+                    <h4>Extraction informations</h4>
                     <label>Extracted component from values in column</label>
                     <table datatable [dtOptions]="dtOptions"
                         class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
-                        id="datatable_experimental_factor_values_detected">
+                        id="datatable_env_values_detected">
                         <thead title="">
                             <tr>
-                                <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)
-                                </th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
-                                <ng-container *ngIf="get_extraction_component==='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted in
-                                    </th>
-                                </ng-container>
-                                <ng-container *ngIf="get_extraction_component!=='study'">
-                                    <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as
-                                    </th>
-                                </ng-container>
-                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated component</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Child of</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let key of detected_values ; index as j;"
-                                style="font-size:10px;text-align: center; cursor: move;">
-                                <th scope="col">
-                                    {{key}}
-                                </th>
-                                <th scope="col">
-                                    {{detected_experimental_factor[j]}}
-                                </th>
-                            
-                                <th scope="col">
-                                    <ng-container>
-                                        <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[j], j)"
-                                            (click)="onLink(key,detected_experimental_factor[j],j)">Link</button>
-                                    </ng-container>
-                                </th>
-                                <th scope="col">
-                                    <button [disabled]="!has_associated_header_linda_id_by_study_id(detected_studies[j], j)"
-                                        (click)="onRemove(key,j)">Unlink</button>
-                                </th>
-                                <th scope="col">
-                                    {{get_associated_header_linda_id_by_study_id(detected_studies[j], j)}}
-                                </th>
-                            
-                            </tr>
+                            <ng-container *ngFor="let associated_header of filter_detected_environments ; index as i;">
+                                <tr *ngFor="let key of associated_header.associated_values ; index as j;"
+                                    style="font-size:10px;text-align: center; cursor: move;">
+                                    <th scope="col">{{associated_header.associated_linda_id[j]}}</th>
+                                    <th scope="col">{{detected_values[j]}}</th>
+                                    <th scope="col">{{get_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])}}</th>
+                                    <th scope="col">{{associated_header.header}}</th>
+                                    <th scope="col">
+                                        <ng-container>
+                                            <button [disabled]="has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])"
+                                                (click)="onLinkEnvironment(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Link</button>
+                                        </ng-container>
+                                    </th>
+                                    <th scope="col">
+                                        <button [disabled]="!has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])" 
+                                        (click)="onUnlinkEnvironment(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Unlink</button>
+                                    </th>
+                                    <th scope="col">{{associated_header.associated_parent_id[j]}}</th>
+                                </tr>
+                            </ng-container>
                         </tbody>
                     </table>
                 </div>
-                
-
             </div>
-            <div *ngIf="!has_study_associated_header()">
-                <p>You have to define a column for study id first</p>
+            <div *ngIf="!has_environment_associated_header()">
+                <p>You have no environment parameter(s) attached to this datafile</p>
             </div>
         </section>
-
+    </div>
+    <div *ngIf="get_extraction_component==='observed_variable'">
+        <app-form id="observed_variable_form" (notify)="get_output_from_child($event)"
+            [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="'create'"
+            inline="true" onlyTemplate="false" asTemplate="false" [role]="">
+        </app-form>
     </div>
     <div *ngIf="get_extraction_component==='biological_material'">
     </div>
+    <div *ngIf="get_extraction_component==='observation_unit'">
+    </div>
+    
+    
+    </section>
 </div>
 
 <div mat-dialog-actions>

@@ -57,6 +57,7 @@ export class ProjectPageComponent implements OnInit {
                     this.role=params['role']
                     this.group_key=params['group_key']
                     this.collection="investigations"
+                    console.log(this.role)
                 }
             );
             console.warn("group key in project page", this.group_key)

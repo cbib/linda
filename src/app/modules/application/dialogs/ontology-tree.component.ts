@@ -16,9 +16,11 @@ interface DialogData {
     ontology_id: string;
     selected_term: OntologyTerm;
     selected_set: OntologyTerm[];
+    selected_key:string
     uncheckable: boolean;
     multiple: boolean;
     observed:boolean;
+    mode_simplified:boolean
 }
 
 /**
@@ -34,7 +36,7 @@ export class OntologyTreeComponent {
     private ontology_id: string;
     private selected_set: OntologyTerm[]
     private selected_term: OntologyTerm;
-
+    private selected_key:string=""
     private ontologyTerms: OntologyTerm[];
     private ontologyDatatype: OntologyTerm[];
     private ontologyEnum: OntologyTerm[];
@@ -42,20 +44,25 @@ export class OntologyTreeComponent {
     private ontologyNode: OntologyTerm[];
     private uncheckable: boolean = false
     private observed: boolean = false
+    private mode_simplified: boolean = false
     private multiple: boolean
+    panel_disabled:boolean=true
+    panel_expanded:boolean=true
     //model ontology    
     private ontology: any = {};
     public spinner_mode = 'indeterminate'
 
     private displayed = false;
     private ontology_tree: OntologyTerm[];
-    show_spinner: boolean = true;
+    public show_spinner: boolean = true;
     private active_node: OntologyTerm;
     private context_term: OntologyTerm[];
-    private search_string: string;
+    public search_string: string;
     active_list: boolean = false;
     matSpinner: MatProgressSpinner;
     ontology_tree_loading_progress_value = 0;
+    selected=-1
+    labels=['Use term id: ', 'Use term name: ', 'Use term Definition: ']
 
     //private result_search=[]
     private selected_nodes = []
@@ -73,8 +80,13 @@ export class OntologyTreeComponent {
         this.selected_set = this.data.selected_set;
         this.uncheckable = this.data.uncheckable;
         this.multiple = this.data.multiple;
+        this.selected_key=this.data.selected_key
+        
         if (this.data.observed){
             this.observed=this.data.observed;
+        }
+        if (this.data.mode_simplified){
+            this.mode_simplified=this.data.mode_simplified
         }
         //console.log("multiple choice is activated: ", this.multiple)
         this.ontology_tree = [];
@@ -188,11 +200,11 @@ export class OntologyTreeComponent {
             this.active_list = true
         }
     }
-
     searchStart(event) {
         this.search_string = event.target.value;
         if (this.search_string === "") {
             this.active_list = false
+            console.log("emptty search")
             
         }
         else{
@@ -207,29 +219,21 @@ export class OntologyTreeComponent {
                             }
                         }
                     });
+                    if (this.selected_nodes.length > 0) {
+                        this.active_list = true
+                    }
                 }
             }
             if (this.selected_nodes.length > 0) {
-                console.log(this.selected_nodes)
+                //console.log(this.selected_nodes)
                 //this.active_list = true
             }
         }
     }
-
-
-
-
     onResponseRangeSelect(value: string) {
         this.selected_term["term"].set_response_range(value)
     }
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-    onOkClick() {
-        ////console.log(this.selected_term)
-        //console.log(this.selected_set)
-
-    }
+    
 
     onValueAdd(event, node: OntologyTerm) {
         //console.log(event.target.value)
@@ -237,10 +241,13 @@ export class OntologyTreeComponent {
     }
     onUnitSelect(value: string, node: OntologyTerm) {
         node["term"].set_unit(value)
-
     }
-
-
+    select(term: OntologyTerm, item:string){
+        console.log(item)
+        console.log(term)
+        this.data.selected_set.push(term)
+        this.data.selected_key=item
+    }
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
     todoLeafItemSelectionToggle(term: OntologyTerm): void {
         this.checklistSelection.toggle(term);
@@ -278,8 +285,6 @@ export class OntologyTreeComponent {
         }
         //console.log(this.data.selected_set)
     }
-
-
     show_info(term: OntologyTerm) {
 
         //this.selected_term=term
@@ -290,10 +295,11 @@ export class OntologyTreeComponent {
         //this.context_term=term["term"].get_context()
 
     }
-
-
     get get_checklistSelection(){
         return this.checklistSelection
+    }
+    get get_mode_simplified(){
+        return this.mode_simplified
     }
     get get_uncheckable(){
         return this.uncheckable
@@ -303,11 +309,10 @@ export class OntologyTreeComponent {
     }
     trackInstances(index, item:Instance){
         return item.name; 
-     }
+    }
     get get_selected_nodes(){
         return this.selected_nodes
     }
-     
     get get_context_term(){
         return this.context_term
     }
@@ -326,7 +331,6 @@ export class OntologyTreeComponent {
     get get_observed(){
         return this.observed
     }
-
     get_progress() {
         //console.log(this.ontology_tree_loading_progress_value)
         return this.ontology_tree_loading_progress_value
@@ -435,7 +439,6 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-
     build_C0_hierarchy2(ontology: {}): OntologyTerm[] {
 
         this.show_spinner = true;
@@ -682,7 +685,6 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-
     build_C0_hierarchy(ontology: {}): OntologyTerm[] {
         this.show_spinner = true;
         var cpt = 0;
@@ -837,7 +839,7 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-
+    
     build_xeo_isa_hierarchy(ontology: {}): OntologyTerm[] {
         this.show_spinner = true;
         //premier passage pour créer tous les termes 
@@ -1026,7 +1028,6 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-
     get_term(term_id: string): any {
         var term: OntologyTerm;
         this.ontologyTerms.forEach(
@@ -1037,7 +1038,6 @@ export class OntologyTreeComponent {
             })
         return term
     }
-
     searchTerm(terms: OntologyTerm[], term_id: string): OntologyTerm {
         var term: OntologyTerm;
         terms.forEach(
@@ -1057,7 +1057,6 @@ export class OntologyTreeComponent {
         )
         return term
     }
-
     searchTree(term: OntologyTerm, term_id: string) {
         if (term.id == term_id) {
             return term;
@@ -1072,7 +1071,6 @@ export class OntologyTreeComponent {
         }
         return null;
     }
-
     get_term2(term_id: string): any {
         var term: OntologyTerm;
         this.ontologyNode.forEach(
@@ -1083,7 +1081,6 @@ export class OntologyTreeComponent {
             })
         return term
     }
-
     get_node(term_id: string): OntologyTerm {
         var term: OntologyTerm;
         this.ontology_tree.forEach(
@@ -1105,7 +1102,6 @@ export class OntologyTreeComponent {
             })
         return term
     }
-
     // get_children(node_id:string,loc_tree: FoodNode[]): FoodNode[]{
     //     var chil:FoodNode[];
     //     loc_tree[0].children.forEach(
@@ -1129,4 +1125,12 @@ export class OntologyTreeComponent {
 
     getChildren = (node: OntologyTerm): OntologyTerm[] => node.children;
     @ViewChild('tree', { static: false }) tree: { treeControl: { expandAll: () => void; }; };
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+    onOkClick() {
+        ////console.log(this.selected_term)
+        //console.log(this.selected_set)
+    }
 }

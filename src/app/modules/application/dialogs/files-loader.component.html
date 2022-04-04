@@ -11,34 +11,47 @@
     <alert></alert>
     <div>
         <!--<app-upload-file ></app-upload-file>-->
-        <div *ngIf="error">
-            {{ error.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'error'">
-            {{ uploadResponse.message }}
-        </div>
-        <div *ngIf="uploadResponse.status === 'progress'">
-            <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0"
-                aria-valuemax="100">
-                {{uploadResponse.message}}%
+        
+        <section *ngIf="get_mode==='local_import'">
+            <div>
+                <form [formGroup]="form" (ngSubmit)="Upload()">
+                    <label style="float: right;" class="btn btn-default btn-file">Browse <input type="file" style="display: none;" accept=".xlsx,.csv" (change)="onFileChange($event)"></label>
+                    <button [disabled]="!get_loaded" class="btn btn-default btn-info" type="submit" style="float: right;">Upload</button>
+                    <button [disabled]="!get_loaded" (click)="onGiveUp()" style="float: right;" class="btn btn-danger">Cancel</button>
+                </form>
             </div>
-        </div>
-        <div>
-            <form [formGroup]="form" (ngSubmit)="Upload()">
-                <label style="float: right;" class="btn btn-default btn-file">Browse <input type="file"
-                        style="display: none;" accept=".xlsx,.csv" (change)="onFileChange($event)"></label>
-                <button [disabled]="!get_loaded" class="btn btn-default btn-info" type="submit"
-                    style="float: right;">
-                    Upload
-                </button>
-
-                <button [disabled]="!get_loaded" (click)="onGiveUp()" style="float: right;" class="btn btn-danger">Cancel</button>
-            </form>
-        </div>
-        <h2>Download data files</h2>
-        <p>Here you can integrate experimental data and metadata to enrich your projects or your studies using later these 
-            datafiles to create or describe your experimental design, tyour observations units, and many more.  </p>
-        <button [disabled]="!get_added" (click)="Preview()" style="float: right;" class="btn btn-info">Preview</button>
+            <div>
+                <h2>Download local data files</h2>
+                <p>Here you can integrate experimental data and metadata to enrich your projects or your studies. Use these 
+                    datafiles to create or describe your experimental design, your observations units, and many more.  </p>
+            </div>
+            <button [disabled]="!get_added" (click)="Preview()" style="float: right;" class="btn btn-info">Preview</button>
+            <div *ngIf="error">
+                {{ error.message }}
+            </div>
+            <div *ngIf="uploadResponse.status === 'error'">
+                {{ uploadResponse.message }}
+            </div>
+            <div *ngIf="uploadResponse.status === 'progress'">
+                <div role="progressbar" [style.width.%]="uploadResponse.message" aria-valuenow="25" aria-valuemin="0"
+                    aria-valuemax="100">
+                    {{uploadResponse.message}}%
+                </div>
+            </div>
+        </section>
+        <section *ngIf="get_mode==='empty_import'">
+            <div>
+                <h2>Build your own data files</h2>
+                <p>Here you can create a datafile skeleton by simply paste Sutdy unique IDs. For each study IDs, a study will b i,ntegrrated in your project. Use these 
+                    datafiles later, to create or describe your experimental design, your observations units, and many more.  </p>
+            </div>
+                <mat-label>FreeText</mat-label>
+                <input [ngModel]="fileName" (ngModelChange)="get_filename($event)">
+        
+                <mat-label>FreeText</mat-label>
+                <textarea [ngModel]="myTextarea" (ngModelChange)="get_text_area($event)"></textarea>
+        
+        </section>
         <div *ngIf="get_preview_request">
             <h2>Data preview</h2>
             <app-table [data]="get_data_model" [data_columns]="get_columns"></app-table>
@@ -49,5 +62,5 @@
 </div>
 <div mat-dialog-actions>
     <button mat-button class="btn btn-default btn-danger" (click)="onNoClick()">Cancel</button>
-    <button mat-button class="btn btn-default btn-success" (click)="onSubmit()">Import Data</button>
+    <button [disabled]="!get_added" mat-button class="btn btn-default btn-success" (click)="onSubmit()">Import Data</button>
 </div>

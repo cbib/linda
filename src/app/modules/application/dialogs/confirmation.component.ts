@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 
 interface DialogData {
   validated: boolean;
+  all_childs:boolean;
   only_childs: boolean;
   mode:string;
   user_key: string, 
@@ -22,7 +23,7 @@ interface DialogData {
   styleUrls: ['./confirmation.component.css']
 })
 export class ConfirmationComponent implements OnInit {
-  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " }, 'extract_existing_env_var':{'title': "Confirm new extraction", 'content': " Are you sure to link with this exisitng observed variable ?"}, 'extract_env_var_again': { 'title': "Confirm unlink component", 'content': " Are you sure to unlink this component ? This will unlink corresponding components"}}
+  mode_text = { 'remove': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'link_study': { 'title': "Confirm change column definition", 'content': " Do you want to link this column with existing study ? " }, 'change_field': { 'title': "Confirm change column definition", 'content': " Are you sure to reset this column and all the components associated ? " }, 'remove_brief': { 'title': "Confirm remove", 'content': " Are you sure to delete ? " }, 'extract_env_var': { 'title': "Confirm extraction", 'content': " Are you sure to extract data? " }, 'extract_existing_env_var':{'title': "Confirm new extraction", 'content': " Are you sure to link with this exisitng observed variable ?"}, 'extract_env_var_again': { 'title': "Confirm unlink component", 'content': " Are you sure to unlink this component ? This will unlink corresponding components"}}
   validated: boolean;
   all_childs: boolean = false
   use_template: boolean = false
@@ -53,6 +54,7 @@ export class ConfirmationComponent implements OnInit {
     this.values = this.data.values
     this.header = this.data.header
     this.headers = this.data.headers
+    this.all_childs=this.data.all_childs
     this.model_id = ""
     this.model_filename=this.data.model_filename
   }

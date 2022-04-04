@@ -77,8 +77,25 @@ export class UserService {
         //return null
         return this.http.post(`${this.APIUrl}/update_person_infos`, person);
     }
-    get_person_id(user_key:string): Observable<PersonInterface>{
-        return this.http.get<PersonInterface>(this.APIUrl + "get_person_id/" + user_key).pipe(catchError(this.handleError));
+    get_person_id(user_key:string): Observable<string>{
+        return this.http.get<string>(this.APIUrl + "get_person_id/" + user_key).pipe(catchError(this.handleError));
+    }
+    get_person_id2(user_key:string){
+        let promise = new Promise((resolve, reject) => {
+            let apiURL = this.APIUrl + "get_person_id/" + user_key;
+            this.http.get(apiURL)
+              .toPromise()
+              .then(
+                res => { // Success
+                    //let results = res.json().results;
+                    resolve("OK it's good");
+                },
+                msg => { // Error
+                reject(msg);
+                }
+              );
+          });
+        return promise
     }
     get_person(person_id:string): Observable<PersonInterface>{
         return this.http.get<PersonInterface>(this.APIUrl + "get_person/" + person_id).pipe(catchError(this.handleError));

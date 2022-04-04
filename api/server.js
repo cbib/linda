@@ -1024,6 +1024,30 @@ router.get('/get_max_level/:model_type', function (req, res) {
     .description('Assembles a list of keys of entries in the collection.');
 
 
+    router.get('/get_lindaID_by_studyID/:study_unique_id/:parent_key', function (req, res) {
+        var study_unique_id = req.pathParams.study_unique_id;
+        var parent_key = req.pathParams.parent_key;
+        var parent_id = "investigations/" + parent_key;
+        var data = {}
+        data = db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global' FILTER v['Study unique ID']==${study_unique_id} RETURN {_id:v._id}`).toArray();
+        if (data.length>0){
+            data[0]["success"]=true
+            res.send(data[0]);
+        }
+        else{
+            res.send({"success":false, '_id':null});
+
+        }
+       
+    })
+        .pathParam('study_unique_id', joi.string().required(), 'username of the entry.')
+        .pathParam('parent_key', joi.string().required(), 'username of the entry.')
+        .response(joi.object().required(), 'Entry stored in the collection.')
+        .summary('List entry keys')
+        .description('Assembles a list of keys of entries in the collection.');
+    
+    
+
 router.get('/get_parent_id/:model_name/:model_key', function (req, res) {
 
     var model_name = req.pathParams.model_name;
@@ -1087,23 +1111,25 @@ router.get('/get_all_vertices/:user_key', function (req, res) {
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
 
+
+
 router.get('/get_vertice/:person_key/:investigation_key', function (req, res) {
-        var person_id = "persons/" + req.pathParams.person_key;
-        var investigation_id = "investigations/" + req.pathParams.investigation_key;
-        var data = [];
-        data = db._query(aql`FOR edge IN investigations_edge FILTER edge._from==${investigation_id}
+    var person_id = "persons/" + req.pathParams.person_key;
+    var investigation_id = "investigations/" + req.pathParams.investigation_key;
+    var data = [];
+    data = db._query(aql`FOR edge IN investigations_edge FILTER edge._from==${investigation_id}
         FOR v, e, s IN 1..3 INBOUND ${person_id} GRAPH 'global' PRUNE e._to ==${person_id} FILTER e._from==edge._to 
             RETURN {study:s.vertices[1],role:e.role, roles:{study_id:v._id, role:e.role}}`);
-        res.send(data);
-       /*  data = db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
-        res.send(data); */
-    })
-        .pathParam('person_key', joi.string().required(), 'user id of the entry.')
-        .pathParam('investigation_key', joi.string().required(), 'user id of the entry.')
-        .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
-        .summary('List entry keys')
-        .description('Assembles a list of keys of entries in the collection.');
-    
+    res.send(data);
+    /*  data = db._query(aql`FOR v, e, s IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER NOT CONTAINS(e._to,"persons") AND NOT CONTAINS(e._to,"templates") RETURN {e:e,s:s}`);
+     res.send(data); */
+})
+    .pathParam('person_key', joi.string().required(), 'user id of the entry.')
+    .pathParam('investigation_key', joi.string().required(), 'user id of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
 
 
 router.get('/get_inv_stud_vertices/:user_key', function (req, res) {
@@ -1256,6 +1282,18 @@ router.get('/get_all_events/:study_key', function (req, res) {
     var study_id = "studies/" + req.pathParams.study_key;
     var data = [];
     data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${study_id} GRAPH 'global' FILTER e._from==${study_id} AND CONTAINS(e._to, "events") RETURN v`);
+    res.send(data);
+})
+    .pathParam('study_key', joi.string().required(), 'study key of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    //.response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+router.get('/get_all_environments/:study_key', function (req, res) {
+    var study_id = "studies/" + req.pathParams.study_key;
+    var data = [];
+    data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${study_id} GRAPH 'global' FILTER e._from==${study_id} AND CONTAINS(e._to, "environments") RETURN v`);
     res.send(data);
 })
     .pathParam('study_key', joi.string().required(), 'study key of the entry.')
@@ -1502,9 +1540,8 @@ router.get('/get_ontology/:ontology_id', function (req, res) {
 //  res.sendFile(filePath);
 //});
 
-router.get('/get_data_file/:key', function (req, res) {
+router.get('/get_data_file_table/:key', function (req, res) {
     try {
-        var collection = req.pathParams.collection;
         var key = req.pathParams.key;
         var data = [];
         const coll = db._collection("data_files");
@@ -1533,6 +1570,30 @@ router.get('/get_data_file/:key', function (req, res) {
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
+
+router.get('/get_data_file/:key', function (req, res) {
+        try {
+            var key = req.pathParams.key;
+            var data = [];
+            const coll = db._collection("data_files");
+            if (!coll) {
+                db._createDocumentCollection("data_files");
+            }
+            data = coll.firstExample('_key', key);
+            res.send(data);
+        }
+        catch (e) {
+            if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+                throw e;
+            }
+            res.throw(404, 'The entry does not exist', e);
+        }
+    
+    }).pathParam('key', joi.string().required(), 'unique key.')
+        .response(joi.object().required(), 'Entry stored in the collection.')
+        .summary('Retrieve an entry')
+        .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+    
 
 router.get('/get_study_by_ID/:study_id/:parent_key', function (req, res) {
     try {
@@ -1714,10 +1775,8 @@ router.get('/get_all_data_files/:investigation_key/', function (req, res) {
      */
 
 router.get('/get_multidata_from_datafiles/:datafile_key/:headers_linked/', function (req, res) {
-
     try {
         var datafile_id = 'data_files/' + req.pathParams.datafile_key;
-
         var headers_linked = req.pathParams.headers_linked;
         let headers = headers_linked.split("linda_separator")
         var get_data = []
@@ -2101,7 +2160,7 @@ router.post('/remove_associated_headers_linda_id', function (req, res) {
 
 /* **************************************************
 // UPDATE  ROUTINES
-************************************************** */ 
+************************************************** */
 router.post('/update_associated_headers_linda_id', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -2413,11 +2472,11 @@ router.post('/update_document', function (req, res) {
         //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
         //Document has been updated
         if (update[0].before !== update[0].after) {
-            res.send({ success: true, message: 'document has been updated ' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            res.send({ success: true, message: 'document has been updated ',  doc:update[0].after  });
         }
         //No changes
         else {
-            res.send({ success: false, message: 'document cannot be updated' + JSON.stringify(update[0].before) + JSON.stringify(update[0].after) });
+            res.send({ success: false, message: 'document cannot be updated',  doc:{} });
         }
     };
 })
@@ -2430,7 +2489,8 @@ router.post('/update_document', function (req, res) {
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
-        message: joi.string().required()
+        message: joi.string().required(),
+        doc:joi.object().required()
     }).required(), 'response.')
     .summary('List entry keys')
     .description('check if user exist and update specific field in MIAPPE model.');
@@ -2468,6 +2528,10 @@ router.post('/update_field', function (req, res) {
         else if (model_type === 'study') {
             _id = 'studies/' + _key;
             update = db._query(aql` FOR entry IN ${studies} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${studies} RETURN NEW.${field}`).toArray();
+        }
+        else if (model_type === 'environment') {
+            _id = 'environments/' + _key;
+            update = db._query(aql` FOR entry IN ${environments} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${environments} RETURN NEW.${field}`).toArray();
         }
         else if (model_type === 'event') {
             _id = 'events/' + _key;
@@ -2628,61 +2692,61 @@ router.post('/update_person', function (req, res) {
 
 
 router.post('/update_user', function (req, res) {
-        var username = req.body.username;
-        var password = req.body.password;
-        var _key = req.body._key;
-        var field = req.body.field;
-        var value = req.body.value;
-        /////////////////////////////
-        //first check if user exist
-        /////////////////////////////
-        const user = db._query(aql`
+    var username = req.body.username;
+    var password = req.body.password;
+    var _key = req.body._key;
+    var field = req.body.field;
+    var value = req.body.value;
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
                 FOR entry IN ${users}
                 FILTER entry.username == ${username}
                 FILTER entry.password == ${password}
                 RETURN entry
             `);
-        if (user.next() === null) {
-            res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+    if (user.next() === null) {
+        res.send({ success: false, message: 'username ' + username + 'doesn\'t exists' });
+    }
+    else {
+        /////////////////////////////
+        //now check if investigation exists else modify field
+        /////////////////////////////
+        var update = [];
+        var _id = '';
+        _id = 'users/' + _key;
+        update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
+
+        //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
+        //Document has been updated
+        if (update[0][field] === value) {
+            res.send({ success: true, message: 'document has been updated ', user: update[0] });
         }
+        //No changes
         else {
-            /////////////////////////////
-            //now check if investigation exists else modify field
-            /////////////////////////////
-            var update = [];
-            var _id = '';
-            _id = 'users/' + _key;
-            update = db._query(aql` FOR entry IN ${users} FILTER entry._id == ${_id} UPDATE {_key:${_key}} WITH {${field}: ${value}} IN ${users} RETURN NEW`).toArray();
-            
-            //var update =db._query(aql` FOR entry IN ${investigations} FILTER entry._id == ${investigation_id} UPDATE {_key:${investigation_key}} WITH {${field}: ${value}} IN ${investigations} RETURN NEW.${field}`).toArray()
-            //Document has been updated
-            if (update[0][field] === value) {
-                res.send({ success: true, message: 'document has been updated ', user: update[0] });
-            }
-            //No changes
-            else {
-                res.send({ success: false, message: 'document cannot be updated', user: user });
-            }
-        };
-    }).body(joi.object({
-        username: joi.string().required(),
-        password: joi.string().required(),
-        _key: joi.string().required(),
-        field: joi.string().required(),
-        value: joi.alternatives().try(joi.boolean(), joi.string(), joi.number()).required()    
-    }).required(), 'Values to check.')
-        .response(joi.object({
-            success: true,
-            message: joi.string().required(),
-            user: joi.object().required()
-        }).required(), 'response.')
-        .summary('List entry keys')
-        .description('check if user exist and update specific field in MIAPPE model.');
-    
+            res.send({ success: false, message: 'document cannot be updated', user: user });
+        }
+    };
+}).body(joi.object({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    _key: joi.string().required(),
+    field: joi.string().required(),
+    value: joi.alternatives().try(joi.boolean(), joi.string(), joi.number()).required()
+}).required(), 'Values to check.')
+    .response(joi.object({
+        success: true,
+        message: joi.string().required(),
+        user: joi.object().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('check if user exist and update specific field in MIAPPE model.');
+
 
 /* **************************************************
 // REMOVE  ROUTINES
-************************************************** */ 
+************************************************** */
 router.post('/remove_childs', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -3127,7 +3191,7 @@ router.post('/remove_template', function (req, res) {
         catch (e) {
             errors.push(e + "refdvdrx " + id);
         }
-        
+
 
 
         //Remove selected node
@@ -4316,6 +4380,7 @@ router.post('/checkID', function (req, res) {
 router.post('/check', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
+    var parent_id = req.body.parent_id;
     var field = req.body.field;
     var value = req.body.value;
     var model_type = req.body.model_type;
@@ -4348,8 +4413,11 @@ router.post('/check', function (req, res) {
         //now check if investigation exists else modify field
         /////////////////////////////
         var check = [];
-        var user_id = user[0]._id
-        check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${user_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
+        if (parent_id===""){
+            parent_id=user[0]._id
+        }
+        //var user_id = user[0]._id
+        check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
         //check = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${user_id} GRAPH 'global' FILTER CONTAINS(e._to, ${coll}) AND v.${field} === ${value} RETURN {eto:e._to, vertice:v}`).toArray();
         //check = db._query(aql` FOR entry IN ${coll} FILTER entry.${field} == ${value} RETURN entry`).toArray()
         if (check.length === 0) {
@@ -4371,6 +4439,7 @@ router.post('/check', function (req, res) {
     .body(joi.object({
         username: joi.string().required(),
         password: joi.string().required(),
+        parent_id: joi.string().allow('').required(),
         field: joi.string().required(),
         value: joi.string().allow('').required(),
         model_type: joi.string().required()

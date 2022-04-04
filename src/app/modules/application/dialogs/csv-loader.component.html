@@ -51,5 +51,5 @@
         </tr>
     </tbody>
 </table>
-<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" ></mat-paginator>
+<mat-paginator #paginator [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" ></mat-paginator>
 

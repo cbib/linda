@@ -55,7 +55,7 @@ export class WizardService {
                                     this.reloadComponent(['/projects_tree'])
                                 }
                                 else{
-                                    this.globalService.update_user(false, currentUser['_key'], 'tutoriel_done', 'person').toPromise().then(
+                                    this.globalService.update_user(false, currentUser['_key'], 'tutoriel_done').toPromise().then(
                                         data => {
                                             //console.log(data['user'])
                                             localStorage.setItem('currentUser', JSON.stringify(data['user']));
@@ -74,7 +74,7 @@ export class WizardService {
                     );
                 }
                 else{
-                    this.globalService.update_user(false, currentUser['_key'], 'tutoriel_done', 'person').toPromise().then(
+                    this.globalService.update_user(false, currentUser['_key'], 'tutoriel_done').toPromise().then(
                         user_data => {
                             this.globalService.update_step("0", currentUser['_key'], 'tutoriel_step', 'person').toPromise().then(
                                 data => {
@@ -107,7 +107,7 @@ export class WizardService {
         }
         else{
             if (currentUser['tutoriel_step'] === "16"){
-                this.globalService.update_user(true, currentUser['_key'], 'tutoriel_done', 'person').toPromise().then(
+                this.globalService.update_user(true, currentUser['_key'], 'tutoriel_done').toPromise().then(
                     data => {
                         ////console.log(data['user'])
                         localStorage.setItem('currentUser', JSON.stringify(data['user']));

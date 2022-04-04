@@ -1,0 +1,97 @@
+<!-- <div class="border-head">
+    <h3 mat-dialog-title>
+        <a href="index.html" class="logo"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                meta<span>D</span>at<span>A</span></b></a>
+    </h3>
+</div> -->
+<mat-card>
+<button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
+        Data file</button>
+<div class="btn-group">
+        <button mat-button class="btn btn-primary btn-xs" (click)="add_column()">Add a new column</button>
+        <!-- <button style="background-color: #4ECDC4" mat-button class="btn-info" (click)="add_composite()">Build composite
+            column</button> -->
+        <button mat-button style="float: top-right;" class="btn btn-info btn-xs" (click)="refresh()">Refresh table</button>
+</div>
+<!-- <ng-template #loading class="loaderHolder"><mat-progress-spinner mode="indeterminate" style="margin: 0 auto">Loading...</mat-progress-spinner></ng-template> -->
+<ng-template #loading class="loaderHolder">
+    <div id="loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="loading"></div>
+    </div>
+</ng-template>
+
+<div *ngIf="get_loaded; else loading">
+    <!-- <section *ngIf="!get_loaded" class="format-section">
+        <div id="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="loading"></div>
+        </div>
+    </section> -->
+    <section class="format-section">
+        <alert id="assign-alert"></alert>
+        <table style="margin: 0%;" id="data_file_table" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable  class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped">
+            <thead>
+                <tr >
+                    <th  *ngFor="let column of get_columns ; index as j;">
+                            <div class="button-group">
+                                <!-- <span id="close" (click)="onRemove(column)">X</span> -->
+                                <button class="close" mat-button (click)="onRemove(column)"><mat-icon>delete_forever</mat-icon></button>
+                                <button style="margin-top: 10px; padding-top: 10px; position: relative;" mat-button class="btn btn-primary btn-xs"  (click)="onDefine(column)">Extract</button>
+                            </div>
+                            <!-- <button  mat-button class="btn-danger btn-xs" (click)="onDefine(column)">Extract column</button> -->
+                            <mat-card [style.background-color]="get_cell_style(column)" [style.color]="'white'" [style.min-width]="'80px'" class="chips text-center"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                            <mat-card [style.background-color]="get_style(column)" class="chips text-center" [style.min-width]="'80px'"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
+                    </th>
+                </tr>
+                <tr class="">
+                    <th *ngFor="let column of get_columns ; index as k;">
+                        {{column}}
+                    </th>
+                </tr>
+            </thead>
+            <!-- <tbody>
+                <tr *ngFor="let row of get_data_file.Data; index as i;" style="font-size:10px;text-align: center; cursor: move;">
+                    <td [style.background-color]="get_cell_style(h)" *ngFor="let h of get_columns; index as j;">
+                        {{row[h]}}
+                    </td>
+                </tr>
+            </tbody> -->
+        </table>
+    </section>
+</div>
+</mat-card>
+
+
+
+
+<!-- <p-table [columns]="data_file.headers" [value]="data_file.Data">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let column of get_tableData_columns">
+                        {{column}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-car let-columns="columns">
+                <tr>
+                    <td *ngFor="let column of get_tableData_columns; index as i">
+                            {{data_file.Data[i][column]}}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table> -->

@@ -27,7 +27,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<BiologicalMaterialInterface>;
-  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'edit'];
+  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -58,16 +58,11 @@ export class BiologicalMaterialPageComponent implements OnInit {
 
   async ngOnInit() {
     console.log(this.parent_id)
-    //await this.get_vertices()
     await this.get_all_biological_materials()
-    
-    
-
   }
   async get_all_biological_materials() {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
-        //console.log(data)
         if (data.length>0){
           var keys= Object.keys(data[0])
           this.prepare_bm_data(data[0],keys)
@@ -76,8 +71,9 @@ export class BiologicalMaterialPageComponent implements OnInit {
           //console.log(this.dataSource)
           this.dt_source.paginator = this.paginator;
           this.dt_source.sort = this.sort;
-          this.loaded = true
+          
         }
+        this.loaded = true
       }
     )
   }

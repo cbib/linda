@@ -18,6 +18,7 @@ import { UserInterface } from '../models/linda/person';
 import { PersonInterface } from '../models/linda/person';
 import { EventInterface } from '../models/linda/event';
 import { Md5 } from 'ts-md5/dist/md5'
+import { EnvironmentInterface } from '../models/linda/environment';
 
 
 @Injectable({
@@ -115,9 +116,20 @@ export class GlobalService {
     get_max_level(model_type: string): Observable<any> {
         return this.http.get(this.APIUrl + "get_max_level/" + model_type).pipe(catchError(this.handleError));
     }
+
+    // Data file routines
     //Get all data files by investigation
     get_all_data_files(investigation_key:string): Observable<any> {
         return this.http.get(this.APIUrl + "get_all_data_files/" + investigation_key).pipe(catchError(this.handleError));
+    }
+    get_data_files(model_key: string, collection:string): Observable<DataFileInterface[]>{
+        return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + model_key + "/" +  collection).pipe(catchError(this.handleError));
+    }
+    get_data_file_table(key: string): Observable<ResDataModal>{
+        return this.http.get<ResDataModal>(this.APIUrl + 'get_data_file_table/' + key);
+    }
+    get_data_file(key: string): Observable<DataFileInterface>{
+        return this.http.get<DataFileInterface>(this.APIUrl + 'get_data_file/' + key);
     }
     get_data_filename(parent_key:string, model_type:string): Observable<any> {
         return this.http.get(this.APIUrl + "get_data_filename/" + parent_key + "/" + model_type).pipe(catchError(this.handleError));
@@ -131,6 +143,35 @@ export class GlobalService {
     get_associated_component_by_type_from_datafiles(datafile_key:string, type:string){
         return this.http.get(this.APIUrl + "get_associated_component_by_type_from_datafiles/" + datafile_key + "/" + type).pipe(catchError(this.handleError));
     }
+    update_associated_headers(id: string, values: {}, collection:string) {
+        let user = this.get_user();
+
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            '_id': id,
+            'values': values,
+            'collection': collection
+        };
+        return this.http.post(`${this.APIUrl + "update_associated_headers"}`, obj2send);
+    }
+    update_associated_headers_linda_id(datafile_id: string, value: string, header:string, collection:string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'datafile_id': datafile_id,
+            'header': header,
+            'value': value,
+            'collection': collection
+        };
+        return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
+    }
+
+    get_lindaID_by_studyID(study_unique_id:string, parent_key:string):Observable<Object>{
+        return this.http.get(this.APIUrl + "get_lindaID_by_studyID/" + study_unique_id+ "/" + parent_key).pipe(catchError(this.handleError));
+    }
+
     get_all_vertices(user_key: string) {
         return this.http.get(this.APIUrl + "get_all_vertices/" + user_key).pipe(catchError(this.handleError));
     }
@@ -189,9 +230,11 @@ export class GlobalService {
     get_all_events(study_key: string) : Observable<EventInterface[]>{
         return this.http.get<EventInterface[]>(this.APIUrl + "get_all_events/" + study_key).pipe(catchError(this.handleError));
     }
-    get_data_files(model_key: string, collection:string): Observable<DataFileInterface[]>{
-        return this.http.get<DataFileInterface[]>(this.APIUrl + "get_data_files/" + model_key + "/" +  collection).pipe(catchError(this.handleError));
+    get_all_environments(study_key: string) : Observable<EnvironmentInterface[]>{
+        return this.http.get<EnvironmentInterface[]>(this.APIUrl + "get_all_environments/" + study_key).pipe(catchError(this.handleError));
     }
+    
+   
     get_all_observation_unit_childs(observation_unit_key: string) {
         return this.http.get<[]>(this.APIUrl + "get_observation_unit_childs/" + observation_unit_key);
     }
@@ -213,15 +256,10 @@ export class GlobalService {
         console.log(model_type)
         return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
         //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
-    }
-    
+    } 
     get_elem(collection: string, key: string) {
         return this.http.get(this.APIUrl + 'get_elem/' + collection + '/' + key).pipe(catchError(this.handleError));
     }
-    get_data_file(key: string): Observable<ResDataModal>{
-        return this.http.get<ResDataModal>(this.APIUrl + 'get_data_file/' + key);
-    }
-
     get_study_by_ID(study_id: string, parent_key:string){
         return this.http.get(this.APIUrl + 'get_study_by_ID/' + study_id+ '/' + parent_key).pipe(catchError(this.handleError));
     }
@@ -229,9 +267,8 @@ export class GlobalService {
     get_by_parent_key(parent_key: string, model_type: string) {
         return this.http.get(this.APIUrl + 'get_by_parent_key/' + model_type + '/' + parent_key).pipe(catchError(this.handleError));
     }
-    
     // HTTP POST REQUEST
-    is_exist(field: string, value: string, model_type: string): Observable<any> {
+    is_exist(field: string, value: string, model_type: string, parent_id:string=""): Observable<any> {
         if (model_type==="person"){
             console.log(field)
             console.log(value)
@@ -252,6 +289,7 @@ export class GlobalService {
             let obj2send = {
                 'username': user.username,
                 'password': user.password,
+                'parent_id':parent_id,
                 'field': field,
                 'value': value,
                 'model_type': model_type
@@ -272,33 +310,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "check_one_exists"}`, obj2send);
     }
-
-
-    update_associated_headers(id: string, values: {}, collection:string) {
-        let user = this.get_user();
-
-        let obj2send = {
-            'username': user.username,
-            'password': user.password,
-            '_id': id,
-            'values': values,
-            'collection': collection
-        };
-        return this.http.post(`${this.APIUrl + "update_associated_headers"}`, obj2send);
-    }
-    update_associated_headers_linda_id(datafile_id: string, value: string, header:string, collection:string) {
-        let user = this.get_user();
-        let obj2send = {
-            'username': user.username,
-            'password': user.password,
-            'datafile_id': datafile_id,
-            'header': header,
-            'value': value,
-            'collection': collection
-        };
-        return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
-    }
-    
     update_field(value: string, key: string, field: string, model_type: string) {
         let user = this.get_user();
         let obj2send = {
@@ -313,7 +324,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
-
     test_script(name:string) {
         let user = this.get_user();
         let obj2send = {
@@ -322,9 +332,6 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "/_api/foxx/scripts/test.js"}`, obj2send);
     }
-
-    //http://localhost:8529/_db/linda/xeml/_api/foxx/scripts/test.js
-
     update_user(value: any, key: string, field: string) {
         let user = this.get_user();
         let obj2send = {
@@ -592,7 +599,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_edge"}`, obj2send);
     }
-
     add(values: {}, model_type: string, parent_id: string, as_template:boolean, group_key:string="") {
         let user = this.get_user();
         let obj2send = {
@@ -626,7 +632,6 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "extract"}`, obj2send);
     }
-    
     add_template(values: {}, model_type: string, role:string) {
         let user = this.get_user();
         let obj2send = {

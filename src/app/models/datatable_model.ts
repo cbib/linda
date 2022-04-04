@@ -3,5 +3,5 @@ export interface ResDataModal {
     per_page: number;
     total: number;
     total_pages: number;
-    data: [];
+    data: {}[];
   }

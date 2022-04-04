@@ -22,8 +22,8 @@ export class EventsPageComponent implements OnInit {
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
-  @Input('role') role: string;
   @Input('grand_parent_id') grand_parent_id: string;
+  @Input('role') role: string;
   @Input('group_key') group_key: string;
 
 

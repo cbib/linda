@@ -21,7 +21,7 @@ export class TemplatesComponent implements OnInit {
   private selected_model_type=""
   private key =""
   private selected_model:string=""
-  private model_types :{}[]= [{"event":"Event"}, {"experimental_factor":"Experimental factor"},{"observed_variable":"Observed variable"}]
+  private model_types :{}[]= [{"event":"Event"}, {"experimental_factor":"Experimental factor"},{"observed_variable":"Observed variable"},{"environment":"Environment"}]
 
   constructor(private globalService : GlobalService,
     private router: Router,

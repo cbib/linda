@@ -1,0 +1,24 @@
+<div id="environment-page">
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
+        Environment</button>
+    <div>
+        <!-- Nav pills -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" [ngClass]="{ 'active':activeTab==='env_info'}" (click)="changeTab('env_info')"
+            aria-controls="env_info" role="tab" data-toggle="tab" href="#env_info">1. environment parameter informations</a>
+        </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div [ngClass]="{ 'active':activeTab==='env_info'}" role="tabpanel" class="tab-pane active" id="envinfo">
+            <h3>Describe your environment parameter</h3>
+            <mat-card style="width: 98%;">
+                <app-form *ngIf="activeTab==='env_info'" id="env_form" (notify)="get_output_from_child($event)"
+                [model_type]="'environment'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+                inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form>    
+            </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

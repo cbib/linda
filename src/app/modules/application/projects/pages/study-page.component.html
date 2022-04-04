@@ -7,7 +7,7 @@
         </h3>           
             <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
     </div> -->
-  <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close
+  <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
     Study</button>
   <div>
   <!-- Nav pills -->
@@ -29,17 +29,17 @@
         aria-controls="biomat" role="tab" data-toggle="tab">4. Biological materials</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsunit'}" (click)="changeTab('obsunit')" href="#obsunit"
-        aria-controls="obsunit" role="tab" data-toggle="tab">5. Observations</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obs'}" (click)="changeTab('obs')" href="#obs"
+        aria-controls="obs" role="tab" data-toggle="tab">5. Observations</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='expfac'}" (click)="changeTab('expfac')" href="#expfac"
         aria-controls="expfac" role="tab" data-toggle="tab">6. Experimental Factors</a>
     </li>
-    <!-- <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsvar'}" (click)="changeTab('obsvar')" href="#obsvar"
-        aria-controls="obsvar" role="tab" data-toggle="tab">7. Observed variables</a>
-    </li> -->
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='env'}" (click)="changeTab('env')" href="#env"
+        aria-controls="env" role="tab" data-toggle="tab">7. Environmental parameters</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='events'}" (click)="changeTab('events')" href="#events"
         aria-controls="events" role="tab" data-toggle="tab">8. Events</a>
@@ -49,7 +49,8 @@
         aria-controls="expfac" role="tab" data-toggle="tab">9. Data files</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" (click)="changeTab('People')" aria-controls="People" role="tab" data-toggle="tab">9. Study members</a>
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" 
+      (click)="changeTab('People')" aria-controls="People" role="tab" data-toggle="tab">9. Study members</a>
   </li>
   </ul>
   <!-- Tab panes -->
@@ -100,15 +101,15 @@
         
       </mat-card>
     </div>
-    <div [ngClass]="{ 'active':activeTab==='obsunit'}" role="tabpanel" class="tab-pane" id="obsunit">
+    <div [ngClass]="{ 'active':activeTab==='obs'}" role="tabpanel" class="tab-pane" id="obs">
       <h3>Describe observation units</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-observations-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
-          [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+          <app-observations-page *ngIf="activeTab==='obs'" (notify)="get_output_from_child($event)"
+          [model_type]="'observation_unit'" [level]="1" [grand_parent_id]="get_parent_id"  [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
           [role]="get_role" </app-observations-page>
           
           <!-- <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
@@ -145,6 +146,24 @@
           <app-experimental-factors-page *ngIf="activeTab==='expfac'" (notify)="get_output_from_child($event)"
           [model_type]="'experimental_factor'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode" [role]="get_role">
         </app-experimental-factors-page>
+       </div>
+      </mat-card>
+    </div>
+    <div [ngClass]="{ 'active':activeTab==='env'}" role="tabpanel" class="tab-pane" id="env">
+      <h3>Describe environmental parameters</h3>
+      <mat-card style="width: 98%;">
+        <p>
+          Environmental parameters that were kept constant throughout the study and did not change between observation units or assays. 
+          Environment characteristics that vary over time, i.e. environmental variables, should be recorded as Observed Variables.
+        </p>
+
+        <div *ngIf="get_role!=='owner'">
+          <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
+        </div>
+        <div *ngIf="get_role==='owner'">
+          <app-environment-variables-page *ngIf="activeTab==='env'" (notify)="get_output_from_child($event)"
+          [model_type]="'environment'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode" [role]="get_role">
+        </app-environment-variables-page>
        </div>
       </mat-card>
     </div>

@@ -116,6 +116,27 @@
         </div>
       </mat-card>
     </div> -->
+    <div [ngClass]="{ 'active':activeTab==='project_data_files'}" role="tabpanel" class="tab-pane" id="project_data_files">
+      <h3>Data files</h3>
+      <mat-card style="width: 98%;">
+        <div *ngIf="get_role!=='owner'">
+          <p>You do not have access to this part of the project. Please contact project owner to gain full project
+            access </p>
+        </div>
+        <div *ngIf="get_role==='owner'">
+          <app-data-files-page 
+            *ngIf="activeTab==='project_data_files'" 
+            (notify)="get_output_from_child($event)"
+            collection="investigations" 
+            [parent_id]="get_model_id" 
+            [model_key]="get_model_key"
+            [role]="get_role" 
+            [group_key]="get_group_key"
+          >
+          </app-data-files-page>
+        </div>
+      </mat-card>
+    </div>
     <div [ngClass]="{ 'active':activeTab==='Explore'}" role="tabpanel" class="tab-pane" id="Explore">
       <h3>Explore</h3>
       <mat-card style="width: 98%;">
@@ -180,27 +201,7 @@
       </mat-card>
 
     </div>
-    <div [ngClass]="{ 'active':activeTab==='project_data_files'}" role="tabpanel" class="tab-pane" id="project_data_files">
-      <h3>Data files</h3>
-      <mat-card style="width: 98%;">
-        <div *ngIf="get_role!=='owner'">
-          <p>You do not have access to this part of the project. Please contact project owner to gain full project
-            access </p>
-        </div>
-        <div *ngIf="get_role==='owner'">
-          <app-data-files-page 
-            *ngIf="activeTab==='project_data_files'" 
-            (notify)="get_output_from_child($event)"
-            collection="investigations" 
-            [parent_id]="get_model_id" 
-            [model_key]="get_model_key"
-            [role]="get_role" 
-            [group_key]="get_group_key"
-          >
-          </app-data-files-page>
-        </div>
-      </mat-card>
-    </div>
+    
 
   </div>
 </div>
