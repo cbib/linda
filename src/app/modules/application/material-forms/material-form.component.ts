@@ -69,6 +69,8 @@ export class MaterialFormComponent implements OnInit {
   fileUploadProgress: string = null;
   uploadedFilePath: string = null;
   uploadResponse = { status: '', message: 0, filePath: '' };
+  taxons:{'species':string,'taxon':[]}[]=[]
+  selected_taxons:{'species':string,'taxon':[]}[]=[]
 
   constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
     public ontologiesService: OntologiesService,
@@ -110,12 +112,22 @@ export class MaterialFormComponent implements OnInit {
     });
     //this.get_model()
     await this.get_model()
+    await this.get_ncbi_taxon()
     console.log(this.mode)
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     this.onClickTour(); 
 
   }
-
+  async get_ncbi_taxon(){
+    this.taxons = await this.globalService.get_ncbi_taxon_data().toPromise()
+    console.log(this.taxons[0])
+  }
+  get get_taxons(){
+    return this.taxons
+  }
+  get get_selected_taxons(){
+    return this.selected_taxons
+  }
   ngAfterOnInit() {
     this.materialControl = this.materialTable.get('materialRows') as FormArray;
     this.biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
@@ -125,6 +137,19 @@ export class MaterialFormComponent implements OnInit {
   
   
   onTaskAdd(event) {
+    this.selected_taxons = []
+    let search_string = event.target.value;
+    if (search_string === "" || search_string.length<4) {
+    }
+    else{
+      for (var taxon in this.taxons) {
+        if (this.taxons[taxon].species.includes(search_string)){
+          this.selected_taxons.push(this.taxons[taxon])
+        }
+      }
+      console.log(this.selected_taxons)
+    }
+            
     this.startfilling = false;
     this.keys.forEach(attr => {
       if (this.materialTable.value[attr] !== "") {

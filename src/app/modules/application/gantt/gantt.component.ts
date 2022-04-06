@@ -54,12 +54,12 @@ export class GanttComponent implements OnInit {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     await this.get_project_vertices()
     await this.get_vertices()
-    console.log(this.vertices)
+    //console.log(this.vertices)
     this.nodes = this.build_hierarchy(this.vertices)
-    console.log(this.nodes)
+    //console.log(this.nodes)
     this.data = this.build_gantt(this.nodes)
     //this.data = this.initialData2();
-    console.log(this.data)
+    //console.log(this.data)
 
 
     //this.data = this.nodes
@@ -69,51 +69,51 @@ export class GanttComponent implements OnInit {
       // EventsClickCell
       vEventsChange: {
         taskname: () => {
-          console.log("taskname");
+          //console.log("taskname");
 
         }
       },
       // EventsClickCell
       vEvents: {
         /* taskname: () => {
-          console.log("taskname");
+          //console.log("taskname");
 
         }, */
         taskname: function (task) {
-          console.log(task.getID());
-          console.log(task.getName());
-          console.log(task.getOriginalID())
+          //console.log(task.getID());
+          //console.log(task.getName());
+          //console.log(task.getOriginalID())
         }
-        /* taskname: console.log,
-        res: console.log,
-        dur: console.log,
-        comp: console.log,
-        start: console.log,
-        end: console.log,
-        planstart: console.log,
-        planend: console.log,
-        cost: console.log,
-        additional_category: console.log, // for additional fields
-        beforeDraw: ()=>console.log('before draw listener'),
-        afterDraw: ()=>console.log('before after listener') */
+        /* taskname: //console.log,
+        res: //console.log,
+        dur: //console.log,
+        comp: //console.log,
+        start: //console.log,
+        end: //console.log,
+        planstart: //console.log,
+        planend: //console.log,
+        cost: //console.log,
+        additional_category: //console.log, // for additional fields
+        beforeDraw: ()=>//console.log('before draw listener'),
+        afterDraw: ()=>//console.log('before after listener') */
       }//,
-      /* vEventClickRow: console.log,
-      vEventClickCollapse: console.log */
+      /* vEventClickRow: //console.log,
+      vEventClickCollapse: //console.log */
     };
     this.editor.setOptions(this.editorOptions)
   }
   async get_project_vertices() {
     const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
-    console.log(person_id);
+    //console.log(person_id);
     const data = await this.globalService.get_vertice(person_id[0].split("/")[1], this.model_key).toPromise();
-    console.log(data);
+    //console.log(data);
   }
   async get_vertices() {
     let user: UserInterface = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(user)
+    //console.log(user)
     const data = await this.globalService.get_all_vertices(user._key).toPromise();
     this.vertices = data;
-    console.log(data);
+    //console.log(data);
     this.statistics = {
       "investigations": 0,
       "studies": 0,
@@ -142,7 +142,7 @@ export class GanttComponent implements OnInit {
         investigations.forEach(
           i => {
             //var mgi= new GantElement(_pID=parseInt(i.model_key),_pName=i.name)
-            console.log(i)
+            //console.log(i)
           });
       }
     )
@@ -159,7 +159,7 @@ export class GanttComponent implements OnInit {
             i => { */
           var investigation = investigations[i];
           //if (investigation)
-          console.log(investigation)
+          //console.log(investigation)
           var mgi = {} as ModelGant
           mgi.pID = parseInt(investigation.model_key)
           mgi.pName = investigation.name
@@ -178,7 +178,7 @@ export class GanttComponent implements OnInit {
           mgi.pNotes = "Some Notes text"
           mymgs.push(mgi)
           let studies = investigation.children
-          console.log(studies)
+          //console.log(studies)
           let cpt = 0
 
           studies.forEach(
@@ -201,7 +201,7 @@ export class GanttComponent implements OnInit {
                 mgs.pCaption = ""
                 mymgs.push(mgs)
 
-                console.log(s.children)
+                //console.log(s.children)
                 s.children.forEach(child => {
 
                   if (child.get_id().includes("events")) {
@@ -258,7 +258,7 @@ export class GanttComponent implements OnInit {
 
                   }
                   else if (child.get_id().includes("experimental_factors")) {
-                    console.log(child.current_data_object)
+                    //console.log(child.current_data_object)
                     var mge = {} as ModelGant
                     let pname = "obsvar_" + child.model_key
                     mge.pID = parseInt(child.model_key)
@@ -311,21 +311,21 @@ export class GanttComponent implements OnInit {
             });
           cpt += 1
         }
-        console.log(mymgs)
+        //console.log(mymgs)
       });
     return mymgs
 
 
   }
   build_hierarchy(edges: []): MiappeNode[] {
-    //console.log(edges)
+    ////console.log(edges)
     var cpt = 0;
     var tmp_nodes = []
     tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
     edges.forEach(
       e => {
 
-        console.log(e)
+        //console.log(e)
         var vertices: [] = e["s"]["vertices"]
         var parent_id: string = e["e"]["_from"]
         var vertice_id: string = e["e"]["_to"]
@@ -335,7 +335,7 @@ export class GanttComponent implements OnInit {
         //var  vertice_keys=[]
         vertices.forEach(
           vertice => {
-            console.log(vertice)
+            //console.log(vertice)
             if (vertice['_id'] === e["e"]["_to"]) {
               //vertice_data=vertice
               var vertice_keys = Object.keys(vertice)
@@ -346,7 +346,7 @@ export class GanttComponent implements OnInit {
                 }
               }
               percent = Math.round(100 * ((total - 3) / (vertice_keys.length - 3)))
-              console.warn(parent_id)
+              //console.warn(parent_id)
               if (parent_id.includes('users')) {
                 short_name = vertice['Project Name']
               }
@@ -356,7 +356,7 @@ export class GanttComponent implements OnInit {
               else {
                 short_name = e["e"]["_to"]
               }
-              console.warn(short_name)
+              //console.warn(short_name)
             }
           }
         )
@@ -379,7 +379,7 @@ export class GanttComponent implements OnInit {
         cpt += 1
       }
     )
-    console.log(tmp_nodes)
+    //console.log(tmp_nodes)
     return tmp_nodes;
   }
   searchTerm(terms: MiappeNode[], term_id: string): any {

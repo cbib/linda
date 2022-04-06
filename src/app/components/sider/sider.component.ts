@@ -14,9 +14,9 @@ export class SiderComponent {
         this._currentUser = value;
   }
     constructor(private authenticationService:AuthenticationService) {
-      console.log("Welcome in Sider component")
+      //console.log("Welcome in Sider component")
       this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
-      console.log( this.currentUser)
+      //console.log( this.currentUser)
       if (!localStorage.getItem('currentUser')==undefined){
          this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
          

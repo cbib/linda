@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { GlobalService, AlertService, UserService, AdService, SearchService} from './services';
+import { GlobalService, AlertService, UserService, AdService, SearchService, BrapiService} from './services';
 import { ReactiveFormsModule,FormsModule }    from '@angular/forms';
 import { JoyrideModule, JoyrideService } from 'ngx-joyride';
 import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -134,6 +134,7 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
               GlobalService,
               SearchService,
               JoyrideService,
+              BrapiService,
               AdService,
               { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
               { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

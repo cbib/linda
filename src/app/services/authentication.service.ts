@@ -26,7 +26,7 @@ export class AuthenticationService {
 
     constructor(private http: HttpClient, private router: Router) {
         //localStorage.removeItem('currentUser');
-        console.log(localStorage)
+        //console.log(localStorage)
         var tmp: any = localStorage.getItem('currentUser')
         this.currentUserSubject = new BehaviorSubject<UserInterface>(JSON.parse(tmp));
         this.currentUser = this.currentUserSubject.asObservable();
@@ -41,11 +41,11 @@ export class AuthenticationService {
     } */
 
     login(username:string, password:string) {
-        console.log(username)
-        console.log(password)
+        //console.log(username)
+        //console.log(password)
         return this.http.post<AuthResponse>(this.APIUrl + 'authenticate_person/', { username: username, password: password })
             .pipe(map(res => {
-                console.log(res)
+                //console.log(res)
                 this.person = res.person
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(this.person));
@@ -56,13 +56,13 @@ export class AuthenticationService {
     }
 
     group_login(username:string, password:string, roles:{},group_key:string, group_password:string) {
-        console.log(username)
-        console.log(password)
-        console.log(group_key)
-        console.log(group_password)
+        //console.log(username)
+        //console.log(password)
+        //console.log(group_key)
+        //console.log(group_password)
         return this.http.post(this.APIUrl + 'authenticate_group/', { username: username, password: password, roles:roles, group_key:group_key, group_password:group_password })
             .pipe(map(res => {
-                console.log(res)
+                //console.log(res)
                 let group = res['group']
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 //localStorage.setItem('token', 'JWT');
@@ -84,7 +84,7 @@ export class AuthenticationService {
             'email': email_obj.email,
             'token': token
         };
-        console.log(obj2send)
+        //console.log(obj2send)
         ///return null
         //let nodemailerUrl = Constants.APIConfig.APIUrl;
         //return this.http.post(this.nodemailerUrl,email_obj)
@@ -95,7 +95,7 @@ export class AuthenticationService {
     }
 
     resetPassword(body:{resettoken:string, newPassword:string, confirmPassword:string}): Observable<any> {
-        console.log(body)
+        //console.log(body)
         //return this.http.post(`${this.APIUrl}reset-password`, body);
         return this.http.post(`${this.APIUrl + "reset-password/"}`, body);
     }

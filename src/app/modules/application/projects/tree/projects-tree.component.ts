@@ -127,7 +127,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       async ngOnInit() {
          this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-          //console.log(this.currentUser)
+          ////console.log(this.currentUser)
           await this.get_vertices()
          // this.get_projects()
           // this.dtOptions = {
@@ -137,31 +137,31 @@ import { UserInterface } from 'src/app/models/linda/person';
           //   };
           this.nodes = []
           this.nodes = this.build_hierarchy(this.vertices)
-          //////console.log(this.nodes.length)
+          ////////console.log(this.nodes.length)
           //this.nodes[0].get_children().sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]))
           this.sort_nodes(this.nodes[0])
           this.dataSource.data = this.nodes
-          // //console.log(this.dataSource.data)
+          // ////console.log(this.dataSource.data)
           // this.treeControl.expand()
           this.treeControl.expandAll();
-          // //console.log(this.treeControl.dataNodes[4])
-          // //console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
-          // //console.log(this.treeControl.dataNodes)
+          // ////console.log(this.treeControl.dataNodes[4])
+          // ////console.log(this.treeControl.getLevel(this.treeControl.dataNodes[4]))
+          // ////console.log(this.treeControl.dataNodes)
           // this.treeControl.expandDescendants(this.treeControl.dataNodes[4])
           var descendants = this.treeControl.getDescendants(this.treeControl.dataNodes[0])
           //this.treeControl.expandDescendants(this.treeControl.dataNodes[0])
           this.treeControl.expand(this.treeControl.dataNodes[0])
           this.loaded=true
           // if (this.treeControl.getLevel(descendants[d]) === 1) {
-          //   //console.log(descendants[d].name)
+          //   ////console.log(descendants[d].name)
           // this.treeControl.expand(descendants[d])
           // this.treeControl.expandDescendants(descendants[d])
           // }
           // if (this.treeControl.getLevel(descendants[d])===2){
-          //    //console.log(descendants[d]['term']['children'])
+          //    ////console.log(descendants[d]['term']['children'])
           //    this.treeControl.expand(descendants[d])
           //    descendants[d]['term']['children'].sort((a, b) => a.name.split("/")[0].localeCompare(b.name.split("/")[0]));
-          //    //console.log(test)
+          //    ////console.log(test)
           // }
   
   
@@ -170,7 +170,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           
   
           this.searchService.getData().subscribe(data => {
-              //////console.log(data);
+              ////////console.log(data);
               //this.search_string=data
           })
           
@@ -179,7 +179,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       async get_vertices() {
           let user = JSON.parse(localStorage.getItem('currentUser'));
-          ////////console.log(user)
+          //////////console.log(user)
           this.globalService.start();
           return this.globalService.get_all_vertices(user._key).toPromise().then(
           //return this.globalService.get_all_vertices(user._key).subscribe(
@@ -190,13 +190,13 @@ import { UserInterface } from 'src/app/models/linda/person';
           )
       }
       build_hierarchy(edges: []): MiappeNode[] {
-          console.log(edges)
+          //console.log(edges)
           var cpt = 0;
           var tmp_nodes = []
           tmp_nodes.push(new MiappeNode("Investigations tree", "Investigations tree", "", 0))
           edges.forEach(
               e => {
-                console.log(e)
+                //console.log(e)
                   var _from: string;
                   var _to: string;
   
@@ -238,17 +238,17 @@ import { UserInterface } from 'src/app/models/linda/person';
                   if (_to.includes("biological_material")){
                       // var bm_vertice= vertices.filter(component => component['_id'] == _to)
                       // var bm_vertice_data_keys = Object.keys(bm_vertice).filter(component => !component.startsWith("_"))
-                      //////console.log(bm_vertice)
+                      ////////console.log(bm_vertice)
                       bm_vertice_data=this.prepare_bm_data(vertice_data, vertice_data_keys)
                       vertice_data_keys=Object.keys(bm_vertice_data[0])
                       //this.bm_datatables[_to]=bm_vertice
-                      //////console.log(this.bm_datatables)
+                      ////////console.log(this.bm_datatables)
                   }
                   if (_to.includes("observation_unit")){
                       this.prepare_ou_data(vertice_data, vertice_data_keys)
                   }
-                  //////console.log(vertice_data)
-                  //////console.log(vertice_data_keys)
+                  ////////console.log(vertice_data)
+                  ////////console.log(vertice_data_keys)
                   if (parent_id.includes("users")) {
                       if (cpt === 0) {
                           tmp_nodes[0].add_children(new MiappeNode(_to, short_name, "", percent, parent_id, vertice_data_keys, vertice_data, bm_vertice_data))
@@ -263,7 +263,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                   cpt += 1
               }
           )
-          ///////console.log(tmp_nodes)
+          /////////console.log(tmp_nodes)
           return tmp_nodes;
       }
       play_again(){
@@ -319,7 +319,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       get get_tutorial_done(){
           this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-          //////console.log(this.currentUser['tutoriel_done'])
+          ////////console.log(this.currentUser['tutoriel_done'])
           return this.currentUser['tutoriel_done']
       }
       get get_tutoriel_level(){
@@ -358,7 +358,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           var selected_set = this.checklistSelection.selected
       }
       expandNode() {
-          //////console.log(this.treeControl.dataNodes[3])
+          ////////console.log(this.treeControl.dataNodes[3])
           this.treeControl.expand(this.treeControl.dataNodes[3]);
       }
       onContextMenu(event: MouseEvent, node: MiappeNode) {
@@ -372,7 +372,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       onClick(node: MiappeNode) {
           this.active_node = node
-          //////console.log(node.id)
+          ////////console.log(node.id)
           // if (node.id == "Investigations tree"){
           //     this.userMenu.openMenu();
           //     this.userMenusecond.openMenu();
@@ -384,7 +384,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           //this.userMenusecond.openMenu();
       }
       onNext(node:string) {
-          //////console.log(node)
+          ////////console.log(node)
       }
       onExperimental_design(node){
           this.router.navigate(['/design'])
@@ -419,7 +419,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           });
       }
       onExplore(node: MiappeNode){
-          //////console.log("you are gonna explore your data !!")
+          ////////console.log("you are gonna explore your data !!")
           this.router.navigate(['/explore'], { queryParams: {parent_id: node.id} })
       }
       onExportIsa(node: MiappeNode) {
@@ -472,30 +472,30 @@ import { UserInterface } from 'src/app/models/linda/person';
           }
       }
       remove_selected(node: MiappeFlatNode) {
-          ////////console.log(node)
+          //////////console.log(node)
           //var descendants = this.treeControl.getDescendants(node);
           //var descAllSelected = descendants.every(child =>this.checklistSelection.isSelected(child));                                
           //var selected_set=this.checklistSelection._selection
           var selected_set = this.checklistSelection.selected
-          //////console.log(selected_set)
-          //        //////console.log(set.entries())
+          ////////console.log(selected_set)
+          //        ////////console.log(set.entries())
           var to_be_remove = []
           selected_set.forEach(function (value) {
   
               var test: MiappeNode = value["term"];
               //this.onRemove(test)
-              //////console.log(test)
+              ////////console.log(test)
               to_be_remove.push(test.id)
   
           });
-          //////console.log(to_be_remove)
+          ////////console.log(to_be_remove)
           for (var i = 0; i < to_be_remove.length; i++) {
-              //////console.log(to_be_remove[i].split("/")[0])
+              ////////console.log(to_be_remove[i].split("/")[0])
               if (to_be_remove[i].split("/")[0] === "observation_units") {
                   this.globalService.remove_observation_unit(to_be_remove[i]).pipe(first()).toPromise().then(
                       data => {
                           if (data["success"]) {
-                              //////console.log(data["message"])
+                              ////////console.log(data["message"])
                           }
                           else {
                               this.alertService.error("this form contains errors! " + data["message"]);
@@ -507,7 +507,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                   this.globalService.remove(to_be_remove[i]).pipe(first()).toPromise().then(
                       data => {
                           if (data["success"]) {
-                              //////console.log(data["message"])
+                              ////////console.log(data["message"])
                           }
                           else {
                               this.alertService.error("this form contains errors! " + data["message"]);
@@ -528,7 +528,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       reloadComponent(path:[string]) {
           let currentUrl = this.router.url;
-          //////console.log(currentUrl)
+          ////////console.log(currentUrl)
           this.router.routeReuseStrategy.shouldReuseRoute = () => false;
           this.router.onSameUrlNavigation = 'reload';
           this.router.navigate(path);
@@ -539,13 +539,13 @@ import { UserInterface } from 'src/app/models/linda/person';
           dialogRef.afterClosed().subscribe((result) => {
               if (result) {
                   if (result.event == 'Confirmed') {
-                      //////console.log(this.active_node.id.split("/")[0])
+                      ////////console.log(this.active_node.id.split("/")[0])
                       if (this.active_node.id.split("/")[0] === "observation_units") {
                           this.globalService.remove_observation_unit(this.active_node.id).pipe(first()).toPromise().then(
                               data => {
-                                  //console.log(data)
+                                  ////console.log(data)
                                   if (data["success"]) {
-                                      //////console.log(data["message"])
+                                      ////////console.log(data["message"])
                                       var message = this.active_node.id + " has been removed from your history !!"
                                       this.alertService.success(message)
                                       //setTimeout(() => {this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });},5000);
@@ -572,7 +572,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                               this.globalService.remove_childs(this.active_node.id).pipe(first()).toPromise().then(
                                   data => {
                                       if (data["success"]) {
-                                          //////console.log(data["message"])
+                                          ////////console.log(data["message"])
                                           var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
                                           this.alertService.success(message)
                                       }
@@ -590,20 +590,20 @@ import { UserInterface } from 'src/app/models/linda/person';
                           //Remove only observed variable or experimental factors
                           // TODO add handler for observation units, biological materials, etc.
                           else if(result.only!=""){
-                              //////console.log(result.only)
+                              ////////console.log(result.only)
                               this.globalService.remove_childs_by_type(this.active_node.id, result.only).pipe(first()).toPromise().then(
                                   data => {
                                       if (data["success"]) {
-                                          //////console.log(data["message"])
+                                          ////////console.log(data["message"])
                                           var message = "child nodes of " + this.active_node.id + " have been removed from your history !!"
                                           //this.alertService.success(message)
                                           var datafile_ids=data["datafile_ids"]
                                           var removed_ids=data["removed_ids"]
                                           // datafile_ids.forEach(datafile_id => {
                                           //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-                                          //         data => { //////console.log(data); }
+                                          //         data => { ////////console.log(data); }
                                           //       )
-                                          // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {//////console.log(data);})
+                                          // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////////console.log(data);})
                                           // });
                                       }
                                       else {
@@ -618,12 +618,12 @@ import { UserInterface } from 'src/app/models/linda/person';
   
                           }
                           else {
-                              //////console.log(this.active_node.id)
+                              ////////console.log(this.active_node.id)
                               this.globalService.remove(this.active_node.id).pipe(first()).toPromise().then(
                                   data => {
-                                      //////console.log(data)
+                                      ////////console.log(data)
                                       if (data["success"]) {
-                                          //////console.log(data["message"])
+                                          ////////console.log(data["message"])
                                           var message = this.active_node.id + " has been removed from your history !!"
                                           this.alertService.success(message)
                                           let new_step=0
@@ -683,7 +683,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           });
       }
       onFileChange(event) {
-          //////console.log(this.active_node)
+          ////////console.log(this.active_node)
   
           //this.fileUploaded = <File>event.target.files[0];
           let uploadResponse = { status: '', message: 0, filePath: '' };
@@ -740,7 +740,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           }
       }
       add_from_data_file(model_type: string) {
-          //////console.log(this.active_node.id)
+          ////////console.log(this.active_node.id)
           var model_key = this.active_node.id.split("/")[1]
           var parent_id = ""
           if (this.active_node.id != 'Investigations tree') {
@@ -760,8 +760,8 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       add(model_type: string, template: string) {
           var model_key = this.active_node.id.split("/")[1]
-          //////console.log(model_key)
-          //////console.log(template)
+          ////////console.log(model_key)
+          ////////console.log(template)
           var model_coll = this.active_node.id.split("/")[0];
           let user = JSON.parse(localStorage.getItem('currentUser'));
           if (template == 'saved') {
@@ -787,11 +787,11 @@ import { UserInterface } from 'src/app/models/linda/person';
                       }
                       var new_values = {}
                       keys.forEach(attr => { new_values[attr] = result.values[attr] })
-                      //////console.log(new_values)
+                      ////////console.log(new_values)
                       this.globalService.add(new_values, model_type, parent_id, false).pipe(first()).toPromise().then(
                           data => {
                               if (data["success"]) {
-                                  ////////console.log(data["message"])
+                                  //////////console.log(data["message"])
                                   //this.model_id=data["_id"];
                                   this.ngOnInit();
                                   //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
@@ -802,7 +802,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                                   return true;
                               }
                               else {
-                                  ////////console.log(data["message"])
+                                  //////////console.log(data["message"])
                                   this.alertService.error("this form contains errors! " + data["message"]);
                                   
                                   return false;
@@ -824,19 +824,19 @@ import { UserInterface } from 'src/app/models/linda/person';
   
           }
           else if (template == 'zip') {
-              //////console.log('add zip file');
+              ////////console.log('add zip file');
           }
           else if (template == 'parent') {
               //Here it is a special case for observation unit when you want to add
               //search for all biological_material in the parent study
-              //////console.log('add zip file');
+              ////////console.log('add zip file');
               var model_name = this.active_node.id.split("/")[0]
               var model_key = this.active_node.id.split("/")[1]
               var search_type = ""
               this.globalService.get_parent_id(model_name, model_key).toPromise().then(
                   data => {
                       var parent_id = data[0]["v_id"]
-                      //////console.log(parent_id)
+                      ////////console.log(parent_id)
                       // if (model_type==='observed_variable'){
                       //     search_type="Observed variable"
                       // }
@@ -850,7 +850,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                       const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: model_type, model_id: "", parent_id: parent_id, user_key: user._key, model_type: model_type, values: {} } });
                       dialogRef.afterClosed().subscribe(result => {
                           if (result) {
-                              //////console.log(result.values)
+                              ////////console.log(result.values)
                               var keys = Object.keys(result.values);
   
                               for (var i = 0; i < keys.length; i++) {
@@ -865,7 +865,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                               this.globalService.add(new_values, model_type, this.active_node.id, false).pipe(first()).toPromise().then(
                                   data => {
                                       if (data["success"]) {
-                                          ////////console.log(data["message"])
+                                          //////////console.log(data["message"])
                                           //this.model_id=data["_id"];
                                           this.ngOnInit();
                                           //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
@@ -876,7 +876,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                                           return true;
                                       }
                                       else {
-                                          ////////console.log(data["message"])
+                                          //////////console.log(data["message"])
                                           this.alertService.error("this form contains errors! " + data["message"]);
                                           return false;
                                           //this.router.navigate(['/studies']);
@@ -902,7 +902,7 @@ import { UserInterface } from 'src/app/models/linda/person';
               }
               
               else if (model_type === "biological_material") {
-                  //console.log(model_type)
+                  ////console.log(model_type)
                   ///new_step=parseInt(this.currentUser.tutoriel_step)+1
                   if (!this.currentUser.tutoriel_done){
                       if (this.currentUser.tutoriel_step==="8"){
@@ -990,26 +990,26 @@ import { UserInterface } from 'src/app/models/linda/person';
   
       }  
       identify() {
-          //////console.log('Hello, Im user tree!');
+          ////////console.log('Hello, Im user tree!');
       }
       isArray(obj : any ){
           return Array.isArray(obj)
       }
       ObservationTableRowSelected(i: number) {
           this.observation_id = this.obs_unit_data[i]['obsUUID']
-          //////console.log(this.observation_id)
+          ////////console.log(this.observation_id)
   
       }
       MaterialTableRowSelected(i) {
           this.biological_material_id = this.biological_materials[i]['bmUUID']
-          //////console.log(this.biological_material_id)
+          ////////console.log(this.biological_material_id)
       }
       get_ou_data(node: MiappeNode) {
-          ////////console.log(node["term"].get_current_observation_unit_data()['observation_units'])
+          //////////console.log(node["term"].get_current_observation_unit_data()['observation_units'])
           return node["term"].get_current_observation_unit_data()['observation_units']
       }
       get_bm_data(node: MiappeNode): [] {
-          ////////console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
+          //////////console.log(node["term"].get_current_observation_unit_data()['biological_materials'])
           return node["term"].get_current_observation_unit_data()['biological_materials']
   
       }
@@ -1029,7 +1029,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           dialogRef.afterClosed().subscribe(result => {
               if (result) {
                   if (result.event == 'Confirmed') {
-                      //////console.log("hello")
+                      ////////console.log("hello")
                   }
               }
           });
@@ -1063,7 +1063,7 @@ import { UserInterface } from 'src/app/models/linda/person';
               var return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
               this.globalService.get_elem(collection, key).toPromise().then(
                   data => {
-                      ////////console.log(data)
+                      //////////console.log(data)
                       var obs_linda_id = data['_id']
                       var obs_keys = Object.keys(data);
                       this.obs_unit_data = []
@@ -1083,30 +1083,30 @@ import { UserInterface } from 'src/app/models/linda/person';
                       this.globalService.get_all_observation_unit_childs(obs_linda_id.split("/")[1]).toPromise().then(
                           observation_unit_childs_data => {
                               //get all biological materials
-                              //console.log(observation_unit_childs_data)
+                              ////console.log(observation_unit_childs_data)
                               for (var i = 0; i < observation_unit_childs_data.length; i++) {
                                   var child_id: string = observation_unit_childs_data[i]['e']['_to']
-                                  ////////console.log(observation_unit_childs_data[i])
+                                  //////////console.log(observation_unit_childs_data[i])
   
                                   if (child_id.includes("biological_materials")) {
-                                      ////////console.log(child_id)
-                                      ////////console.log(observation_unit_childs_data[i]['e']['biological_materials'])
+                                      //////////console.log(child_id)
+                                      //////////console.log(observation_unit_childs_data[i]['e']['biological_materials'])
                                       var tmp_bm: [] = observation_unit_childs_data[i]['e']['biological_materials']
                                       this.biological_materials = this.biological_materials.concat(tmp_bm)
   
                                   }
                                   else if (child_id.includes("experimental_factors")) {
-                                      ////////console.log(child_id)
-                                      ////////console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
+                                      //////////console.log(child_id)
+                                      //////////console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
                                       var tmp_ef: [] = observation_unit_childs_data[i]['e']['experimental_factors']
                                       this.experimental_factors = this.experimental_factors.concat(tmp_ef)
                                   }
                                   //type sample childs
                                   else {
-                                      ////////console.log(child_id)
+                                      //////////console.log(child_id)
   
                                       var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
-                                      ////////console.log(sample_data)
+                                      //////////console.log(sample_data)
                                       var sample_keys = Object.keys(sample_data);
                                       var sample = {}
                                       sample_keys.forEach(key => {
@@ -1137,7 +1137,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                       //         i--;
                       //     }
                       // }
-                      //console.log(return_data)
+                      ////console.log(return_data)
                       // node["term"].set_current_data(this.current_data_keys)
                       // node["term"].set_model_key(node.id.split("/")[1])
                   }
@@ -1156,21 +1156,21 @@ import { UserInterface } from 'src/app/models/linda/person';
           //     //     data => {
           //             this.current_data_keys = Object.keys(data);
           //             this.current_data_array.push(data);
-          //             //////console.log(this.current_data_array)
+          //             ////////console.log(this.current_data_array)
           //             // for (var i = 0; i < this.current_data_array[0]['Biological material ID'].length; i++) {
-          //             //     //////console.log(this.current_data_array[0]['Biological material ID'][i][0])
+          //             //     ////////console.log(this.current_data_array[0]['Biological material ID'][i][0])
           //             // }
                           
           //             node["term"].set_current_data_object(this.current_data_array)
           //             this.getBiologicalDataFromSource(data)
-          //             ////console.log(node["term"].get_current_data_object())
+          //             //////console.log(node["term"].get_current_data_object())
           //             for (var i = 0; i < this.current_data_keys.length; i++) {
           //                 if (this.current_data_keys[i].startsWith("_")) {
           //                     this.current_data_keys.splice(i, 1);
           //                     i--;
           //                 }
           //             }
-          //             // ////console.log(this.current_data)
+          //             // //////console.log(this.current_data)
           //             node["term"].set_current_data(this.current_data_keys)
           //             node["term"].set_model_key(node.id.split("/")[1])
           //         //});
@@ -1193,7 +1193,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           //                     i--;
           //                 }
           //             }
-          //             ////////console.log(this.current_data)
+          //             //////////console.log(this.current_data)
           //             node["term"].set_current_data(this.current_data_keys)
           //             node["term"].set_model_key(node.id.split("/")[1])
           //         }
@@ -1235,14 +1235,14 @@ import { UserInterface } from 'src/app/models/linda/person';
               columns.push({title: key, data: key})
             }
           });
-          ///////console.log(object_type)
+          /////////console.log(object_type)
           var cpt=0
           var newTableData=[]
           for (var i = 0; i < this.tableData[0]["Biological material ID"].length; i++) {
           //this.tableData[0]["Biological material ID"].forEach(element => {
               for (var j = 0; j < this.tableData[0]["Biological material ID"][i].length; j++) {
               //element.forEach(bm_id => {
-                  //////console.log(this.tableData[0]["Biological material ID"][i][j])
+                  ////////console.log(this.tableData[0]["Biological material ID"][i][j])
                   let object_type_tmp=Object.assign(object_type)
                   //ELEMENT_BM_DATA.push({'biologicalMaterialId':this.tableData[0]["Biological material ID"][i][j]})
                   object_type_tmp["Biological material ID"]=this.tableData[0]["Biological material ID"][i][j]
@@ -1251,7 +1251,7 @@ import { UserInterface } from 'src/app/models/linda/person';
               }//);
               //cpt+=1
           }//);
-          //////console.log(newTableData)
+          ////////console.log(newTableData)
           this.dtOptions['data']=newTableData
           this.dtOptions['columns']=columns
           // this.dtOptions = {
@@ -1316,12 +1316,12 @@ import { UserInterface } from 'src/app/models/linda/person';
           var dt_source=new MatTableDataSource<BiologicalMaterialTableModel>(datasources);
           this.bm_datasources[data['_id']] = dt_source; 
   
-          //////console.log(newTableData)
-          //////console.log(ELEMENT_BM_DATA)
+          ////////console.log(newTableData)
+          ////////console.log(ELEMENT_BM_DATA)
           return newTableData
       }
       get_ou_dataSource(node_id:string){
-          ////console.log(node_id)
+          //////console.log(node_id)
           return this.ou_datasources[node_id]
       }
       get_bm_dataSource(node_id:string){
@@ -1337,7 +1337,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           return node["term"].get_current_data_object()
       }
       get_current_data_file_headers(node: MiappeNode) {
-          ////console.log(node["term"].get_current_data_object())
+          //////console.log(node["term"].get_current_data_object())
           let ass_headers=node["term"].get_current_data_object()['associated_headers']
   
           var associated_component=[]
@@ -1346,7 +1346,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                   associated_component.push(element)
               }
           });
-          ////console.log(associated_component)
+          //////console.log(associated_component)
           return associated_component
       }
       get_model_key(node: MiappeNode) {
@@ -1479,7 +1479,7 @@ import { UserInterface } from 'src/app/models/linda/person';
               var i;
               var result = null;
               for (i = 0; result == null && i < term.get_children().length; i++) {
-                  ////////console.log(term.children[i])
+                  //////////console.log(term.children[i])
                   result = this.searchTree(term.get_children()[i], term_id);
               }
               return result;
@@ -1493,7 +1493,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       //          t=>{
       //              if (t.id===term_id){
       //                term=t
-      //                ////////console.log(term_id)
+      //                //////////console.log(term_id)
       //              }
       //
       //          })

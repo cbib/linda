@@ -137,6 +137,10 @@ export class GlobalService {
     get_data_from_datafiles(datafile_key:string, header:string){
         return this.http.get(this.APIUrl + "get_data_from_datafiles/" + datafile_key + "/" + header).pipe(catchError(this.handleError));
     }
+    get_ncbi_taxon_data():Observable<any>{
+        return this.http.get(this.APIUrl + "get_ncbi_taxon_data/");
+    }
+    
     get_multidata_from_datafiles(datafile_key:string, headers_linked:string){
         return this.http.get(this.APIUrl + "get_multidata_from_datafiles/" + datafile_key + "/" + headers_linked).pipe(catchError(this.handleError));
     }

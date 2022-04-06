@@ -142,6 +142,8 @@ var samples = db._collection('samples');
 var templates = db._collection('templates');
 var metadata_files = db._collection('metadata_files');
 var germplasms = db._collection('germplasms');
+var NCBITaxons = db._collection('NCBITaxons');
+
 /*Edge collections*/
 
 
@@ -222,6 +224,10 @@ if (!metadata_files) {
 if (!germplasms) {
     db._createDocumentCollection('germplasms');
     germplasms = db._collection('germplasms');
+}
+if (!NCBITaxons) {
+    db._createDocumentCollection('NCBITaxons');
+    NCBITaxons = db._collection('NCBITaxons');
 }
 
 
@@ -1008,6 +1014,49 @@ router.get('/get_germplasm_taxon_group_accession_numbers/:taxon_group', function
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
 
+router.get('/get_species/', function (req, res) {
+        const coll = db._collection('NCBITaxons');
+        if (!coll) {
+            db._createDocumentCollection('NCBITaxons');
+        }
+        var get_data = db._query(aql`
+        FOR entry IN ${coll}
+        RETURN { species: UNIQUE(entry.data[*].species) }
+        `).toArray();
+        //var result=get_data[0]
+        console.log(get_data[0]['species'].length)
+        res.send(get_data);
+})
+        .response(joi.object().required(), 'List of entry keys.')
+        .summary('List entry keys')
+        .description('Assembles a list of keys of entries in the collection.');
+    
+router.get('/get_ncbi_taxon_data/', function (req, res) {
+            const coll = db._collection('NCBITaxons');
+            if (!coll) {
+                db._createDocumentCollection('NCBITaxons');
+            }
+            var get_data = db._query(aql`
+            FOR entry IN ${coll}
+                RETURN entry.data
+            `).toArray();
+            //var result=get_data[0]
+            //console.log(get_data[0]['species'].length)
+            res.send(get_data[0]);
+    })
+            .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+            .summary('List entry keys')
+            .description('Assembles a list of keys of entries in the collection.');
+        
+    
+        /* var get_data = db._query(aql`
+        LET document = DOCUMENT("NCBITaxons/33550834") 
+        LET alteredList = (
+            FOR element IN document.data 
+                        FILTER element.species == ${taxon_group} 
+                        LET newItem = ({accession_num:element.AccessionNumber, accession_name:element.AccessionName,holding_institution: element.HoldingInstitution}) 
+                        RETURN newItem) 
+                RETURN alteredList`); */
 
 
 router.get('/get_model/:model_type', function (req, res) {
@@ -1596,8 +1645,8 @@ router.get('/get_data_file_table/:key', function (req, res) {
         var obj_to_send = {
             'page': 1,
             'per_page': 100,
-            'total': data['Data'].lenght,
-            'total_pages': data['Data'].lenght / 100,
+            'total': data['Data'].length,
+            'total_pages': data['Data'].length / 100,
             'data': data['Data']
         }
         res.send(obj_to_send);

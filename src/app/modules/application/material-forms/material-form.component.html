@@ -96,7 +96,10 @@
                       <span *ngIf="validated_term[field['key']].selected!==true"
                         style="display:inline-block; margin-left: 10px;">
                         <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" list="dynamicNodes"/>
+                          <datalist id="dynamicNodes">
+                            <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species" [ngValue]="taxon.species">{{taxon.species}}</option>
+                         </datalist>
                       </span>
                       <span *ngIf="validated_term[field['key']].selected===true"
                         style="display:inline-block; margin-left: 10px;">
@@ -110,7 +113,10 @@
                         <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
-                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" list="dynamicNodes2"/>
+                          <datalist id="dynamicNodes2">
+                            <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species" [ngValue]="taxon.species">{{taxon.species}}</option>
+                         </datalist>
                         <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
