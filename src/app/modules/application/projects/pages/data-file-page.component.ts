@@ -65,8 +65,14 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     await this.load_data_file()
   }
-
+  ngOnDestroy(): void {
+    // Do not forget to unsubscribe the event
+    this.dtTrigger.unsubscribe();
+    this.myEventSubscription.unsubscribe();
+  }
   async load_data_file() {
+    this.loaded = false
+    //this.globalService.start()
     this.myEventSubscription = this.globalService.get_data_file(this.model_key).subscribe(
       data => {
         this.data_file = Object.assign(data)
@@ -89,6 +95,7 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
         this.loaded = true
         setTimeout(() => {
           this.dtTrigger.next();
+          //this.globalService.end()
         });
       })
   }
@@ -96,11 +103,16 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
     //this.loaded=false
     // delete this.data_file
     this.alertService.clear()
-    await this.dtElement.dtInstance.then(async (dtInstance: DataTables.Api) => {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+      this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/data_file_page'], { queryParams: { parent_id: this.parent_id, model_key: this.model_key, model_id: this.model_id, role: this.role, group_key: this.group_key } });
+
+   /*  await this.dtElement.dtInstance.then(async (dtInstance: DataTables.Api) => {
       // Destroy the table first
       dtInstance.destroy();
       await this.load_data_file()
-    });
+      this.dtTrigger.next();
+    }); */
   }
   clean_associated_header(_associated_header: AssociatedHeadersInterface, _parent_id: string, _component_id: string, _component_value, _extraction_component_field) {
     console.log(_associated_header)
@@ -184,11 +196,6 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
       this.router.navigate(['/data_file_page'], { queryParams: { parent_id: this.parent_id, model_key: this.model_key, model_id: this.model_id, role: this.role, group_key: this.group_key } });
     }
   }
-  ngOnDestroy(): void {
-    // Do not forget to unsubscribe the event
-    this.dtTrigger.unsubscribe();
-    this.myEventSubscription.unsubscribe();
-  }
   add_composite() {
     const dialogRef = this.definedialog.open(AddColumnComponent, { width: '1000px', data: { data_file: this.data_file, parent_id: this.parent_id, group_key: this.group_key } });
     dialogRef.afterClosed().subscribe(data => {
@@ -211,8 +218,6 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
     });
 
   }
-
-
   getDataFromSource() {
     this.tableData = this.data_file.Data;
     console.log(this.tableData)
@@ -229,13 +234,18 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
     this.loaded = true
   }
   onDefine(column: string) {
+    this.loaded=false
     console.log(column)
     const dialogRef = this.definedialog.open(DefineComponent, { width: '1000px', data: { column_original_label: column, data_file: this.data_file, parent_id: this.parent_id, group_key: this.group_key } });
     dialogRef.afterClosed().subscribe(async data => {
       if (data !== undefined) {
-        console.log(data)
-        this.data_file = data.data_file
-        await this.refresh()
+        //console.log(data)
+        /* this.data_file = data.data_file
+        await this.refresh() */
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate(['/data_file_page'], { queryParams: { parent_id: this.parent_id, model_key: this.model_key, model_id: this.model_id, role: this.role, group_key: this.group_key } });
+  
       };
     });
   }

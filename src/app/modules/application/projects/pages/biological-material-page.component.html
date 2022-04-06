@@ -34,10 +34,11 @@
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
         </mat-form-field>
-        <div *ngIf="loaded===true">
+        <!-- <div *ngIf="loaded===true">
         <app-biological-material-table [data]="get_dataSource"></app-biological-material-table>
-        </div>
-        <!-- <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+        </div> -->
+        <div *ngIf="loaded===true">
+        <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
             
             <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
                 <ng-container *ngIf="column!=='edit'">
@@ -58,8 +59,10 @@
             <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
             <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
         </table>
-        <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize"
-                   [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+        <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+
+        <!-- <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+    </div>
     </div>
     </mat-card>
     

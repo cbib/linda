@@ -13,5 +13,6 @@ dependencies:
   - pip
   - pip:
     - arango
+    - pandas
     - python-arango
 prefix: /opt/anaconda3/envs/linda

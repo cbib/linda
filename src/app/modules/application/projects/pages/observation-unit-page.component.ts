@@ -26,6 +26,7 @@ export class ObservationUnitPageComponent implements OnInit {
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
+  @Input('grand_parent_id') grand_parent_id: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ObservationUnitInterface>;
   private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
@@ -49,6 +50,7 @@ export class ObservationUnitPageComponent implements OnInit {
         this.model_key = params['model_key'];
         this.mode = params['mode'];
         this.parent_id = params['parent_id']
+        this.grand_parent_id = params['grand_parent_id']
       }
     );
   }

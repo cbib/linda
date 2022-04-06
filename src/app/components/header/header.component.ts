@@ -173,7 +173,7 @@ export class HeaderComponent implements OnInit{
         "biological_materials":[],
         "observed_variables":[]
     }
-    if (this.currentUser){
+    /* if (this.currentUser){
             return this.globalService.get_inv_stud_vertices(this.currentUser['_key']).toPromise().then(
                 data => {
                     this.vertice_data=data;
@@ -211,6 +211,6 @@ export class HeaderComponent implements OnInit{
                     );
                 }
             )
-    }
+    } */
 }
 }

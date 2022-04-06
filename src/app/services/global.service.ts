@@ -324,6 +324,24 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
+    update_multiple_field(values: string[], parent_id:string, _keys: string[], field: string, model_type: string, datafile_key:string="" ,datafile_header:string="" ,model_field:string="") {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id':parent_id,
+            '_keys': _keys,
+            'field': field,
+            'values': values,
+            'model_type': model_type,
+            'datafile_key':datafile_key,
+            'datafile_header':datafile_header,          
+            'model_field':model_field
+
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "update_multiple_field"}`, obj2send);
+    }
     test_script(name:string) {
         let user = this.get_user();
         let obj2send = {
@@ -498,6 +516,16 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "remove"}`, obj2send);
     }
+    //REMOVE REQUEST
+    remove_multiple(ids:any[]) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'ids': ids
+        };
+        return this.http.post(`${this.APIUrl + "remove_multiple"}`, obj2send);
+    }
     remove_template(id:string) {
         let user = this.get_user();
         let obj2send = {
@@ -599,6 +627,37 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_edge"}`, obj2send);
     }
+    add_multiple(values: any[], model_type: string, parent_id: string, as_template:boolean, group_key:string="",datafile_key:string="" ,datafile_header:string="" ,model_field:string="", parent_ids:string[]=[]) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'role': "owner",
+            'parent_id': parent_id,
+            'values': values,
+            'model_type': model_type,
+            'as_template': as_template,
+            'group_key':group_key,
+            'datafile_key':datafile_key,
+            'datafile_header':datafile_header,          
+            'model_field':model_field,
+            'parent_ids':parent_ids
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_multiple"}`, obj2send);
+    }
+    change_datafile_header(value: string, datafile_key:string ,datafile_header:string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'value': value,
+            'datafile_key':datafile_key,
+            'datafile_header':datafile_header,          
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "change_datafile_header"}`, obj2send);
+    }
     add(values: {}, model_type: string, parent_id: string, as_template:boolean, group_key:string="") {
         let user = this.get_user();
         let obj2send = {
@@ -668,6 +727,7 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
+    
     add_observation_units(values: {}, model_type: string, parent_id: string) {
         let user = this.get_user();
         let obj2send = {

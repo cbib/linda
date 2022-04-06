@@ -96,7 +96,7 @@
                 <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
             </table>
-            <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+            <mat-paginator [hidden] #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
         </div>
         <!-- <button class="btn btn-success btn-xs fa fa-refresh" (click)="add_project()"><span style="margin-left: 5px;">Start a new project</span></button> -->
         </mat-card>

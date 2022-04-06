@@ -57,6 +57,9 @@ export class ObservationsPageComponent implements OnInit {
   get get_parent_id(){
     return this.parent_id
   }
+  get get_grand_parent_id(){
+    return this.grand_parent_id
+  }
   get get_mode(){
       return this.mode
   }

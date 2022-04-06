@@ -121,6 +121,8 @@ export class StudiesPageComponent implements OnInit {
         await this.get_studies()
         this.dataSource = new MatTableDataSource(this.studies);
         this.loaded = true
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             //this.search_string=data
@@ -133,10 +135,7 @@ export class StudiesPageComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        //this.dataSource.sort = this.sort;
-        //this.dataSource.paginator = this.paginator;
-        //this.dataSource.paginator = this.paginator;
-        //this.dataSource.sort = this.sort;
+        
         this._cdr.detectChanges()
       } 
     async get_vertices() {

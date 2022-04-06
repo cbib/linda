@@ -202,9 +202,9 @@ export class OntologyTreeComponent {
     }
     searchStart(event) {
         this.search_string = event.target.value;
-        if (this.search_string === "") {
+        if (this.search_string === "" || this.search_string.length<3) {
             this.active_list = false
-            console.log("emptty search")
+            console.log("empty search")
             
         }
         else{
@@ -839,7 +839,6 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-    
     build_xeo_isa_hierarchy(ontology: {}): OntologyTerm[] {
         this.show_spinner = true;
         //premier passage pour créer tous les termes 

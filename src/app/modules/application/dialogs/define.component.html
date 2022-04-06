@@ -24,10 +24,24 @@
     </section>
     <section *ngIf="!get_while_added" class="format-section">
     <form [formGroup]="get_generalForm">
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="lastName">Header</label>
+            <button *ngIf="get_generalForm.get('Header').disabled" (click)="onChangeHeader()">Modify</button>
+            <button *ngIf="get_generalForm.get('Header').enabled" (click)="onSaveHeader()">Save</button>
             <input type="text" placeholder="Header*" formControlName="Header" class="form-control" />
+        </div> -->
+        <div class="form-group">
+          <label for="lastName">Header</label>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button *ngIf="get_generalForm.get('Header').disabled" (click)="onChangeHeader()">Modify</button>
+                <button *ngIf="get_generalForm.get('Header').enabled" (click)="onSaveHeader()">Save</button>
+            </div>
+            <input type="text" placeholder="Header*" formControlName="Header" class="form-control" />
+          </div>
         </div>
+
+
         <div class="form-group">
             <mat-form-field class="full-width">
                 <mat-select formControlName="Standard term" placeholder="Select component field"
@@ -95,25 +109,24 @@
         <!-- Specific STUDY Part-->
         <section *ngIf="get_extraction_component_field==='Study unique ID'">
             <h4>Column informations</h4>
-            <button (click)="onExtractAll()">test</button>
             <label for="lastName">Detected study unique ID(s) in this column</label>
             <table datatable [dtOptions]="dtOptions"
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_study_id">
                 <thead title="">
                     <tr>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th>
+                       <!--  <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllStudies()">Extract all</button></th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onRemoveAllStudies()">Remove all</button></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let value of detected_values ; index as i;"
                         style="font-size:10px;text-align: center; cursor: move;">
-                        <th scope="col" >
+                        <!-- <th scope="col" >
                             <mat-checkbox [checked]="get_checklistSelection.isSelected(value)" (change)="itemSelectionToggle(value)"></mat-checkbox>
-                        </th>
+                        </th> -->
                         <!-- Original headers column-->
                         <th scope="col">
                             {{value}}
@@ -121,7 +134,7 @@
                         <th scope="col">
                             <ng-container>
                                 <button [disabled]="has_associated_header_linda_id_by_value(value)"
-                                    (click)="onExtractStudy(value,i)">Create</button>
+                                    (click)="onExtractStudy(value,i)">Extract</button>
                             </ng-container>
                         </th>
                         <th scope="col">
@@ -200,7 +213,7 @@
                             <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
-                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                            <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onLinkAllStudies()">Link all</button></th>
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
                             <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Linked to</th>
                         </tr>
@@ -212,7 +225,7 @@
                             <th scope="col">{{detected_studies[i]}}</th>
                             <th scope="col">
                                 <ng-container>
-                                    <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i],i)" (click)="onLinkStudy(key,detected_studies[i],i)">Link</button>
+                                    <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i],i)" (click)="onLinkStudy(key,detected_studies[i])">Link</button>
                                     <!-- <button [disabled]="has_associated_header_linda_id_by_study_id(detected_studies[i], i)" (click)="onLink(key,detected_studies[i],i)">Link</button> -->
                                 </ng-container>
                             </th>
@@ -315,7 +328,7 @@
                 <thead title="">
                     <tr>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllEvents()">Extract all</button></th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
                     </tr>
@@ -431,7 +444,7 @@
 
     </div>
     <div *ngIf="get_extraction_component==='experimental_factor'">
-        <h4>Project informations</h4>
+        <!-- <h4>Project informations</h4>
         <label for="lastName">People involved in this project</label>
         <table datatable [dtOptions]="dtOptions"
             class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
@@ -484,7 +497,6 @@
                 id="datatable_study_detected_id">
                 <thead title="table">
                     <tr>
-                        <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected studie(s)
                             in this file
                         </th>
@@ -503,7 +515,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div> -->
          <!-- Specific Experimental Factor Part-->
          <section *ngIf="get_extraction_component_field==='Experimental Factor accession number'">
             <h4>Column informations</h4>
@@ -515,7 +527,7 @@
                     <tr>
                         <!--                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Assign</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllExperimentalFactors()">Extract all</button></th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
                     </tr>
@@ -709,7 +721,7 @@
                 <thead title="">
                     <tr>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extract</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllEnvironments()">Extract all</button></th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
                     </tr>
@@ -824,10 +836,133 @@
         </section>
     </div>
     <div *ngIf="get_extraction_component==='observed_variable'">
-        <app-form id="observed_variable_form" (notify)="get_output_from_child($event)"
+        <section *ngIf="get_extraction_component_field==='Variable accession number'">
+            <h4>Column informations</h4>
+            <label for="lastName">Detected environment parameter type in this column</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                id="datatable_event_id">
+                <thead title="">
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllObservedVariables()">Extract all</button></th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Remove</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">parent study</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let value of get_associated_studies() ; index as i;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{get_studyValuesDictionary[value]}}
+                        </th>
+                        <th scope="col">
+                            <ng-container>
+                                <button [disabled]="has_associated_header_parent_id_by_index(value, i)"
+                                    (click)="onExtractObservedVariable(value,get_studyValuesDictionary[value],i)">Create</button>
+                            </ng-container>
+                        </th>
+                        <th scope="col">
+                            <button [disabled]="!has_associated_header_parent_id_by_index(value, i)"
+                                (click)="onRemoveObservedVariable(value,get_studyValuesDictionary[value],i)">Remove</button>
+                        </th>
+                        <th scope="col">
+                            {{value}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Extraction informations</h4>
+            <label for="lastName">Extracted component from values in column</label>
+            <table datatable [dtOptions]="dtOptions"
+                class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                id="datatable_experimental_factor_component_id">
+                <thead title="">
+                    <tr>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Study Unique ID</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">From values</th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Extracted as</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="detected_ids.length>0">
+                    <tr *ngFor="let key of detected_ids ; index as j;"
+                        style="font-size:10px;text-align: center; cursor: move;">
+                        <th scope="col">
+                            {{detected_studies[j]}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_value_by_linda_id(key, j)}}
+                        </th>
+                        <th scope="col">
+                            {{get_associated_header_linda_id(key, j)}}
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section *ngIf="get_extraction_component_field!=='Variable accession number'">
+            <div *ngIf="has_observed_variable_associated_header()">
+                <h4>Event informations</h4>
+                <mat-card>
+                <label>Select environment parameter in this data file to link with</label>
+                <mat-select (selectionChange)="onLinkComponent($event.value)">
+                    <mat-option disabled>--</mat-option>
+                    <mat-option *ngFor="let associated_header of filter_observed_variable_associated_headers" [value]="{header:associated_header.header,values:associated_header.associated_values,ids:associated_header.associated_linda_id}">
+                        {{associated_header.header + " (" +associated_header.associated_component_field + ")"}}
+                    </mat-option>
+                </mat-select>
+                </mat-card>
+                <div *ngIf="get_linked">
+                    <h4>Extraction informations</h4>
+                    <label>Extracted component from values in column</label>
+                    <table datatable [dtOptions]="dtOptions"
+                        class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
+                        id="datatable_env_values_detected">
+                        <thead title="">
+                            <tr>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated component</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Associated with</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Link</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Unlink</th>
+                                <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Child of</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let associated_header of filter_detected_observed_variables ; index as i;">
+                                <tr *ngFor="let key of associated_header.associated_values ; index as j;"
+                                    style="font-size:10px;text-align: center; cursor: move;">
+                                    <th scope="col">{{associated_header.associated_linda_id[j]}}</th>
+                                    <th scope="col">{{detected_values[j]}}</th>
+                                    <th scope="col">{{get_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])}}</th>
+                                    <th scope="col">{{associated_header.header}}</th>
+                                    <th scope="col">
+                                        <ng-container>
+                                            <button [disabled]="has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])"
+                                                (click)="onLinkObservedVariable(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Link</button>
+                                        </ng-container>
+                                    </th>
+                                    <th scope="col">
+                                        <button [disabled]="!has_component_linked_id(associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])" 
+                                        (click)="onUnlinkObservedVariable(detected_values[j],associated_header.associated_parent_id[j],associated_header.associated_linda_id[j])">Unlink</button>
+                                    </th>
+                                    <th scope="col">{{associated_header.associated_parent_id[j]}}</th>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="!has_observed_variable_associated_header()">
+                <p>You have no observed variable parameter(s) attached to this datafile</p>
+            </div>
+        </section>
+        <!-- <app-form id="observed_variable_form" (notify)="get_output_from_child($event)"
             [model_type]="'observed_variable'" [level]="1" [parent_id]="get_parent_id" [model_key]="" [mode]="'create'"
             inline="true" onlyTemplate="false" asTemplate="false" [role]="">
-        </app-form>
+        </app-form> -->
+
     </div>
     <div *ngIf="get_extraction_component==='biological_material'">
     </div>

@@ -4,7 +4,7 @@
                 meta<span>D</span>at<span>A</span></b></a>
     </h3>
 </div> -->
-<mat-card>
+
 <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close
         Data file</button>
 <div class="btn-group">
@@ -44,25 +44,40 @@
     </section> -->
     <section class="format-section">
         <alert id="assign-alert"></alert>
-        <table style="margin: 0%;" id="data_file_table" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable  class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped">
-            <thead>
-                <tr >
-                    <th  *ngFor="let column of get_columns ; index as j;">
-                            <div class="button-group">
-                                <!-- <span id="close" (click)="onRemove(column)">X</span> -->
-                                <button class="close" mat-button (click)="onRemove(column)"><mat-icon>delete_forever</mat-icon></button>
-                                <button style="margin-top: 10px; padding-top: 10px; position: relative;" mat-button class="btn btn-primary btn-xs"  (click)="onDefine(column)">Extract</button>
-                            </div>
-                            <!-- <button  mat-button class="btn-danger btn-xs" (click)="onDefine(column)">Extract column</button> -->
+       <!--  <thead *ngIf="get_loaded; else loading">
+                <tr>
+                    <th *ngFor="let column of get_columns ; index as j;">
+                        <div class="text-center">
+                            <button class="close" mat-button (click)="onRemove(column)"><mat-icon style="height: 48px;width: 48px;">delete_forever</mat-icon></button>
+                            <button mat-button class="btn btn-primary btn-xs"  (click)="onDefine(column)">Extract</button>
+                            <h5 class="text-center" >{{column}}</h5>
                             <mat-card [style.background-color]="get_cell_style(column)" [style.color]="'white'" [style.min-width]="'80px'" class="chips text-center"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
                             <mat-card [style.background-color]="get_style(column)" class="chips text-center" [style.min-width]="'80px'"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
+                        </div>   
+                    </th>
+                </tr>
+            </thead> -->
+        
+
+        <table *ngIf="get_loaded; else loading" style="margin: 0%;" id="data_file_table" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable  class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped">
+            <thead >
+                <tr>
+                    <th *ngFor="let column of get_columns ; index as j;">
+                        <div class="btn-group">
+                            <button mat-button class="btn btn-primary btn-xs"  (click)="onDefine(column)">Extract</button>
+                            <button class="close" mat-button (click)="onRemove(column)"><mat-icon>delete_forever</mat-icon></button>
+                        </div>
+                        <div>
+                            <mat-card [style.background-color]="get_cell_style(column)" [style.color]="'white'" [style.min-width]="'80px'" class="chips text-center"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                            <mat-card [style.background-color]="get_style(column)" class="chips text-center" [style.min-width]="'80px'"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
+                        </div>   
                     </th>
                 </tr>
                 <tr class="">
                     <th *ngFor="let column of get_columns ; index as k;">
                         {{column}}
                     </th>
-                </tr>
+                </tr> 
             </thead>
             <!-- <tbody>
                 <tr *ngFor="let row of get_data_file.Data; index as i;" style="font-size:10px;text-align: center; cursor: move;">
@@ -74,7 +89,7 @@
         </table>
     </section>
 </div>
-</mat-card>
+
 
 
 

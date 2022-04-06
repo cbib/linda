@@ -52,10 +52,9 @@ export class Study implements StudyInterface {
     'Observation unit description':string;
     'Observation unit level hierarchy':string;
     'Type of experimental design':string;
-    constructor(){
-
+    constructor(study_id:string=""){
         this["Definition"]=""
-        this["Study unique ID"]=""
+        this["Study unique ID"]=study_id
         this["Study Name"]=""
         this["Study title"]=""
         this["Cultural practices"]=""

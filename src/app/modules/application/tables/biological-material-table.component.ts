@@ -9,7 +9,7 @@ export class BiologicalMaterialTableComponent implements OnInit {
   dataTable: any;
   dtOptions: any;
   tableData = [];
-  @Input() data:{};
+  @Input('data') data:{};
   private bm_datasources:{} = {}
   @ViewChild('dataTable', {static: true}) table;
 

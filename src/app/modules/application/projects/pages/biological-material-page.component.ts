@@ -19,6 +19,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input('level') level: number;
   @Input('parent_id') parent_id: string;
@@ -58,12 +59,14 @@ export class BiologicalMaterialPageComponent implements OnInit {
 
   async ngOnInit() {
     console.log(this.parent_id)
-    await this.get_all_biological_materials()
+    await this.set_all_biological_materials()
+    this.loaded=true
   }
-  async get_all_biological_materials() {
+  /* async get_all_biological_materials() {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         if (data.length>0){
+          console.log(data)
           var keys= Object.keys(data[0])
           this.prepare_bm_data(data[0],keys)
           //console.log(this.dt_source)
@@ -71,12 +74,26 @@ export class BiologicalMaterialPageComponent implements OnInit {
           //console.log(this.dataSource)
           this.dt_source.paginator = this.paginator;
           this.dt_source.sort = this.sort;
-          
+          this.loaded = true
         }
-        this.loaded = true
+        else{
+          console.log(data)
+          this.loaded = true
+        }
+        
       }
     )
+  } */
+
+  async set_all_biological_materials() {
+    const data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
+    console.log(data);
+    this.dataSource = new MatTableDataSource(data);
+    console.log(this.dataSource);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
+
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;
     this.paginator.pageIndex = event.pageIndex;
@@ -84,10 +101,10 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dt_source.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    if (this.dt_source.paginator) {
-      this.dt_source.paginator.firstPage();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
   get get_displayedColumns() {
@@ -95,12 +112,14 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
   get get_dataSource() {
     //console.log(this.newTableData)
-    return this.dt_source
+    return this.dataSource
   }
 
   onRemove(element: BiologicalMaterialInterface) {
   }
   add(element: BiologicalMaterialInterface) {
+    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create" } });
+
   }
   onEdit(element: BiologicalMaterialInterface) {
   }

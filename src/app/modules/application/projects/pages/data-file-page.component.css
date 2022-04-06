@@ -175,6 +175,7 @@
       right: 0;
       padding: 2px;
       line-height: 10px;
+      float:right;
       /* min-width: auto; */
       max-width: 10px;
       max-height: 10px;
