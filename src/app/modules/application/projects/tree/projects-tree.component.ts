@@ -1296,7 +1296,8 @@ import { UserInterface } from 'src/app/models/linda/person';
                           if (keys[k].includes("Biological material") ){
                               tmp_dict[keys[k]]=data[keys[k]][i][j]
                           }
-                          else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")){
+                          else if (keys[k].includes("Material")){
+                          //else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")){
                               tmp_dict[keys[k]]=data[keys[k]][i]
                           }
                           

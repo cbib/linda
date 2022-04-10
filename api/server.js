@@ -974,7 +974,54 @@ router.post('/request-reset', (req, res) => {
  ******************************************************************************************
  ******************************************************************************************/
 
-router.get('/get_germplasm_unique_taxon_group/', function (req, res) {
+ router.get('/get_germplasmsdatamodal/', function (req, res) {
+
+    var data = {}
+    const coll = db._collection('germplasms');
+    if (!coll) {
+        db._createDocumentCollection('germplasms');
+    }
+    //data = db._query(aql`FOR entry IN ${coll} RETURN entry`);
+    data = db._query(aql`
+    FOR entry IN ${coll}
+        RETURN entry.germplasm_urgi_inrae
+    `).toArray();
+    //var germplasms= coll.firstExample('_key', key);
+    var obj_to_send = {
+        'page': 1,
+        'per_page': 5,
+        'total': data[0].length,
+        'total_pages': data[0].length / 5,
+        'data': data[0]
+    }
+    res.send(obj_to_send);
+})
+    .response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+    
+router.get('/get_germplasms/', function (req, res) {
+
+        var data = {}
+        const coll = db._collection('germplasms');
+        if (!coll) {
+            db._createDocumentCollection('germplasms');
+        }
+        //data = db._query(aql`FOR entry IN ${coll} RETURN entry`);
+        data = db._query(aql`
+        FOR entry IN ${coll}
+            RETURN entry.germplasm_gnpis_inrae
+        `).toArray();
+        //var germplasms= coll.firstExample('_key', key);
+
+        res.send(data[0]);
+    })
+        .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+        .summary('List entry keys')
+        .description('Assembles a list of keys of entries in the collection.');
+    
+
+router.get('/get_germplasm_unique_taxon_groups/', function (req, res) {
 
     var data = {}
     const coll = db._collection('germplasms');
@@ -985,29 +1032,37 @@ router.get('/get_germplasm_unique_taxon_group/', function (req, res) {
     data = db._query(aql`
     FOR entry IN ${coll}
         RETURN { TaxonGroup: UNIQUE(entry.germplasm_urgi_inrae[*].TaxonGroup) }
-    `);
-    res.send(data.next());
+    `).toArray();
+    res.send(data[0]);
 })
     .response(joi.object().required(), 'List of entry keys.')
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
 
+
+
 router.get('/get_germplasm_taxon_group_accession_numbers/:taxon_group', function (req, res) {
     var taxon_group = req.pathParams.taxon_group;
-    var data = {}
     const coll = db._collection('germplasms');
     if (!coll) {
         db._createDocumentCollection('germplasms');
     }
-    var get_data = db._query(aql`
+    var data = db._query(aql`
     LET document = DOCUMENT("germplasms/33546532") 
     LET alteredList = (
         FOR element IN document.germplasm_urgi_inrae 
                     FILTER element.TaxonGroup == ${taxon_group} 
-                    LET newItem = ({accession_num:element.AccessionNumber, accession_name:element.AccessionName,holding_institution: element.HoldingInstitution}) 
+                    LET newItem = (element)  
                     RETURN newItem) 
-            RETURN alteredList`);
-    res.send(get_data);
+            RETURN alteredList`).toArray();
+    var obj_to_send = {
+        'page': 1,
+        'per_page': 5,
+         'total': data[0].length,
+        'total_pages': data[0].length / 5,
+        'data': data[0]
+    }
+    res.send(obj_to_send);
 })
     .pathParam('taxon_group', joi.string().required(), 'taxon_group of the entry.')
     .response(joi.object().required(), 'List of entry keys.')
@@ -1748,6 +1803,49 @@ router.get('/get_elem/:collection/:key', function (req, res) {
     .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+
+router.get('/get_biological_material_by_key/:key', function (req, res) { 
+    var errors=[]
+    var data = {};
+    try {
+        var key = req.pathParams.key;
+        
+        const coll = db._collection("biological_materials");
+        if (!coll) {
+            db._createDocumentCollection(datatype);
+        }
+        data = coll.firstExample('_key', key);
+        
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            errors.push(e)
+            throw e;
+            
+        }
+        //res.throw(404, 'The entry does not exist', e);
+    }
+    if (errors.length===0){
+        res.send({success:true, data:data});
+    }
+    else{
+        res.send({success:false, data:{}});
+    }
+
+})
+.pathParam('key', joi.string().required(), 'unique key.')
+.response(
+    joi.object(
+        {
+            success: joi.boolean().required(),
+            data:joi.object().required()
+        }
+    ).required(), 'Entry stored in the collection.'
+    )
+.summary('Retrieve an entry')
+.description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
 
 router.get('/get_by_key/:model_type/:key', function (req, res) {
     try {

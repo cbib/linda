@@ -11,24 +11,33 @@ import { GlobalService, AlertService, UserService} from '../../../services';
 // Components
 import { MaterialFormComponent } from './material-form.component';
 import { AuthGuard } from '../../../guards/auth.guards';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DataTablesModule } from 'angular-datatables';
+import { AgGridModule } from 'ag-grid-angular';
+import { HttpClientModule } from '@angular/common/http';
+import { CustomTooltip } from './custom-tooltip.component';
 
-
+import 'ag-grid-enterprise';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     MaterialFormRoutingModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
     MatIconModule,
     MatMenuModule,
     MatCardModule,
+    DataTablesModule,
+    AgGridModule.withComponents([CustomTooltip]),
     JoyrideModule.forChild()
   ],
   exports: [
     MaterialFormComponent
   ],
   declarations: [
-    MaterialFormComponent
+    MaterialFormComponent,
+    CustomTooltip
   ],
   entryComponents:[MaterialFormComponent],
   providers: [

@@ -7,7 +7,7 @@ import { Constants } from "../constants";
 import { Investigation } from '../models/miappe/investigation';
 import { InvestigationInterface } from '../models/linda/investigation'; 
 import { StudyInterface} from '../models/linda/study'
-import { BiologicalMaterialInterface } from '../models/linda/biological-material'
+import { BiologicalMaterialFullInterface, BiologicalMaterialInterface } from '../models/linda/biological-material'
 import { ExperimentalFactorInterface } from '../models/linda/experimental_factor'; 
 import { ObservationUnitInterface } from '../models/linda/observation-unit';
 import { AssociatedHeadersInterface, DataFileInterface } from '../models/linda/data_files'
@@ -19,6 +19,7 @@ import { PersonInterface } from '../models/linda/person';
 import { EventInterface } from '../models/linda/event';
 import { Md5 } from 'ts-md5/dist/md5'
 import { EnvironmentInterface } from '../models/linda/environment';
+import { GermPlasmInterface } from '../models/linda/germplasm';
 
 
 @Injectable({
@@ -140,6 +141,18 @@ export class GlobalService {
     get_ncbi_taxon_data():Observable<any>{
         return this.http.get(this.APIUrl + "get_ncbi_taxon_data/");
     }
+    get_germplasm_taxon_group_accession_numbers(taxon_group:string):Observable<ResDataModal>{
+        return this.http.get<ResDataModal>(this.APIUrl + "get_germplasm_taxon_group_accession_numbers/" + taxon_group);
+    }
+    get_germplasm_unique_taxon_groups():Observable<any>{
+        return this.http.get(this.APIUrl + "get_germplasm_unique_taxon_groups/");
+    }
+    get_germplasmsdatamodal():Observable<ResDataModal>{
+        return this.http.get<ResDataModal>(this.APIUrl + "get_germplasms/");
+    }
+    get_germplasms():Observable<any[]>{
+        return this.http.get<any[]>(this.APIUrl + "get_germplasms/");
+    }
     
     get_multidata_from_datafiles(datafile_key:string, headers_linked:string){
         return this.http.get(this.APIUrl + "get_multidata_from_datafiles/" + datafile_key + "/" + headers_linked).pipe(catchError(this.handleError));
@@ -259,6 +272,10 @@ export class GlobalService {
         console.log(key)
         console.log(model_type)
         return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
+        //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
+    } 
+    get_biological_material_by_key(key: string):Observable<{success:boolean,data:BiologicalMaterialFullInterface}>{
+        return this.http.get<{success:boolean,data:BiologicalMaterialFullInterface}>(this.APIUrl + 'get_biological_material_by_key/' + '/' + key).pipe(catchError(this.handleError));
         //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
     } 
     get_elem(collection: string, key: string) {

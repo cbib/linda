@@ -10,19 +10,18 @@
   </div>
   <select name="select_template" size="1" (change)="onSelect($event.target.value)">
     <option value="" disabled>Select {{model_type}}s</option>
-    <ng-container *ngIf="model_type!=='biological_material'" matColumnDef="{{column}}">
+
+    <ng-container *ngIf="model_type!=='biological_material'">
       <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}
       </option>
     </ng-container>
-    <ng-container *ngIf="model_type==='biological_material'" matColumnDef="{{column}}">
+    <ng-container *ngIf="model_type==='biological_material'">
       <option *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}</option>
     </ng-container>
   </select>
 
-
   <ng-container *ngIf="model_type==='biological_material'">
     <table style="width: 100%;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
-
       <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->
 

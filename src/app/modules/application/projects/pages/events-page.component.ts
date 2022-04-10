@@ -131,8 +131,6 @@ export class EventsPageComponent implements OnInit {
         }
     }
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
-    console.log(this.model_type)
-    console.log(this.parent_id)
     const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {

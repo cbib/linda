@@ -1,105 +1,101 @@
 <div>
   <div class="border-head">
     <nav class="navbar navbar-expand-sm navbar-dark">
-    <h3>
-      <a href="index.html" class="logo">
-        <b>
-          P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
-        </b>
-      </a>
-      <div class="form-group text-center" style="float: right;">
-        <button (click)="onClickTour(true)" class="btn btn-xs btn-light">Help</button>
-        <span style="margin-right:10px;"></span>
-        <button (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
-          Cancel
-        </button>
-        <span style="margin-right:10px;"></span>        
-        <button 
-        joyrideStep="StepSubmit"
-        title=""
-        [stepContent]="submitcontent"
-        [stepPosition]="bottom"
-        [stepContentParams]="{'model_n':model_type}"
-        class="btn btn-xs btn-info" type="submit" (click)="submitForm();"
-          [disabled]="materialTable.invalid || (get_startfilling()===false && mode==='create')">
-          Submit
-          <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
-        </button>
-        <ng-template #submitcontent let-nod="model_n">
-          <div>
-            <nav class="navbar navbar-expand-sm navbar-dark">
+      <h3>
+        <a href="index.html" class="logo">
+          <b>
+            P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span>
+          </b>
+        </a>
+        <div class="form-group text-center" style="float: right;">
+          <button (click)="onClickTour(true)" class="btn btn-xs btn-light">Help</button>
+          <span style="margin-right:10px;"></span>
+          <button (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
+            Cancel
+          </button>
+          <span style="margin-right:10px;"></span>
+          <button joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="bottom"
+            [stepContentParams]="{'model_n':model_type}" class="btn btn-xs btn-info" type="submit"
+            (click)="submitForm();"
+            [disabled]="materialTable.invalid || (get_startfilling()===false && mode==='create')">
+            Submit
+            <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+          </button>
+          <ng-template #submitcontent let-nod="model_n">
+            <div>
+              <nav class="navbar navbar-expand-sm navbar-dark">
                 <h3>
-                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-              </h3>
-            </nav>
-          </div>
-          <h5>Data submission</h5>
-            <p>As you can see, your form has been filled with the corresponding values ! 1O plants (INRA:B73_1 to INRA:B73_10) from the same material source (INRA:B73) have been integrated in the Study. <br> Feel free to complete the form !  <br>
-            When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
-        </ng-template>
-        <!-- Save as template
+                  <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                      meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+                </h3>
+              </nav>
+            </div>
+            <h5>Data submission</h5>
+            <p>As you can see, your form has been filled with the corresponding values ! 1O plants (INRA:B73_1 to
+              INRA:B73_10) from the same material source (INRA:B73) have been integrated in the Study. <br> Feel free to
+              complete the form ! <br>
+              When it's done, click on <button class="btn btn-success">Submit</button> to submit your form !! </p>
+          </ng-template>
+          <!-- Save as template
         <label class="switch ">
           <input type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" class="default">
           <span class="slider round"></span>
         </label> -->
 
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)" id="flexSwitchCheckDefault">
-          <label class="form-check-label" for="flexSwitchCheckDefault">Save as template</label>
-      </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" [checked]="Checked" (change)="toggleVisibility($event)"
+              id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Save as template</label>
+          </div>
 
-      </div>
-    </h3>
+        </div>
+      </h3>
     </nav>
   </div>
 
   <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}} </h1>
   <p>{{model.Definition}}</p>
-  <div
-  joyrideStep="StepDemoForm"
-  title=""
-  [stepContent]="democontent"
-  [stepContentParams]="{'model_n':model_type}"
-  (next)= "onDone()">
-    
-    <form [formGroup]="materialTable">
-      <div 
-      joyrideStep="Step1_1"
-      title=""
-      [stepContent]="biologicalMaterialGeneralContent"
-      [stepPosition]="'center'"
-      [stepContentParams]="{'model_n':model_type}">
-      <!-- <h3>General Material information</h3> -->
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>General Material information</mat-card-title>
+  <div joyrideStep="StepDemoForm" title="" [stepContent]="democontent" [stepContentParams]="{'model_n':model_type}"
+    (next)="onDone()">
 
-          <!-- <mat-card-title><a href="#" class="logo">General Material information</a></mat-card-title> -->
-        </mat-card-header>    
+    <form [formGroup]="materialTable">
+      <div joyrideStep="Step1_1" title="" [stepContent]="biologicalMaterialGeneralContent" [stepPosition]="'center'"
+        [stepContentParams]="{'model_n':model_type}">
+        <!-- <h3>General Material information</h3> -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>General Material information</mat-card-title>
+            <!-- <mat-card-title><a href="#" class="logo">General Material information</a></mat-card-title> -->
+          </mat-card-header>
           <mat-card-content>
-            <ng-container formArrayName="generalRows" *ngFor="let group of materialTable.get('generalRows')['controls'] ; let l=index">
+            <ng-container formArrayName="generalRows"
+              *ngFor="let group of materialTable.get('generalRows')['controls'] ; let l=index">
               <div [formGroupName]="l" class="form-group">
                 <ng-container *ngFor="let field of cleaned_model ; let j=index">
                   <div *ngIf="model[field['key']].Level==1">
                     <label for="{{field['key']}}">{{field['key']}}</label>
                     <span style="display:inline-block; margin-left: 10px;">
-                      <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                      <i style="color :lightblue" class="fa fa-info-circle"
+                        title="{{model[field['key']].Definition}}"></i>
                     </span>
                     <div *ngIf="model[field['key']].Format.includes('Ontology')">
-                      <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as k;" class="btn-group">
+                      <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as k;"
+                        class="btn-group">
                         <button class="btn btn-success btn-xs fa fa-plus"
                           (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
                           {{ont}}
                         </button>
-      
+
                       </div>
                       <span *ngIf="validated_term[field['key']].selected!==true"
                         style="display:inline-block; margin-left: 10px;">
                         <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" list="dynamicNodes"/>
-                          <datalist id="dynamicNodes">
-                            <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species" [ngValue]="taxon.species">{{taxon.species}}</option>
-                         </datalist>
+                          formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
+                          list="dynamicNodes" />
+                        <datalist id="dynamicNodes">
+                          <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species"
+                            [ngValue]="taxon.species">{{taxon.species}}</option>
+                        </datalist>
                       </span>
                       <span *ngIf="validated_term[field['key']].selected===true"
                         style="display:inline-block; margin-left: 10px;">
@@ -113,20 +109,25 @@
                         <input *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
-                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" list="dynamicNodes2"/>
-                          <datalist id="dynamicNodes2">
-                            <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species" [ngValue]="taxon.species">{{taxon.species}}</option>
-                         </datalist>
+                          (input)="onInputChanges('test',$event.target.value)"
+                          [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" list="dynamicNodes2" />
+                        <datalist id="dynamicNodes2">
+                          <option *ngFor="let taxon of get_selected_taxons" [value]="taxon.species"
+                            [ngValue]="taxon.species">{{taxon.species}}</option>
+                        </datalist>
                         <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                           placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                           class="form-control" (keypress)="onTaskAdd($event)"
                           [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
                         <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.required">{{field['key']}} is
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.required">{{field['key']}}
+                            is
                             required</div>
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum length is
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum length
+                            is
                             required</div>
-                          <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is required -
+                          <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                            required -
                             already used !! </div>
 
                         </div>
@@ -140,109 +141,211 @@
                 </ng-container>
               </div>
             </ng-container>
-          </mat-card-content> 
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div>
+        <mat-card>
+          <h2>Material Lot Name grouped by taxon group and Material accession name</h2>
+          <p>Pick and choose material from INRAE Collection mmaterial sources</p>
+          <!-- <select [ngModel]="get_selected_taxon" [ngModelOptions]="{standalone: true}" name="select_model" size="1"
+            (change)="onTaxonChange($event.target.value)">
+            <option *ngFor="let md of get_unique_taxon_groups" [value]="md">{{md}}</option>
+          </select> -->
+        <button (click)="getSelectedRows()">Get Selected Rows</button>
+        <div class="example-header">
+          Page Size:
+          <select (change)="onSelectPageSizeChanged()" id="select-page-size">
+            <option value="10" selected="">10</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
+        <ag-grid-angular 
+        style="width: 95%; height: 500px;" 
+        class="ag-theme-alpine" 
+        [columnDefs]="selectColumnDefs" 
+        [defaultColDef]="selectDefaultColDef"
+        [autoGroupColumnDef]="selectAutoGroupColumnDef"
+        rowSelection="multiple"
+        [groupSelectsChildren]="true"
+        [groupSelectsFiltered]="true"
+        [pagination]="true"
+        [paginationPageSize]="selectPaginationPageSize"
+        [paginationNumberFormatter]="selectPaginationNumberFormatter"
+        [suppressRowClickSelection]="true"
+        [sideBar]="selectSideBar"
+        [rowData]="selectRowData"
+        (gridReady)="onSelectGridReady($event)"
+        >
+        </ag-grid-angular>
+        <h2>Biological Material grouped by Material source ID</h2>
+        <p>Pick and choose material from INRAE Collection mmaterial sources</p>
+        <button (click)="CleanTable()">Clear</button>
+        <div class="example-header">
+          Page Size:
+          <select (change)="onPageSizeChanged()" id="page-size">
+            <option value="10" selected="">10</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
+        <ag-grid-angular id="bm-table"
+        style="width: 95%; height: 500px;" 
+        class="ag-theme-alpine" 
+        [columnDefs]="ColumnDefs" 
+        [defaultColDef]="DefaultColDef"
+        [autoGroupColumnDef]="AutoGroupColumnDef"
+        rowSelection="multiple"
+        [groupSelectsChildren]="true"
+        [groupSelectsFiltered]="true"
+        [tooltipShowDelay]="tooltipShowDelay"
+        [tooltipHideDelay]="tooltipHideDelay"
+        [pagination]="true"
+        [paginationPageSize]="PaginationPageSize"
+        [paginationNumberFormatter]="PaginationNumberFormatter"
+        [suppressRowClickSelection]="true"
+        [enableCellChangeFlash]="true"
+        [animateRows]="true"
+        [sideBar]="SideBar"
+        [rowData]="RowData"
+        (gridReady)="onGridReady($event)"
+        >
+        </ag-grid-angular>
+         <!-- [rowData]="rowData | async" -->
       </mat-card>
-      </div >
+     
+      </div>
+      <div>
+        <!-- <mat-card>
+          <h2>Select taxon group </h2>
+          <select [ngModel]="get_selected_taxon" [ngModelOptions]="{standalone: true}" name="select_model" size="1"
+            (change)="onTaxonChange($event.target.value)">
+            <option *ngFor="let md of get_unique_taxon_groups" [value]="md">{{md}}</option>
+          </select>
+
+          <h4>Germplasms Table (URGI/GNPIS)</h4>
+          <ng-template #loading3 class="loaderHolder">
+            <mat-progress-spinner mode="indeterminate" style="margin: 0 auto">Loading...</mat-progress-spinner>
+          </ng-template>
+
+          <div *ngIf="get_germplasm_loaded || selected_taxon!==''; else loading3">
+            <table style="margin: 0%;" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable
+              class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped"></table>
+          </div>
+        </mat-card> -->
+        <!-- <div [hidden]="!get_germplasm_loaded">
+          <table style="margin: 0%;" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable  class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped"></table>
+        </div> -->
+      </div>
       <ng-template #biologicalMaterialGeneralContent let-nod="model_n">
         <div>
           <nav class="navbar navbar-expand-sm navbar-dark">
-              <h3>
-                   <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-              </h3>
+            <h3>
+              <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                  meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+            </h3>
           </nav>
         </div>
         <h4>Biological material</h4>
         <mat-card>
-        <h5>Biological materials details</h5>
-        <p><b>Biological material</b> – identifies and describes the plant materials used in the studies. </p>
-        <p>They must be identified through the organism field, which indicates the unique taxonomic identifier of the biological material 
-        in a standard such as the NCBI taxonomy. Optionally, they may be identified through the fields genus, species and infraspecific name, 
-        where textual names are expected (but should follow accepted standards).</p>
+          <h5>Biological materials details</h5>
+          <p><b>Biological material</b> – identifies and describes the plant materials used in the studies. </p>
+          <p>They must be identified through the organism field, which indicates the unique taxonomic identifier of the
+            biological material
+            in a standard such as the NCBI taxonomy. Optionally, they may be identified through the fields genus,
+            species and infraspecific name,
+            where textual names are expected (but should follow accepted standards).</p>
         </mat-card>
         <mat-card>
-        <h5>General Material information</h5>
-        <p>Here you can described general informations about your Organism, Species, Genus... </p><br> 
-        <!-- For example, add the following
+          <h5>General Material information</h5>
+          <p>Here you can described general informations about your Organism, Species, Genus... </p><br>
+          <!-- For example, add the following
         <ul>
           <li> Genus : Zea</li>
           <li> Species : mays</li>
           <li> Organism : NCBI:4577 </li>
           <li> Infraspecific name : B73</li>
         </ul> -->
-        
-      </mat-card>
+
+        </mat-card>
       </ng-template>
       <br>
-      <div 
-      *ngIf="mode!=='preprocess'"
-      joyrideStep="Step1_2"
-      title=""
-      [stepContent]="biologicalMaterialSourceContent"
-      [stepPosition]="center"
-      [stepContentParams]="{'model_n':model_type}">
-      <!-- <h3>Material information</h3> -->
-      <mat-card>
-        <mat-card-header>
+      <div *ngIf="mode!=='preprocess'" joyrideStep="Step1_2" title="" [stepContent]="biologicalMaterialSourceContent"
+        [stepPosition]="center" [stepContentParams]="{'model_n':model_type}">
+        <!-- <h3>Material information</h3> -->
+        <mat-card>
+          <mat-card-header>
             <mat-card-title>Material Source description</mat-card-title>
-        </mat-card-header>    
-        <mat-card-content>
-          <div class="action-container">
+          </mat-card-header>
+          <mat-card-content>
+            <div class="action-container">
 
-            <button class="btn btn-defaut btn-file" mat-raised-button type="submit" (click)="addMaterialRow()">Add material</button>
-            <!-- <button class="btn btn-primary" mat-raised-button (click)="addMaterialRowFromFile()">Add material from files</button> -->
-            <label class="btn btn-primary btn-file">Add material from files<input type="file" style="display: none;"  accept=".xlsx,.csv"  (change)="onFileChange($event)"></label>
+              <button class="btn btn-defaut btn-file" mat-raised-button type="submit" (click)="addMaterialRow()">Add
+                material</button>
+              <!-- <button class="btn btn-primary" mat-raised-button (click)="addMaterialRowFromFile()">Add material from files</button> -->
+<!--               <label class="btn btn-primary btn-file">Add material from files<input type="file" style="display: none;" accept=".xlsx,.csv" (change)="onFileChange($event)"></label>
+ -->
+            </div>
+            <span style="display:inline-block; margin-left: 10px;"></span>
+            <table datatable [dtOptions]="dtOptionsMatTable" cellpadding="0" cellspacing="0" cellwidth="2" border="0"
+              class="table table-hover table-bordered table-responsive-md text-center table-striped" [ngClass]="{'table-dark': mode_table}">
+              <!-- <thead class="text-nowrap">   -->
+              <!-- <thead>
+                <ng-container *ngFor="let field of cleaned_model ; let i=index">
+                  <th class="text-center align-middle" *ngIf="model[field['key']].Level==2">
+                    <div>
+                      <label for="{{field['key']}}">{{field['key']}}</label>
+                      <span style="display:inline-block; margin-left: 10px;">
+                        <i style="color :lightblue" class="fa fa-info-circle"
+                          title="{{model[field['key']].Definition}}"></i>
+                      </span>
+                    </div>
+                  </th>
+                </ng-container>
+                <th></th>
+                <th></th>
+              </thead> -->
+              <tbody style="overflow: hidden;
+              position: relative;
+              border: 0px none;">
+                <ng-container formArrayName="materialRows"
+                  *ngFor="let group of materialTable.get('materialRows')['controls'] ; let i=index">
+                  <tr (click)="RowSelected(i)" [formGroupName]="i" [ngClass]="{'highlight': selectedRowIndex == i}">
+                    <ng-container *ngFor="let field of cleaned_model ; let j=index">
 
-
-          </div>
-          <span style="display:inline-block; margin-left: 10px;"></span>
-          <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
-            <!-- <thead class="text-nowrap">   -->
-            <thead>
-              <ng-container *ngFor="let field of cleaned_model ; let i=index">
-                <th class="text-center align-middle" *ngIf="model[field['key']].Level==2">
-                  <div>
-                    <label for="{{field['key']}}">{{field['key']}}</label>
-                    <span style="display:inline-block; margin-left: 10px;">
-                      <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
-                    </span>
-                  </div>
-                </th>
-              </ng-container>
-              <th></th>
-            </thead>
-            <tbody>
-              <ng-container formArrayName="materialRows" *ngFor="let group of materialTable.get('materialRows')['controls'] ; let i=index"> 
-                <tr (click)="RowSelected(i)" [formGroupName]="i" [ngClass]="{'highlight': selectedRowIndex == i}">
-                  <ng-container *ngFor="let field of cleaned_model ; let j=index">
-                    <td class="text-center align-middle" *ngIf="model[field['key']].Level==2">
-                      <div *ngIf="model[field['key']].Format.includes('Ontology')">
-                        <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as o;"
-                          class="btn-group">
-                          <button class="btn btn-success btn-xs fa fa-plus"
-                            (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)">
-                            {{ont}}
-                          </button>
-
+                      <td class="text-center align-middle" *ngIf="model[field['key']].Level==2">
+                        <!-- displayed when model field has ontology format -->
+                        <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                          
+                          <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as o;" class="btn-group">
+                            <button class="btn btn-success btn-xs fa fa-plus" (click)="onOntologyTermSelection(ont, field['key'],model[field['key']].Multiple)"> {{ont}}</button>
+                          </div>
+                          <!-- displayed when value is not selected -->
+                          <span *ngIf="validated_term[field['key']].selected!==true" style="display:inline-block; margin-left: 10px;">
+                            <!-- form Control Name -->
+                            <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                          </span>
+                          <!-- displayed when value is selected -->
+                          <span *ngIf="validated_term[field['key']].selected===true" style="display:inline-block; margin-left: 10px;">
+                            <!-- form Control Name -->
+                            <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                          </span>
                         </div>
-                        <span *ngIf="validated_term[field['key']].selected!==true"
-                          style="display:inline-block; margin-left: 10px;">
-                          <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                            formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
-                        </span>
-                        <span *ngIf="validated_term[field['key']].selected===true"
-                          style="display:inline-block; margin-left: 10px;">
-                          <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
-                            formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
-                        </span>
-                      </div>
-                      <div *ngIf="!model[field['key']].Format.includes('Ontology')">
-                        <div *ngIf="!field['key'].includes('date')">
-                          <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
-                            mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                            formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                        <!-- displayed when model field has not ontology format -->
+                        <div *ngIf="!model[field['key']].Format.includes('Ontology')">
+                          <!-- displayed when model field is not date format -->
+                          <div *ngIf="!field['key'].includes('date')">
+                            <!-- displayed when model field is unique ID and not free text -->
+                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('latitude')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('longitude')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
 
-                          <!-- <mat-slider formControlName="{{field['key']}}"
+                            <!-- <mat-slider formControlName="{{field['key']}}"
                             *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
                             [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
                           </mat-slider>
@@ -260,64 +363,69 @@
                             *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('altitude')"
                             [displayWith]="formatLabel" step="0.1" thumbLabel min="-11000" max="+11000" tickInterval="0.1">
                           </mat-slider> -->
-
-                          <textarea
-                            *ngIf="model[field['key']].Format.includes('Free text') || model[field['key']].Format.includes('DOI')"
-                            mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                            formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
-                            [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
-                          <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
-                              {{field['key']}} is required</div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">Minimum
-                              length is required</div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
-                              required - already used !! </div>
-                            <div style="color :red" *ngIf="group.controls[field['key']].errors.duplicate">duplicate ID in table unique ID is required -
+                            <!-- displayed when model field is DOI and free text -->
+                            <textarea *ngIf="model[field['key']].Format.includes('Free text') || model[field['key']].Format.includes('DOI')" mdbInput placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)" [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
+                            <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
+                              <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                                {{field['key']}} is required
+                              </div>
+                              <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">Minimum
+                                length is required</div>
+                              <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                                required - already used !! </div>
+                              <div style="color :red" *ngIf="group.controls[field['key']].errors.duplicate">duplicate ID
+                                in table unique ID is required -
                                 already used !! </div>
+                            </div>
+                          </div>
+                          <!-- displayed when model field is date format -->
+                          <div *ngIf="field['key'].includes('date')">
+                            <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
+                              formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
                           </div>
                         </div>
-
-                        <div *ngIf="field['key'].includes('date')">
-                          <input mdbInput placeholder="{{model[field['key']].Example}}" type="date"
-                            formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
-                        </div>
-                      </div>
+                      </td>
+                    </ng-container>
+                    <td class="text-center align-middle">
+                      <mat-icon class="delete" (click)="deleteMaterialRow(i)">delete_forever</mat-icon>
                     </td>
-                  </ng-container>
-                  <td class="text-center align-middle">
-                    <mat-icon class="delete" (click)="deleteMaterialRow(i)">delete_forever</mat-icon>
-                  </td>
-                  <td class="text-center align-middle">
-                    <mat-icon class="edit" (click)="editBiologicalMaterial(i)">edit_bm</mat-icon>
-                  </td>
-                </tr>
-              </ng-container>
-            </tbody>
-          </table>
-        </mat-card-content>
-      </mat-card>
-      </div >
-      <ng-template #biologicalMaterialSourceContent let-nod="model_n">
-      <div>
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <h3>
-                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-            </h3>
-        </nav>
+                    <td class="text-center align-middle">
+                      <mat-icon class="edit" (click)="editBiologicalMaterial(i)">edit_bm</mat-icon>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+
+          </mat-card-content>
+        </mat-card>
       </div>
-      <h4>Material source</h4>
-      <p>
-          <b>Material source</b> - fields identify the origin or provenance of the biological material (e.g. gene bank accession, 
-          in situ material like an orchard, tree material provenance including forest wild site, laboratory-specific populations). 
-          These fields include the material source ID (which follows the same recommendations as the biological material ID), 
-          the material source DOI (for referencing material sources listed in repositories), four geographical coordinates fields 
+      <ng-template #biologicalMaterialSourceContent let-nod="model_n">
+        <div>
+          <nav class="navbar navbar-expand-sm navbar-dark">
+            <h3>
+              <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                  meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+            </h3>
+          </nav>
+        </div>
+        <h4>Material source</h4>
+        <p>
+          <b>Material source</b> - fields identify the origin or provenance of the biological material (e.g. gene bank
+          accession,
+          in situ material like an orchard, tree material provenance including forest wild site, laboratory-specific
+          populations).
+          These fields include the material source ID (which follows the same recommendations as the biological material
+          ID),
+          the material source DOI (for referencing material sources listed in repositories), four geographical
+          coordinates fields
           (same as for biological material), and finally a textual description.
-       </p>
-       <h5>Material source description</h5>
-      <p> Here you can described material sources important details about your material like unique identifier in some repository.
-         Click on "Add material button" to create a new entry in the Material source table</p>
-      <!-- <ul>
+        </p>
+        <h5>Material source description</h5>
+        <p> Here you can described material sources important details about your material like unique identifier in some
+          repository.
+          Click on "Add material button" to create a new entry in the Material source table</p>
+        <!-- <ul>
         <li> Click on "Add material button" to create a new entry in the Material source table</li>
         <li> then, fill in the following fields : </li>
         <ul>
@@ -326,25 +434,19 @@
       </ul> -->
       </ng-template>
       <br>
-      <div 
-      *ngIf="mode!=='preprocess'"
-      joyrideStep="Step1_3"
-      title=""
-      [stepContent]="biologicalMaterialContent"
-      [stepPosition]="center"
-      [stepContentParams]="{'model_n':model_type}">
+      <div *ngIf="mode!=='preprocess'" joyrideStep="Step1_3" title="" [stepContent]="biologicalMaterialContent"
+        [stepPosition]="center" [stepContentParams]="{'model_n':model_type}">
         <mat-card>
           <mat-card-header>
-              <mat-card-title>Biological material description</mat-card-title>
-          </mat-card-header>    
+            <mat-card-title>Biological material description</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <div class="action-container">
-              <button class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterialRow()">Add
-                biological material</button>
+              <button class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterialRow()">Add biological material</button>
             </div>
             <span style="display:inline-block; margin-left: 10px;"></span>
-            <table cellpadding="0" cellspacing="0" cellwidth="2" border="0" class="display table table-bordered table-hover"
-              [ngClass]="{'table-dark': mode_table}">
+            <table cellpadding="0" cellspacing="0" cellwidth="2" border="0"
+              class="display table table-bordered table-hover" [ngClass]="{'table-dark': mode_table}">
               <!-- <thead class="text-nowrap">   -->
               <thead>
 
@@ -354,7 +456,8 @@
                     <div>
                       <label for="{{field['key']}}">{{field['key']}}</label>
                       <span style="display:inline-block; margin-left: 10px;">
-                        <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                        <i style="color :lightblue" class="fa fa-info-circle"
+                          title="{{model[field['key']].Definition}}"></i>
                       </span>
                     </div>
                   </th>
@@ -363,7 +466,8 @@
                     <div>
                       <label for="{{field['key']}}">{{field['key']}}</label>
                       <span style="display:inline-block; margin-left: 10px;">
-                        <i style="color :lightblue" class="fa fa-info-circle" title="{{model[field['key']].Definition}}"></i>
+                        <i style="color :lightblue" class="fa fa-info-circle"
+                          title="{{model[field['key']].Definition}}"></i>
                       </span>
                     </div>
                   </th>
@@ -387,18 +491,19 @@
                           </div>
                           <span *ngIf="validated_term[field['key']].selected!==true"
                             style="display:inline-block; margin-left: 10px;">
-                            <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}" type="text"
-                              formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                            <input style="color:black" mdbInput placeholder="{{model[field['key']].Example}}"
+                              type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
                           </span>
                           <span *ngIf="validated_term[field['key']].selected===true"
                             style="display:inline-block; margin-left: 10px;">
-                            <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}" type="text"
-                              formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
+                            <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}"
+                              type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
                           </span>
                         </div>
                         <div *ngIf="!model[field['key']].Format.includes('Ontology')">
                           <div *ngIf="!field['key'].includes('date')">
-                            <input *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
+                            <input
+                              *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
                               mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                               formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
                               [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
@@ -422,12 +527,13 @@
                             </mat-slider> -->
 
                             <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
-                              placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                              (keyup)="onTaskAdd($event)"
+                              placeholder="{{model[field['key']].Example}}" type="text"
+                              formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
                               [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
                             <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
                               <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
-                                {{field['key']}} is required</div>
+                                {{field['key']}} is required
+                              </div>
                               <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
                                 length is required</div>
                               <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
@@ -451,33 +557,39 @@
             </table>
           </mat-card-content>
         </mat-card>
-      </div >
-      <ng-template #biologicalMaterialContent let-nod="model_n">
-      <div>
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <h3>
-                 <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-            </h3>
-        </nav>
       </div>
-      <h4>Biological Material</h4>
-      <h5>Biological Material description</h5>
-      <p>
-        Plant materials must be identified through a biological material ID field, which can be institution-specific 
-        or platform-specific (e.g. seed lot number for annual plants, clone number for perennials or an experimental plant ID), 
-        and is recommended to follow the MCPD convention of holding institute identifier (FAO WIEWS code) plus a unique identifier 
-        of the individual plant material provided by that institute.
-      </p>
-      <p>
-        They may also be identified through geographical coordinates (i.e. latitude, longitude, altitude, and coordinates uncertainty), 
-        as is common for forest trees. The biological material preprocessing describes the biological material pretreatments, 
-        applied (e.g. to the seeds, or the tree cuttings) before the beginning of the experiment.
-      </p>
-      <h5>Biological Material description</h5>
-      <p>  Here you can described biological material  important details about your material like unique identifier in some repository.
+      <ng-template #biologicalMaterialContent let-nod="model_n">
+        <div>
+          <nav class="navbar navbar-expand-sm navbar-dark">
+            <h3>
+              <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+                  meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+            </h3>
+          </nav>
+        </div>
+        <h4>Biological Material</h4>
+        <h5>Biological Material description</h5>
+        <p>
+          Plant materials must be identified through a biological material ID field, which can be institution-specific
+          or platform-specific (e.g. seed lot number for annual plants, clone number for perennials or an experimental
+          plant ID),
+          and is recommended to follow the MCPD convention of holding institute identifier (FAO WIEWS code) plus a
+          unique identifier
+          of the individual plant material provided by that institute.
+        </p>
+        <p>
+          They may also be identified through geographical coordinates (i.e. latitude, longitude, altitude, and
+          coordinates uncertainty),
+          as is common for forest trees. The biological material preprocessing describes the biological material
+          pretreatments,
+          applied (e.g. to the seeds, or the tree cuttings) before the beginning of the experiment.
+        </p>
+        <h5>Biological Material description</h5>
+        <p> Here you can described biological material important details about your material like unique identifier in
+          some repository.
           !! Each biological material is linked to a material in the material source table !! <br>
-       Click on "Add biological material" button to create a new entry in the biological Material table</p>
-      <!-- <ul>
+          Click on "Add biological material" button to create a new entry in the biological Material table</p>
+        <!-- <ul>
         <li> First click on "Add biological material" button to create a new entry in the biological Material table
           
         </li>
@@ -487,38 +599,61 @@
         <li> Biological Material preprocessing (with PECO ontology): INRA:B73_inra_1</li>
       </ul>
       </ul> -->
-    </ng-template>
+      </ng-template>
     </form>
   </div>
-  <ng-template #democontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
+  <ng-template #democontent let-nod="model_n" let-modellen="model_len" let-modell="model_level"
+    let-modelmessage="message">
     <div>
       <nav class="navbar navbar-expand-sm navbar-dark">
-          <h3>
-               <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
-          </h3>
+        <h3>
+          <a class="logo" style="color: black;"><b>P<span>L</span>ant exper<span>I</span>me<span>N</span>tal
+              meta<span>D</span>at<span>A</span></b><span style="color: black;"> : THE TUTORIAL</span></a>
+        </h3>
       </nav>
     </div>
     <div *ngIf="nod === 'biological_material'">
       <h4>Biological materials</h4>
-      <p> Click on <b>NEXT</b> to add a 10 biological materials (10 plants) for five differents material accessions(<b>B73</b>,<b>PH207</b>,<b>Oh43</b>,<b>W64A</b>,<b>EZ47</b>) short-called : "INRA:B73_1 to INRA:B73_10, INRA:PH207_1 to INRA:PH207_10, etc." with the following values:</p>
+      <p> Click on <b>NEXT</b> to add a 10 biological materials (10 plants) for five differents material
+        accessions(<b>B73</b>,<b>PH207</b>,<b>Oh43</b>,<b>W64A</b>,<b>EZ47</b>) short-called : "INRA:B73_1 to
+        INRA:B73_10, INRA:PH207_1 to INRA:PH207_10, etc." with the following values:</p>
+      <ul>
+        <li>
+          <p> <b>Genus</b> : Zea</p>
+        </li>
+        <li>
+          <p> <b>Species </b> : mays </p>
+        </li>
+        <li>
+          <p> <b>Organism </b> : NCBI:4577 </p>
+        </li>
+        <li>
+          <p> <b>Infraspecific name </b> : B73,PH207,Oh43,W64A,EZ47 </p>
+        </li>
+        <li>
+          <p> <b> 5 Material source IDs </b> : INRA:B73, INRA:PH207, INRA:Oh43,INRA:W64A, INRA:EZ47</p>
           <ul>
-          <li> <p> <b>Genus</b> : Zea</p></li>
-          <li> <p> <b>Species </b> : mays </p></li>
-          <li> <p> <b>Organism </b> : NCBI:4577 </p></li>
-          <li> <p> <b>Infraspecific name </b> : B73,PH207,Oh43,W64A,EZ47 </p></li>
-          <li> <p> <b> 5 Material source IDs </b> : INRA:B73, INRA:PH207, INRA:Oh43,INRA:W64A, INRA:EZ47</p>
-          <ul>
-            <li><p> <b> 10 Biological material IDs </b> : from INRA:B73_1 to INRA:B73_10 </p></li>
-            <li> <p> <b> 10 Biological material IDs </b> : from INRA:PH207_1 to INRA:PH207_10 </p></li>
-            <li> <p> <b> 10 Biological material IDs </b> : from INRA:Oh43_1 to INRA:Oh43_10 </p></li>
-            <li> <p> <b> 10 Biological material IDs </b> : from INRA:W64A_1 to INRA:W64A_10 </p></li>
-            <li> <p> <b> 10 Biological material IDs </b> : from INRA:EZ47_1 to INRA:EZ47_10 </p></li>
+            <li>
+              <p> <b> 10 Biological material IDs </b> : from INRA:B73_1 to INRA:B73_10 </p>
+            </li>
+            <li>
+              <p> <b> 10 Biological material IDs </b> : from INRA:PH207_1 to INRA:PH207_10 </p>
+            </li>
+            <li>
+              <p> <b> 10 Biological material IDs </b> : from INRA:Oh43_1 to INRA:Oh43_10 </p>
+            </li>
+            <li>
+              <p> <b> 10 Biological material IDs </b> : from INRA:W64A_1 to INRA:W64A_10 </p>
+            </li>
+            <li>
+              <p> <b> 10 Biological material IDs </b> : from INRA:EZ47_1 to INRA:EZ47_10 </p>
+            </li>
           </ul>
-          </li>
-          </ul>
-       <p> The other fields can be fullfilled later<br></p>
+        </li>
+      </ul>
+      <p> The other fields can be fullfilled later<br></p>
     </div>
-</ng-template>
+  </ng-template>
   <!-- <div class="output">
     <p>Form Data: {{materialTable.value | json}}</p>
     <p>Is Valid: {{materialTable.valid}}</p>

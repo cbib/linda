@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators,ValidatorFn, AbstractControl } from '@angular/forms';
 import { GlobalService, AlertService, OntologiesService } from '../../../services';
 import { first } from 'rxjs/operators';
@@ -12,8 +12,25 @@ import { DelimitorComponent } from '../dialogs/delimitor.component';
 import { CsvLoaderComponent } from '../dialogs/csv-loader.component';
 import * as XLSX from 'xlsx';
 import { UserInterface } from 'src/app/models/linda/person';
-
+import { DataTableDirective } from 'angular-datatables';
 import {JoyrideService} from 'ngx-joyride';
+import { GermPlasmInterface } from 'src/app/models/linda/germplasm';
+import { Observable, Subject } from 'rxjs';
+import { ColDef, PaginationNumberFormatterParams, FirstDataRenderedEvent, GridReadyEvent, SideBarDef, GridApi, RefreshCellsParams } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { SetFilterModel} from 'ag-grid-enterprise';
+import { BiologicalMaterial, BiologicalMaterialFullInterface, BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
+import { CustomTooltip } from './custom-tooltip.component';
+/* import {
+  CheckboxSelectionCallbackParams,
+  ColDef,
+  FirstDataRenderedEvent,
+  GridApi,
+  GridReadyEvent,
+  HeaderCheckboxSelectionCallbackParams,
+  PaginationNumberFormatterParams,
+} from '@ag-grid-community/core';
+ */
 @Component({
   selector: 'app-material-form',
   templateUrl: './material-form.component.html',
@@ -27,6 +44,20 @@ export class MaterialFormComponent implements OnInit {
   @Input() model_type: string;
   @Input() mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
+  //@ViewChild('agGrid') agGrid!: AgGridAngular;
+  @ViewChild(AgGridAngular, { static: false }) selectAgGrid: AgGridAngular;
+  @ViewChild(AgGridAngular, { static: false }) agGrid: AgGridAngular;
+
+  //@ViewChild('dataTable', {static: true}) table;
+  @ViewChild(DataTableDirective, { static: false }) dtElement: DataTableDirective;
+  dtTrigger: Subject<any> = new Subject<any>();
+  dataTable: any;
+  //dtOptions: any;
+  dtOptionsMatTable: any = {};
+  //dtOptionsMatTable: DataTables.Settings = {};
+  dtOptions: DataTables.Settings = {};
+  tableData = [];
+
 
   materialTable: FormGroup;
   materialControl: FormArray;
@@ -61,6 +92,7 @@ export class MaterialFormComponent implements OnInit {
   selectedRowIndex = -1;
   bottom="bottom"
   center="center"
+  subscription: any;
 
 
   // I/O part
@@ -71,7 +103,132 @@ export class MaterialFormComponent implements OnInit {
   uploadResponse = { status: '', message: 0, filePath: '' };
   taxons:{'species':string,'taxon':[]}[]=[]
   selected_taxons:{'species':string,'taxon':[]}[]=[]
+  germplasms:GermPlasmInterface[]=[]
+  selected_germplasms:GermPlasmInterface[]=[]
+  germplasm_loaded:boolean=false
+  unique_taxon_groups:{}={}
+  selected_taxon:string=""
+  
+  ///dtOptions: DataTables.Settings = {};
 
+/*    // We use this trigger because fetching the list of persons can be quite long,
+  // thus we ensure the data is fetched before rendering
+  dtTrigger: Subject<any> = new Subject<any>(); */
+
+  private columns=[]
+  public selectPaginationPageSize = 10;
+  public selectPaginationNumberFormatter: (
+    params: PaginationNumberFormatterParams
+  ) => string = function (params) {
+    return '[' + params.value.toLocaleString() + ']';
+  };
+  
+  selectColumnDefs: ColDef[] = [
+    { field: 'TaxonGroup', rowGroup: true, hide: true},
+    { field: 'AccessionName', rowGroup: true, hide: true},
+    { field: 'Genus'},
+    { field: 'TaxonScientificName'},
+    { field: 'AccessionNumber'},
+    { field: 'CollectionNames'},
+    {field: 'CollectionTypes'},
+    {field: 'HoldingInstitution'},
+    {field:'DOI'},
+//{field:'LotName'},
+    {field:'PanelNames'},
+    {field:'PanelSizes'}
+  ];
+  
+  public selectDefaultColDef: ColDef = {
+    editable: false,
+    enableRowGroup: true,
+    enablePivot: true,
+    enableValue: true,
+    sortable: true,
+    resizable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 100
+  };
+  /* public selectAutoGroupColumnDef: ColDef = {
+    headerName: 'Material Accession Name',
+    field: 'AccessionName',
+    minWidth: 250,
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
+      checkbox: true,
+    },
+  }; */
+  public selectAutoGroupColumnDef: ColDef = {
+    headerName: 'Lot Name',
+    field: 'LotName',
+    minWidth: 250,
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
+      checkbox: true,
+    },
+  };
+  //rowData: Observable<any[]>;
+  public selectSideBar: SideBarDef | string | boolean | null = 'filters';
+  public selectRowData!: any[];
+  private selectGridApi!: GridApi;
+  private gridApi!: GridApi;
+  public doc:BiologicalMaterialFullInterface;
+  public RowData!: BiologicalMaterialInterface[];
+  public tooltipShowDelay = 0;
+  public tooltipHideDelay = 2000;
+
+
+  // MATERIAL TABLE
+  
+  ColumnDefs: ColDef[] = [
+    { field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, hide: true, tooltipField: 'Biological material ID',},
+    { field: 'Genus', tooltipField: 'Biological material ID',},
+    { field: 'Species', tooltipField: 'Biological material ID',},
+    { field: 'Organism'},
+    { field: 'Infraspecific name'},
+    { field: 'Material source description'},
+    { field: 'Material source DOI'},
+    { field: 'Material source altitude'},
+    { field: 'Material source latitude'},
+    { field: 'Material source longitude'},
+    { field: 'Material source coordinates uncertainty'},
+    { field: 'Biological material preprocessing'},
+    { field: 'Biological longitude'},
+    { field: 'Biological latitude'},
+    { field: 'Biological altitude'},
+    { field: 'Biological coordinates uncertainty'}
+  ];
+  public DefaultColDef: ColDef = {
+    editable: false,
+    enableRowGroup: true,
+    enablePivot: true,
+    enableValue: true,
+    sortable: true,
+    resizable: true,
+    filter: true,
+    flex: 1,
+    minWidth: 100,
+    tooltipComponent: CustomTooltip
+  };
+  public AutoGroupColumnDef: ColDef = {
+    headerName: 'Biological material ID',
+    field: 'Biological material ID',
+    tooltipField: 'Biological material ID', 
+    minWidth: 250,
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
+      checkbox: true,
+    },
+  };
+  public SideBar: SideBarDef | string | boolean | null = 'filters';
+  public PaginationPageSize = 10;
+  public PaginationNumberFormatter: (
+    params: PaginationNumberFormatterParams
+  ) => string = function (params) {
+    return '[' + params.value.toLocaleString() + ']';
+  };
+  
+  
   constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
     public ontologiesService: OntologiesService,
 
@@ -81,7 +238,8 @@ export class MaterialFormComponent implements OnInit {
     public dialog: MatDialog,
     public bmdialog: MatDialog) {
 
-
+    //this.rowData = this.globalService.get_germplasms()
+    this.germplasm_loaded=false
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
@@ -93,11 +251,142 @@ export class MaterialFormComponent implements OnInit {
     );
     if (this.model_key != "") {
       this.get_model_by_key();
+
     }
 
   }
+  RefreshAll() {
 
+    var params = {
+      force: true
+    };
+    console.log('before refreshing')
+    //agGrid.api == gridApi
+    ///this.agGrid.api.refreshCells(params);
+    this.gridApi.setRowData((this.RowData))
+    ///this.gridApi.refreshCells(params)
+    
+    //this.gridApi.redrawRows();
+  }
+  CleanTable():void{
+    this.RowData=[]
+    this.RefreshAll()
+  }
+  getSelectedRows():void{
+    const selectedNodes = this.selectAgGrid.api.getSelectedNodes();
+    console.log(selectedNodes)
+    const selectedData = selectedNodes.map(node => node.data);
+    console.log(selectedData)
+
+    const materialControl = this.materialTable.get('materialRows') as FormArray;
+    const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+    for (let index = 0; index < selectedData.length; index++) {
+      const element = selectedData[index];
+      //materialControl.push(this.initiateMaterialFormWithValues(element))
+      //biologicalMaterialControl.push(this.initiateBiologicalMaterialFormWithValues(selectedData));
+      let bm_id=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]+ "_1"
+      let bm:BiologicalMaterial=new BiologicalMaterial(bm_id)
+      bm['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
+      bm['Material source DOI']=element["DOI"]
+      bm['Material source altitude']=""
+      bm['Material source description']=""
+      bm['Material source latitude']=""
+      bm['Material source longitude']=""
+      bm.Genus=element["Genus"]
+      bm.Species=element["TaxonScientificName"]
+      bm.Organism=""
+      bm['Infraspecific name']=element["TaxonScientificName"]
+      this.RowData.push(bm)
+      
+    }
+    console.log(this.RowData)
+    //this.agGrid.api.setRowData(this.RowData);
+    this.RefreshAll()
+    //this.GridApi.refreshCells();
+    
+  }
+  async get_model_by_key() {
+    //console.log('test')
+    this.model_to_edit = [];
+    await this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
+      this.model_to_edit = data;
+    //console.log(this.model_to_edit)
+      //this.modelForm.patchValue(this.model_to_edit);
+    });
+  }
+  onSelectGridReady(params: GridReadyEvent) {
+    this.selectGridApi = params.api;
+    this.globalService.get_germplasms().subscribe((data) => {
+      this.selectRowData = data;  
+      this.selectGridApi.setRowData(this.selectRowData)
+    });
+  }
+  get_data(){
+    this.RowData=[]
+    if (this.model_key!==''){
+      this.globalService.get_biological_material_by_key(this.model_key).toPromise().then(data_full => {
+        if (data_full.success){
+          let data=data_full.data
+          for (var i = 0; i < data["Material source ID (Holding institute/stock centre, accession)"].length; i++) {
+            for (var j = 0; j < data["Biological material ID"][i].length; j++) {
+              let bm:BiologicalMaterial=new BiologicalMaterial(data["Biological material ID"][i][j])
+              bm['Material source ID (Holding institute/stock centre, accession)']=data["Material source ID (Holding institute/stock centre, accession)"][i]
+              bm['Material source DOI']=data["Material source DOI"][i]
+              bm['Material source altitude']=data["Material source altitude"][i]
+              bm['Material source description']=data["Material source description"][i]
+              bm['Material source latitude']=data["Material source latitude"][i]
+              bm['Material source longitude']=data["Material source longitude"][i]
+              bm.Genus=data["Genus"]
+              bm.Species=data["Species"]
+              bm.Organism=data["Organism"]
+              bm["Infraspecific name"]=data["Infraspecific name"]
+              this.RowData.push(bm)
+            }
+          } 
+        }
+      });
+    }
+    console.log(this.RowData)
+  }
+  onGridReady(params: GridReadyEvent) {
+    
+    this.gridApi = params.api;
+    this.get_data()
+    
+  }
+  onSelectPageSizeChanged(){
+    var value = (document.getElementById('select-page-size') as HTMLInputElement)
+    .value;
+    this.selectGridApi.paginationSetPageSize(Number(value));
+  }
+  onPageSizeChanged(){
+    var value = (document.getElementById('page-size') as HTMLInputElement)
+    .value;
+    this.gridApi.paginationSetPageSize(Number(value));
+  }
   async ngOnInit() {
+    console.log(this.columns)
+    this.columns=[
+      {title:"Material source ID (Holding institute/stock centre, accession)", data:"Material source ID (Holding institute/stock centre, accession)"},
+      {title:"Material source description", data:"Material source description"},
+      {title:"Material source DOI", data:"Material source DOI"},
+      {title:"Material source altitude", data:"Material source altitude"},
+      {title:"Material source latitude", data:"Material source latitude"},
+      {title:"Material source longitude", data:"Material source longitude"},
+      {title:"Material source coordinates uncertainty", data:"Material source coordinates uncertainty"},
+      {title:"Edit", data:"Edit"},
+      {title:"Delete", data:"Delete"}
+    ]
+    this.dtOptionsMatTable = {
+      pagingType: 'full_numbers',
+      pageLength: 5,
+      processing: true,
+      scrollX:true,
+      columns:this.columns
+    };
+    this.germplasm_loaded=false
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    
     this.mode_table = false
     this.materialTouchedRows = [];
     this.biologicalMaterialTouchedRows = [];
@@ -110,32 +399,66 @@ export class MaterialFormComponent implements OnInit {
       biologicalMaterialRows: this.fb.array([]),
       generalRows: this.fb.array([])
     });
-    //this.get_model()
-    await this.get_model()
+    this.get_model()
     await this.get_ncbi_taxon()
+    await this.get_germplasm_unique_taxon_groups()
     console.log(this.mode)
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
-    this.onClickTour(); 
+    //this.onClickTour(); 
+  }
 
-  }
-  async get_ncbi_taxon(){
-    this.taxons = await this.globalService.get_ncbi_taxon_data().toPromise()
-    console.log(this.taxons[0])
-  }
-  get get_taxons(){
-    return this.taxons
-  }
-  get get_selected_taxons(){
-    return this.selected_taxons
+  onInputChanges(field:string,value: string){
+    console.log(value)
   }
   ngAfterOnInit() {
     this.materialControl = this.materialTable.get('materialRows') as FormArray;
     this.biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     this.generalControl = this.materialTable.get('generalRows') as FormArray;
-
   }
+  get get_selected_taxon(){
+    return this.selected_taxon    
+  }
+  async get_ncbi_taxon(){
+    this.taxons = await this.globalService.get_ncbi_taxon_data().toPromise()
+    console.log(this.taxons[0])
+  }
+  async get_germplasm_unique_taxon_groups(){
+    this.unique_taxon_groups = await this.globalService.get_germplasm_unique_taxon_groups().toPromise()
+  }
+
+  /* async get_germplasms() {
+    this.globalService.get_germplasm_taxon_group_accession_numbers(this.selected_taxon).subscribe(
+      data => {
+      this.germplasm_loaded=false
+      this.tableData = data.data;
+      this.dtOptions = {
+        data: this.tableData,
+        columns: this.columns,
+        pageLength: 5,
+        lengthMenu : [5, 10, 15, 20]
+      };
+    }, err => {
+      this.germplasm_loaded=false
+    }, () => {
+      this.dataTable = $(this.table.nativeElement);
+      this.dataTable.DataTable(this.dtOptions);   
+    });
+  } */
   
-  
+  get get_taxons(){
+    return this.taxons
+  }
+  get get_tableData(){
+    return this.tableData
+  }
+  get get_selected_taxons(){
+    return this.selected_taxons
+  }
+  get get_unique_taxon_groups():string[]{
+    return this.unique_taxon_groups['TaxonGroup']
+  }
+  get get_germplasm_loaded():boolean{
+    return this.germplasm_loaded
+  }
   onTaskAdd(event) {
     this.selected_taxons = []
     let search_string = event.target.value;
@@ -159,10 +482,8 @@ export class MaterialFormComponent implements OnInit {
     // //console.log(this.startfilling)
     // //console.log(this.materialTable.value)
   }
-  
   get_model() {
     this.model = [];
-
     //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
     this.globalService.get_model(this.model_type).toPromise().then(data => {
       this.model = data;
@@ -184,40 +505,6 @@ export class MaterialFormComponent implements OnInit {
         }
       }
       this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
-      //this.addRow()
-      //const control =  this.materialTable.get('materialRows') as FormArray;
-      //control.push(this.initiateForm());
-      //this.addRow()
-
-      // //console.log(this.cleaned_model)
-      // //console.log(this.materialTable)
-
-      // const generalControl = this.materialTable.get('generalRows') as FormArray;
-      // generalControl.push(this.initiateGeneralForm());
-
-      // let attributeFilters = {};
-      // this.cleaned_model.forEach(attr => {
-      //   this.validated_term[attr["key"]] = { selected: false, values: "" }
-      //   if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-      //     if (!attr["key"].includes("Biological") && !attr["key"].includes("Material")) {
-      //       if (attr["key"].includes("ID")) {
-      //         //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-      //         //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-      //         attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
-      //       }
-      //       else if (attr["key"].includes("Project Name")) {
-      //         attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
-      //       }
-      //       else {
-      //         attributeFilters[attr["key"]] = [''];
-      //       }
-      //       //attributeFilters['mat-id'] = this.material_id
-
-
-      //     }
-
-      //   }
-      // });
       const generalControl = this.materialTable.get('generalRows') as FormArray;
       const materialControl = this.materialTable.get('materialRows') as FormArray;
       const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
@@ -226,29 +513,15 @@ export class MaterialFormComponent implements OnInit {
         for (var i = 0; i < this.model_to_edit["Material source ID (Holding institute/stock centre, accession)"].length; i++) {
           materialControl.push(this.initiateMaterialForm("",i));
           for (var j = 0; j < this.model_to_edit["Biological material ID"][i].length; j++) {
-
             biologicalMaterialControl.push(this.initiateBiologicalMaterialForm("",i,j));
-
           }
-
         }
       }
       //generalControl.push(this.formBuilder.group(attributeFilters))
       // //console.log(this.materialTable.value)
-
-
     });
   }
-  get_model_by_key() {
-    //console.log('test')
-    this.model_to_edit = [];
-    this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
-      this.model_to_edit = data;
-      //console.log(this.model_to_edit)
-      //this.modelForm.patchValue(this.model_to_edit);
-    });
-  }
- 
+  
   isMaterialIDDuplicate(): ValidatorFn {
     return (c: AbstractControl): { [key: string]: boolean } | null => {
       // const userNames = this..get("credentials").value;
@@ -270,17 +543,44 @@ export class MaterialFormComponent implements OnInit {
       return null;
     }
   } 
+  
+  initiateMaterialFormWithValues(selected_data:{}): FormGroup {
+    
+    let attributeFilters = {};
+    this.cleaned_model.forEach(attr => {
+      var value=''
+      this.validated_term[attr["key"]] = { selected: false, values: "" }
+      if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
+        if (attr["key"].includes("Material")) {
+          if (attr["key"].includes("Material source ID")) {
+            attributeFilters[attr["key"]] = [selected_data['AccessionNumber'], [Validators.required, Validators.minLength(4)]];
+
+          }
+          else if(attr["key"].includes("DOI")){
+            attributeFilters[attr["key"]] = [selected_data['DOI'], [Validators.required, Validators.minLength(4)]];
+
+          }
+          else{
+            attributeFilters[attr["key"]] = [""]
+          }
+          attributeFilters['mat-id'] = uuid.v4()
+          this.material_id = attributeFilters['mat-id']
+        }
+      }
+      
+    });
+    return this.fb.group(attributeFilters,{ updateOn: "blur" });
+  }
   initiateMaterialForm(mode:string="create", index:number=0): FormGroup {
     // //console.log(this.cleaned_model)
-    
-    
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
       var value=''
       
       this.validated_term[attr["key"]] = { selected: false, values: "" }
       if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-        if (attr["key"].includes("Material") || attr["key"].includes("Infraspecific name")) {
+        if (attr["key"].includes("Material")) {
+        //if (attr["key"].includes("Material") || attr["key"].includes("Infraspecific name")) {
           if (mode!=="create"){
             value=this.model_to_edit[attr["key"]][index]
           }
@@ -310,7 +610,31 @@ export class MaterialFormComponent implements OnInit {
 
     return this.fb.group(attributeFilters,{ updateOn: "blur" });
   }
+  initiateBiologicalMaterialFormWithValues(selected_data:{}): FormGroup {
+    
+    let attributeFilters = {};
+    this.cleaned_model.forEach(attr => {
+      var value=''
+      this.validated_term[attr["key"]] = { selected: false, values: "" }
+      if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
+        if (attr["key"].includes("Biological")) {
+          if (attr["key"].includes("ID")) {
+             let bm_id=selected_data["HoldingInstitution"].split(" - ")[0] +"_"+ selected_data["AccessionNumber"] + "_1"
 
+            attributeFilters[attr["key"]] = [bm_id, [Validators.required, Validators.minLength(4)]];
+
+          }
+          else{
+            attributeFilters[attr["key"]] = [""]
+          }
+          attributeFilters['mat-id'] = uuid.v4()
+          this.material_id = attributeFilters['mat-id']
+        }
+      }
+      
+    });
+    return this.fb.group(attributeFilters,{ updateOn: "blur" });
+  }
   initiateBiologicalMaterialForm(mode:string="create", material_index:number=0, index:number=0): FormGroup {
     ////console.log(this.cleaned_model)
     let attributeFilters = {};
@@ -350,7 +674,6 @@ export class MaterialFormComponent implements OnInit {
 
     return this.fb.group(attributeFilters);
   }
-
   initiateGeneralForm(): FormGroup {
     //console.log(this.cleaned_model)
 
@@ -385,8 +708,6 @@ export class MaterialFormComponent implements OnInit {
 
     return this.fb.group(attributeFilters);
   }
-
-
   RowSelected(i) {
     ////console.log(i)
     this.index_row = i
@@ -404,7 +725,6 @@ export class MaterialFormComponent implements OnInit {
     ////console.log(this.material_id)
     ////console.log(this.index_row)
   }
-
   addBiologicalMaterialRow() {
     ////console.log(this.material_id)
     if (this.material_id === "") {
@@ -415,13 +735,9 @@ export class MaterialFormComponent implements OnInit {
       biologicalMaterialControl.push(this.initiateBiologicalMaterialForm());
     }
   }
-
   editBiologicalMaterial(index: number){
     console.log("here  you have to open a new dialog component with the table for biologiccal material as in user tree")
-  }
-
-
-  
+  }  
   // I/O part
   read_csv(delimitor: string) {
     let fileReader = new FileReader();
@@ -483,7 +799,6 @@ export class MaterialFormComponent implements OnInit {
     
 
   }
-
   deleteMaterialRow(index: number) {
     ////console.log(this.index_row)
     ////console.log(index)
@@ -520,15 +835,12 @@ export class MaterialFormComponent implements OnInit {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     biologicalMaterialControl.controls[index].patchValue({ "Biological material preprocessing": id })
   }
-
   editRow(group: FormGroup) {
     group.get('isEditable').setValue(true);
   }
-
   doneRow(group: FormGroup) {
     group.get('isEditable').setValue(false);
   }
-
   get getMaterialFormControls() {
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     return materialControl;
@@ -548,7 +860,6 @@ export class MaterialFormComponent implements OnInit {
     return generalControl;
 
   }
-
   onLatitudeChange(value) {
   }
   onLongitudeChange(value) {
@@ -564,12 +875,9 @@ export class MaterialFormComponent implements OnInit {
       var decimals = value - Math.floor(value);
       return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
     }
-
     else {
       return value;
     }
-
-
   }
   formatLabel(value: number) {
 
@@ -592,9 +900,6 @@ export class MaterialFormComponent implements OnInit {
       return value;
     }
   }
-
-
-
   onOntologyTermSelection(ontology_id: string, key: string, index: number, multiple: boolean = true) {
 
     //this.show_spinner = true;
@@ -640,8 +945,6 @@ export class MaterialFormComponent implements OnInit {
       }
     });
   }
-
-
   save(form: any): boolean {
 
 
@@ -709,14 +1012,9 @@ export class MaterialFormComponent implements OnInit {
     //this.formDataService.setAddress(this.address);
     return true;
   };
-
-
-
- 
   get_startfilling() {
     return this.startfilling;
   };
-
   notify_checkbox_disabled() {
     if (!this.startfilling) {
       this.alertService.error('need to fill the form first');
@@ -724,7 +1022,6 @@ export class MaterialFormComponent implements OnInit {
     }
 
   }
-
   toggleVisibility(e) {
     this.marked = e.target.checked;
   };
@@ -742,7 +1039,6 @@ export class MaterialFormComponent implements OnInit {
     }
 
   };
-
   submitForm() {
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
@@ -780,7 +1076,9 @@ export class MaterialFormComponent implements OnInit {
     //this.materialTouchedRows.forEach(material_attr => {
     materialControl.controls.forEach(material_attr => {
       console.log(material_attr)
-      var data=material_attr.value
+      console.log(Object.keys(material_attr.value))
+      var data = material_attr.value
+      console.log(material_attr)
       var material_attr_keys = Object.keys(data)
       var current_mat_id = ""
       for (var i = 0; i < material_attr_keys.length; i++) {
@@ -872,7 +1170,6 @@ export class MaterialFormComponent implements OnInit {
     
     //console.log(return_data)
   }
-
   toggleTheme() {
     this.mode_table = !this.mode_table;
   }
@@ -907,7 +1204,7 @@ export class MaterialFormComponent implements OnInit {
     generalRows.controls[0].patchValue({ "Genus": "Zea" })
     generalRows.controls[0].patchValue({ "Species": "mays" })
     generalRows.controls[0].patchValue({ "Organism": "NCBI:4577" })
-    //generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
+    generalRows.controls[0].patchValue({ "Infraspecific name": species_list })
     var cpt=0
     var gbl_cpt=0
     const MaterialControl = this.materialTable.get('materialRows') as FormArray;
@@ -921,7 +1218,7 @@ export class MaterialFormComponent implements OnInit {
       ////console.log(m_id)
       ////console.log(MaterialControl.controls[cpt])
       MaterialControl.controls[cpt].patchValue({ "Material source ID (Holding institute/stock centre, accession)": m_id })
-      MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
+      //MaterialControl.controls[cpt].patchValue({ "Infraspecific name": species })
       // TODO finish bm incorporation
       
       

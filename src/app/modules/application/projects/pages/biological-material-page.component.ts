@@ -6,7 +6,8 @@ import { GlobalService, AlertService, OntologiesService } from '../../../../serv
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
-import { BiologicalMaterialTableModel} from '../../../../models/biological_material_models'
+import { BiologicalMaterialTableModel } from '../../../../models/biological_material_models'
+import { first } from 'rxjs/operators';
 @Component({
   selector: 'app-biological-material-page',
   templateUrl: './biological-material-page.component.html',
@@ -19,7 +20,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  
+
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input('level') level: number;
   @Input('parent_id') parent_id: string;
@@ -28,7 +29,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @Input('mode') mode: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<BiologicalMaterialInterface>;
-  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','edit'];
+  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -37,8 +38,8 @@ export class BiologicalMaterialPageComponent implements OnInit {
   helpMenuPosition = { x: '0px', y: '0px' };
   //private bm_datasources:{} = {}
   bm_vertice_data
-  dt_source:MatTableDataSource<BiologicalMaterialTableModel>;
-  newTableData:{}[]=[]
+  dt_source: MatTableDataSource<BiologicalMaterialTableModel>;
+  newTableData: {}[] = []
 
   constructor(
     public globalService: GlobalService,
@@ -60,7 +61,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   async ngOnInit() {
     console.log(this.parent_id)
     await this.set_all_biological_materials()
-    this.loaded=true
+    this.loaded = true
   }
   /* async get_all_biological_materials() {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
@@ -116,48 +117,61 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
 
   onRemove(element: BiologicalMaterialInterface) {
+    this.globalService.remove(element._id).pipe(first()).toPromise().then(
+      data => {
+          ////console.log(data)
+          if (data["success"]) {
+              console.log(data["message"])
+              var message = element._id + " has been removed from your history !!"
+              this.alertService.success(message)
+              this.ngOnInit()
+          }
+          else {
+              this.alertService.error("this form contains errors! " + data["message"]);
+          }
+      });
   }
   add(element: BiologicalMaterialInterface) {
     this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create" } });
 
   }
   onEdit(element: BiologicalMaterialInterface) {
+    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" } });
   }
-  async prepare_bm_data(node_vertice, vertice_keys){
-          //console.log(node_vertice)
-          //console.log(vertice_keys)
-          //var newTableData:{}[]=[]
-          let datasources: BiologicalMaterialTableModel[] = []
-          var data= node_vertice
-          var keys = vertice_keys
-          for (var i = 0; i < data["Biological material ID"].length; i++) {
-              //this.tableData[0]["Biological material ID"].forEach(element => {
-              for (var j = 0; j < data["Biological material ID"][i].length; j++) {
-                  let tmp_dict:BiologicalMaterialTableModel={"Species":"","Organism":"","Biological material ID":"","Biological material preprocessing":"", 'Material source DOI':"", 'Material source ID (Holding institute/stock centre, accession)':"", 'Infraspecific name':"", 'Genus':""};
-                  for (var k = 0; k < keys.length; k++) {
-                      if (!keys[k].startsWith('_') && !keys[k].includes('altitude') && !keys[k].includes('latitude') && !keys[k].includes('longitude') && !keys[k].includes('coordinates uncertainty') && !keys[k].includes('description')){
-  
-                          if (keys[k].includes("Biological material") ){
-                              tmp_dict[keys[k]]=data[keys[k]][i][j]
-                          }
-                          else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")){
-                              tmp_dict[keys[k]]=data[keys[k]][i]
-                          }
-                          
-                          else{
-                              tmp_dict[keys[k]]=data[keys[k]]
-                          }  
-                          
-                      }
-                      
-                  }
-                  this.newTableData.push(tmp_dict)
-                  datasources.push(tmp_dict)
-                  
-                  
-              }
+  async prepare_bm_data(node_vertice, vertice_keys) {
+    //console.log(node_vertice)
+    //console.log(vertice_keys)
+    //var newTableData:{}[]=[]
+    let datasources: BiologicalMaterialTableModel[] = []
+    var data = node_vertice
+    var keys = vertice_keys
+    for (var i = 0; i < data["Biological material ID"].length; i++) {
+      //this.tableData[0]["Biological material ID"].forEach(element => {
+      for (var j = 0; j < data["Biological material ID"][i].length; j++) {
+        let tmp_dict: BiologicalMaterialTableModel = { "Species": "", "Organism": "", "Biological material ID": "", "Biological material preprocessing": "", 'Material source DOI': "", 'Material source ID (Holding institute/stock centre, accession)': "", 'Infraspecific name': "", 'Genus': "" };
+        for (var k = 0; k < keys.length; k++) {
+          if (!keys[k].startsWith('_') && !keys[k].includes('altitude') && !keys[k].includes('latitude') && !keys[k].includes('longitude') && !keys[k].includes('coordinates uncertainty') && !keys[k].includes('description')) {
+
+            if (keys[k].includes("Biological material")) {
+              tmp_dict[keys[k]] = data[keys[k]][i][j]
+            }
+            else if (keys[k].includes("Material") || keys[k].includes("Infraspecific")) {
+              tmp_dict[keys[k]] = data[keys[k]][i]
+            }
+
+            else {
+              tmp_dict[keys[k]] = data[keys[k]]
+            }
+
           }
-          this.dt_source=new MatTableDataSource<BiologicalMaterialTableModel>(datasources);
-          
+
+        }
+        this.newTableData.push(tmp_dict)
+        datasources.push(tmp_dict)
+
+
       }
+    }
+    this.dt_source = new MatTableDataSource<BiologicalMaterialTableModel>(datasources);
+  }
 }
