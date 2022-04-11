@@ -55,7 +55,7 @@
     "material-design-icons": "^3.0.1",
     "mdb-ui-kit": "^3.4.0",
     "mkdirp": "^1.0.4",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "ng-bootstrap": "^1.6.3",
     "ng-gantt": "^2.5.0",
     "ngx-guided-tour": "^1.1.11",
