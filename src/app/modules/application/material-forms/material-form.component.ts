@@ -268,6 +268,47 @@ export class MaterialFormComponent implements OnInit {
     
     //this.gridApi.redrawRows();
   }
+  async ngOnInit() {
+    console.log(this.columns)
+    this.columns=[
+      {title:"Material source ID (Holding institute/stock centre, accession)", data:"Material source ID (Holding institute/stock centre, accession)"},
+      {title:"Material source description", data:"Material source description"},
+      {title:"Material source DOI", data:"Material source DOI"},
+      {title:"Material source altitude", data:"Material source altitude"},
+      {title:"Material source latitude", data:"Material source latitude"},
+      {title:"Material source longitude", data:"Material source longitude"},
+      {title:"Material source coordinates uncertainty", data:"Material source coordinates uncertainty"},
+      {title:"Edit", data:"Edit"},
+      {title:"Delete", data:"Delete"}
+    ]
+    this.dtOptionsMatTable = {
+      pagingType: 'full_numbers',
+      pageLength: 5,
+      processing: true,
+      scrollX:true,
+      columns:this.columns
+    };
+    this.germplasm_loaded=false
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    
+    this.mode_table = false
+    this.materialTouchedRows = [];
+    this.biologicalMaterialTouchedRows = [];
+    this.generalTouchedRows = [];
+    this.index_row = 0
+    this.material_id = ""
+    this.used_mat_ids=[]
+    this.materialTable = this.fb.group({
+      materialRows: this.fb.array([]),
+      biologicalMaterialRows: this.fb.array([]),
+      generalRows: this.fb.array([])
+    });
+    this.get_model()
+    await this.get_ncbi_taxon()
+    await this.get_germplasm_unique_taxon_groups()
+    console.log(this.mode)
+    //this.onClickTour(); 
+  }
   CleanTable():void{
     this.RowData=[]
     this.RefreshAll()
@@ -277,6 +318,7 @@ export class MaterialFormComponent implements OnInit {
     console.log(selectedNodes)
     const selectedData = selectedNodes.map(node => node.data);
     console.log(selectedData)
+    //open dialog for number o mbiological materila by material source
 
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
@@ -364,47 +406,7 @@ export class MaterialFormComponent implements OnInit {
     .value;
     this.gridApi.paginationSetPageSize(Number(value));
   }
-  async ngOnInit() {
-    console.log(this.columns)
-    this.columns=[
-      {title:"Material source ID (Holding institute/stock centre, accession)", data:"Material source ID (Holding institute/stock centre, accession)"},
-      {title:"Material source description", data:"Material source description"},
-      {title:"Material source DOI", data:"Material source DOI"},
-      {title:"Material source altitude", data:"Material source altitude"},
-      {title:"Material source latitude", data:"Material source latitude"},
-      {title:"Material source longitude", data:"Material source longitude"},
-      {title:"Material source coordinates uncertainty", data:"Material source coordinates uncertainty"},
-      {title:"Edit", data:"Edit"},
-      {title:"Delete", data:"Delete"}
-    ]
-    this.dtOptionsMatTable = {
-      pagingType: 'full_numbers',
-      pageLength: 5,
-      processing: true,
-      scrollX:true,
-      columns:this.columns
-    };
-    this.germplasm_loaded=false
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
-    
-    this.mode_table = false
-    this.materialTouchedRows = [];
-    this.biologicalMaterialTouchedRows = [];
-    this.generalTouchedRows = [];
-    this.index_row = 0
-    this.material_id = ""
-    this.used_mat_ids=[]
-    this.materialTable = this.fb.group({
-      materialRows: this.fb.array([]),
-      biologicalMaterialRows: this.fb.array([]),
-      generalRows: this.fb.array([])
-    });
-    this.get_model()
-    await this.get_ncbi_taxon()
-    await this.get_germplasm_unique_taxon_groups()
-    console.log(this.mode)
-    //this.onClickTour(); 
-  }
+  
 
   onInputChanges(field:string,value: string){
     console.log(value)

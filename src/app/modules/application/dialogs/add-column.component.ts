@@ -90,6 +90,7 @@ export class AddColumnComponent implements OnInit {
   private ontologies={'study':["CO_715", "OBI"], 'experimental_factor':["CO_715","EFO","PECO","EO"], 'observed_variable':["CO_322 (Maize)","CO_325","CO_331","Solanacae","XEO"], 'event':["CO_715", "XEO"], 'environment':["XEO"]}
   private term_ids:string[]=[]
   private associated_model:string=""
+  unique_taxon_groups:{}={}
   private extract_component_options = {
     'options': [
       { disabled: true, header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '', fields: [] },
@@ -222,6 +223,9 @@ export class AddColumnComponent implements OnInit {
   }
   get_associated_ontologies(){
     return this.ontologies[this.associated_model]
+  }
+  async get_germplasm_unique_taxon_groups(){
+    this.unique_taxon_groups = await this.globalService.get_germplasm_unique_taxon_groups().toPromise()
   }
   onOntologyTermSelection(ontology_id: string, key: string, multiple: string, value_index:number){
     /* console.log(ontology_id)
