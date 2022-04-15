@@ -905,6 +905,8 @@ router.post('/valid-password-token', (req, res) => {
     .summary('List entry keys')
     .description('check if user exist.');
 
+
+  
 //const sendMail = require("./queries/send-mail");
 router.post('/request-reset', (req, res) => {
     const email = req.body.email
@@ -930,6 +932,25 @@ router.post('/request-reset', (req, res) => {
         let personId = result[0]['person']['Person ID']
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
+        
+        var child_process = require('child_process');
+        child_process.execFile('./scripts/send_mail.sh',['import',req.body.email,req.body.token], (err, data) => {
+            if (err) {
+              console.log("error "+err);
+              return res.status(500).send('Error');
+            }
+          });
+        
+        /* const exec = require('child_process').exec; 
+        var child;
+        const myShellScript = exec('sh send_mail.sh ');
+        myShellScript.stdout.on('data', (data)=>{
+            console.log(data); 
+            // do whatever you want here with data
+        });
+        myShellScript.stderr.on('data', (data)=>{
+            console.error(data);
+        }); */  
 
 
         res.send({ success: true });
