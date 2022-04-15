@@ -944,8 +944,8 @@ router.post('/request-reset', (req, res) => {
                 console.log("good")
             }
           }); */
-          var spawn = require('child_process').spawn
-          const child = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
+          //var spawn = require('child_process').spawn
+          const child = require('child_process').spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
           child.stdout.on('data', data => {
             console.log(`stdout:\n${data}`);
             res.send({ success: true });
