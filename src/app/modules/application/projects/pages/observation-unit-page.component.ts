@@ -96,9 +96,13 @@ export class ObservationUnitPageComponent implements OnInit {
   onRemove(element: ObservationUnitInterface) {
   }
   add(element: ObservationUnitInterface) {
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
+
 
   }
   onEdit(element: ObservationUnitInterface) {
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" } });
+
 
   }
 }
