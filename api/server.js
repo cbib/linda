@@ -934,7 +934,7 @@ router.post('/request-reset', (req, res) => {
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
         
-        const { child_process } = require('child_process');
+        /* const { child_process } = require('child_process');
         child_process.execFile('./scripts/send_mail.sh',[req.body.email,req.body.token], (err, data) => {
             if (err) {
               console.log("error "+err);
@@ -943,14 +943,13 @@ router.post('/request-reset', (req, res) => {
             else{
                 console.log("good")
             }
-          });
+          }); */
 
-          var spawnout = spawn("../sh_scripts/MakeAnalysis_phase1_v2.sh",[req.params.UUID,req.params.REF], { detached: true } );
-          //  //var spawnout = spawn('../sh_scripts/MakeAnalysis_phase1_v2.sh',[req.params.UUID,req.params.REF], { detached: true } );
-              spawnout.on('exit',function(code) {
+          var spawnout = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
+            spawnout.on('exit',function(code) {
                   console.log("spawn ended "+code);
               });
-              res.send('end spawn launch');
+              ////res.send('end spawn launch');
         
         /* const exec = require('child_process').exec; 
         var child;
