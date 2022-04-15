@@ -55,7 +55,7 @@ const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
 const getUserName = require("./queries/get-user-name");
 const telegram = require("./queries/telegram-chat");
-const { spawn } = require('child_process');
+//const { spawn } = require('child_process');
 //const uuidV4 = require('uuid/v4');
 //const uuid = require('uuid');
 //const { v4: uuidv4 } = require('uuid');
@@ -944,7 +944,7 @@ router.post('/request-reset', (req, res) => {
                 console.log("good")
             }
           }); */
-
+          var spawn = require('child_process').spawn
           const child = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
           child.stdout.on('data', data => {
             console.log(`stdout:\n${data}`);
