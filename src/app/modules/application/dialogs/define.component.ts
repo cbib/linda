@@ -946,8 +946,6 @@ export class DefineComponent implements OnInit, OnDestroy {
   has_event_associated_header(): boolean {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event accession number').length > 0
   }
-
-
   /*ExperimentalFactor PART ROUTINES*/
   async onExtractAllExperimentalFactors() {
     this.while_added = true

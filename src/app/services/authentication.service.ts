@@ -84,7 +84,7 @@ export class AuthenticationService {
             'email': email_obj.email,
             'token': token
         };
-        //console.log(obj2send)
+        console.log(obj2send)
         ///return null
         //let nodemailerUrl = Constants.APIConfig.APIUrl;
         //return this.http.post(this.nodemailerUrl,email_obj)
