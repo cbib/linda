@@ -948,10 +948,12 @@ router.post('/request-reset', (req, res) => {
           const child = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
           child.stdout.on('data', data => {
             console.log(`stdout:\n${data}`);
+            res.send({ success: true });
           });
           
           child.stderr.on('data', data => {
             console.error(`stderr: ${data}`);
+            res.send({ success: false });
           });
               ////res.send('end spawn launch');
         
@@ -967,7 +969,7 @@ router.post('/request-reset', (req, res) => {
         }); */  
 
 
-        res.send({ success: true });
+        
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
