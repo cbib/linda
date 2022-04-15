@@ -55,6 +55,7 @@ const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
 const getUserName = require("./queries/get-user-name");
 const telegram = require("./queries/telegram-chat");
+const { spawn } = require('child_process');
 //const uuidV4 = require('uuid/v4');
 //const uuid = require('uuid');
 //const { v4: uuidv4 } = require('uuid');
@@ -943,6 +944,13 @@ router.post('/request-reset', (req, res) => {
                 console.log("good")
             }
           });
+
+          var spawnout = spawn("../sh_scripts/MakeAnalysis_phase1_v2.sh",[req.params.UUID,req.params.REF], { detached: true } );
+          //  //var spawnout = spawn('../sh_scripts/MakeAnalysis_phase1_v2.sh',[req.params.UUID,req.params.REF], { detached: true } );
+              spawnout.on('exit',function(code) {
+                  console.log("spawn ended "+code);
+              });
+              res.send('end spawn launch');
         
         /* const exec = require('child_process').exec; 
         var child;
