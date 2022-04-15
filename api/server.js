@@ -945,10 +945,14 @@ router.post('/request-reset', (req, res) => {
             }
           }); */
 
-          var spawnout = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
-            spawnout.on('exit',function(code) {
-                  console.log("spawn ended "+code);
-              });
+          const child = spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
+          child.stdout.on('data', data => {
+            console.log(`stdout:\n${data}`);
+          });
+          
+          child.stderr.on('data', data => {
+            console.error(`stderr: ${data}`);
+          });
               ////res.send('end spawn launch');
         
         /* const exec = require('child_process').exec; 
