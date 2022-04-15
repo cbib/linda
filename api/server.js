@@ -933,7 +933,7 @@ router.post('/request-reset', (req, res) => {
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
         
-        const child_process = require('child_process');
+        const { child_process } = require('child_process');
         child_process.execFile('./scripts/send_mail.sh',[req.body.email,req.body.token], (err, data) => {
             if (err) {
               console.log("error "+err);
