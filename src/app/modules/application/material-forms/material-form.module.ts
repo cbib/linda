@@ -17,7 +17,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { HttpClientModule } from '@angular/common/http';
 import { CustomTooltip } from './custom-tooltip.component';
 
-import 'ag-grid-enterprise';
+//import 'ag-grid-enterprise';
 @NgModule({
   imports: [
     CommonModule,

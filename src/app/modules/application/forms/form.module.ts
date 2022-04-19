@@ -13,6 +13,7 @@ import { GlobalService, AlertService, UserService} from '../../../services';
 // Components
 import { FormComponent } from './form.component';
 import { AuthGuard } from '../../../guards/auth.guards';
+import { StudyFormComponent } from './study-form.component';
 
 
 @NgModule({
@@ -28,12 +29,14 @@ import { AuthGuard } from '../../../guards/auth.guards';
     JoyrideModule.forChild()
   ],
   exports: [
-    FormComponent
+    FormComponent,
+    StudyFormComponent
   ],
   declarations: [
-    FormComponent
+    FormComponent,
+    StudyFormComponent,
   ],
-  entryComponents:[FormComponent],
+  entryComponents:[FormComponent, StudyFormComponent],
   providers: [
     AuthGuard,
     AlertService,

@@ -103,7 +103,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     ngOnInit() {
         ///const id = this.activatedRoute.snapshot.params.id;
 
-        //console.log(this.mode)
+        console.log(this.parent_id)
         this.set_max_level();
         this.set_model();
         console.log(this.onlyTemplate)
@@ -282,13 +282,16 @@ export class FormComponent implements OnInit//, AfterViewInit
         this.cleaned_model.forEach(attr => {
             this.validated_term[attr["key"]] = { selected: false, values: "" }
             if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-                if (attr["key"].includes("ID")) {
+                if (attr["key"].includes("ID") || attr["key"].includes("accession number")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                     //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
+                }
+                else if (attr["key"].includes("Event date")) {
+                    attributeFilters[attr["key"]] = ['', [Validators.required]];
                 }
                 else {
                     attributeFilters[attr["key"]] = [''];
@@ -298,8 +301,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         return this.formBuilder.group(attributeFilters);
     }
     set_model() {
-        this.modelForm = new FormGroup({});
-        
+        this.modelForm = new FormGroup({}); 
         //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
         this.globalService.get_model(this.model_type).toPromise().then(data => {
             this.model = data;
@@ -324,7 +326,7 @@ export class FormComponent implements OnInit//, AfterViewInit
             this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a['pos'] - b['pos']; });
             console.log(this.cleaned_model)
 
-            if (this.mode === "create" ) {
+            if (this.mode === "create" || this.mode === "preprocess") {
                 //console.log(this.model_type)
                 this.modelForm = this.initiateForm()
                 //console.log(this.modelForm.value)
@@ -350,7 +352,6 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
                                 this.disabled_id_keys.push(attr["key"])
                             }
-
                         }
                         else if (attr["key"].includes("Project Name")) {
                             attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
@@ -380,9 +381,6 @@ export class FormComponent implements OnInit//, AfterViewInit
                 for (let i = 0; i < this.disabled_id_keys.length; i++) {
                     let attr = this.disabled_id_keys[i]
                     console.log(this.disabled_id_keys[i])
-                    // //console.log(this.modelForm.value)
-                    // //console.log(this.modelForm.get(this.disabled_id_keys[i]))
-                    // //console.log(this.modelForm.value[this.disabled_id_keys[i]])
                     this.modelForm.get(this.disabled_id_keys[i]).disable();
                     /* if (this.disabled_id_keys[i].includes("ID")){
                         this.modelForm.get(this.disabled_id_keys[i]).disable();
@@ -398,46 +396,12 @@ export class FormComponent implements OnInit//, AfterViewInit
             }
         });
     };
-    formatLatitudeLabel(value: number) {
-        //north hemisphera
-        if (value > 0) {
-            var decimals = value - Math.floor(value);
-            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′N"
-        }
-        //south hemisphera
-        if (value < 0) {
-            var decimals = value - Math.floor(value);
-            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
-        }
-
-        else {
-            return value;
-        }
-    }
-    formatLabel(value: number) {
-
-        return value + 'm';
-    }
-    formatLongitudeLabel(value: number) {
-        ////console.log(value)
-        //east hemisphera
-        if (value > 0) {
-            var decimals = value - Math.floor(value);
-            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′E"
-        }
-        //west hemisphera
-        if (value < 0) {
-            var decimals = value - Math.floor(value);
-            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
-        }
-        else {
-            return value;
-        }
-    }
-    onOntologyTermSelection(ontology_id: string, key: string, multiple: string) {
+    
+    onOntologyTermSelection(ontology_id: string, key: string, multiple: string, subclass_of:string) {
         //this.show_spinner = true;
         console.log(key)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
+        console.log(subclass_of)
+        const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple, sub_class_of:subclass_of, model_type:this.model_type} });
         // dialogRef..afterOpened().subscribe(result => {
         //     this.show_spinner = false;
         // })
@@ -463,7 +427,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                         var term_id = result.selected_set[0]['id']
                         var term_def = result.selected_set[0]['def']
                         var term_name = result.selected_set[0]['name']
-                        var term = result.selected_set[0]['term']
+                        var term:OntologyTerm = result.selected_set[0]['term']
                         //console.log(term)
                         this.validated_term[key] = { selected: true, values: term_id };
                         var var_key = ""
@@ -471,9 +435,58 @@ export class FormComponent implements OnInit//, AfterViewInit
                         var var_name_id = ""
                         var var_description = ""
                         //console.log(key)
+                        if (this.model_type==='environment'){
+                            this.modelForm.controls['Environment parameter'].patchValue(term.get_name())
+                            this.modelForm.controls['Environment parameter accession number'].patchValue(term.get_id())
+                            let complete_value=term.get_value() + " " + term.get_unit()
+                            this.modelForm.controls['Environment parameter value'].patchValue(complete_value)
+                        }
+                        else if (this.model_type==='event'){
+                            this.modelForm.controls['Event type'].patchValue(term.get_name())
+                            this.modelForm.controls['Event accession number'].patchValue(term.get_id())
+                            this.modelForm.controls['Event description'].patchValue(term.get_def())
+
+                        }
+                        else if (this.model_type==='experimental_factor'){
+                            this.modelForm.controls['Experimental Factor type'].patchValue(term.get_name())
+                            this.modelForm.controls['Experimental Factor accession number'].patchValue(term.get_id())
+                            this.modelForm.controls['Experimental Factor description'].patchValue(term.get_def())
+                        }
+                        else if (this.model_type==='observed_variable'){
+                            console.log(term)
+                            console.log(term.namespace)
+                            if (term.namespace.includes('Trait')){
+                                this.modelForm.controls['Trait'].patchValue(term.get_name())
+                                this.modelForm.controls['Trait accession number'].patchValue(term.get_id())
+                            }
+                            if (term.namespace.includes('Method')){
+                                this.modelForm.controls['Method'].patchValue(term.get_name())
+                                this.modelForm.controls['Method accession number'].patchValue(term.get_id())
+                                this.modelForm.controls['Method description'].patchValue(term.get_def())
+                                
+                            }
+                            if (term.namespace.includes('Variable')){
+                                this.modelForm.controls['Variable ID'].patchValue(term.get_name())
+                                this.modelForm.controls['Variable accession number'].patchValue(term.get_id())
+                                this.modelForm.controls['Variable name'].patchValue(term.get_def())
+
+                            }
+                            if (term.namespace.includes('Scale')){
+                                console.log(term.get_name())
+                                this.modelForm.controls['Scale'].patchValue(term.get_name())
+                                this.modelForm.controls['Scale accession number'].patchValue(term.get_id())
+
+                            }
+                            
+
+                        }
+                        else {
+                            
+                        }
+                        this.modelForm.updateValueAndValidity()
 
 
-                        if (key.includes(" accession number")) {
+                        /* if (key.includes(" accession number")) {
                             var_key = key.split(" accession number")[0]
                             console.warn(var_key)
                             var_name = var_key + " name"
@@ -488,8 +501,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 }
                             }
                         }
-
-                        else if (key.includes("Type of ")) {
+                        //
+                        if (key.includes("Type of ")) {
                             var_key = key.split("Type of ")[1]
                             var_description = "Description of " + var_key
                             if (this.modelForm.controls[var_description]) {
@@ -518,7 +531,7 @@ export class FormComponent implements OnInit//, AfterViewInit
 
                         if (this.modelForm.controls["Environment parameter value"]) {
                             //console.log(term)
-                            this.modelForm.controls["Environment parameter value"].patchValue(term["value"] + " " + term.unit)
+                            this.modelForm.controls["Environment parameter value"].patchValue(term.value + " " + term.unit)
                         }
                         if (this.modelForm.controls["Environment parameter"]) {
                             //console.log(term)
@@ -539,7 +552,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                         term_ids += term_name
                         if (this.modelForm.controls[var_name_id]) {
                             this.modelForm.controls[var_name_id].patchValue(term_name)
-                        }
+                        } */
                         this.startfilling = true;
                     }
                 }
@@ -639,6 +652,42 @@ export class FormComponent implements OnInit//, AfterViewInit
     get getChecked(){
         return this.Checked
     }
+    formatLatitudeLabel(value: number) {
+        //north hemisphera
+        if (value > 0) {
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′N"
+        }
+        //south hemisphera
+        if (value < 0) {
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′S"
+        }
+
+        else {
+            return value;
+        }
+    }
+    formatLabel(value: number) {
+
+        return value + 'm';
+    }
+    formatLongitudeLabel(value: number) {
+        ////console.log(value)
+        //east hemisphera
+        if (value > 0) {
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′E"
+        }
+        //west hemisphera
+        if (value < 0) {
+            var decimals = value - Math.floor(value);
+            return Math.floor(value) + "°" + decimals.toFixed(2).substring(2) + "′W"
+        }
+        else {
+            return value;
+        }
+    }
     get_startfilling() {
         return this.startfilling;
     };
@@ -646,17 +695,42 @@ export class FormComponent implements OnInit//, AfterViewInit
     notify_checkbox_disabled() {
         if (!this.startfilling) {
             this.alertService.error('need to fill the form first');
-
         }
-
     }
 
     toggleVisibility(e) {
         this.asTemplate = e.target.checked;
     };
+    submit(form: any) {
+        //console.log("start to submit")
+        if (!this.startfilling && this.mode != "edit") {
+            this.alertService.error('need to fill the form first');
 
+        }
+        else {
+            if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
+                //console.log("start to subbmit")
+                if (!form.valid) {
+                    //console.log("invalid  form")
+                    let message = "this form contains errors! "
+                    this.alertService.error(message);
+                    this.notify.emit('error in the form');
+                    return false;
+                }
+                else {
+                    var data={'form':this.modelForm.value, 'template':this.asTemplate}
+                    this.notify.emit(data);
+                }
+            }
+            else{
+                var data={'form':this.modelForm.value, 'template':this.asTemplate}
+                this.notify.emit(data);
+                this.save(form)
+            }
+            
+        }
+    };
     save(form: any): boolean {
-
         if (!form.valid) {
             let message = "this form contains errors! "
             this.alertService.error(message);
@@ -681,7 +755,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 console.warn(this.onlyTemplate)
                 if (this.onlyTemplate){
                     console.warn("supposed to be true",this.onlyTemplate)
-                    this.globalService.add_template(this.modelForm.value, this.model_type, this.role).pipe(first()).toPromise().then(
+                    this.globalService.add_template(this.modelForm.value, this.model_type, 'owner').pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
                                 this.model_id = data["_id"];
@@ -703,7 +777,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
                 else{
                     console.warn("supposed to be false",this.onlyTemplate)
-                //console.log(this.asTemplate)
+                    //console.log(this.asTemplate)
                     this.globalService.add(this.modelForm.value, this.model_type, this.parent_id, this.asTemplate).pipe(first()).toPromise().then(
                         data => {
                             if (data["success"]) {
@@ -774,8 +848,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
             }
             else {
-                let element = event.target as HTMLInputElement;
-                let value_field = element.innerText;
+                //let element = event.target as HTMLInputElement;
+                //let value_field = element.innerText;
                 if (this.mode==="edit_template"){
                     this.globalService.update_document(this.model_key, this.modelForm.value, this.model_type, true).pipe(first()).toPromise().then(
                         data => {
@@ -784,7 +858,8 @@ export class FormComponent implements OnInit//, AfterViewInit
                                 this.alertService.success(message)
                                 //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
                                 
-                                this.router.navigate(['/projects_tree']);
+                                this.router.navigate(['/templates']);
+                                
                                 return true;
                             }
                             else {
@@ -829,6 +904,10 @@ export class FormComponent implements OnInit//, AfterViewInit
         //console.log(this.mode)
         if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
             this.notify.emit('cancel the form');
+        }
+        else if(this.mode==="edit_template" ){
+            this.router.navigate(['/templates'])
+
         }
         else{
             let new_step=0
@@ -885,7 +964,7 @@ export class FormComponent implements OnInit//, AfterViewInit
     }
 
     back(modelForm, level) {
-        if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
+        if (this.mode==="preprocess" || this.mode==="edit-preprocess" || this.inline==="true"){
             this.level-=1
             if (this.model_type==="biological_material"){
                 this.level=1
@@ -897,42 +976,14 @@ export class FormComponent implements OnInit//, AfterViewInit
 
     };
 
-    submit(form: any) {
-        //console.log("start to submit")
-        if (!this.startfilling && this.mode != "edit") {
-            this.alertService.error('need to fill the form first');
-
-        }
-        else {
-            if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
-                //console.log("start to subbmit")
-                if (!form.valid) {
-                    //console.log("invalid  form")
-                    let message = "this form contains errors! "
-                    this.alertService.error(message);
-                    this.notify.emit('error in the form');
-                    return false;
-                }
-                else {
-                    var data={'form':this.modelForm.value, 'template':this.asTemplate}
-                    this.notify.emit(data);
-                }
-            }
-            else{
-                var data={'form':this.modelForm.value, 'template':this.asTemplate}
-                this.notify.emit(data);
-                this.save(form)
-            }
-            
-        }
-    };
+    
     onNext() {
         // Do something
     }
     goToNext(form: any, level) {
         //console.log(level)
         //console.log(this.mode)
-        if (this.mode==="preprocess" || this.mode==="edit-preprocess"){
+        if (this.mode==="preprocess" || this.mode==="edit-preprocess" || this.mode==="edit-template" || this.inline==="true"){
             this.level+=1
             if (this.model_type==="biological_material"){
                 this.level=1

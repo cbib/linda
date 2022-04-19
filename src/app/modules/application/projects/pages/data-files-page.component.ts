@@ -28,8 +28,8 @@ export class DataFilesPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   @Input('collection') collection: string;
   @Input('parent_id') parent_id: string;
@@ -77,6 +77,7 @@ export class DataFilesPageComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.load_data_files()
     this.loaded = true

@@ -98,26 +98,26 @@ export class OntologyTerm {
         public set_def(def:string){
             this.def=def;
         }
-        public get_def(def:string){
+        public get_def(){
             return this.def;
         }
         public set_comment(comment:string){
             this.comment=comment;
         }
-        public get_comment(comment:string){
+        public get_comment(){
             return this.comment;
         }
         public set_enum(enumeration:string){
             this.enumeration=enumeration;
         }
-        public get_enum(enumeration:string){
+        public get_enum(){
             return this.enumeration;
         }
         public set_datatype(datatype:string){
             this.datatype=datatype;
         }
         
-        public get_datatype(datatype:string){
+        public get_datatype(){
             return this.datatype;
         }
         public get_children(){

@@ -31,8 +31,9 @@ export class FormGenericComponent implements OnInit {
    }
   ngOnInit() {
     console.log("Init form dialog")
-    console.log("this.model_key in FormGenericComponent", this.model_key)
-    console.log("this.parent_id in FormGenericComponent", this.parent_id)
+    console.warn("this.model_key in FormGenericComponent", this.model_key)
+    console.warn("this.parent_id in FormGenericComponent", this.parent_id)
+    console.warn("this.mode in FormGenericComponent", this.mode)
     this.loaded=true
 
   }

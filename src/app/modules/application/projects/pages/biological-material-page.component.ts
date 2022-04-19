@@ -5,9 +5,10 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
+import { BiologicalMaterialFullInterface, BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
 import { BiologicalMaterialTableModel } from '../../../../models/biological_material_models'
 import { first } from 'rxjs/operators';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-biological-material-page',
   templateUrl: './biological-material-page.component.html',
@@ -19,17 +20,21 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   @Input('level') level: number;
   @Input('parent_id') parent_id: string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
+  @Input('role') role: string;
+  @Input('grand_parent_id') grand_parent_id: string;
+  @Input('group_key') group_key: string;
+  
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
-  private dataSource: MatTableDataSource<BiologicalMaterialInterface>;
-  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus', 'edit'];
+  private dataSource: MatTableDataSource<BiologicalMaterialFullInterface>;
+  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','total materials','total biological materials','edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -54,11 +59,15 @@ export class BiologicalMaterialPageComponent implements OnInit {
         this.model_key = params['model_key'];
         this.mode = params['mode'];
         this.parent_id = params['parent_id']
+        this.role=params['role']
+        this.grand_parent_id=params['grand_parent_id']
+        this.group_key=params['group_key']
       }
     );
   }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     console.log(this.parent_id)
     await this.set_all_biological_materials()
     this.loaded = true
@@ -85,9 +94,20 @@ export class BiologicalMaterialPageComponent implements OnInit {
       }
     )
   } */
-
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.displayedColumns, event.previousIndex, event.currentIndex);
+  }
   async set_all_biological_materials() {
-    const data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
+    var data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
+    console.log(data);
+    data[0]['total materials']=data[0]["Material source ID (Holding institute/stock centre, accession)"].length
+    data[0]['total biological materials']=data[0]["Biological material ID"][0].length*data[0]['total materials']
+    data[0]['Infraspecific name']=Array.from(new Set(data[0]['Infraspecific name']))
+    if (data[0]['Infraspecific name'].length>3){
+      data[0]['Infraspecific name']=data[0]['Infraspecific name'].slice(0, 3);
+    }
+    data[0]['Species']=Array.from(new Set(data[0]['Species']))
+    data[0]['Genus']=Array.from(new Set(data[0]['Genus']))
     console.log(data);
     this.dataSource = new MatTableDataSource(data);
     console.log(this.dataSource);
@@ -115,8 +135,31 @@ export class BiologicalMaterialPageComponent implements OnInit {
     //console.log(this.newTableData)
     return this.dataSource
   }
+  get get_grand_parent_id(){
+    return this.grand_parent_id
+  }
+  get get_mode(){
+      return this.mode
+  }
+  get get_model_key(){
+      return this.model_key
+  }
+  get get_role(){
+      return this.role
+  }
+  get get_parent_id(){
+    return this.parent_id
+  }
+  reloadComponent() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "biomat", role: this.role, group_key: this.group_key } });
 
-  onRemove(element: BiologicalMaterialInterface) {
+    //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: _model_id, model_key: this.model_key, model_type: 'study', activeTab: 'data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+  }
+
+  onRemove(element: BiologicalMaterialFullInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
           ////console.log(data)
@@ -124,19 +167,19 @@ export class BiologicalMaterialPageComponent implements OnInit {
               console.log(data["message"])
               var message = element._id + " has been removed from your history !!"
               this.alertService.success(message)
-              this.ngOnInit()
+              this.reloadComponent()
           }
           else {
               this.alertService.error("this form contains errors! " + data["message"]);
           }
       });
   }
-  add(element: BiologicalMaterialInterface) {
-    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create" } });
+  add(element: BiologicalMaterialFullInterface) {
+    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create", role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });
 
   }
-  onEdit(element: BiologicalMaterialInterface) {
-    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" } });
+  onEdit(element: BiologicalMaterialFullInterface) {
+    this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" ,role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });
   }
   async prepare_bm_data(node_vertice, vertice_keys) {
     //console.log(node_vertice)

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter, ChangeDetectorRef , AfterViewInit} from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { GlobalService, AlertService, FileService, SearchService, UserService } from '../../../../services';
 import { WizardService } from '../services/wizard.service';
@@ -33,7 +33,7 @@ import { ShareProject } from '../../dialogs/share-project';
     templateUrl: './studies-page.component.html',
     styleUrls: ['./studies-page.component.css']
 })
-export class StudiesPageComponent implements OnInit {
+export class StudiesPageComponent implements OnInit,AfterViewInit {
 
     @Input() search_string: string;
     @Input('parent_id') parent_id: string;
@@ -44,8 +44,8 @@ export class StudiesPageComponent implements OnInit {
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
 
     contextMenuPosition = { x: '0px', y: '0px' };
@@ -98,16 +98,19 @@ export class StudiesPageComponent implements OnInit {
         );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         console.warn("group key in studies page", this.group_key)
+        this.dataSource = new MatTableDataSource([]);
+        //await this.get_vertices()
+        this.get_studies()
     }
 
     private initialSelection = []
     private checklistSelection = new SelectionModel<MatChip>(true, this.initialSelection /* multiple */);
 
-    public handlePageBottom(event: PageEvent) {
+    /* public handlePageBottom(event: PageEvent) {
         this.paginator.pageSize = event.pageSize;
         this.paginator.pageIndex = event.pageIndex;
         this.paginator.page.emit(event);
-    }
+    } */
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -116,26 +119,38 @@ export class StudiesPageComponent implements OnInit {
         }
     }
     async ngOnInit() {
-
-        //await this.get_vertices()
-        await this.get_studies()
-        this.dataSource = new MatTableDataSource(this.studies);
-        this.loaded = true
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        
+        //this.dataSource = new MatTableDataSource(this.studies);
+       // this.loaded = true
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             //this.search_string=data
         })
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        //console.log(this.currentUser)
         console.log(this.parent_id)
-        //this.extract_design(36,7,3)
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
+    }
+    async get_studies() {
+        //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
+        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
+            async person_id => {
+                console.log(person_id)
+                const data = await this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise();
+                console.log(data);
+                this.roles = data.map(study => study['roles']);
+                this.studies = data.map(study_1 => study_1['study']); 
+                this.dataSource = new MatTableDataSource(this.studies);  
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+                this._cdr.detectChanges();
+                this.loaded = true
+            }
+        )
     }
 
     ngAfterViewInit() {
-        
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this._cdr.detectChanges()
       } 
     async get_vertices() {
@@ -160,18 +175,7 @@ export class StudiesPageComponent implements OnInit {
     get get_group_key() {
         return this.group_key
     }
-    async get_studies() {
-        //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
-        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-            async person_id => {
-                console.log(person_id)
-                const data = await this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise();
-                console.log(data);
-                this.roles = data.map(study => study['roles']);
-                this.studies = data.map(study_1 => study_1['study']);   
-            }
-        )
-    }
+    
 
     // Event handler
     onEdit(elem) {

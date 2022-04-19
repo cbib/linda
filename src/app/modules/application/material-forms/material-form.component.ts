@@ -18,7 +18,7 @@ import { GermPlasmInterface } from 'src/app/models/linda/germplasm';
 import { Observable, Subject } from 'rxjs';
 import { ColDef, PaginationNumberFormatterParams, FirstDataRenderedEvent, GridReadyEvent, SideBarDef, GridApi, RefreshCellsParams } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { SetFilterModel} from 'ag-grid-enterprise';
+//import { SetFilterModel} from 'ag-grid-enterprise';
 import { BiologicalMaterial, BiologicalMaterialFullInterface, BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
 import { CustomTooltip } from './custom-tooltip.component';
 /* import {
@@ -43,6 +43,9 @@ export class MaterialFormComponent implements OnInit {
   @Input() model_key: string;
   @Input() model_type: string;
   @Input() mode: string;
+  @Input('role') role: string;
+  @Input('grand_parent_id') grand_parent_id: string;
+  @Input('group_key') group_key: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   //@ViewChild('agGrid') agGrid!: AgGridAngular;
   @ViewChild(AgGridAngular, { static: false }) selectAgGrid: AgGridAngular;
@@ -124,8 +127,11 @@ export class MaterialFormComponent implements OnInit {
   };
   
   selectColumnDefs: ColDef[] = [
-    { field: 'TaxonGroup', rowGroup: true, hide: true},
+    //{ field: 'TaxonGroup', rowGroup: true, hide: true},
     { field: 'AccessionName', rowGroup: true, hide: true},
+    
+    //{ field: 'AccessionName'},
+    { field: 'TaxonGroup'},
     { field: 'Genus'},
     { field: 'TaxonScientificName'},
     { field: 'AccessionNumber'},
@@ -133,7 +139,7 @@ export class MaterialFormComponent implements OnInit {
     {field: 'CollectionTypes'},
     {field: 'HoldingInstitution'},
     {field:'DOI'},
-//{field:'LotName'},
+    {field:'LotName'},
     {field:'PanelNames'},
     {field:'PanelSizes'}
   ];
@@ -159,6 +165,15 @@ export class MaterialFormComponent implements OnInit {
     },
   }; */
   public selectAutoGroupColumnDef: ColDef = {
+    headerName: 'Accession name',
+    field: 'AccessionName',
+    minWidth: 250,
+    cellRenderer: 'agGroupCellRenderer',
+    cellRendererParams: {
+      checkbox: true,
+    },
+  };
+  /* public selectAutoGroupColumnDef: ColDef = {
     headerName: 'Lot Name',
     field: 'LotName',
     minWidth: 250,
@@ -166,7 +181,7 @@ export class MaterialFormComponent implements OnInit {
     cellRendererParams: {
       checkbox: true,
     },
-  };
+  }; */
   //rowData: Observable<any[]>;
   public selectSideBar: SideBarDef | string | boolean | null = 'filters';
   public selectRowData!: any[];
@@ -181,13 +196,15 @@ export class MaterialFormComponent implements OnInit {
   // MATERIAL TABLE
   
   ColumnDefs: ColDef[] = [
-    { field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, hide: true, tooltipField: 'Biological material ID',},
-    { field: 'Genus', tooltipField: 'Biological material ID',},
-    { field: 'Species', tooltipField: 'Biological material ID',},
-    { field: 'Organism'},
+    { field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, tooltipField: 'Biological material ID',pinned: 'left' },
+    //{ field: 'Genus', tooltipField: 'Biological material ID', pinned: 'left' },
+    //{ field: 'Species', tooltipField: 'Biological material ID', pinned: 'left' },
+    //{ field: 'Organism', pinned: 'left' },
+    //{ field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, hide: true, tooltipField: 'Biological material ID',pinned: 'left' },
+
     { field: 'Infraspecific name'},
     { field: 'Material source description'},
-    { field: 'Material source DOI'},
+    { field: 'Material source DOI', hide: true },
     { field: 'Material source altitude'},
     { field: 'Material source latitude'},
     { field: 'Material source longitude'},
@@ -227,6 +244,7 @@ export class MaterialFormComponent implements OnInit {
   ) => string = function (params) {
     return '[' + params.value.toLocaleString() + ']';
   };
+ public all_selected:boolean=false
   
   
   constructor(private fb: FormBuilder, public globalService: GlobalService,private readonly joyrideService: JoyrideService,
@@ -247,6 +265,9 @@ export class MaterialFormComponent implements OnInit {
         this.model_key = params['model_key'];
         this.mode = params['mode'];
         this.parent_id = params['parent_id']
+        this.role=params['role']
+        this.grand_parent_id=params['grand_parent_id']
+        this.group_key=params['group_key']
       }
     );
     if (this.model_key != "") {
@@ -254,6 +275,9 @@ export class MaterialFormComponent implements OnInit {
 
     }
 
+  }
+  get get_mode(){
+    return this.mode
   }
   RefreshAll() {
 
@@ -269,8 +293,9 @@ export class MaterialFormComponent implements OnInit {
     //this.gridApi.redrawRows();
   }
   async ngOnInit() {
+    this.RowData=[]
     console.log(this.columns)
-    this.columns=[
+    /* this.columns=[
       {title:"Material source ID (Holding institute/stock centre, accession)", data:"Material source ID (Holding institute/stock centre, accession)"},
       {title:"Material source description", data:"Material source description"},
       {title:"Material source DOI", data:"Material source DOI"},
@@ -287,7 +312,7 @@ export class MaterialFormComponent implements OnInit {
       processing: true,
       scrollX:true,
       columns:this.columns
-    };
+    }; */
     this.germplasm_loaded=false
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'))
     
@@ -303,16 +328,13 @@ export class MaterialFormComponent implements OnInit {
       biologicalMaterialRows: this.fb.array([]),
       generalRows: this.fb.array([])
     });
-    this.get_model()
+    //this.get_model()
     await this.get_ncbi_taxon()
     await this.get_germplasm_unique_taxon_groups()
     console.log(this.mode)
     //this.onClickTour(); 
   }
-  CleanTable():void{
-    this.RowData=[]
-    this.RefreshAll()
-  }
+  
   getSelectedRows():void{
     const selectedNodes = this.selectAgGrid.api.getSelectedNodes();
     console.log(selectedNodes)
@@ -331,17 +353,40 @@ export class MaterialFormComponent implements OnInit {
       bm['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
       bm['Material source DOI']=element["DOI"]
       bm['Material source altitude']=""
-      bm['Material source description']=""
+      bm['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
+      LotName: "CamB1"
+      PanelNames: "nan"
+      PanelSizes: "nan"
       bm['Material source latitude']=""
       bm['Material source longitude']=""
       bm.Genus=element["Genus"]
-      bm.Species=element["TaxonScientificName"]
+      bm.Species=element["TaxonScientificName"].split(" ")[1]
       bm.Organism=""
       bm['Infraspecific name']=element["TaxonScientificName"]
       this.RowData.push(bm)
+
+      bm_id=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]+ "_2"
+      let bm2:BiologicalMaterial=new BiologicalMaterial(bm_id)
+      bm2['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
+      bm2['Material source DOI']=element["DOI"]
+      bm2['Material source altitude']=""
+      bm2['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
+      bm2['Material source latitude']=""
+      bm2['Material source longitude']=""
+      bm2.Genus=element["Genus"]
+      bm2.Species=element["TaxonScientificName"].split(" ")[1]
+      bm2.Organism=""
+      bm2['Infraspecific name']=element["TaxonScientificName"]
+      this.RowData.push(bm2)
       
     }
     console.log(this.RowData)
+    let group = this.RowData.reduce((r, a) => {
+      r[a['Material source ID (Holding institute/stock centre, accession)']] = [...r[a['Material source ID (Holding institute/stock centre, accession)']] || [], a];
+      return r;
+     }, {});
+     console.log("group", group);
+     console.log("group length", Object.keys(group).length);
     //this.agGrid.api.setRowData(this.RowData);
     this.RefreshAll()
     //this.GridApi.refreshCells();
@@ -378,15 +423,17 @@ export class MaterialFormComponent implements OnInit {
               bm['Material source description']=data["Material source description"][i]
               bm['Material source latitude']=data["Material source latitude"][i]
               bm['Material source longitude']=data["Material source longitude"][i]
-              bm.Genus=data["Genus"]
-              bm.Species=data["Species"]
-              bm.Organism=data["Organism"]
-              bm["Infraspecific name"]=data["Infraspecific name"]
+              bm.Genus=data["Genus"][i]
+              bm.Species=data["Species"][i]
+              bm.Organism=data["Organism"][i]
+              bm["Infraspecific name"]=data["Infraspecific name"][i]
               this.RowData.push(bm)
             }
-          } 
+          }
+          this.RefreshAll();
         }
       });
+      
     }
     console.log(this.RowData)
   }
@@ -394,6 +441,8 @@ export class MaterialFormComponent implements OnInit {
     
     this.gridApi = params.api;
     this.get_data()
+    //this.gridApi.setRowData((this.RowData))
+
     
   }
   onSelectPageSizeChanged(){
@@ -461,6 +510,18 @@ export class MaterialFormComponent implements OnInit {
   get get_germplasm_loaded():boolean{
     return this.germplasm_loaded
   }
+  CleanTable():void{
+    this.RowData=[]
+    this.RefreshAll()
+  }
+  select_all_filtered():void{
+    this.selectAgGrid.api.selectAllFiltered()
+    this.all_selected=true
+  }
+  deselect_all_filtered():void{
+    this.selectAgGrid.api.deselectAllFiltered()
+    this.all_selected=false
+  }
   onTaskAdd(event) {
     this.selected_taxons = []
     let search_string = event.target.value;
@@ -523,7 +584,6 @@ export class MaterialFormComponent implements OnInit {
       // //console.log(this.materialTable.value)
     });
   }
-  
   isMaterialIDDuplicate(): ValidatorFn {
     return (c: AbstractControl): { [key: string]: boolean } | null => {
       // const userNames = this..get("credentials").value;
@@ -545,7 +605,6 @@ export class MaterialFormComponent implements OnInit {
       return null;
     }
   } 
-  
   initiateMaterialFormWithValues(selected_data:{}): FormGroup {
     
     let attributeFilters = {};
@@ -741,15 +800,15 @@ export class MaterialFormComponent implements OnInit {
     console.log("here  you have to open a new dialog component with the table for biologiccal material as in user tree")
   }  
   // I/O part
-  read_csv(delimitor: string) {
+  /* read_csv(delimitor: string) {
     let fileReader = new FileReader();
     fileReader.onload = (e) => {
         var csv = fileReader.result;
         this.load_csv(csv, e.loaded,e.total, delimitor)
     }
     fileReader.readAsText(this.fileUploaded);
-  }
-  readExcel() {
+  } */
+  /* readExcel() {
     let fileReader = new FileReader();
     fileReader.onload = (e) => {
         var storeData:any = fileReader.result;
@@ -765,8 +824,8 @@ export class MaterialFormComponent implements OnInit {
     }
     fileReader.readAsArrayBuffer(this.fileUploaded);
     
-  }
-  onFileChange(event) {
+  } */
+  /* onFileChange(event) {
     if (event.target.files.length > 0) {
         this.uploadResponse.status = 'progress'
         this.fileUploaded = event.target.files[0];
@@ -787,8 +846,8 @@ export class MaterialFormComponent implements OnInit {
         //this.form.get('file').setValue(this.fileUploaded);
 
     }
-  }
-  load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
+  } */
+  /* load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
     console.log(csvData)
     let allTextLines = csvData.split(/\r|\n|\r/);
     const dialogRef = this.dialog.open(CsvLoaderComponent, { width: '1200px', data: { material_data: allTextLines, delimitor:delimitor , cleaned_model:this.cleaned_model} });
@@ -800,23 +859,14 @@ export class MaterialFormComponent implements OnInit {
         ///console.log(allTextLines)
     
 
-  }
+  } */
   deleteMaterialRow(index: number) {
-    ////console.log(this.index_row)
-    ////console.log(index)
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     this.material_id = materialControl.controls[index].value['mat-id']
     materialControl.removeAt(index);
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-    ////console.log("biologicalMaterialControl.controls.length ",biologicalMaterialControl.controls.length)
     for (var i = 0; i < biologicalMaterialControl.controls.length; i++) {
-      ////console.log("biologicalMaterialControl ", i )
-      ////console.log(biologicalMaterialControl.controls[i].value['mat-id'])
-
-      ////console.log(biologicalMaterialControl.controls[i].value.findIndex(image => image['mat-id'] === index))
-
       if (biologicalMaterialControl.controls[i].value['mat-id'] === this.material_id) {
-
         biologicalMaterialControl.removeAt(i);
         i--
       }
@@ -831,7 +881,6 @@ export class MaterialFormComponent implements OnInit {
   deleteBiologicalMaterialRow(index: number) {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     biologicalMaterialControl.removeAt(index);
-
   }
   addBiologicalMaterialTerm(index: number, key: string, id: string) {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
@@ -849,15 +898,11 @@ export class MaterialFormComponent implements OnInit {
   }
   get getBiologicalMaterialFormControls() {
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-    // if (biologicalMaterialControl.controls.length>0){
-    //   //console.log(biologicalMaterialControl.controls[0].value)
-    // }
     return biologicalMaterialControl;
   }
   get getGeneralFormControls() {
     const generalControl = this.materialTable.get('generalRows') as FormArray;
     if (generalControl.controls.length > 0) {
-      // //console.log(generalControl.controls[0].value)
     }
     return generalControl;
 
@@ -882,7 +927,6 @@ export class MaterialFormComponent implements OnInit {
     }
   }
   formatLabel(value: number) {
-
     return value + 'm';
   }
   formatLongitudeLabel(value: number) {
@@ -947,153 +991,48 @@ export class MaterialFormComponent implements OnInit {
       }
     });
   }
-  save(form: any): boolean {
-
-
-    // if (this.marked) {
-    //   this.globalService.saveTemplate(form, this.model_type).pipe(first()).toPromise().then(
-    //     data => {
-    //       if (data["success"]) {
-    //         let message = "Template saved! " + data["message"]
-    //         this.alertService.success(message);
-    //       }
-    //       else {
-    //         let message = "Cannot save template! " + data["message"]
-    //         this.alertService.error(message);
-    //       }
-    //     }
-    //   );
-    // }
-    if (this.mode === "create") {
-      
-      this.globalService.add(form, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(
-        data => {
-          if (data["success"]) {
-            this.model_id = data["_id"];
-            this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
-            this.alertService.success(message)
-            if  (!this.currentUser.tutoriel_done){
-              let new_step=10
-              this.currentUser.tutoriel_step=new_step.toString()
-              localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            }
-
-            return true;
-          }
-          else {
-            this.alertService.error("this form contains errors! " + data["message"]);
-            return false;
-          }
-        }
-      );
-    }
-    else {
-      let element = event.target as HTMLInputElement;
-      let value_field = element.innerText;
-      this.globalService.update_document(this.model_key, form, this.model_type,).pipe(first()).toPromise().then(
-        data => {
-          if (data["success"]) {
-            var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
-            this.alertService.success(message)
-            this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            return true;
-          }
-          else {
-            this.alertService.error("this form contains errors! " + data["message"]);
-
-            return false;
-          };
-
-
-        }
-      );
-    }
-
-    //Here register the form with the correct investigation id et study id
-    //this.formDataService.setAddress(this.address);
-    return true;
-  };
+  
   get_startfilling() {
     return this.startfilling;
   };
   notify_checkbox_disabled() {
     if (!this.startfilling) {
       this.alertService.error('need to fill the form first');
-
     }
-
   }
   toggleVisibility(e) {
     this.marked = e.target.checked;
   };
-  cancel(form: any) {
-    if (this.mode==="preprocess"){
-      this.notify.emit('cancel the form');
-    }
-    else{
-      if  (!this.currentUser.tutoriel_done){
-          let new_step=8
-          this.currentUser.tutoriel_step=new_step.toString()
-          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-      }
-      this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-    }
-
-  };
+  
   submitForm() {
-    const materialControl = this.materialTable.get('materialRows') as FormArray;
+    /* const materialControl = this.materialTable.get('materialRows') as FormArray;
     const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     const generalControl = this.materialTable.get('generalRows') as FormArray;
-
     if (this.mode==='preprocess'){
       materialControl.push(this.initiateMaterialForm());
       biologicalMaterialControl.push(this.initiateBiologicalMaterialForm());
     }
-
     this.materialTouchedRows = materialControl.controls.filter(row => row.touched).map(row => row.value);
     this.biologicalMaterialTouchedRows = biologicalMaterialControl.controls.filter(row => row.touched).map(row => row.value);
     this.generalTouchedRows = generalControl.controls.filter(row => row.touched).map(row => row.value);
-
-    // //console.log(this.materialTouchedRows);
-    // //console.log(this.biologicalMaterialTouchedRows);
-    // //console.log(this.generalTouchedRows);
-    // generalControl.controls.forEach(attr=>{
-    //   //console.log(attr.value)
-    // });
-    // //console.log(this.cleaned_model);
-    // //console.log(generalControl.controls)
-    // //console.log(materialControl.controls)
-    // //console.log(biologicalMaterialControl.controls)
     var return_data = {}
-
-
     generalControl.controls.forEach(general_attr => {
-
       return_data = general_attr.value
-      //console.log(general_attr.value)
     });
     console.log(return_data)
     var material_index = 0
     //this.materialTouchedRows.forEach(material_attr => {
     materialControl.controls.forEach(material_attr => {
-      console.log(material_attr)
-      console.log(Object.keys(material_attr.value))
       var data = material_attr.value
-      console.log(material_attr)
       var material_attr_keys = Object.keys(data)
       var current_mat_id = ""
       for (var i = 0; i < material_attr_keys.length; i++) {
-        console.log(material_attr_keys[i])
-        // //console.log(material_attr[material_attr_keys[i]])
         if (material_attr_keys[i] === 'mat-id') {
           current_mat_id = data[material_attr_keys[i]]
-
         }
         else {
           if (return_data[material_attr_keys[i]]) {
             return_data[material_attr_keys[i]].push(data[material_attr_keys[i]])
-
           }
           else {
             return_data[material_attr_keys[i]] = []
@@ -1111,67 +1050,159 @@ export class MaterialFormComponent implements OnInit {
           }
         }
       });
-      //console.log(return_data)
-
-
       biologicalMaterialControl.controls.forEach(biological_material_attr => {
-
         var data2=biological_material_attr.value
-        //console.log(data2['mat-id'])
-
-
         if (data2['mat-id'] === current_mat_id) {
-
           var biological_material_attr_keys = Object.keys(data2)
-          console.log(biological_material_attr_keys.length)
           for (var i = 0; i < biological_material_attr_keys.length; i++) {
             if (biological_material_attr_keys[i] !== 'mat-id') {
               return_data[biological_material_attr_keys[i]][material_index].push(data2[biological_material_attr_keys[i]])
-
-              // if (return_data[biological_material_attr_keys[i]]){
-              //   if (return_data[biological_material_attr_keys[i]][material_index]){
-
-              //    return_data[biological_material_attr_keys[i]][material_index].push(biological_material_attr[biological_material_attr_keys[i]])
-
-              //   }
-              //   else{
-              //     return_data[biological_material_attr_keys[i]].push([])
-              //     return_data[biological_material_attr_keys[i]][material_index].push(biological_material_attr[biological_material_attr_keys[i]])
-
-              //   }
-
-              //   //return_data[biological_material_attr_keys[i]].push([])
-              //   //return_data[biological_material_attr_keys[i]][return_data[biological_material_attr_keys[i]].length -1].push(biological_material_attr[biological_material_attr_keys[i]])
-
-              // }
-              // else{
-              //   //console.log("attribute not already exist", biological_material_attr_keys[i])
-
-              //   return_data[biological_material_attr_keys[i]]=[[]]
-              //   return_data[biological_material_attr_keys[i]][material_index].push(biological_material_attr[biological_material_attr_keys[i]])
-              // }
-
             }
-
           }
         }
       });
-
       material_index += 1
-    });
+    }); */
     if (this.mode==="preprocess"){
-      console.log("start to subbmit")
-      
-      var data={'form':return_data, 'template':this.marked}
+      var data={'form':this.convertRowData(), 'template':this.marked}
       this.notify.emit(data);
-      
     }
     else{
-      this.save(return_data)
+      this.save(this.convertRowData())
     }
-    
-    //console.log(return_data)
   }
+  convertRowData(){
+    let doc_to_add = {
+      'Genus': [],
+      'Species': [],
+      'Organism': [],
+      'Infraspecific name': [],
+      'Material source ID (Holding institute/stock centre, accession)': [],
+      'Material source description': [],
+      'Material source longitude': [],
+      'Material source altitude': [],
+      'Material source latitude': [],
+      'Material source DOI': [],
+      'Material source coordinates uncertainty': [],
+      'Biological material ID': [],
+      'Biological material preprocessing': [],
+      'Biological material coordinates uncertainty': [],
+      'Biological material longitude': [],
+      'Biological material latitude': [],
+      'Biological material altitude': []
+    };
+    let material_group = this.RowData.reduce((r, a) => {
+      r[a['Material source ID (Holding institute/stock centre, accession)']] = [...r[a['Material source ID (Holding institute/stock centre, accession)']] || [], a];
+      return r;
+    }, {});
+    console.log("group", material_group);
+    console.log("group length", Object.keys(material_group).length);
+    let cpt_mat=0
+    Object.keys(material_group).forEach(material=>{
+      let materiel_doc=material_group[material] //array of bm
+      console.log(materiel_doc)
+      doc_to_add.Genus.push(materiel_doc[0].Genus)
+      doc_to_add.Species.push(materiel_doc[0].Species)
+      doc_to_add.Organism.push(materiel_doc[0].Organism)
+      doc_to_add['Infraspecific name'].push(materiel_doc[0]['Infraspecific name'])
+      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(materiel_doc[0]['Material source ID (Holding institute/stock centre, accession)'])
+      doc_to_add['Material source description'].push(materiel_doc[0]['Material source description'])
+      doc_to_add['Material source DOI'].push(materiel_doc[0]['Material source DOI'])
+      let keys=Object.keys(materiel_doc[0])
+      
+      for (let index = 0; index < keys.length; index++) {
+        if (keys[index].includes("Biological ")){
+          var element=keys[index]
+          let tmp_bm=[]
+          for (let j = 0; j < materiel_doc.length; j++) {
+            tmp_bm.push(materiel_doc[j][element])
+            
+          }
+          doc_to_add[element].push(tmp_bm)
+        }
+      }
+      
+      cpt_mat++
+      
+    });
+
+    console.log(doc_to_add)
+    return doc_to_add
+    /* for (let index = 0; index < this.RowData.length; index++) {
+      const bm = this.RowData[index];
+      doc_to_add.Genus.push(bm.Genus)
+      doc_to_add.Species.push(bm.Species)
+      doc_to_add.Organism.push(bm.Organism)
+      doc_to_add['Infraspecific name'].push(bm['Infraspecific name'])
+      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(bm['Material source ID (Holding institute/stock centre, accession)'])
+      doc_to_add['Material source description'].push(bm['Material source description'])
+      doc_to_add['Material source DOI'].push(bm['Material source DOI'])
+      
+    } */
+  }
+  save(form: any): boolean {
+    if (this.mode === "create") {
+      this.globalService.add(form, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(
+        data => {
+          if (data["success"]) {
+            this.model_id = data["_id"];
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "biomat", role: this.role, group_key: this.group_key } });
+            var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+            this.alertService.success(message)
+            if  (!this.currentUser.tutoriel_done){
+              let new_step=10
+              this.currentUser.tutoriel_step=new_step.toString()
+              localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            return true;
+          }
+          else {
+            this.alertService.error("this form contains errors! " + data["message"]);
+            return false;
+          }
+        }
+      );
+    }
+    //edit mode
+    else {
+      //let element = event.target as HTMLInputElement;
+      //let value_field = element.innerText;
+      console.log(form)
+      console.log(this.RowData)
+
+      this.globalService.update_document(this.model_key, form, this.model_type).pipe(first()).toPromise().then(
+        data => {
+          if (data["success"]) {
+            var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+            this.alertService.success(message)
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "biomat", role: this.role, group_key: this.group_key } });
+            return true;
+          }
+          else {
+            this.alertService.error("this form contains errors! " + data["message"]);
+
+            return false;
+          };
+        }
+      );
+    }
+    //Here register the form with the correct investigation id et study id
+    //this.formDataService.setAddress(this.address);
+    return true;
+  };
+  cancel(form: any) {
+    if (this.mode==="preprocess"){
+      this.notify.emit('cancel the form');
+    }
+    else{
+      if  (!this.currentUser.tutoriel_done){
+          let new_step=8
+          this.currentUser.tutoriel_step=new_step.toString()
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "biomat", role: this.role, group_key: this.group_key } });
+    }
+  };
   toggleTheme() {
     this.mode_table = !this.mode_table;
   }
@@ -1192,13 +1223,9 @@ export class MaterialFormComponent implements OnInit {
       }
     }
 
- }
- onDone() {
-  // //console.log(this.currentUser['tutoriel_step'])
-  // //console.log(this.materialTable.value)
-  // //console.log(this.materialTable.controls)
+  }
+  onDone() {
   //this.joyrideService.closeTour()
-  
   //Biological  form template
   //if (this.currentUser['tutoriel_step']==="9"){
     var species_list=["B73", "PH207", "Oh43", "W64A", "EZ47"]
@@ -1236,7 +1263,7 @@ export class MaterialFormComponent implements OnInit {
     })
   //}  
   this.startfilling=true
-}
+  }
 
 
   // submit(form: any) {

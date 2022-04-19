@@ -39,7 +39,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
       @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
       @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-      @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+      @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
       ///@ViewChildren(MatPaginator) paginators: QueryList<MatPaginator>
       @ViewChild('biologicalMaterialDataTable', {static: false}) table;
       @Output() notify: EventEmitter<string> = new EventEmitter<string>();
@@ -126,6 +126,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           this.paginator.page.emit(event);
       }
       async ngOnInit() {
+          
          this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
           ////console.log(this.currentUser)
           await this.get_vertices()

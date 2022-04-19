@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, Inject, ViewChild } from '@angular/core';
+import { Component, Input, Inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { GlobalService, OntologiesService, AlertService } from '../../../services';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
@@ -8,7 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-
+import { ProgressBarComponent } from 'src/app/components/progress-bar/progress-bar.component';
 //MODELS
 import { OntologyFlatNode } from '../../../models/ontology_flat_node'
 
@@ -21,6 +21,8 @@ interface DialogData {
     multiple: boolean;
     observed:boolean;
     mode_simplified:boolean
+    sub_class_of:string;
+    model_type:string;
 }
 
 /**
@@ -29,9 +31,11 @@ interface DialogData {
 @Component({
     selector: 'app-ontology-tree',
     templateUrl: './ontology-tree.component.html',
-    styleUrls: ['./ontology-tree.component.css']
+    styleUrls: ['./ontology-tree.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OntologyTreeComponent {
+    @ViewChild(ProgressBarComponent,{static:false}) progress_bar: ProgressBarComponent;
 
     private ontology_id: string;
     private selected_set: OntologyTerm[]
@@ -45,14 +49,15 @@ export class OntologyTreeComponent {
     private uncheckable: boolean = false
     private observed: boolean = false
     private mode_simplified: boolean = false
+    private sub_class_of:string="";
+    private model_type:string="";
     private multiple: boolean
     panel_disabled:boolean=true
     panel_expanded:boolean=true
     //model ontology    
     private ontology: any = {};
     public spinner_mode = 'indeterminate'
-
-    private displayed = false;
+    private displayed_term_id:string = "";
     private ontology_tree: OntologyTerm[];
     public show_spinner: boolean = true;
     private active_node: OntologyTerm;
@@ -63,9 +68,25 @@ export class OntologyTreeComponent {
     ontology_tree_loading_progress_value = 0;
     selected=-1
     labels=['Use term id: ', 'Use term name: ', 'Use term Definition: ']
-
     //private result_search=[]
     private selected_nodes = []
+    private ont_transformer = (node: OntologyTerm, level: number) => {
+        return {
+            expandable: !!node.children && node.children.length > 0,
+            name: node.name,
+            namespace: node.namespace,
+            def: node.def,
+            id: node.id,
+            term: node,
+            level: level,
+        };
+    }
+    private treeControl = new FlatTreeControl<OntologyFlatNode>(node => node.level, node => node.expandable);
+    private treeFlattener = new MatTreeFlattener(this.ont_transformer, node => node.level, node => node.expandable, node => node.children);
+    private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    private initialSelection = []
+    private checklistSelection = new SelectionModel<OntologyFlatNode>(this.data.multiple, this.initialSelection /* multiple */);
+    
     constructor(
         private globalService: GlobalService,
         private ontologiesService: OntologiesService,
@@ -88,7 +109,13 @@ export class OntologyTreeComponent {
         if (this.data.mode_simplified){
             this.mode_simplified=this.data.mode_simplified
         }
-        //console.log("multiple choice is activated: ", this.multiple)
+        if (this.data.sub_class_of){
+            this.sub_class_of=this.data.sub_class_of
+        }
+        if (this.data.model_type){
+            this.model_type=this.data.model_type
+        }
+        console.log("sub_class_of is given: ", this.sub_class_of)
         this.ontology_tree = [];
         this.ontologyTerms = [];
         this.ontologyContext = [];
@@ -96,92 +123,40 @@ export class OntologyTreeComponent {
         this.ontologyEnum = [];
         this.ontologyNode = [];
         this.search_string = ""
-
-
-
     }
-    private ont_transformer = (node: OntologyTerm, level: number) => {
-        return {
-            expandable: !!node.children && node.children.length > 0,
-            name: node.name,
-            namespace: node.namespace,
-            def: node.def,
-            id: node.id,
-            term: node,
-            level: level,
-        };
+    
+    async ngOnInit() {
+        this.ontology_tree_loading_progress_value = 0
+        await this.get_ontology()
+        //this.ontology_tree_loading_progress_value = 100
     }
-
-    private treeControl = new FlatTreeControl<OntologyFlatNode>(node => node.level, node => node.expandable);
-    private treeFlattener = new MatTreeFlattener(this.ont_transformer, node => node.level, node => node.expandable, node => node.children);
-    private dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    private initialSelection = []
-    private checklistSelection = new SelectionModel<OntologyFlatNode>(this.data.multiple, this.initialSelection /* multiple */);
-
-    get_ontology() {
-        //console.log(this.ontology_id)
-        return this.ontologiesService.get_ontology(this.ontology_id).toPromise().then(data => {
-            this.ontology = data;
-            this.ontologyNode = []
-            this.search_string = ""
-            var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "CO_322 (Maize)", "CO_325", "CO_331", "Solanacae"]
-            //console.log(this.ontology_id)
-            //console.log(this.ontology)
-            if (this.ontology_id === "XEO") {
-                this.ontologyNode = this.build_xeo_isa_hierarchy(this.ontology);
-            }
-            else if ((this.ontology_id === "CO_322 (Maize)") || (this.ontology_id === "CO_325")|| (this.ontology_id === "CO_331")) {
-                //console.log(this.ontology)
-                this.ontologyNode = this.build_C0_hierarchy2(this.ontology);
-
-            }
-            else if (ontologies_list.includes(this.ontology_id)) {
-                //this.ontology_tree_loading_progress_value = 50
-                this.ontologyNode = this.build_eo_isa_hierarchy(this.ontology);
-                //this.ontology_tree_loading_progress_value = 100
-            }
-
-            else {
-                //console.log("no ontology defined")
-            }
-            //console.log("after build hierarchy function")
-            //this.show_spinner = false
-            this.dataSource.data = this.ontologyNode;
-
-        })
+    
+    async get_ontology() {
+        const data = await this.ontologiesService.get_ontology(this.ontology_id).toPromise();
+        this.ontology = data;
+        this.ontologyNode = [];
+        this.search_string = "";
+        var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "Solanacae"];
+        if (this.ontology_id === "XEO") {
+            this.ontologyNode = this.build_xeo_isa_hierarchy(this.ontology);
+        }
+        if ((this.ontology_id === "CO_322 (Maize)") || (this.ontology_id === "CO_325") || (this.ontology_id === "CO_331")) {
+            this.ontologyNode = this.build_C0_hierarchy2(this.ontology);
+        }
+        if (ontologies_list.includes(this.ontology_id)) {
+            this.ontologyNode = this.build_eo_isa_hierarchy(this.ontology);
+        }
+        if (this.sub_class_of !== "") {
+            console.log(this.searchTerm(this.ontologyNode, this.sub_class_of));
+            this.ontologyNode = [this.searchTerm(this.ontologyNode, this.sub_class_of)];
+        }
+        this.dataSource.data = this.ontologyNode;
     }
     // async load(){
     //     await this.get_ontology()
     // }
 
-    async ngOnInit() {
-        this.ontology_tree_loading_progress_value = 50
-        await this.get_ontology()
-        this.ontology_tree_loading_progress_value = 100
-        // this.ontologyNode = []
-        // this.search_string = ""
-        // var ontologies_list = ["EnvO", "EO", "BTO", "PO", "CO_20", "EFO", "CO_715"]
-
-        // if (this.ontology_type === "XEO") {
-        //     this.ontologyNode = this.build_xeo_isa_hierarchy(this.ontology);
-        // }
-        // else if (this.ontology_type === "CO_322") {
-        //     this.ontologyNode = this.build_C0_hierarchy(this.ontology);
-
-        // }
-        // else if (ontologies_list.includes(this.ontology_type)) {
-        //     this.ontology_tree_loading_progress_value = 50
-        //     this.ontologyNode = this.build_eo_isa_hierarchy(this.ontology);
-        //     this.ontology_tree_loading_progress_value = 100
-        // }
-
-        // else {
-        //     //console.log("no ontology defined")
-        // }
-        // //console.log("after build hierarchy function")
-        // //this.show_spinner = false
-        // this.dataSource.data = this.ontologyNode;
-    }
+    
 
     onSearch() {
         this.selected_nodes = []
@@ -230,16 +205,31 @@ export class OntologyTreeComponent {
             }
         }
     }
-    onResponseRangeSelect(value: string) {
+    onResponseRangeSelect(value: string, node) {
         this.selected_term["term"].set_response_range(value)
+        node["term"].set_response_range(value)
     }
-    
+    onFreeTextAdd(event, node: OntologyTerm) {
+        this.selected_term["term"].set_freetext(event.target.value)
+        node["term"].set_freetext(event.target.value)
+    }
+    onFreeTextPaste(event: any, node: OntologyTerm) {
+        let freetext=event.clipboardData.getData('text')
+        this.selected_term["term"].set_freetext(freetext)
+        node["term"].set_freetext(freetext)
+    }
+    onExtractWholeObservedVariable(node: OntologyTerm){
+        console.log(node)
+
+    }
 
     onValueAdd(event, node: OntologyTerm) {
         //console.log(event.target.value)
+        this.selected_term["term"].set_value(event.target.value)
         node["term"].set_value(event.target.value)
     }
     onUnitSelect(value: string, node: OntologyTerm) {
+        this.selected_term["term"].set_unit(value)
         node["term"].set_unit(value)
     }
     select(term: OntologyTerm, item:string){
@@ -254,24 +244,27 @@ export class OntologyTreeComponent {
         //console.log(this.checklistSelection)
         //console.log(this.checklistSelection.isSelected(term))
         //console.log(this.data.selected_set)
-        if (this.checklistSelection.isSelected(term)) {
+        this.selected_term=term
+        if (this.checklistSelection.isSelected(this.selected_term)) {
             if (this.multiple) {
-                this.data.selected_set.push(term)
+                this.data.selected_set.push(this.selected_term)
             }
             else {
                 this.data.selected_set.pop()
-                this.data.selected_set.push(term)
+                this.data.selected_set.push(this.selected_term)
             }
-            this.context_term = term["term"].get_context()
-            //console.log(this.context_term)
+            this.context_term = this.selected_term["term"].get_context()
+            console.log(this.context_term)
             for (var context in this.context_term) {
                 if (this.context_term[context].name === "Quantity") {
-                    term["term"].set_unit(this.context_term[context]["instances"][0]._symbol)
+                    this.selected_term["term"].set_unit(this.context_term[context]["instances"][0]._symbol)
 
                 }
             }
 
-            this.displayed = true;
+            this.displayed_term_id = this.selected_term.id;
+            console.log(this.displayed_term_id)
+            //this.selected_term=term
 
         }
         else {
@@ -280,20 +273,13 @@ export class OntologyTreeComponent {
                     this.data.selected_set.splice(i, 1);
                 }
             }
-            this.displayed = false;
+            this.displayed_term_id = "";
             //this.context_term=term["term"].get_context()
         }
         //console.log(this.data.selected_set)
     }
     show_info(term: OntologyTerm) {
-
-        //this.selected_term=term
-        //this.data.selected_term=this.selected_term
-        //this.data.selected_set=this.selected_set
         this.active_node = term
-        //this.displayed=true;
-        //this.context_term=term["term"].get_context()
-
     }
     get get_checklistSelection(){
         return this.checklistSelection
@@ -313,6 +299,9 @@ export class OntologyTreeComponent {
     get get_selected_nodes(){
         return this.selected_nodes
     }
+    get get_selected_term(){
+        return this.selected_term
+    }
     get get_context_term(){
         return this.context_term
     }
@@ -325,15 +314,24 @@ export class OntologyTreeComponent {
     get get_ontologyEnum(){
         return this.ontologyEnum
     }
-    get_displayed() {
-        return this.displayed
+    get get_model_type(){
+        return this.model_type
+    }
+    get_displayed(term: OntologyTerm) {
+        return this.displayed_term_id===term.id
     }
     get get_observed(){
         return this.observed
     }
-    get_progress() {
+    get progress() {
         //console.log(this.ontology_tree_loading_progress_value)
-        return this.ontology_tree_loading_progress_value
+        if  (this.progress_bar){
+            return this.progress_bar.get_progress
+        }
+        else{
+            return 0
+        }
+        
     }
     build_eo_isa_hierarchy(ontology: {}): OntologyTerm[] {
 
@@ -341,7 +339,9 @@ export class OntologyTreeComponent {
         this.show_spinner = true;
         //console.log(this.show_spinner)
         //this.matSpinner.value= 0
-        this.ontology_tree_loading_progress_value = 0
+        //this.ontology_tree_loading_progress_value = 0
+        //this.progress_bar.progress=0
+        this.progress_bar.set_progress(0)
         var ontology_data: Array<{ is_obsolete: boolean; is_a: string; id: string; def: any; comment: any; name: any; relationship: string; }> = ontology["term"]
         //premier passage pour créer tous les termes sans les relations de parenté
         for (var i = 0, len = ontology_data.length; i < len; i++) {
@@ -361,7 +361,9 @@ export class OntologyTreeComponent {
         //ontology_data.forEach(
         //     term=>{
         //this.matSpinner.value= 30
-        this.ontology_tree_loading_progress_value = 30
+        //this.ontology_tree_loading_progress_value = 30
+       
+        this.progress_bar.set_progress(30)
         //console.log(this.ontology_tree_loading_progress_value)
         for (var i = 0, len = ontology_data.length; i < len; i++) {
             var term = ontology_data[i]
@@ -395,7 +397,8 @@ export class OntologyTreeComponent {
         }
         //)
         var cpt = 0
-        this.ontology_tree_loading_progress_value = 60
+        //this.ontology_tree_loading_progress_value = 60
+        this.progress_bar.set_progress(60)
         //console.log(this.ontology_tree_loading_progress_value)
         //troisième passage pour créer les relations entre termes 
         for (var i = 0, len = this.ontologyTerms.length; i < len; i++) {
@@ -409,7 +412,8 @@ export class OntologyTreeComponent {
                 cpt += 1;
             }
         }
-        this.ontology_tree_loading_progress_value = 90
+        //this.ontology_tree_loading_progress_value = 90
+        this.progress_bar.set_progress(90)
         //console.log(this.ontology_tree_loading_progress_value)
         var cpt = 0
         var head_term: OntologyTerm[] = []
@@ -435,10 +439,12 @@ export class OntologyTreeComponent {
         }
 
 
-        this.ontology_tree_loading_progress_value = 100
+        //this.ontology_tree_loading_progress_value = 100
+        this.progress_bar.set_progress(100)
         this.show_spinner = false;
         return this.ontologyNode;
     }
+    //
     build_C0_hierarchy2(ontology: {}): OntologyTerm[] {
 
         this.show_spinner = true;
@@ -841,11 +847,10 @@ export class OntologyTreeComponent {
     }
     build_xeo_isa_hierarchy(ontology: {}): OntologyTerm[] {
         this.show_spinner = true;
-        //premier passage pour créer tous les termes 
+        //first traversal pour créer tous les termes 
         var cpt = 0;
         this.ontologyTerms.push(new OntologyTerm(this.ontology_id, "", [], ""));
         var ontology_data: Array<{ is_obsolete: boolean; is_a: string; id: string; def: any; comment: any; name: any; relationship: string; }> = ontology["term"]
-
         ontology_data.forEach(
             term => {
                 this.ontologyTerms.push(new OntologyTerm(term.id, term.name, [], ""))
@@ -1129,7 +1134,8 @@ export class OntologyTreeComponent {
         this.dialogRef.close();
     }
     onOkClick() {
-        ////console.log(this.selected_term)
+
+        console.log(this.selected_term)
         //console.log(this.selected_set)
     }
 }

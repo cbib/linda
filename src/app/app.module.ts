@@ -19,6 +19,7 @@ import { DataTablesModule } from 'angular-datatables';
 import { HeaderModule } from './components/header/header.module';
 import { FooterModule } from './components/footer/footer.module';
 import { SiderModule } from './components/sider/sider.module';
+import { ProgressBarModule } from './components/progress-bar/progress-bar.module';
 import { FormModule } from './modules/application/forms/form.module';
 import { MaterialFormModule } from './modules/application/material-forms/material-form.module';
 import { ObservationUnitFormModule} from './modules/application/observation-unit-forms/observation-unit-form.module'
@@ -104,6 +105,7 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
     HeaderModule,
     FooterModule,
     SiderModule,
+    ProgressBarModule,
     FormModule,
     MaterialFormModule,
     ObservationUnitFormModule,

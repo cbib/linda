@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild , AfterViewInit,ChangeDetectorRef} from '@angular/core';
 import { GlobalService, AlertService, UserService} from '../../../services';
 import { splitAtColon } from '@angular/compiler/src/util';
 import { Router, ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { TemplateElement} from '../../../models/template_models'
-
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort'
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-templates',
@@ -14,12 +16,14 @@ import { TemplateElement} from '../../../models/template_models'
 
 //Add possibility to import a template into a existing esperiment
 
-export class TemplatesComponent implements OnInit {
+export class TemplatesComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   private displayedColumns: string[] = ['id', 'Model', 'Actions'];
-  private dataSource
+  private dataSource:MatTableDataSource<TemplateElement>;
   private currentUser
   private selected_model_type=""
-  private key =""
+  private model_key =""
   private selected_model:string=""
   private model_types :{}[]= [{"event":"Event"}, {"experimental_factor":"Experimental factor"},{"observed_variable":"Observed variable"},{"environment":"Environment"}]
 
@@ -27,14 +31,46 @@ export class TemplatesComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private userService:UserService,
-    private route: ActivatedRoute) 
+    private route: ActivatedRoute,
+    private _cdr: ChangeDetectorRef) 
     { 
-
+      this.dataSource = new MatTableDataSource([]);
+      this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      this.get_templates()
     }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    await this.get_templates()
+    //await this.get_templates()
+  }
+  async get_templates(){
+    const ELEMENT_DATA: TemplateElement[]=[]
+    return await this.userService.get_person_id(this.currentUser._key).toPromise().then(
+      async person_id => {
+          console.log(person_id)
+          const data = await this.globalService.get_templates(person_id[0].split("/")[1]).toPromise();
+        if (data) {
+          data.forEach(result => {
+            console.log(result);
+            this.model_key = result['template']['_id'].split('/')[1];
+            ELEMENT_DATA.push({ 'id': result['template']['_id'], 'model': result['template'], key: this.model_key, 'model_type': result['template']['_model_type'], 'edit': "test" });
+          });
+          //this.dataSource = ELEMENT_DATA;
+          this.dataSource = new MatTableDataSource(ELEMENT_DATA);
+          console.log(this.dataSource);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this._cdr.detectChanges();
+        }
+      }
+    );
+  }
+  ngAfterViewInit(): void {
+    console.log(this.dataSource)
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this._cdr.detectChanges()
   }
   get get_model_types() : {}[]{
     return this.model_types
@@ -42,6 +78,7 @@ export class TemplatesComponent implements OnInit {
   get get_selected_model(){
     return this.selected_model
   }
+  
 
   get_key(model:{}){
     return Object.keys(model)[0];
@@ -49,27 +86,26 @@ export class TemplatesComponent implements OnInit {
   get_value(model:{}){
     return model[Object.keys(model)[0]];
   }
-
-
-  get_templates(){
-    const ELEMENT_DATA: TemplateElement[]=[]
-    return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-      person_id => {
-          console.log(person_id)
-          return this.globalService.get_templates(person_id[0].split("/")[1]).toPromise().then(
-              data => {
-                if (data){
-                  data.forEach(result => {
-                      console.log(result)
-                      ELEMENT_DATA.push({'id':result['template']['_id'], 'model': result['template'], key: this.key, 'model_type': result['template']['_model_type'], 'edit': "test" })
-                  });
-                  this.dataSource = ELEMENT_DATA;
-                }
-              }
-          );
-      }
-    );
+  public handlePageBottom(event: PageEvent) {
+    this.paginator.pageSize = event.pageSize;
+    this.paginator.pageIndex = event.pageIndex;
+    this.paginator.page.emit(event);
   }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  get get_dataSource() {
+    return this.dataSource
+  }
+
+
+  
 
   /* get_all_templates(user_key){
     const ELEMENT_DATA: TemplateElement[]=[]

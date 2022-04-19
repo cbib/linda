@@ -33,8 +33,8 @@ export class EnvironmentVariablesPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   private dataSource: MatTableDataSource<EnvironmentInterface>;
   private displayedColumns: string[] = ['Environment parameter', 'Environment parameter value', 'Environment parameter accession number','edit'];
   loaded: boolean = false
@@ -67,6 +67,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     console.log(this.parent_id)
     //await this.get_vertices()
@@ -132,7 +133,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

@@ -13,7 +13,7 @@
     [stepContent]="menucontent"
     [stepContentParams]="{'model_n':model_type, 'model_len':get_cleaned_model.length, 'model_level':get_level, 'message':get_message_guided_tour()}">
     <button (click)="onClickTour(true)" style="float: right;" class="btn btn-light">Help</button>
-    <button *ngIf="get_level<get_max_level && inline==='false'" style="float: right;" class="btn btn-info" (click)="goToNext(get_modelForm,get_level)">Next</button>
+    <button *ngIf="get_level<get_max_level " style="float: right;" class="btn btn-info" (click)="goToNext(get_modelForm,get_level)">Next</button>
     <!-- <span style="margin-right:10px;"></span>-->
 
     <button *ngIf="inline==='false'" joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="get_left" [stepContentParams]="{'model_n':model_type}"
@@ -57,7 +57,7 @@
     <!-- <span style="margin-right:10px;"></span> -->
     <button *ngIf="inline==='false'" (click)="cancel(get_modelForm)" style="float: right;" class="btn btn-danger">Cancel</button>
     <!-- <span style="margin-right:10px;"></span> -->
-    <button *ngIf="get_level>1 && inline==='false'" style="float: right;" class="btn btn-xs btn-info" (click)="back(get_modelForm,get_level)" [disabled]="get_level<=1">Back</button>
+    <button *ngIf="get_level>1 " style="float: right;" class="btn btn-xs btn-info" (click)="back(get_modelForm,get_level)" [disabled]="get_level<=1">Back</button>
     <!-- <span style="margin-right:10px;"></span> -->
     <!-- <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" [checked]="getChecked" (change)="toggleVisibility($event)" id="flexSwitchCheckDefault">
@@ -198,36 +198,69 @@
                             title="{{get_model[field['key']].Definition}}"></i>
                     </span>
                     <!--ontology format =-->
-                    <div 
-                    *ngIf="get_model[field['key']].Format.includes('Ontology')"
-                    joyrideStep="StepOntologyField"
-                    title=""
-                    [stepContent]="formOntologyContent"
-                    [stepContentParams]="{'model_n':model_type, 'model_len':get_cleaned_model.length, 'model_level':get_level, 'message':get_message_guided_tour()}"
-                    >
-
-                        <div *ngFor="let ont of get_model[field['key']]['Associated ontologies'] ; index as j;"
-                            class="btn-group">
+                    <div *ngIf="get_model[field['key']].Format.includes('Ontology')"
+                        joyrideStep="StepOntologyField"
+                        title=""
+                        [stepContent]="formOntologyContent"
+                        [stepContentParams]="{'model_n':model_type, 'model_len':get_cleaned_model.length, 'model_level':get_level, 'message':get_message_guided_tour()}"
+                        >
+                        <div *ngFor="let ont of get_model[field['key']]['Associated ontologies'] ; index as j;" class="btn-group">
                             <button class="btn btn-success btn-xs fa fa-plus"
-                                (click)="onOntologyTermSelection(ont, field['key'],get_model[field['key']].Multiple)">
+                                (click)="onOntologyTermSelection(ont, field['key'],get_model[field['key']].Multiple,get_model[field['key']].SubclassOf)">
                                 {{ont}}
                             </button>
-
                         </div>
                         <span *ngIf="get_validated_term[field['key']].selected!==true"
                             style="display:inline-block; margin-left: 10px;">
-                            <input style="color:black" mdbInput placeholder="{{get_model[field['key']].Example}}" type="text"
-                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                            <input 
+                                *ngIf="!get_model[field['key']].Format.includes('Free text')"
+                                style="color:black" 
+                                mdbInput 
+                                placeholder="{{get_model[field['key']].Example}}" 
+                                type="text"
+                                formControlName="{{field['key']}}" 
+                                class="form-control" 
+                                (keypress)="onTaskAdd($event)" 
+                            />
+                            <textarea 
+                                *ngIf="get_model[field['key']].Format.includes('Free text')" 
+                                style="width: 90%;"
+                                mdbInput
+                                placeholder="{{get_model[field['key']].Example}}" 
+                                type="text" 
+                                formControlName="{{field['key']}}"
+                                class="form-control" 
+                                (keypress)="onTaskAdd($event)"
+                            >
+                            </textarea>
                         </span>
                         <span *ngIf="get_validated_term[field['key']].selected===true"
                             style="display:inline-block; margin-left: 10px;">
-                            <input style="color:black" mdbInput value="{{get_validated_term[field['key']].values}}" type="text"
-                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)"
-                                [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
+                            <input 
+                                *ngIf="!get_model[field['key']].Format.includes('Free text')"
+                                style="color:black" 
+                                mdbInput 
+                                value="{{get_validated_term[field['key']].values}}" 
+                                type="text"
+                                formControlName="{{field['key']}}" 
+                                class="form-control" 
+                                (keypress)="onTaskAdd($event)"
+                                [ngClass]="{ 'is-invalid': f[field['key']].errors }" 
+                            />
+                            <textarea 
+                                *ngIf="get_model[field['key']].Format.includes('Free text')" 
+                                style="width: 90%;"
+                                mdbInput
+                                value="{{get_validated_term[field['key']].values}}" 
+                                type="text" 
+                                formControlName="{{field['key']}}"
+                                class="form-control" 
+                                (keypress)="onTaskAdd($event)"
+                                [ngClass]="{ 'is-invalid': f[field['key']].errors}"
+                            >
+                            </textarea>
                         </span>
-                    </div>
-
-                    
+                    </div>      
                     <ng-template style="min-height: 800px;max-height: 800px;" #formOntologyContent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
                         <div>
                           <nav class="navbar navbar-expand-sm navbar-dark">
@@ -311,15 +344,28 @@
                                     title=""
                                     [stepContent]="formUIcontent"
                                     [stepContentParams]="{'model_n':model_type, 'model_len':get_cleaned_model.length, 'model_level':get_level, 'message':get_message_guided_tour()}"
-                                    >
-                                <input *ngIf="!get_model[field['key']].Format.includes('Free text') " mdbInput
-                                    placeholder="{{get_model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                                    class="form-control" (keypress)="onTaskAdd($event)"
-                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" />
-                                <textarea *ngIf="get_model[field['key']].Format.includes('Free text')" mdbInput
-                                    placeholder="{{get_model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
-                                    class="form-control" (keypress)="onTaskAdd($event)"
-                                    [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
+                                >
+                                <input 
+                                    *ngIf="!get_model[field['key']].Format.includes('Free text')" 
+                                    mdbInput
+                                    placeholder="{{get_model[field['key']].Example}}" 
+                                    type="text" 
+                                    formControlName="{{field['key']}}"
+                                    class="form-control" 
+                                    (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors }" 
+                                />
+                                <textarea 
+                                    *ngIf="get_model[field['key']].Format.includes('Free text')" 
+                                    mdbInput
+                                    placeholder="{{get_model[field['key']].Example}}" 
+                                    type="text" 
+                                    formControlName="{{field['key']}}"
+                                    class="form-control" 
+                                    (keypress)="onTaskAdd($event)"
+                                    [ngClass]="{ 'is-invalid': f[field['key']].errors}"
+                                >
+                                </textarea>
                             </div>
                             <ng-template style="min-height: 800px;max-height: 800px;" #formUIcontent let-nod="model_n" let-modellen="model_len" let-modell="model_level" let-modelmessage="message">
                                 <div>
@@ -397,7 +443,6 @@
                                   
                                 </div> -->
                             </ng-template>
-
                             <div *ngIf="get_model[field['key']].Format.includes('Unique identifier') && get_model[field['key']].Position !== '1' "
 >
                                 <input *ngIf="!get_model[field['key']].Format.includes('Free text') " mdbInput
@@ -409,8 +454,6 @@
                                     class="form-control" (keypress)="onTaskAdd($event)"
                                     [ngClass]="{ 'is-invalid': f[field['key']].errors}"></textarea>
                             </div>
-
-
                             <div *ngIf="!get_model[field['key']].Format.includes('Unique identifier')"
                                     joyrideStep="StepNormalField"
                                     title=""
@@ -495,9 +538,6 @@
                                 </div>
                                 
                             </ng-template>
-                            
-
-
                             <div *ngIf="f[field['key']].errors" class="invalid-feedback">
                                 <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is
                                     required</div>
@@ -510,8 +550,12 @@
 
                         <!--Date format-->
                         <div *ngIf="field['key'].includes('date')">
-                            <input mdbInput placeholder="{{get_model[field['key']].Example}}" type="date"
-                                formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                            <input mdbInput placeholder="{{get_model[field['key']].Example}}" type="date" formControlName="{{field['key']}}" class="form-control" (keypress)="onTaskAdd($event)" />
+                            <div *ngIf="f[field['key']].errors" class="invalid-feedback">
+                                <div style="color :red" *ngIf="f[field['key']].errors.required">{{field['key']}} is
+                                    required</div>
+                               
+                            </div>
                         </div>
                     </div>
                 </div>

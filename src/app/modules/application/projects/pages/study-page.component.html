@@ -11,6 +11,8 @@
     Study</button>
   <div>
   <!-- Nav pills -->
+  <!-- Nav pills -->
+  <!-- Nav pills -->
   <ul class="nav nav-pills">
     <li class="nav-item">
       <a class="nav-link active" [ngClass]="{ 'active':activeTab==='studyinfo'}" (click)="changeTab('studyinfo')"
@@ -53,25 +55,54 @@
       (click)="changeTab('People')" aria-controls="People" role="tab" data-toggle="tab">9. Study members</a>
   </li>
   </ul>
+
+  <!-- Tab panes -->
+  <!-- Tab panes -->
   <!-- Tab panes -->
   <div class="tab-content">
     <div [ngClass]="{ 'active':activeTab==='studyinfo'}" role="tabpanel" class="tab-pane active" id="studyinfo">
       <h3>Describe your study</h3>
       <mat-card style="width: 98%;">
-        <app-form *ngIf="activeTab==='studyinfo'" id="study_form" (notify)="get_output_from_child($event)"
-          [model_type]="'study'" [level]="1" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
-          inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form>    
+        <!-- <app-form *ngIf="activeTab==='studyinfo'" 
+          id="study_form" 
+          (notify)="get_output_from_child($event)"
+          [model_type]="'study'" 
+          [level]="1" 
+          [parent_id]="get_parent_id" 
+          [model_key]="get_model_key" 
+          [mode]="get_mode"
+          inline="true" 
+          onlyTemplate="false" 
+          asTemplate="false" 
+          [role]="get_role">
+        </app-form> -->
+
+        <app-study-form *ngIf="activeTab==='studyinfo'" 
+          id="study_form" 
+          (notify)="get_output_from_child($event)"
+          [model_type]="'study'" 
+          [level]="1" 
+          [parent_id]="get_parent_id" 
+          [model_key]="get_model_key" 
+          [mode]="get_mode"
+          inline="true" 
+          onlyTemplate="false" 
+          asTemplate="false" 
+          [role]="get_role">
+        </app-study-form>        
       </mat-card>
     </div>
 
     <div [ngClass]="{ 'active':activeTab==='studysite'}" role="tabpanel" class="tab-pane active" id="studysite">
-      <h3>Describe your experimental site</h3>
-      <mat-card style="width: 98%;">
-        <app-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
+        <!-- <app-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
           [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
-          inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role"></app-form> 
+          inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role">
+        </app-form>  -->
+        <app-study-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
+        [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
+        inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role">
+      </app-study-form> 
         
-      </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='studydesign'}" role="tabpanel" class="tab-pane active" id="studydesign">
       <h3>Describe your experimental design</h3>
@@ -80,7 +111,8 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-form *ngIf="activeTab==='studydesign'" id="study_form_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-form>
+          <app-study-form *ngIf="activeTab==='studydesign'" id="study_form_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-study-form>
+          
           <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_model_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
         </div>
 
@@ -95,7 +127,15 @@
         </div>
         <div *ngIf="get_role==='owner'">
           <app-biological-material-page *ngIf="activeTab==='biomat'" (notify)="get_output_from_child($event)"
-          [model_type]="'biological_material'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+          [model_type]="'biological_material'" 
+          [level]="1" 
+          [grand_parent_id]="get_parent_id"  
+          [parent_id]="get_model_id" 
+          [model_key]="" 
+          [mode]="get_mode" 
+          [role]="get_role"
+          [group_key]="get_group_key"
+          >
         </app-biological-material-page>
        </div>
         

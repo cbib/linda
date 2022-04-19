@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort'
@@ -10,13 +10,14 @@ import { UserInterface } from 'src/app/models/linda/person';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-observed-variables-page',
   templateUrl: './observed-variables-page.component.html',
   styleUrls: ['./observed-variables-page.component.css']
 })
-export class ObservedVariablesPageComponent implements OnInit {
+export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
   @Input('level') level: number;
   @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
@@ -31,10 +32,10 @@ export class ObservedVariablesPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   private dataSource: MatTableDataSource<ObservedVariableInterface>;
-  private displayedColumns: string[] = ['Variable name', 'Variable accession number', 'edit'];
+  private displayedColumns: string[] = ['Trait', 'Method', 'Variable ID', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -48,7 +49,8 @@ export class ObservedVariablesPageComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    private _cdr: ChangeDetectorRef) {
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
@@ -62,25 +64,32 @@ export class ObservedVariablesPageComponent implements OnInit {
       }
     );
   }
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this._cdr.detectChanges()
+}
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     console.log(this.parent_id)
     //await this.get_vertices()
-    this.get_all_observed_variables()
+    await this.get_all_observed_variables()
     this.loaded = true
 
   }
-  async get_all_observed_variables() {
-    return this.globalService.get_all_observed_variables(this.parent_id.split('/')[1]).toPromise().then(
+
+  async get_all_observed_variables(){
+    await this.globalService.get_all_observed_variables(this.parent_id.split('/')[1]).toPromise().then(
       data => {
-        console.log(data)
         this.dataSource = new MatTableDataSource(data);
         console.log(this.dataSource)
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-      }
-    )
+      });
+        
+      
   }
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;
@@ -133,7 +142,7 @@ export class ObservedVariablesPageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess" } });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess" } });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

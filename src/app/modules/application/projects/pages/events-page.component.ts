@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort'
+import { MatTableDataSource } from '@angular/material/table';
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
+
 import { EventInterface, LindaEvent } from 'src/app/models/linda/event';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
@@ -16,7 +17,7 @@ import { UserInterface } from 'src/app/models/linda/person';
   templateUrl: './events-page.component.html',
   styleUrls: ['./events-page.component.css']
 })
-export class EventsPageComponent implements OnInit {
+export class EventsPageComponent implements OnInit, AfterViewInit {
   @Input('level') level: number;
   @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
@@ -33,8 +34,8 @@ export class EventsPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   private dataSource: MatTableDataSource<EventInterface>;
   private displayedColumns: string[] = ['Event type', 'Event date', 'Event description','Event accession number','edit'];
   loaded: boolean = false
@@ -65,8 +66,12 @@ export class EventsPageComponent implements OnInit {
       }
     );
   }
+  ngAfterViewInit(): void {
+    throw new Error('Method not implemented.');
+  }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     console.log(this.parent_id)
     //await this.get_vertices()
@@ -130,8 +135,7 @@ export class EventsPageComponent implements OnInit {
             this.alertService.error("You are not in the right form as requested by the tutorial")
         }
     }
-    //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

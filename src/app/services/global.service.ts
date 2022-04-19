@@ -229,8 +229,8 @@ export class GlobalService {
     get_all_study_persons(study_key: string) : Observable<PersonInterface[]>{
         return this.http.get<PersonInterface[]>(this.APIUrl + "get_study_persons/" + study_key).pipe(catchError(this.handleError));
     }
-    get_all_biological_materials(study_key: string) : Observable<BiologicalMaterialInterface[]>{
-        return this.http.get<BiologicalMaterialInterface[]>(this.APIUrl + "get_all_biological_materials/" + study_key).pipe(catchError(this.handleError));
+    get_all_biological_materials(study_key: string) : Observable<BiologicalMaterialFullInterface[]>{
+        return this.http.get<BiologicalMaterialFullInterface[]>(this.APIUrl + "get_all_biological_materials/" + study_key).pipe(catchError(this.handleError));
     }
     get_all_experimental_designs(study_key: string) : Observable<ExperimentalDesignInterface[]>{
         return this.http.get<ExperimentalDesignInterface[]>(this.APIUrl + "get_all_experimental_designs/" + study_key).pipe(catchError(this.handleError));
@@ -289,7 +289,7 @@ export class GlobalService {
         return this.http.get(this.APIUrl + 'get_by_parent_key/' + model_type + '/' + parent_key).pipe(catchError(this.handleError));
     }
     // HTTP POST REQUEST
-    is_exist(field: string, value: string, model_type: string, parent_id:string=""): Observable<any> {
+    is_exist(field: string, value: string, model_type: string, parent_id:string="", as_template:boolean=false): Observable<any> {
         if (model_type==="person"){
             console.log(field)
             console.log(value)
@@ -313,7 +313,8 @@ export class GlobalService {
                 'parent_id':parent_id,
                 'field': field,
                 'value': value,
-                'model_type': model_type
+                'model_type': model_type,
+                'as_template':as_template
             };
             return this.http.post(`${this.APIUrl + "check"}`, obj2send).pipe(catchError(this.handleError));
         }

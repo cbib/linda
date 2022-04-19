@@ -7,7 +7,9 @@ import { MatTableModule } from '@angular/material/table';
 import { AlertService} from '../../../services';
 import { AuthGuard } from '../../../guards/auth.guards';
 import { AlertModule } from '../alert/alert.module';
-
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule} from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input';
 @NgModule({
   declarations: [TemplatesComponent],
   imports: [
@@ -15,7 +17,10 @@ import { AlertModule } from '../alert/alert.module';
     TemplatesRoutingModule,
     MatTableModule,
     FormsModule,
-    AlertModule
+    AlertModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule
     
   ],
   exports: [

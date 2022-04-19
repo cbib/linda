@@ -34,7 +34,7 @@ import { ProjectLoaderComponent } from '../../dialogs/project-loader.component';
         ]),
     ],
 })
-export class ProjectsPageComponent implements OnInit {
+export class ProjectsPageComponent implements OnInit, AfterViewInit {
 
     @Input() search_string: string;
     @Input('activeTab') activeTab: string;
@@ -43,8 +43,8 @@ export class ProjectsPageComponent implements OnInit {
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     ///@ViewChildren(MatPaginator) paginators: QueryList<MatPaginator>
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
@@ -97,9 +97,23 @@ export class ProjectsPageComponent implements OnInit {
         public dialog: MatDialog,
         private _cdr: ChangeDetectorRef
     ) {
+        this.route.queryParams.subscribe(
+            params => {
+                if (params['activeTab']){
+                    this.activeTab = params['activeTab'];
+                    this.group_key = params['activeTab'];
+                }
+                else{
+                    this.activeTab = "Guests"
+                    this.group_key = "Guests"
+                }
+            }
+        );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        this.activeTab = "Guests"
-        this.group_key = "Guests"
+        this.dataSource = new MatTableDataSource([]);
+        this.get_projects()
+        this.get_user_groups()
+        this.parent_id = this.currentUser['_id']
     }
     private initialSelection = []
     private checklistSelection = new SelectionModel<MatChip>(true, this.initialSelection /* multiple */);
@@ -109,12 +123,6 @@ export class ProjectsPageComponent implements OnInit {
         this.paginator.pageIndex = event.pageIndex;
         this.paginator.page.emit(event);
     }
-    /* ngAfterViewInit() {
-        this.route.queryParams.subscribe(params => {
-            this.activeTab = params['activeTab'];
-            this._cdr.detectChanges()
-        }); 
-    } */
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -125,36 +133,66 @@ export class ProjectsPageComponent implements OnInit {
     changeTab(tab: string) {
         this.activeTab = tab
         this.group_key = tab
-        //console.log(this.activeTab)
-        this.ngOnInit()
-    }
-    async ngOnInit() {
-        //await this.get_vertices()
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
-        const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
-        this.set_projects(person_id, data)
+        console.log(this.activeTab)
+        this.reloadComponent()
 
-        this.dataSource = new MatTableDataSource(this.projects);
-        this.loaded = true
+    }
+    
+    reloadComponent() {
+        let currentUrl = this.router.url;
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate(['/projects_page'], { queryParams: { activeTab: this.activeTab} });    
+        //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: _model_id, model_key: this.model_key, model_type: 'study', activeTab: 'data_files', mode: "edit", role: this.role, group_key: this.group_key } });
+      }
+    async ngOnInit() { 
         this.searchService.getData().subscribe(data => {
             ////console.log(data);
             this.search_string = data
         })
-
-        this.get_user_groups()
-        this.parent_id = this.currentUser['_id']
+        
         //console.log(this.currentUser)
 
     }
+    async get_projects() {
+        /* // get person linda db id 
+        this.roles = data.map(project => project['roles']);
+        this.groups = data.map(project_1 => project_1['groups']);
+        const projects = data.map(project_2 => project_2['project']);
+        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
+        this.projects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
+        this.dataSource = new MatTableDataSource(this.projects);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this._cdr.detectChanges();
+        this.loaded = true */
+
+        return this.userService.get_person_id(this.currentUser._key).toPromise().then(
+            async person_id => {
+                console.log(person_id)
+                const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
+                console.log(data);
+                this.roles = data.map(project => project['roles']);
+                this.groups = data.map(project_1 => project_1['groups']);
+                const projects = data.map(project_2 => project_2['project']);
+                let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
+                this.projects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
+                this.dataSource = new MatTableDataSource(this.projects);
+                this.dataSource.sort = this.sort;
+                this.dataSource.paginator = this.paginator;
+                this._cdr.detectChanges();
+                this.loaded = true
+            }
+        );
+    }
     ngAfterViewInit() {
-        //this.dataSource.sort = this.sort;
-        //this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
         this._cdr.detectChanges()
     }
 
-    get_user_groups() {
-        this.userService.get_groups(this.currentUser._key).toPromise().then(
+    async get_user_groups() {
+        await this.userService.get_groups(this.currentUser._key).toPromise().then(
             grps => {
                 //console.log(grps)
                 for (var g in grps) {
@@ -177,43 +215,7 @@ export class ProjectsPageComponent implements OnInit {
     get_user_group(group_key: string) {
         return this.user_groups.includes(group_key)
     }
-    set_projects(person_id: string, data: InvestigationInterface[]) {
-        // get person linda db id 
-        //const person_id = await this.userService.get_person_id(this.currentUser._key).toPromise();
-        //console.log(person_id)
-        //const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
-        //console.log("data", data);
-        this.roles = data.map(project => project['roles']);
-        this.groups = data.map(project_1 => project_1['groups']);
-        const projects = data.map(project_2 => project_2['project']);
-        /* const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
-        const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); */
-        //projects.filter((data) => data.projec.includes(this.group_key));
-        let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
-        this.projects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
-
-        //console.log(this.dataSource)
-        //return getProjects
-        // this.dataSource.paginator = this.paginator;
-        //this.dataSource.sort = this.sort;
-
-
-        /* return this.userService.get_person_id(this.currentUser._key).toPromise().then(
-            async person_id => {
-                console.log(person_id)
-                const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
-                console.log("data", data);
-                this.roles = data.map(project => project['roles']);
-                this.groups = data.map(project_1 => project_1['groups']);
-                const projects = data.map(project_2 => project_2['project']);
-                //const getProjects1 = this.group_keys.map((data) => data.group_keys.includes(this.group_key));
-                //const getProjects2 = this.group_keys.filter((data) => data.group_keys.includes(this.group_key)); 
-                //projects.filter((data) => data.projec.includes(this.group_key));
-                let projects_groups = projects.map((item, i) => Object.assign({}, item, this.groups[i]));
-                console.log(projects_groups);
-                const getProjects = projects_groups.filter((data_1) => data_1.group_keys.includes(this.group_key));
-            }); */
-    }
+    
     // play_again() {
     //     this.wizardService.play_again(this.vertices, this.currentUser)
     // }
@@ -378,7 +380,7 @@ export class ProjectsPageComponent implements OnInit {
                         ////console.log(data["message"])
                         var message = element._id + " has been removed from your history !!"
                         this.alertService.success(message)
-                        this.reloadComponent(['/projects_page'])
+                        this.reloadComponent()
                         //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
                         //window.location.reload();
                         ///this.router.navigate(['/projects_tree']);
@@ -411,7 +413,7 @@ export class ProjectsPageComponent implements OnInit {
             data => {
                 if (data["success"]) {
                     console.log(data)
-                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner" } });
+                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner", group_key:this.group_key } });
                     //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
 
                 }
@@ -426,13 +428,7 @@ export class ProjectsPageComponent implements OnInit {
             this.router.navigate([currentUrl]);
         });
     }
-    reloadComponent(path: [string]) {
-        let currentUrl = this.router.url;
-        ////console.log(currentUrl)
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.router.onSameUrlNavigation = 'reload';
-        this.router.navigate(path);
-    }
+    
     activate_multiple_selection(val: boolean) {
         this.multiple_selection = val;
         var selected_set = this.checklistSelection.selected

@@ -52,7 +52,7 @@ import { DataTablesModule } from 'angular-datatables';
 import { AddColumnComponent } from './add-column.component';
 import { EditFormComponent } from './edit-form.component';
 import { ProjectLoaderComponent } from './project-loader.component';
-
+import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.module';
 @NgModule({
   declarations: [
     ConfirmationComponent, 
@@ -90,6 +90,7 @@ import { ProjectLoaderComponent } from './project-loader.component';
     MatSelectModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    ProgressBarModule,
     MatExpansionModule,
     MatTreeModule,
     MatCardModule,

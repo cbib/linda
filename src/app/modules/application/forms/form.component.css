@@ -193,7 +193,8 @@ ul {
   max-height: 800px;
 }
 .mat-card{
-  max-width: 600px;
+  width: 95%;
+  height: 95%;
 }
 .menu_mat_card{
   max-width: 1000px;

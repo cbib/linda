@@ -17,4 +17,115 @@
     margin: 4px;
 }
 
+  table {
+    width: 100%;
+  }
+  
+  tr.example-detail-row {
+    height: 0;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+  }
+  
+  tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+  }
+  
+  .example-element-row td {
+    border-bottom-width: 0;
+  }
+  
+  .example-element-detail {
+    overflow: hidden;
+    display: flex;
+  }
+  
+  .example-element-diagram {
+    min-width: 80px;
+    border: 2px solid black;
+    padding: 8px;
+    font-weight: lighter;
+    margin: 8px 0;
+    height: 104px;
+  }
+  
+  .example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+  }
+  
+  .example-element-description {
+    padding: 16px;
+  }
+  
+  .example-element-description-attribution {
+    opacity: 0.5;
+  }
+  .icon-play{
+    background-image : url(../../../../../assets/images/images.jpg);
+    background-size: cover;
+    display: inline-block;
+    height: 12px;
+    width: 15px;
+  }
+  
+  .h-divider{
+    margin-top:5px;
+    margin-bottom:5px;
+    height:1px;
+    width:100%;
+    border-top:1px solid gray;
+   }
+   span.span-project{
+    margin-left:5px;
+    margin-right:5px;
+    height:100%;
+    width:1px;
+    border-top:1px solid gray;
+   }
+
+   .nga-card-step {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .04), 0 3px 3px rgba(0, 0, 0, .09);
+    margin: 4px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+/*   td.mat-cell{
+    background-color: bisque;
+  } */
+ /*  tr.mat-row:hover{
+    box-shadow: 0 10px 10px rgba(0, 0, 0, .9), 0 4px 4px rgba(0, 0, 0, .13);
+    border-radius: 20px;
+    color: #0d6efd;
+  } */
+  
+  .nga-card-step:hover {
+    box-shadow: 0 10px 10px rgba(0, 0, 0, .09), 0 4px 4px rgba(0, 0, 0, .13);
+    border-radius: 4px;
+    color: #0d6efd;
+  
+  }
+  
+  .nga-card-step a {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .nga-card-step a:hover {
+    color: #0d6efd;
+    text-decoration: none;
+  }
+
+  th.mat-header-cell.edit_col {
+     text-align: right;
+  }
+
+ /*  th.mat-header-cell{
+    text-align: right;
+  } */
+
+
 

@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewInit} from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort'
@@ -13,20 +13,21 @@ import { ObservationUnitInterface } from 'src/app/models/linda/observation-unit'
   templateUrl: './observation-unit-page.component.html',
   styleUrls: ['./observation-unit-page.component.css']
 })
-export class ObservationUnitPageComponent implements OnInit {
+export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
   @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   @Input('level') level: number;
   @Input('parent_id') parent_id: string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
   @Input('grand_parent_id') grand_parent_id: string;
+  
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ObservationUnitInterface>;
   private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
@@ -42,7 +43,8 @@ export class ObservationUnitPageComponent implements OnInit {
     public ontologiesService: OntologiesService,
     private router: Router,
     private alertService: AlertService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private _cdr: ChangeDetectorRef) {
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
@@ -56,6 +58,7 @@ export class ObservationUnitPageComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     console.log(this.parent_id)
     //await this.get_vertices()
     this.get_all_observation_units()
@@ -72,6 +75,11 @@ export class ObservationUnitPageComponent implements OnInit {
         this.dataSource.sort = this.sort;
       }
     )
+  }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this._cdr.detectChanges()
   }
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;

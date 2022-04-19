@@ -37,8 +37,8 @@ export class PersonsPageComponent implements OnInit {
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     ///@ViewChildren(MatPaginator) paginators: QueryList<MatPaginator>
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
@@ -104,7 +104,7 @@ export class PersonsPageComponent implements OnInit {
       }
 
     async ngOnInit() {
-
+        this.dataSource = new MatTableDataSource([]);
         console.log(this.parent_id)
         //await this.get_vertices()
         this.get_all_persons()

@@ -75,62 +75,67 @@ export class ExplorationComponent implements OnInit {
 
   async get_data() {
     const data = await this.globalService.get_all_data_files(this.investigation_key).toPromise();
+    console.log(data)
     this.filename_used = []
     if (data.length > 0 && data[0] !== null) {
       data[0].forEach(
         data_file => {
           //console.log(data_file)
-          if (!this.filename_used.includes(data_file.filename)) {
-            this.datafile_ids[data_file.filename] = data_file.eto
-            this.headers_by_filename[data_file.filename] = []
-            this.datafile_study_ids[data_file.filename] = data_file.efrom
-            this.filename_used.push(data_file.filename)
-            this.ObservedVariables[data_file.filename] = []
-            this.ObservationUnits[data_file.filename] = []
-            this.associated_headers_by_filename[data_file.filename] = []
-            this.BiologicalMaterials[data_file.filename] = []
-            this.genotypes[data_file.filename]=[]      
-          }
-          this.selected_file = this.filename_used[0]
-          data_file.associated_headers.forEach(element => {
-            if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
-                ///if (!this.headers.includes(element.header)){
-                var header = element.header
-                let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component,associated_linda_id: element.associated_linda_id,  associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
-                this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
-                
-              }
+          let stud_ass_header=data_file.associated_headers.filter(associated_header => associated_header["associated_component_field"]==="Study unique ID")[0]
+          stud_ass_header.associated_linda_id.forEach(linda_id=>{
+            if (!this.filename_used.includes(data_file.filename)) {
+              this.datafile_ids[data_file.filename] = data_file.eto
+              this.headers_by_filename[data_file.filename] = []
+              this.datafile_study_ids[data_file.filename] = linda_id
+              this.filename_used.push(data_file.filename)
+              this.ObservedVariables[data_file.filename] = []
+              this.ObservationUnits[data_file.filename] = []
+              this.associated_headers_by_filename[data_file.filename] = []
+              this.BiologicalMaterials[data_file.filename] = []
+              this.genotypes[data_file.filename]=[]      
             }
-          );
-          this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'observed_variables').toPromise().then(
-            observed_variable_data => {
-              //console.log(observed_variable_data)
-              observed_variable_data.forEach(observed_variable => {
-                this.ObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':data_file.efrom})
-              });
-              this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'observation_units').toPromise().then(
-                observation_unit_data => {
-                  //console.log(observation_unit_data)
-                  observation_unit_data.forEach(observation_unit => {
-                    this.ObservationUnits[data_file.filename].push({'observation_unit':observation_unit, 'study_id':data_file.efrom})
-                  });
-                  this.globalService.get_type_child_from_parent(data_file.efrom.split("/")[0], data_file.efrom.split("/")[1], 'biological_materials').toPromise().then(
-                    biological_material_data => {
-                      //console.log(biological_material_data)
-                      biological_material_data.forEach(biological_material => {
-                        this.BiologicalMaterials[data_file.filename].push({'biological_material':biological_material, 'study_id':data_file.efrom})
-                        //this.genotypes[data_file.filename]=biological_material["Material source ID (Holding institute/stock centre, accession)"]
-                        this.genotypes[data_file.filename]=biological_material["Infraspecific name"]
-                      });
-                    }
-                  )
+            this.selected_file = this.filename_used[0]
+            data_file.associated_headers.forEach(element => {
+              if (!this.headers_by_filename[data_file.filename].includes(element.header)) {
+                  ///if (!this.headers.includes(element.header)){
+                  var header = element.header
+                  let tmp_associated_header = { 'header': element.header, selected: element.selected, associated_component: element.associated_component,associated_linda_id: element.associated_linda_id,  associated_component_field: element.associated_component_field, is_time_values: element.is_time_values, is_numeric_values: element.is_numeric_values }
+                  this.associated_headers_by_filename[data_file.filename].push(tmp_associated_header)
+                  
                 }
-              )
-              //this.selected_observed_variable=observed_variable_data[0]["Trait"]
-              
-              //this.my_data.push()
-            }
-          )
+              }
+            );
+            console.log(this.associated_headers_by_filename)
+            this.globalService.get_type_child_from_parent(linda_id.split("/")[0], linda_id.split("/")[1], 'observed_variables').toPromise().then(
+              observed_variable_data => {
+                console.log(observed_variable_data)
+                observed_variable_data.forEach(observed_variable => {
+                  this.ObservedVariables[data_file.filename].push({'observed_variable':observed_variable, 'study_id':linda_id})
+                });
+                this.globalService.get_type_child_from_parent(linda_id.split("/")[0], linda_id.split("/")[1], 'observation_units').toPromise().then(
+                  observation_unit_data => {
+                    console.log(observation_unit_data)
+                    observation_unit_data.forEach(observation_unit => {
+                      this.ObservationUnits[data_file.filename].push({'observation_unit':observation_unit, 'study_id':linda_id})
+                    });
+                    this.globalService.get_type_child_from_parent(linda_id.split("/")[0], linda_id.split("/")[1], 'biological_materials').toPromise().then(
+                      biological_material_data => {
+                        console.log(biological_material_data)
+                        biological_material_data.forEach(biological_material => {
+                          this.BiologicalMaterials[data_file.filename].push({'biological_material':biological_material, 'study_id':linda_id})
+                          this.genotypes[data_file.filename]=biological_material["Material source ID (Holding institute/stock centre, accession)"]
+                          //this.genotypes[data_file.filename]=biological_material["Infraspecific name"]
+                        });
+                      }
+                    )
+                  }
+                )
+                //this.selected_observed_variable=observed_variable_data[0]["Trait"]
+                
+                //this.my_data.push()
+              }
+            )
+          });
         }
       )
     }
@@ -247,9 +252,10 @@ export class ExplorationComponent implements OnInit {
       this.my_displayed_data.push(this.my_data.filter(element=> element.name===column)[0])
     }
     this.my_displayed_data=[...this.my_displayed_data]
-    //console.log(event)
+    console.log(event)
+    console.log(this.my_displayed_data)
     let toggle = event.source;
-    //console.log(toggle)
+    console.log(toggle)
     if (toggle) {
         let group = toggle.buttonToggleGroup;
         if (event.value.some(item => item == toggle.value)) {

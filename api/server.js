@@ -55,6 +55,7 @@ const errors = require('@arangodb').errors;
 const queues = require('@arangodb/foxx/queues')
 const getUserName = require("./queries/get-user-name");
 const telegram = require("./queries/telegram-chat");
+
 //const { spawn } = require('child_process');
 //const uuidV4 = require('uuid/v4');
 //const uuid = require('uuid');
@@ -907,7 +908,7 @@ router.post('/valid-password-token', (req, res) => {
     .description('check if user exist.');
 
 
-  
+
 //const sendMail = require("./queries/send-mail");
 router.post('/request-reset', (req, res) => {
     const email = req.body.email
@@ -933,7 +934,7 @@ router.post('/request-reset', (req, res) => {
         let personId = result[0]['person']['Person ID']
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
-        
+
         /* const { child_process } = require('child_process');
         child_process.execFile('./scripts/send_mail.sh',[req.body.email,req.body.token], (err, data) => {
             if (err) {
@@ -944,19 +945,34 @@ router.post('/request-reset', (req, res) => {
                 console.log("good")
             }
           }); */
-          //var spawn = require('child_process').spawn
-          const child = require('child_process').spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
-          child.stdout.on('data', data => {
-            console.log(`stdout:\n${data}`);
-            res.send({ success: true });
-          });
-          
-          child.stderr.on('data', data => {
-            console.error(`stderr: ${data}`);
-            res.send({ success: false });
-          });
-              ////res.send('end spawn launch');
+        //var spawn = require('child_process').spawn
+
+        var command = "sh ./scripts/send_mail.sh " + email + " " + token;
+        var sendmail = exec(command,
+            (error, stdout, stderr) => {
+                //console.log(stdout);
+                //console.log(stderr);
+                if (error !== null) {
+                    console.log(`exec error: ${error}`);
+                    res.send({ success: false });
+                }
+                else {
+                    res.send({ success: true });
+                }
+            });
+
+        /* const child = require('child_process').spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
+        child.stdout.on('data', data => {
+          console.log(`stdout:\n${data}`);
+          res.send({ success: true });
+        });
         
+        child.stderr.on('data', data => {
+          console.error(`stderr: ${data}`);
+          res.send({ success: false });
+        }); */
+        ////res.send('end spawn launch');
+
         /* const exec = require('child_process').exec; 
         var child;
         const myShellScript = exec('sh send_mail.sh ');
@@ -966,10 +982,10 @@ router.post('/request-reset', (req, res) => {
         });
         myShellScript.stderr.on('data', (data)=>{
             console.error(data);
-        }); */  
+        }); */
 
 
-        
+
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
@@ -1011,7 +1027,7 @@ router.post('/request-reset', (req, res) => {
  ******************************************************************************************
  ******************************************************************************************/
 
- router.get('/get_germplasmsdatamodal/', function (req, res) {
+router.get('/get_germplasmsdatamodal/', function (req, res) {
 
     var data = {}
     const coll = db._collection('germplasms');
@@ -1036,27 +1052,27 @@ router.post('/request-reset', (req, res) => {
     .response(joi.object().required(), 'List of entry keys.')
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
-    
+
 router.get('/get_germplasms/', function (req, res) {
 
-        var data = {}
-        const coll = db._collection('germplasms');
-        if (!coll) {
-            db._createDocumentCollection('germplasms');
-        }
-        //data = db._query(aql`FOR entry IN ${coll} RETURN entry`);
-        data = db._query(aql`
+    var data = {}
+    const coll = db._collection('germplasms');
+    if (!coll) {
+        db._createDocumentCollection('germplasms');
+    }
+    //data = db._query(aql`FOR entry IN ${coll} RETURN entry`);
+    data = db._query(aql`
         FOR entry IN ${coll}
             RETURN entry.germplasm_gnpis_inrae
         `).toArray();
-        //var germplasms= coll.firstExample('_key', key);
+    //var germplasms= coll.firstExample('_key', key);
 
-        res.send(data[0]);
-    })
-        .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
-        .summary('List entry keys')
-        .description('Assembles a list of keys of entries in the collection.');
-    
+    res.send(data[0]);
+})
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
 
 router.get('/get_germplasm_unique_taxon_groups/', function (req, res) {
 
@@ -1095,7 +1111,7 @@ router.get('/get_germplasm_taxon_group_accession_numbers/:taxon_group', function
     var obj_to_send = {
         'page': 1,
         'per_page': 5,
-         'total': data[0].length,
+        'total': data[0].length,
         'total_pages': data[0].length / 5,
         'data': data[0]
     }
@@ -1107,48 +1123,48 @@ router.get('/get_germplasm_taxon_group_accession_numbers/:taxon_group', function
     .description('Assembles a list of keys of entries in the collection.');
 
 router.get('/get_species/', function (req, res) {
-        const coll = db._collection('NCBITaxons');
-        if (!coll) {
-            db._createDocumentCollection('NCBITaxons');
-        }
-        var get_data = db._query(aql`
+    const coll = db._collection('NCBITaxons');
+    if (!coll) {
+        db._createDocumentCollection('NCBITaxons');
+    }
+    var get_data = db._query(aql`
         FOR entry IN ${coll}
         RETURN { species: UNIQUE(entry.data[*].species) }
         `).toArray();
-        //var result=get_data[0]
-        console.log(get_data[0]['species'].length)
-        res.send(get_data);
+    //var result=get_data[0]
+    console.log(get_data[0]['species'].length)
+    res.send(get_data);
 })
-        .response(joi.object().required(), 'List of entry keys.')
-        .summary('List entry keys')
-        .description('Assembles a list of keys of entries in the collection.');
-    
+    .response(joi.object().required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
 router.get('/get_ncbi_taxon_data/', function (req, res) {
-            const coll = db._collection('NCBITaxons');
-            if (!coll) {
-                db._createDocumentCollection('NCBITaxons');
-            }
-            var get_data = db._query(aql`
+    const coll = db._collection('NCBITaxons');
+    if (!coll) {
+        db._createDocumentCollection('NCBITaxons');
+    }
+    var get_data = db._query(aql`
             FOR entry IN ${coll}
                 RETURN entry.data
             `).toArray();
-            //var result=get_data[0]
-            //console.log(get_data[0]['species'].length)
-            res.send(get_data[0]);
-    })
-            .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
-            .summary('List entry keys')
-            .description('Assembles a list of keys of entries in the collection.');
-        
-    
-        /* var get_data = db._query(aql`
-        LET document = DOCUMENT("NCBITaxons/33550834") 
-        LET alteredList = (
-            FOR element IN document.data 
-                        FILTER element.species == ${taxon_group} 
-                        LET newItem = ({accession_num:element.AccessionNumber, accession_name:element.AccessionName,holding_institution: element.HoldingInstitution}) 
-                        RETURN newItem) 
-                RETURN alteredList`); */
+    //var result=get_data[0]
+    //console.log(get_data[0]['species'].length)
+    res.send(get_data[0]);
+})
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+
+/* var get_data = db._query(aql`
+LET document = DOCUMENT("NCBITaxons/33550834") 
+LET alteredList = (
+    FOR element IN document.data 
+                FILTER element.species == ${taxon_group} 
+                LET newItem = ({accession_num:element.AccessionNumber, accession_name:element.AccessionName,holding_institution: element.HoldingInstitution}) 
+                RETURN newItem) 
+        RETURN alteredList`); */
 
 
 router.get('/get_model/:model_type', function (req, res) {
@@ -1842,46 +1858,46 @@ router.get('/get_elem/:collection/:key', function (req, res) {
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
-router.get('/get_biological_material_by_key/:key', function (req, res) { 
-    var errors=[]
+router.get('/get_biological_material_by_key/:key', function (req, res) {
+    var errors = []
     var data = {};
     try {
         var key = req.pathParams.key;
-        
+
         const coll = db._collection("biological_materials");
         if (!coll) {
             db._createDocumentCollection(datatype);
         }
         data = coll.firstExample('_key', key);
-        
+
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
             errors.push(e)
             throw e;
-            
+
         }
         //res.throw(404, 'The entry does not exist', e);
     }
-    if (errors.length===0){
-        res.send({success:true, data:data});
+    if (errors.length === 0) {
+        res.send({ success: true, data: data });
     }
-    else{
-        res.send({success:false, data:{}});
+    else {
+        res.send({ success: false, data: {} });
     }
 
 })
-.pathParam('key', joi.string().required(), 'unique key.')
-.response(
-    joi.object(
-        {
-            success: joi.boolean().required(),
-            data:joi.object().required()
-        }
-    ).required(), 'Entry stored in the collection.'
+    .pathParam('key', joi.string().required(), 'unique key.')
+    .response(
+        joi.object(
+            {
+                success: joi.boolean().required(),
+                data: joi.object().required()
+            }
+        ).required(), 'Entry stored in the collection.'
     )
-.summary('Retrieve an entry')
-.description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
 router.get('/get_by_key/:model_type/:key', function (req, res) {
@@ -2561,7 +2577,7 @@ router.post('/update_template', function (req, res) {
     var _key = req.body._key;
     var values = req.body.values;
     var model_type = req.body.model_type;
-    var datatype = model_type + '_templates';
+    var datatype ='templates';
     const coll = db._collection(datatype);
     if (!coll) {
         db._createDocumentCollection(datatype);
@@ -5299,6 +5315,7 @@ router.post('/check', function (req, res) {
     var field = req.body.field;
     var value = req.body.value;
     var model_type = req.body.model_type;
+    var as_template=req.body.as_template;
     /////////////////////////////
     //first check if user exist
     /////////////////////////////
@@ -5331,8 +5348,18 @@ router.post('/check', function (req, res) {
         if (parent_id === "") {
             parent_id = user[0]._id
         }
+        console.log(parent_id)
+        console.log(field)
+        console.log(value)
+        console.log(model_type)
         //var user_id = user[0]._id
-        check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
+        if (as_template){
+            check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} AND CONTAINS('e._to','templates') RETURN {eto:e._to, vertice:v}`).toArray();
+f
+        }
+        else{
+            check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
+        }
         //check = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${user_id} GRAPH 'global' FILTER CONTAINS(e._to, ${coll}) AND v.${field} === ${value} RETURN {eto:e._to, vertice:v}`).toArray();
         //check = db._query(aql` FOR entry IN ${coll} FILTER entry.${field} == ${value} RETURN entry`).toArray()
         if (check.length === 0) {
@@ -5357,7 +5384,8 @@ router.post('/check', function (req, res) {
         parent_id: joi.string().allow('').required(),
         field: joi.string().required(),
         value: joi.string().allow('').required(),
-        model_type: joi.string().required()
+        model_type: joi.string().required(),
+        as_template:joi.boolean().required()
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,

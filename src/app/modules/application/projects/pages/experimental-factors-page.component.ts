@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort'
@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './experimental-factors-page.component.html',
   styleUrls: ['./experimental-factors-page.component.css']
 })
-export class ExperimentalFactorsPageComponent implements OnInit {
+export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
   @Input('level') level: number;
   @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
@@ -33,8 +33,8 @@ export class ExperimentalFactorsPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   private dataSource: MatTableDataSource<ExperimentalFactorInterface>;
   private displayedColumns: string[] = ['Experimental Factor type', 'Experimental Factor values','Experimental Factor accession number','Experimental Factor description', 'edit'];
   loaded: boolean = false
@@ -51,6 +51,7 @@ export class ExperimentalFactorsPageComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
+    private _cdr: ChangeDetectorRef,
     public dialog: MatDialog) { 
     this.route.queryParams.subscribe(
       params => {
@@ -66,8 +67,14 @@ export class ExperimentalFactorsPageComponent implements OnInit {
       }
     );
   }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this._cdr.detectChanges()
+  }
 
   async ngOnInit() {
+    this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     console.log(this.parent_id)
     //await this.get_vertices()
@@ -137,7 +144,7 @@ export class ExperimentalFactorsPageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

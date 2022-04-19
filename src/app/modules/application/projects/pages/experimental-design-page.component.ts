@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -23,7 +23,7 @@ import { UserInterface } from 'src/app/models/linda/person';
   templateUrl: './experimental-design-page.component.html',
   styleUrls: ['./experimental-design-page.component.css']
 })
-export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
+export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     BlockDesignForm = new FormGroup({
         totalBlockControl : new FormControl(''),
@@ -46,8 +46,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
     
     contextMenuPosition = { x: '0px', y: '0px' };
     userMenuPosition = { x: '0px', y: '0px' };
@@ -55,20 +55,18 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
     investigationMenuPosition = { x: '0px', y: '0px' };
     helpMenuPosition = { x: '0px', y: '0px' };
 
-    
     experimental_design_blocks:BlockDesign[]=[]
     design_types=["BlockDesign", "CompleteBlockDesign","IncompleteBlockDesign"]
-
     private design:ExperimentalDesign;
     private design_type:string
     private total_block_number:number=0
     private total_column_per_block:number=0
     private total_row_per_block:number=0
     private total_row_per_plot:number=0
-
     private dataSource: MatTableDataSource<ExperimentalDesignInterface>;
     private displayedColumns: string[] = ['Blocks per trial', 'edit'];
     private study_id:string
+    private experimental_designs:ExperimentalDesignInterface[]=[]
 
     private currentUser:UserInterface
 
@@ -78,6 +76,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
         private alertService: AlertService,
         private route: ActivatedRoute,
         private formBuilder:FormBuilder,
+        private _cdr: ChangeDetectorRef,
         public dialog: MatDialog){
             this.route.queryParams.subscribe(
                 params => {
@@ -89,26 +88,42 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
                     this.study_id="studies/"+this.model_key
                 }
               );
-            
-              
-
+    } 
+    ngAfterViewInit(){
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this._cdr.detectChanges()
     }
-    
 
-    ngOnInit(): void {
-        console.log( this.level);
-        console.log( this.model_type);
-        console.log( this.model_key);
-        console.log( this.mode);
-        console.log( this.parent_id);
-        this.get_all_experimental_designs()
+    async ngOnInit(){
+        this.dataSource = new MatTableDataSource([]);
+        await this.get_all_experimental_designs()
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        
-        
+        this.dataSource = new MatTableDataSource(this.experimental_designs);
+        //console.log(this.dataSource)
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         //this.extract_design(36,7,3)
-        //console.log(this.design)
-        
+        //console.log(this.design)   
     }
+    async get_all_experimental_designs() {
+        const data = await this.globalService.get_all_experimental_designs(this.model_key).toPromise()
+        if (data.length>0){
+            console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
+            this.experimental_designs=data
+            console.log(this.experimental_designs)
+            
+        }
+        /* return this.globalService.get_all_experimental_designs(this.model_key).toPromise().then(
+            data => {
+                if (data.length>0){
+                    console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
+                    this.experimental_designs=data
+                    
+                }
+            }
+        ) */
+      }
 
     ngOnDestroy(): void {
         //Called once, before the instance is destroyed.
@@ -121,43 +136,21 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
         this.paginator.page.emit(event);
       }
     save(){
-        
         this.globalService.add(this.design, this.model_type, this.study_id, false).pipe(first()).toPromise().then(
             data => {
                 if (data["success"]) {
-                    ////////console.log(data["message"])
-                    //this.model_id=data["_id"];
                     this.ngOnInit();
-                    //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
-                    //var message = "A " + model_type[0].toUpperCase() + model_type.slice(1).replace("_", " ") + " from " + this.parent_id + " using " + result.values['_id'] + " has been successfully integrated in your history !!"
-
-                    //this.alertService.success(message)
-
                     return true;
                 }
                 else {
-                    ////////console.log(data["message"])
                     this.alertService.error("this form contains errors! " + data["message"]);
                     return false;
-                    //this.router.navigate(['/studies']);
                 }
             }
         );
     }
     
-    async get_all_experimental_designs() {
-        return this.globalService.get_all_experimental_designs(this.model_key).toPromise().then(
-            data => {
-                if (data.length>0){
-                    console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
-                    this.dataSource = new MatTableDataSource(data);
-                    console.log(this.dataSource)
-                    this.dataSource.paginator = this.paginator;
-                    this.dataSource.sort = this.sort;
-                }
-            }
-        )
-      }
+    
 
 
     onRemove(element:ExperimentalDesignInterface) {
@@ -166,84 +159,19 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    // Remove only childs from the seleccted node
-                    if (result.all_childs) {
-                        this.globalService.remove_childs(element._key).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]) {
-                                    ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id+ " have been removed from your history !!"
-                                    this.alertService.success(message)
-                                    this.ngOnInit();
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
+                    this.globalService.remove(element._id).pipe(first()).toPromise().then(
+                        data => {
+                            ////console.log(data)
+                            if (data["success"]) {
+                                console.log(data["message"])
+                                var message = element._id + " has been removed from your history !!"
+                                this.alertService.success(message)
+                                this.ngOnInit()
                             }
-                        );
-                        //window.location.reload();
-                        //(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-
-                    }
-                    //Remove only observed variable or experimental factors
-                    // TODO add handler for observation units, biological materials, etc.
-                    else if (result.only != "") {
-                        ////console.log(result.only)
-                        this.globalService.remove_childs_by_type(element._id, result.only).pipe(first()).toPromise().then(
-                            data => {
-                                if (data["success"]) {
-                                    ////console.log(data["message"])
-                                    var message = "child nodes of " + element._id + " have been removed from your history !!"
-                                    //this.alertService.success(message)
-                                    var datafile_ids = data["datafile_ids"]
-                                    var removed_ids = data["removed_ids"]
-                                    this.ngOnInit();
-                                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-                                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-                                    // datafile_ids.forEach(datafile_id => {
-                                    //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-                                    //         data => { ////console.log(data); }
-                                    //       )
-                                    // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////console.log(data);})
-                                    // });
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
+                            else {
+                                this.alertService.error("this form contains errors! " + data["message"]);
                             }
-                        );
-                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                        //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_key } });
-                        ///window.location.reload();
-                        ///this.reloadComponent(['/studies_page'])
-                        //window.location.reload();
-
-                    }
-                    else {
-                        ////console.log(this.active_node.id)
-                        this.globalService.remove(element._id).pipe(first()).toPromise().then(
-                            data => {
-                                ////console.log(data)
-                                if (data["success"]) {
-                                    console.log(data["message"])
-                                    var message = element._id + " has been removed from your history !!"
-                                    this.alertService.success(message)
-
-                                    //window.location.reload();
-                                    this.ngOnInit();
-                                    //this.router.navigate(['/projects_page'], { queryParams: { key: this.parent_key } });
-                                    //window.location.reload();
-                                    ///this.router.navigate(['/projects_tree']);
-                                }
-                                else {
-                                    this.alertService.error("this form contains errors! " + data["message"]);
-                                }
-                            }
-                        );
-                        //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
-
-                        // this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-                    }
+                        });
                 }
             }
             //this.reloadComponent(['/projects'])

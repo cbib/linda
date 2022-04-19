@@ -36,7 +36,8 @@ export class CsvLoaderComponent implements OnInit {
       console.log(this.headers)
       
     }
-  ngOnInit() {  
+  ngOnInit() {
+      
     this.options_fields_by_component=[]
     let tmpAttributesGroups = {}
     this.extract_fields_options['options']=[] 

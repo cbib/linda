@@ -90,10 +90,10 @@ export interface BiologicalMaterialFullInterface {
     '_key':string;
     '_rev':string;
     'Definition': string;
-    'Genus':string;
-    'Species':string;
-    'Organism':string;
-    'Infraspecific name': string;
+    'Genus':string[];
+    'Species':string[];
+    'Organism':string[];
+    'Infraspecific name': string[];
     'Material source ID (Holding institute/stock centre, accession)': string[];
     'Material source description': string[];
     'Material source longitude':string[];
