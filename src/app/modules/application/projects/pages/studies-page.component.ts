@@ -123,20 +123,25 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
         //this.dataSource = new MatTableDataSource(this.studies);
        // this.loaded = true
         this.searchService.getData().subscribe(data => {
-            ////console.log(data);
+            //////console.log(data);
             //this.search_string=data
         })
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        console.log(this.parent_id)
+        //console.log(this.parent_id)
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
     }
+    ngAfterViewInit() {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this._cdr.detectChanges()
+    } 
     async get_studies() {
         //return this.globalService.get_childs('investigations',this.parent_id.split('/')[1]).toPromise().then(
         return this.userService.get_person_id(this.currentUser._key).toPromise().then(
             async person_id => {
-                console.log(person_id)
+                //console.log(person_id)
                 const data = await this.globalService.get_studies(this.parent_id.split('/')[1], person_id[0].split("/")[1]).toPromise();
-                console.log(data);
+                //console.log(data);
                 this.roles = data.map(study => study['roles']);
                 this.studies = data.map(study_1 => study_1['study']); 
                 this.dataSource = new MatTableDataSource(this.studies);  
@@ -148,19 +153,15 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
         )
     }
 
-    ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this._cdr.detectChanges()
-      } 
+    
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        //////console.log(user)
+        ////////console.log(user)
         this.globalService.start();
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             //return this.globalService.get_all_vertices(user._key).subscribe(
             data => {
-                console.log(data)
+                //console.log(data)
                 this.globalService.end()
                 this.vertices = data;
             }
@@ -187,7 +188,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
 
     }
     onNext(node: string) {
-        ////console.log(node)
+        //////console.log(node)
     }
     async onRemove(element: StudyInterface) {
         const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
@@ -196,9 +197,9 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
                 if (result.event == 'Confirmed') {
                     // Remove only childs from the seleccted node
                     const data = await this.globalService.remove(element._id).toPromise()
-                    console.log(data)
+                    //console.log(data)
                     if (data["success"]) {
-                        console.log(data["message"])
+                        //console.log(data["message"])
                         var message = element._id + " has been removed from your history !!"
                         this.alertService.success(message)
                         this.reloadComponent()
@@ -227,7 +228,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
                         let data= this.globalService.remove_childs(element._key).toPromise()
                         
                         if (data["success"]) {
-                                    ////console.log(data["message"])
+                                    //////console.log(data["message"])
                             var message = "child nodes of " + element._id + " have been removed from your history !!"
                             this.alertService.success(message)
                             this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type: 'investigation', activeTab: 'assStud', mode: "edit", role: this.role, group_key: this.group_key } });
@@ -244,11 +245,11 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
                     //Remove only observed variable or experimental factors
                     // TODO add handler for observation units, biological materials, etc.
                     else if (result.only != "") {
-                        ////console.log(result.only)
+                        //////console.log(result.only)
                         this.globalService.remove_childs_by_type(element._id, result.only).pipe(first()).toPromise().then(
                             data => {
                                 if (data["success"]) {
-                                    ////console.log(data["message"])
+                                    //////console.log(data["message"])
                                     var message = "child nodes of " + element._id + " have been removed from your history !!"
                                     //this.alertService.success(message)
                                     var datafile_ids = data["datafile_ids"]
@@ -259,9 +260,9 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
                                     //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser._id, model_key: this.parent_id.split("/")[1], model_type:'investigation', model_id: this.parent_id, mode: "edit" , activeTab: 'assStud' } });
                                     // datafile_ids.forEach(datafile_id => {
                                     //     this.globalService.remove_associated_headers_linda_id(datafile_id, removed_ids, 'data_files').pipe(first()).toPromise().then(
-                                    //         data => { ////console.log(data); }
+                                    //         data => { //////console.log(data); }
                                     //       )
-                                    // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {////console.log(data);})
+                                    // //     this.globalService.update_associated_headers(element, this.update_associated_headers[filename], 'data_files').pipe(first()).toPromise().then(data => {//////console.log(data);})
                                     // });
                                 }
                                 else {
@@ -279,12 +280,12 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
 
                     }
                     else {
-                        ////console.log(this.active_node.id)
+                        //////console.log(this.active_node.id)
                         this.globalService.remove(element._id).pipe(first()).toPromise().then(
                             data => {
-                                ////console.log(data)
+                                //////console.log(data)
                                 if (data["success"]) {
-                                    console.log(data["message"])
+                                    //console.log(data["message"])
                                     var message = element._id + " has been removed from your history !!"
                                     this.alertService.success(message)
 
@@ -329,13 +330,13 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
             }
         }
         let new_study: Study = new Study()
-        console.log(new_study)
-        console.log(this.model_type)
-        console.log(this.parent_id)
+        //console.log(new_study)
+        //console.log(this.model_type)
+        //console.log(this.parent_id)
         this.globalService.add(new_study, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
             data => {
                 if (data["success"]) {
-                    console.log(data)
+                    //console.log(data)
 
                     this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'study', model_id: data['_id'], mode: "edit", activeTab: 'studyinfo', role: "owner", group_key: this.group_key } });
                     //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
@@ -344,21 +345,21 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     }
 
     onShare(element: StudyInterface) {
-        console.log(this.currentUser)
-        console.log("Add dialog for share project with authentified users - or same group users")
+        //console.log(this.currentUser)
+        //console.log("Add dialog for share project with authentified users - or same group users")
         const dialogRef = this.dialog.open(ShareProject, { width: '500px', data: { model_id: element._id } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
 
                 var guest_person: PersonInterface = result['person']
-                console.log(guest_person['_id'])
-                console.log(element._id)
+                //console.log(guest_person['_id'])
+                //console.log(element._id)
                 // create new edge doccument in users_edge
 
                 this.globalService.add_edge(element._id, guest_person['_id'], "reader").pipe(first()).toPromise().then(
                     data => {
                         if (data["success"]) {
-                            console.log(data["_id"])
+                            //console.log(data["_id"])
                             var message = "A new study " + data["_id"] + " has been successfully shared with " + guest_person['Person name'] + " !!"
                             this.alertService.success(message)
                             this.router.navigate(['/projects_page']);
@@ -378,24 +379,24 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     }
 
     identify() {
-        ////console.log('Hello, Im user tree!');
+        //////console.log('Hello, Im user tree!');
     }
     isArray(obj: any) {
         return Array.isArray(obj)
     }
     get_output_from_child(val: any) {
         if (val === 'cancel the form') {
-            console.log("Cancel form")
+            //console.log("Cancel form")
         }
         /* else if (val === 'close_study'){
             delete this.selected_study
         }
         else if (instanceOfStudy(val)){
             this.selected_study=val
-            console.log(this.selected_study)
+            //console.log(this.selected_study)
         } */
         else {
-            console.log(val)
+            //console.log(val)
             this.alertService.success("Changes have been successfully saved")
         }
     }
@@ -414,7 +415,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     }
     reloadComponent() {
         let currentUrl = this.router.url;
-        ////console.log(currentUrl)
+        //////console.log(currentUrl)
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         //this.router.navigate(path);
@@ -446,15 +447,15 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
                 }
                 block_design.add_plot_design(plot_design)
             }
-            console.log(block_design)
+            //console.log(block_design)
             new_design.add_block_design(block_design)
         }
-        console.log(new_design)
-        console.log(new_design.get_block_design(4))
+        //console.log(new_design)
+        //console.log(new_design.get_block_design(4))
     }
     /* get_studies() {
         var cpt = 0;
-        console.log(this.vertices)
+        //console.log(this.vertices)
         let selected = [this.parent_id];
         let res = this.vertices.filter(({
             e
@@ -462,19 +463,19 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
         );
         res.forEach(
             r => {
-                console.log(r['e']['_to'])
-                console.log(r['s']['vertices'])
+                //console.log(r['e']['_to'])
+                //console.log(r['s']['vertices'])
                 
                 let found_vertices=r['s']['vertices']
                 let res2= found_vertices.filter(vertice => vertice['_id']===r['e']['_to'])[0];
-                console.log(res2)
+                //console.log(res2)
                 let study_linda_id = res2["_id"]
                 let study_id = res2["Study unique ID"]
                 let short_name = res2["Study Name"]
-                console.log(study_id)
-                console.log(short_name)
+                //console.log(study_id)
+                //console.log(short_name)
                 this.studies.push({ "study_short_name": short_name, "study_id": study_id, "_id":study_linda_id,"study_parent_id": this.parent_id })
-                console.log(this.studies)
+                //console.log(this.studies)
             }
         );
     } */

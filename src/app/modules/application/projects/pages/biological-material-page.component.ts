@@ -34,7 +34,9 @@ export class BiologicalMaterialPageComponent implements OnInit {
   
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<BiologicalMaterialFullInterface>;
-  private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','total materials','total biological materials','edit'];
+  //private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','total materials','total biological materials','edit'];
+
+  private displayedColumns: string[] = ['Genus', 'Species', 'Infraspecific name','total materials','total biological materials','edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -68,7 +70,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource([]);
-    console.log(this.parent_id)
+    //console.log(this.parent_id)
     await this.set_all_biological_materials()
     this.loaded = true
   }
@@ -76,18 +78,18 @@ export class BiologicalMaterialPageComponent implements OnInit {
     return this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         if (data.length>0){
-          console.log(data)
+          //console.log(data)
           var keys= Object.keys(data[0])
           this.prepare_bm_data(data[0],keys)
-          //console.log(this.dt_source)
+          ////console.log(this.dt_source)
           //this.dataSource = new MatTableDataSource(data);
-          //console.log(this.dataSource)
+          ////console.log(this.dataSource)
           this.dt_source.paginator = this.paginator;
           this.dt_source.sort = this.sort;
           this.loaded = true
         }
         else{
-          console.log(data)
+          //console.log(data)
           this.loaded = true
         }
         
@@ -99,18 +101,47 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
   async set_all_biological_materials() {
     var data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
-    console.log(data);
-    data[0]['total materials']=data[0]["Material source ID (Holding institute/stock centre, accession)"].length
+    //console.log(data);
+    for (let index = 0; index < data.length; index++) {
+      //const element = data[index];
+      data[index]['total materials']=data[index]["Material source ID (Holding institute/stock centre, accession)"].length
+      data[index]['total biological materials']=data[index]["Biological material ID"][0].length*data[index]['total materials']
+      data[index]['Infraspecific name']=Array.from(new Set(data[index]['Infraspecific name']))
+      data[index]['Species']=Array.from(new Set(data[index]['Species']))
+      data[index]['Genus']=Array.from(new Set(data[index]['Genus']))
+      if (data[index]['Infraspecific name'].length>3){
+        data[index]['Infraspecific name']=data[index]['Infraspecific name'].slice(0, 3);
+        data[index]['Infraspecific name'].push("...")
+      }
+      if (data[index]['Species'].length>3){
+        data[index]['Species']=data[index]['Species'].slice(0, 3);
+        data[index]['Species'].push("...")
+      }
+      if (data[index]['Genus'].length>3){
+        data[index]['Genus']=data[index]['Genus'].slice(0, 3);
+        data[index]['Genus'].push("...")
+      }
+      
+    }
+    /* data[0]['total materials']=data[0]["Material source ID (Holding institute/stock centre, accession)"].length
     data[0]['total biological materials']=data[0]["Biological material ID"][0].length*data[0]['total materials']
     data[0]['Infraspecific name']=Array.from(new Set(data[0]['Infraspecific name']))
+    data[0]['Species']=Array.from(new Set(data[0]['Species']))
+    data[0]['Genus']=Array.from(new Set(data[0]['Genus']))
     if (data[0]['Infraspecific name'].length>3){
       data[0]['Infraspecific name']=data[0]['Infraspecific name'].slice(0, 3);
     }
-    data[0]['Species']=Array.from(new Set(data[0]['Species']))
-    data[0]['Genus']=Array.from(new Set(data[0]['Genus']))
-    console.log(data);
+    if (data[0]['Species'].length>3){
+      data[0]['Species']=data[0]['Species'].slice(0, 3);
+    }
+    if (data[0]['Genus'].length>3){
+      data[0]['Genus']=data[0]['Genus'].slice(0, 3);
+    } */
+    //data[0]['Species']=Array.from(new Set(data[0]['Species']))
+    //data[0]['Genus']=Array.from(new Set(data[0]['Genus']))
+    console.log(data[0]['Species']);
     this.dataSource = new MatTableDataSource(data);
-    console.log(this.dataSource);
+    //console.log(this.dataSource);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
@@ -132,7 +163,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
     return this.displayedColumns
   }
   get get_dataSource() {
-    //console.log(this.newTableData)
+    ////console.log(this.newTableData)
     return this.dataSource
   }
   get get_grand_parent_id(){
@@ -162,9 +193,9 @@ export class BiologicalMaterialPageComponent implements OnInit {
   onRemove(element: BiologicalMaterialFullInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
-          ////console.log(data)
+          //////console.log(data)
           if (data["success"]) {
-              console.log(data["message"])
+              //console.log(data["message"])
               var message = element._id + " has been removed from your history !!"
               this.alertService.success(message)
               this.reloadComponent()
@@ -182,8 +213,8 @@ export class BiologicalMaterialPageComponent implements OnInit {
     this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" ,role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });
   }
   async prepare_bm_data(node_vertice, vertice_keys) {
-    //console.log(node_vertice)
-    //console.log(vertice_keys)
+    ////console.log(node_vertice)
+    ////console.log(vertice_keys)
     //var newTableData:{}[]=[]
     let datasources: BiologicalMaterialTableModel[] = []
     var data = node_vertice

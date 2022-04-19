@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort'
@@ -19,15 +19,13 @@ import { UserInterface } from 'src/app/models/linda/person';
 })
 export class EventsPageComponent implements OnInit, AfterViewInit {
   @Input('level') level: number;
-  @Input('parent_id') parent_id:string;
+  @Input('study_id') study_id:string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
   @Input('grand_parent_id') grand_parent_id: string;
   @Input('role') role: string;
   @Input('group_key') group_key: string;
-
-
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
@@ -52,40 +50,43 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    private _cdr: ChangeDetectorRef) {
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
-          this.model_type = params['model_type'];
-          this.model_key = params['model_key'];
-          this.mode = params['mode'];
-          this.parent_id = params['parent_id']
-          this.group_key = params['group_key']
-          this.role=params['role']
-          this.grand_parent_id=params['grand_parent_id']
+        this.model_type = params['model_type'];
+        this.model_key = params['model_key'];
+        this.study_id = params['study_id']
+        this.grand_parent_id=params['grand_parent_id']
+        this.mode = params['mode'];
+        this.role=params['role']
+        this.group_key = params['group_key']
       }
     );
   }
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
-  }
+  
 
-  async ngOnInit() {
+  async ngOnInit() {  
     this.dataSource = new MatTableDataSource([]);
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(this.parent_id)
-    //await this.get_vertices()
-    await this.set_all_events()
-    this.loaded = true
+    this.set_all_events()
 
   }
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this._cdr.detectChanges()
+  }
   async set_all_events() {
-    const data = await this.globalService.get_all_events(this.parent_id.split('/')[1]).toPromise();
-    console.log(data);
+    const data = await this.globalService.get_all_events(this.study_id.split('/')[1]).toPromise();
+    //console.log(data);
     this.dataSource = new MatTableDataSource(data);
-    console.log(this.dataSource);
+    //console.log(this.dataSource);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this._cdr.detectChanges()
+    this.loaded = true
   }
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;
@@ -110,9 +111,9 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
   onRemove(element: EventInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
-          ////console.log(data)
+          //////console.log(data)
           if (data["success"]) {
-              console.log(data["message"])
+              //console.log(data["message"])
               var message = element._id + " has been removed from your history !!"
               this.alertService.success(message)
               this.ngOnInit()
@@ -135,16 +136,16 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
             this.alertService.error("You are not in the right form as requested by the tutorial")
         }
     }
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, parent_id:this.study_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {
-          console.log(result)
+          //console.log(result)
           let event: LindaEvent= result["formData"]["form"]
-          this.globalService.add(event, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+          this.globalService.add(event, this.model_type, this.study_id, false, "").pipe(first()).toPromise().then(
         data => {
             if (data["success"]) {
-                console.log(data)
+                //console.log(data)
                 this.ngOnInit()
             }
         });;
@@ -160,7 +161,7 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
     console.warn(element)
     //this.notify.emit(elem)
     //let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
-    this.router.navigate(['/event_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.parent_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "event_info", role: this.role, group_key: this.group_key } });
+    this.router.navigate(['/event_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.study_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "event_info", role: this.role, group_key: this.group_key } });
 
   }
 }

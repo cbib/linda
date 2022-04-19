@@ -342,8 +342,8 @@ export class MaterialFormComponent implements OnInit {
     console.log(selectedData)
     //open dialog for number o mbiological materila by material source
 
-    const materialControl = this.materialTable.get('materialRows') as FormArray;
-    const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+    //const materialControl = this.materialTable.get('materialRows') as FormArray;
+    //const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     for (let index = 0; index < selectedData.length; index++) {
       const element = selectedData[index];
       //materialControl.push(this.initiateMaterialFormWithValues(element))
@@ -354,9 +354,6 @@ export class MaterialFormComponent implements OnInit {
       bm['Material source DOI']=element["DOI"]
       bm['Material source altitude']=""
       bm['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
-      LotName: "CamB1"
-      PanelNames: "nan"
-      PanelSizes: "nan"
       bm['Material source latitude']=""
       bm['Material source longitude']=""
       bm.Genus=element["Genus"]
@@ -404,7 +401,10 @@ export class MaterialFormComponent implements OnInit {
   onSelectGridReady(params: GridReadyEvent) {
     this.selectGridApi = params.api;
     this.globalService.get_germplasms().subscribe((data) => {
-      this.selectRowData = data;  
+
+      this.selectRowData = data; 
+      console.log(this.selectRowData)
+      this.selectRowData=this.selectRowData.filter(selectRow=>!selectRow['DOI'].includes('urn:URGI'))
       this.selectGridApi.setRowData(this.selectRowData)
     });
   }
@@ -516,6 +516,10 @@ export class MaterialFormComponent implements OnInit {
   }
   select_all_filtered():void{
     this.selectAgGrid.api.selectAllFiltered()
+    const selectedNodes = this.selectAgGrid.api.getSelectedNodes();
+    console.log(selectedNodes)
+    const selectedData = selectedNodes.map(node => node.data);
+    console.log(selectedData)
     this.all_selected=true
   }
   deselect_all_filtered():void{

@@ -201,8 +201,18 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-environment-variables-page *ngIf="activeTab==='env'" (notify)="get_output_from_child($event)"
-          [model_type]="'environment'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode" [role]="get_role">
+          <app-environment-variables-page 
+            *ngIf="activeTab==='env'" 
+            (notify)="get_output_from_child($event)" 
+            [model_type]="'environment'" 
+            [level]="1" 
+            [grand_parent_id]="get_parent_id" 
+            [parent_id]="get_model_id" 
+            [model_key]="" 
+            [mode]="get_mode" 
+            [role]="get_role" 
+            [group_key]="get_group_key" 
+          >
         </app-environment-variables-page>
        </div>
       </mat-card>
@@ -215,8 +225,18 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-events-page *ngIf="activeTab==='events'" (notify)="get_output_from_child($event)"
-          [model_type]="'event'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
+          <app-events-page 
+            *ngIf="activeTab==='events'" 
+            (notify)="get_output_from_child($event)" 
+            [model_type]="'event'" 
+            [level]="1" 
+            [grand_parent_id]="get_parent_id" 
+            [study_id]="get_model_id" 
+            [model_key]="" 
+            [mode]="get_mode" 
+            [role]="get_role"  
+            [group_key]="get_group_key" 
+        >
         </app-events-page>
        </div>
       </mat-card>
@@ -287,7 +307,7 @@
     <div [ngClass]="{ 'active':activeTab==='People'}"  role="tabpanel" class="tab-pane" id="People">
       <h3>Project members</h3>
       <!-- add filter in gantt as in redmine -->
-          <app-persons-page  *ngIf="activeTab==='People'"  [parent_id]="get_model_id"></app-persons-page>
+          <app-persons-page  *ngIf="activeTab==='People'"  [model_id]="get_model_id"></app-persons-page>
     </div>
   </div>
 </div>

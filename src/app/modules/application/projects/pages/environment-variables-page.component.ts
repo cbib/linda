@@ -62,6 +62,14 @@ export class EnvironmentVariablesPageComponent implements OnInit {
           this.group_key = params['group_key']
           this.role=params['role']
           this.grand_parent_id=params['grand_parent_id']
+          console.log(this.level)
+          console.log(this.model_type)
+          console.log(this.model_key)
+          console.log(this.parent_id)
+          console.log(this.grand_parent_id)
+          console.log(this.mode)
+          console.log(this.role)
+          console.log(this.group_key)
       }
     );
   }

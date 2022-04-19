@@ -29,7 +29,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         totalBlockControl : new FormControl(''),
         totalRowPerBlockControl : new FormControl(''),
         totalColumnPerBlockControl : new FormControl(''),
-        totalRowPerPlotControl : new FormControl('')
+        totalRowPerPlotControl : new FormControl(''),
+        totalBlockPerRowControl : new FormControl('')
     })
 
     // Input args
@@ -63,12 +64,26 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     private total_column_per_block:number=0
     private total_row_per_block:number=0
     private total_row_per_plot:number=0
+    private total_block_per_row:number=0
     private dataSource: MatTableDataSource<ExperimentalDesignInterface>;
     private displayedColumns: string[] = ['Blocks per trial', 'edit'];
     private study_id:string
     private experimental_designs:ExperimentalDesignInterface[]=[]
 
     private currentUser:UserInterface
+
+
+
+    ///// TESST PART
+    products = [];  
+    countryCode: any;  
+    currencySymbol:any;  
+    productCountryInformation: any = [];  
+    hideme = [];  
+    Index: any;  
+    countryId: any;  
+    country: any;  
+    priceToDisplay=[];
 
     constructor(public globalService: GlobalService,
         public ontologiesService: OntologiesService,
@@ -93,8 +108,13 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this._cdr.detectChanges()
+        
     }
-
+    showBlockInfo(i,ProductId){
+        this.hideme[i] = !this.hideme[i];  
+        this.Index = i; 
+    }
+    
     async ngOnInit(){
         this.dataSource = new MatTableDataSource([]);
         await this.get_all_experimental_designs()
@@ -134,7 +154,13 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         this.paginator.pageSize = event.pageSize;
         this.paginator.pageIndex = event.pageIndex;
         this.paginator.page.emit(event);
-      }
+    }
+
+    get total_block_control(){ return this.BlockDesignForm.get('totalBlockControl')}
+    get total_row_per_block_control(){ return this.BlockDesignForm.get('totalRowPerBlockControl')}
+    get total_column_per_block_control(){ return this.BlockDesignForm.get('totalColumnPerBlockControl')}
+    get total_row_per_plot_control(){ return this.BlockDesignForm.get('totalRowPerPlotControl')}
+    get total_block_per_row_control(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
     save(){
         this.globalService.add(this.design, this.model_type, this.study_id, false).pipe(first()).toPromise().then(
             data => {
@@ -224,31 +250,40 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         for (var block=1;block<(this.total_block_number+1);block++){
             var block_design:BlockDesign=new BlockDesign(block, this.total_block_number)
             for (var column=1;column<this.total_column_per_block+1;column++){  
-                var plot_design:PlotDesign=new PlotDesign()
-                plot_design.set_column_number(column)
-                plot_design.set_plot_number(plot)
+                
+                
                 for (var row=1;row<this.total_row_per_block+1;row++){
+                    
                     var row_design:RowDesign=new RowDesign()
-                    row_design.set_row_number(row)
+                    row_design.set_row_number(row/this.total_row_per_plot)
                     row_design.set_row_per_plot(this.total_row_per_plot)
-                    plot_design.add_row_design(row_design)
+                    var plot_design:PlotDesign=new PlotDesign()
+                    plot_design.set_column_number(column)
                     if (row%this.total_row_per_plot===0){
+                        plot_design.set_plot_number(plot)
+                        plot_design.add_row_design(row_design)
                         block_design.add_plot_design(plot_design)
-                        var plot_design:PlotDesign=new PlotDesign()
+                        //var plot_design:PlotDesign=new PlotDesign()
+                        plot++
                         
+                    }
+                    else{
+                        
+                        plot_design.add_row_design(row_design)
+
                     }
                     /* else{
                         block_design.add_plot_design(plot_design)
                     } */
                 }
-                plot++
+                
                 
             }
             //console.log(block_design)
             this.experimental_design_blocks.push(block_design)
             this.design.add_block_design(block_design)
         }
-        console.log(this.design)
+        //console.log(this.design)
         //console.log(this.design.get_block_design(4))
         //console.log(this.experimental_design_blocks)
     }

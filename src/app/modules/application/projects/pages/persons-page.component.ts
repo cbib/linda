@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ViewChildren, QueryList, Output, Input, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import { GlobalService, AlertService, FileService, SearchService, UserService } from '../../../../services';
 import { WizardService } from '../services/wizard.service';
@@ -31,7 +31,7 @@ import { PersonInterface } from 'src/app/models/linda/person';
 export class PersonsPageComponent implements OnInit {
 
     @Input() search_string: string;
-    @Input('parent_id') parent_id:string;
+    @Input('model_id') model_id:string;
     @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
@@ -39,8 +39,6 @@ export class PersonsPageComponent implements OnInit {
     @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
     @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
-
-    ///@ViewChildren(MatPaginator) paginators: QueryList<MatPaginator>
     @Output() notify: EventEmitter<string> = new EventEmitter<string>();
 
     contextMenuPosition = { x: '0px', y: '0px' };
@@ -80,9 +78,23 @@ export class PersonsPageComponent implements OnInit {
         private wizardService: WizardService,
         private route: ActivatedRoute,
         public media: MediaObserver,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private _cdr: ChangeDetectorRef
     ) {
+        this.route.queryParams.subscribe(
+            params => {
+
+                this.model_id = params['model_id'];
+                //console.log(this.model_id)
+                
+            }
+        );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        this.dataSource = new MatTableDataSource([]);
+        //console.log(this.model_id)
+        //await this.get_vertices()
+        this.get_all_persons()
+        this.loaded = true
         
     }
 
@@ -104,39 +116,44 @@ export class PersonsPageComponent implements OnInit {
       }
 
     async ngOnInit() {
-        this.dataSource = new MatTableDataSource([]);
-        console.log(this.parent_id)
-        //await this.get_vertices()
-        this.get_all_persons()
-        this.loaded = true
+       
         this.searchService.getData().subscribe(data => {
-            ////console.log(data);
+            //////console.log(data);
             this.search_string=data
         })
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     }
+    ngAfterViewInit() {
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this._cdr.detectChanges()
+    }
     async get_all_persons() {
-        console.log(this.parent_id.split('/')[1])
-        if(this.parent_id.split('/')[0]==="investigations"){
-            return this.globalService.get_all_project_persons(this.parent_id.split('/')[1]).toPromise().then(
+        //console.log(this.model_id.split('/')[1])
+        if(this.model_id.split('/')[0]==="investigations"){
+            return this.globalService.get_all_project_persons(this.model_id.split('/')[1]).toPromise().then(
                 data => {
-                    console.log(data)
+                    //console.log(data)
                     this.dataSource = new MatTableDataSource(data);
-                    console.log(this.dataSource)
+                    //console.log(this.dataSource)
                     this.dataSource.paginator = this.paginator;
                     this.dataSource.sort = this.sort;
+                    this._cdr.detectChanges();
+                    this.loaded = true
                 }
             )
         }
         else{
-            return this.globalService.get_all_study_persons(this.parent_id.split('/')[1]).toPromise().then(
+            return this.globalService.get_all_study_persons(this.model_id.split('/')[1]).toPromise().then(
                 data => {
-                    console.log(data)
+                    //console.log(data)
                     this.dataSource = new MatTableDataSource(data);
-                    console.log(this.dataSource)
+                    //console.log(this.dataSource)
                     this.dataSource.paginator = this.paginator;
                     this.dataSource.sort = this.sort;
+                    this._cdr.detectChanges();
+                    this.loaded = true
                 }
             )
         }
@@ -165,14 +182,14 @@ export class PersonsPageComponent implements OnInit {
 
     
     onEdit(elem:PersonInterface) {
-        console.log("on Edit")
+        //console.log("on Edit")
     }
     activate_multiple_selection(val: boolean) {
         this.multiple_selection = val;
         var selected_set = this.checklistSelection.selected
     }
     onNext(node: string) {
-        ////console.log(node)
+        //////console.log(node)
     }
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
@@ -182,7 +199,7 @@ export class PersonsPageComponent implements OnInit {
     }
     reloadComponent(path: [string]) {
         let currentUrl = this.router.url;
-        ////console.log(currentUrl)
+        //////console.log(currentUrl)
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
         this.router.navigate(path);
@@ -197,7 +214,7 @@ export class PersonsPageComponent implements OnInit {
 
     }
     identify() {
-        ////console.log('Hello, Im user tree!');
+        //////console.log('Hello, Im user tree!');
     }
     isArray(obj: any) {
         return Array.isArray(obj)

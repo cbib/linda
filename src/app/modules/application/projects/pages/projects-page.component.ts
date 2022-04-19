@@ -133,7 +133,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     changeTab(tab: string) {
         this.activeTab = tab
         this.group_key = tab
-        console.log(this.activeTab)
+        //console.log(this.activeTab)
         this.reloadComponent()
 
     }
@@ -147,13 +147,17 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
       }
     async ngOnInit() { 
         this.searchService.getData().subscribe(data => {
-            ////console.log(data);
+            //////console.log(data);
             this.search_string = data
         })
-        
-        //console.log(this.currentUser)
 
     }
+    ngAfterViewInit() {
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this._cdr.detectChanges()
+    }
+    
     async get_projects() {
         /* // get person linda db id 
         this.roles = data.map(project => project['roles']);
@@ -169,9 +173,9 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
 
         return this.userService.get_person_id(this.currentUser._key).toPromise().then(
             async person_id => {
-                console.log(person_id)
+                //console.log(person_id)
                 const data = await this.globalService.get_projects(person_id[0].split("/")[1]).toPromise();
-                console.log(data);
+                //console.log(data);
                 this.roles = data.map(project => project['roles']);
                 this.groups = data.map(project_1 => project_1['groups']);
                 const projects = data.map(project_2 => project_2['project']);
@@ -185,21 +189,17 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
             }
         );
     }
-    ngAfterViewInit() {
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        this._cdr.detectChanges()
-    }
+    
 
     async get_user_groups() {
         await this.userService.get_groups(this.currentUser._key).toPromise().then(
             grps => {
-                //console.log(grps)
+                ////console.log(grps)
                 for (var g in grps) {
-                    //console.log(g)
+                    ////console.log(g)
                     this.user_groups.push(grps[g].split('/')[1])
                 }
-                /// console.log(this.user_groups)
+                /// //console.log(this.user_groups)
             }
         );
     }
@@ -226,11 +226,11 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     //     this.wizardService.onDone(false, this.currentUser, this.vertices)
     // }
     onAccessGroup(_group_key: string) {
-        console.log(this.currentUser)
+        //console.log(this.currentUser)
         const dialogRef = this.dialog.open(GroupLoginComponent, { width: '500px', data: { group_key: _group_key, current_user: this.currentUser } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                console.log(result['logged'])
+                //console.log(result['logged'])
                 this.user_groups.push(_group_key)
                 this.router.navigate(['/projects_page'], { queryParams: { activeTab: _group_key } });
 
@@ -242,24 +242,24 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         this.wizardService.onClickTour(this.vertices, this.currentUser, replay, level)
     }
     onExplore(element: InvestigationInterface) {
-        ////console.log("you are gonna explore your data !!")
+        //////console.log("you are gonna explore your data !!")
         this.router.navigate(['/explore'], { queryParams: { parent_id: element._id } })
     }
     onShare(element: InvestigationInterface) {
-        console.log(this.currentUser)
+        //console.log(this.currentUser)
         const dialogRef = this.dialog.open(ShareProject, { width: '500px', data: { model_id: element._id } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
 
                 var guest_person: PersonInterface = result['person']
-                console.log(guest_person['_id'])
-                console.log(element._id)
+                //console.log(guest_person['_id'])
+                //console.log(element._id)
                 // create new edge doccument in users_edge
 
                 this.globalService.add_edge(element._id, guest_person['_id'], "reader", this.group_key).pipe(first()).toPromise().then(
                     data => {
                         if (data["success"]) {
-                            console.log(data["_id"])
+                            //console.log(data["_id"])
                             var message = "A new project " + data["_id"] + " has been successfully shared with " + guest_person['Person name'] + " !!"
                             this.alertService.success(message)
                             this.router.navigate(['/projects_page']);
@@ -310,7 +310,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         });
     }
     onExport(element: InvestigationInterface) {
-        console.log(element)
+        //console.log(element)
         const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: true, is_investigation: true } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -358,12 +358,12 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         });
     }
     onEdit(elem: InvestigationInterface) {
-        console.log("on Edit")
+        //console.log("on Edit")
         let role = this.roles.filter(inv => inv.project_id == elem._id)[0]['role']
         this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.currentUser['_id'], model_type: "investigation", model_key: elem._key, model_id: elem._id, mode: "edit", activeTab: 'identifiers', role: role, group_key: this.group_key } });
     }
     onNext(node: string) {
-        ////console.log(node)
+        //////console.log(node)
     }
     onExperimental_design() {
         this.router.navigate(['/design'])
@@ -375,9 +375,9 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
                 if (result.event == 'Confirmed') {
                     // Remove only childs from the seleccted node
                     const data = await this.globalService.remove(element._id).toPromise()
-                    ////console.log(data)
+                    //////console.log(data)
                     if (data["success"]) {
-                        ////console.log(data["message"])
+                        //////console.log(data["message"])
                         var message = element._id + " has been removed from your history !!"
                         this.alertService.success(message)
                         this.reloadComponent()
@@ -408,11 +408,11 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
             }
         }
         let new_investigation: Investigation = new Investigation()
-        console.log(new_investigation)
+        //console.log(new_investigation)
         this.globalService.add(new_investigation, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
             data => {
                 if (data["success"]) {
-                    console.log(data)
+                    //console.log(data)
                     this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner", group_key:this.group_key } });
                     //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
 
@@ -420,7 +420,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
             });;
     }
     invitePerson(group_key) {
-        console.log(group_key)
+        //console.log(group_key)
     }
     reloadCurrentRoute() {
         let currentUrl = this.router.url;
@@ -434,7 +434,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         var selected_set = this.checklistSelection.selected
     }
     identify() {
-        ////console.log('Hello, Im user tree!');
+        //////console.log('Hello, Im user tree!');
     }
     isArray(obj: any) {
         return Array.isArray(obj)
