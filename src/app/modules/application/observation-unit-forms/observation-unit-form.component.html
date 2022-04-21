@@ -91,7 +91,7 @@
                   <tr (click)="ObservationTableRowSelected(i)" [formGroupName]="i" [ngClass]="{'highlight': ou_index_row == i}">
                     <ng-container *ngFor="let field of cleaned_model ; let j=index">
                       <td class="text-center align-middle">
-                        <div *ngIf="model[field['key']].Format.includes('Ontology')">
+                       <!--  <div *ngIf="model[field['key']].Format.includes('Ontology')">
                           <div *ngFor="let ont of model[field['key']]['Associated ontologies'] ; index as o;"
                             class="btn-group">
                             <button class="btn btn-success btn-xs fa fa-plus"
@@ -110,26 +110,26 @@
                             <input style="color:black" mdbInput value="{{validated_term[field['key']].values}}"
                               type="text" formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)" />
                           </span>
-                        </div>
+                        </div> -->
                         <div *ngIf="!model[field['key']].Format.includes('Ontology')">
                           <div *ngIf="!field['key'].includes('date')">
                             <input
                               *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('ID')"
                               mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                               formControlName="{{field['key']}}" (keypress)="onTaskAdd($event)"
-                              [ngClass]="{ 'is-invalid': group.controls[field['key']].errors }" />
+                              [ngClass]="{ 'is-invalid': group.errors }" />
 
                             <textarea
                               *ngIf="model[field['key']].Format.includes('Free text') && !field['key'].includes('Observation Unit factor value')"
                               mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                               formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
-                              [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}">
+                              [ngClass]="{ 'is-invalid': group.errors}">
                             </textarea>
                             <textarea
                               *ngIf="model[field['key']].Format.includes('Formatted text (Key:value)') && !field['key'].includes('Observation Unit factor value')"
                               mdbInput placeholder="{{model[field['key']].Example}}" type="text"
                               formControlName="{{field['key']}}" (keyup)="onTaskAdd($event)"
-                              [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}">
+                              [ngClass]="{ 'is-invalid': group.errors}">
                             </textarea>
                             <!-- ef_data[i]['observation_id']===observation_id &&  -->
                             <ng-container  *ngIf="get_experimental_factor(group.value['obsUUID']).length===0 && model[field['key']].Format.includes('Free text') && field['key'].includes('Observation Unit factor value')">
@@ -165,12 +165,12 @@
 
 
 
-                            <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                            <div *ngIf="group.errors" class="invalid-feedback">
+                              <div style="color :red" *ngIf="group.errors.required">
                                 {{field['key']}} is required</div>
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                              <div style="color :red" *ngIf="group.errors.minlength">minimum
                                 length is required</div>
-                              <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                              <div style="color :red" *ngIf="group.errors.create">Unique ID is
                                 required - already used !! </div>
                             </div>
                           </div>

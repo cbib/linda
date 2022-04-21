@@ -10,21 +10,20 @@
   </div>
   <select name="select_template" size="1" (change)="onSelect($event.target.value)">
     <option value="" disabled>Select {{model_type}}s</option>
-
-    <ng-container *ngIf="model_type!=='biological_material'">
-      <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}
+    <ng-container *ngIf="model_type==='experimental_factor'">
+      <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_result" value="{{t._id}}">
+        {{t._id}}
       </option>
     </ng-container>
     <ng-container *ngIf="model_type==='biological_material'">
-      <option *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}</option>
+      <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_result" value="{{t._id}}">
+        {{t._id}}
+      </option>
     </ng-container>
   </select>
 
-  <ng-container *ngIf="model_type==='biological_material'">
-    <table style="width: 100%;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
-      <!--- Note that these columns can be defined in any order.
-                  The actual rendered columns are set as a property on the row definition" -->
-
+  <ng-container *ngIf="model_type==='biological_material' && loaded">
+    <table style="width: 100%;" *ngIf="loaded" mat-table [dataSource]="get_sources[model_type]" matSort>
       <!-- Position Column -->
       <ng-container *ngFor="let column of get_columns[model_type] ; let i=index">
         <!-- {{column}} -->
@@ -33,6 +32,7 @@
           <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
         </ng-container>
       </ng-container>
+
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterBmToggle() : null"
@@ -46,19 +46,20 @@
             [disabled]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId)">
           </mat-checkbox>
         </td>
-
       </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="get_columns[model_type]"></tr>
       <tr mat-row *matRowDef="let row; columns: get_columns[model_type];"
         (click)="!get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && get_bmselection.toggle(row)"
         [ngStyle]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && {'background-color': 'lightgrey'}">
       </tr>
     </table>
+    <mat-paginator [hidden] #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </ng-container>
 
 
-  <ng-container *ngIf="model_type==='experimental_factor'">
-    <table style="width: 1200px;" *ngIf="ready_to_show" mat-table matSort [dataSource]="get_sources[model_type]">
+  <ng-container *ngIf="model_type==='experimental_factor'&& loaded">
+    <table style="width: 1200px;" *ngIf="loaded" mat-table matSort [dataSource]="get_sources[model_type]">
 
       <!--- Note that these columns can be defined in any order.
                   The actual rendered columns are set as a property on the row definition" -->
@@ -90,6 +91,7 @@
         [ngStyle]="get_already_there.includes(row.experimentalFactorType) && {'background-color': 'lightgrey'}"></tr>
 
     </table>
+    <mat-paginator [hidden] #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </ng-container>
 
   <div mat-dialog-actions>

@@ -209,9 +209,21 @@ export interface BlockDesignInterface {
         "value": number;
         "ID": string;
     };
-    "Plot design": {
+    /* "Plot design": {
         "value": PlotDesign[]| CompleteBlockDesign[] | IncompleteBlockDesign[];
         "ID": string;
+    }; */
+    "Plot design": {
+        "value": PlotDesign[];
+        "ID": "CO_715:0000150";
+    };
+    "Complete Block Design": {
+        "value": CompleteBlockDesign[] ;
+        "ID": "CO_715:0000145";
+    };
+    "Incomplete Block Design": {
+        "value": IncompleteBlockDesign[];
+        "ID": "CO_715:0000242";
     };
 
 }
@@ -249,6 +261,9 @@ export class BlockDesign implements BlockDesignInterface{
     }
     add_plot_design(_plot_design:PlotDesign){
         this["Plot design"].value.push(_plot_design)
+    }
+    clean_plot_design(){
+        this["Plot design"].value=[]
     }
     add_complete_block_design(_complete_block_design:CompleteBlockDesign){
         this["Complete Block Design"].value.push(_complete_block_design)

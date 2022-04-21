@@ -5,18 +5,25 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort'
 import { first } from 'rxjs/operators';
-import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
-import { ExperimentalDesign } from 'src/app/models/linda/experimental-design';
-import { BlockDesignInterface } from 'src/app/models/linda/experimental-design';
-import { BlockDesign } from 'src/app/models/linda/experimental-design';
-import { Replication } from 'src/app/models/linda/experimental-design';
-import { PlotDesign } from 'src/app/models/linda/experimental-design';
-import { RowDesign } from 'src/app/models/linda/experimental-design';
+import { 
+    ExperimentalDesign,
+    BlockDesign,
+    Replication,
+    PlotDesign,
+    RowDesign,
+    BlockDesignInterface,
+    CompleteBlockDesign, 
+    IncompleteBlockDesign, 
+    ExperimentalDesignInterface,
+    CompleteBlockDesignInterface,
+    IncompleteBlockDesignInterface } from 'src/app/models/linda/experimental-design';
+
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatTableDataSource} from '@angular/material/table';
 import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { MatDialog } from '@angular/material/dialog';
 import { UserInterface } from 'src/app/models/linda/person';
+import { SelectionComponent } from '../../dialogs/selection.component';
 
 @Component({
   selector: 'app-experimental-design-page',
@@ -24,7 +31,20 @@ import { UserInterface } from 'src/app/models/linda/person';
   styleUrls: ['./experimental-design-page.component.css']
 })
 export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, AfterViewInit {
+    // Input args
+    @Input('level') level: number;
+    @Input('parent_id') parent_id:string;
+    @Input('model_id') model_id: string;
+    @Input('model_type') model_type: string;
+    @Input('model_key') model_key: string;
+    @Input('activeTab') activeTab: string;
+    @Input('mode') mode: string;
+    @Input('role') role: string;
+    @Input('group_key') group_key: string;
+    @Input('grand_parent_id') grand_parent_id: string;
 
+
+    @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
     BlockDesignForm = new FormGroup({
         totalBlockControl : new FormControl(''),
         totalRowPerBlockControl : new FormControl(''),
@@ -33,33 +53,15 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         totalBlockPerRowControl : new FormControl('')
     })
 
-    // Input args
-    @Input('level') level: number;
-    @Input('parent_id') parent_id:string;
-    @Input('model_key') model_key: string;
-    @Input('model_type') model_type: string;
-    @Input('mode') mode: string;
-    @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
-
-    // Menu part
-    @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
-    @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
-    @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
-    @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
-    @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
-    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: false }) sort: MatSort;
     
-    contextMenuPosition = { x: '0px', y: '0px' };
-    userMenuPosition = { x: '0px', y: '0px' };
-    userMenusecondPosition = { x: '0px', y: '0px' };
-    investigationMenuPosition = { x: '0px', y: '0px' };
-    helpMenuPosition = { x: '0px', y: '0px' };
 
-    experimental_design_blocks:BlockDesign[]=[]
-    design_types=["BlockDesign", "CompleteBlockDesign","IncompleteBlockDesign"]
+    
+ 
+
+    //experimental_design_blocks:BlockDesign[]=[]
+    design_types=["CompleteBlockDesign","IncompleteBlockDesign"]
     private design:ExperimentalDesign;
-    private design_type:string
+    private block_design_type:string=""
     private total_block_number:number=0
     private total_column_per_block:number=0
     private total_row_per_block:number=0
@@ -69,13 +71,18 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     private displayedColumns: string[] = ['Blocks per trial', 'edit'];
     private study_id:string
     private experimental_designs:ExperimentalDesignInterface[]=[]
-
     private currentUser:UserInterface
-
-
+    public designLoaded:boolean=false
+    public blockDesignLoaded:boolean=false
+    public complete_block_design_type:CompleteBlockDesign;
+    public incomplete_block_design_type:IncompleteBlockDesign;
+    public available_designs:string[]
+    public block_design_subtype:string
 
     ///// TESST PART
-    products = [];  
+    hideme = [];  
+    Index: any;  
+    /* products = [];  
     countryCode: any;  
     currencySymbol:any;  
     productCountryInformation: any = [];  
@@ -83,7 +90,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     Index: any;  
     countryId: any;  
     country: any;  
-    priceToDisplay=[];
+    priceToDisplay=[]; */
 
     constructor(public globalService: GlobalService,
         public ontologiesService: OntologiesService,
@@ -98,74 +105,276 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     this.level = params['level'];
                     this.model_type = params['model_type'];
                     this.model_key = params['model_key'];
+                    this.model_id = params['model_id'];
                     this.mode = params['mode'];
                     this.parent_id = params['parent_id']
-                    this.study_id="studies/"+this.model_key
+                    this.group_key = params['group_key']
+                    this.role = params['role']
+                    this.grand_parent_id = params['grand_parent_id']
+                    this.activeTab=params['activeTab']
+                    
+                    
                 }
               );
+              if (this.model_key!==""){
+                this.get_design_by_key()
+              }
+              
     } 
-    ngAfterViewInit(){
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this._cdr.detectChanges()
-        
-    }
+
+    
+
+    
     showBlockInfo(i,ProductId){
         this.hideme[i] = !this.hideme[i];  
         this.Index = i; 
     }
-    
-    async ngOnInit(){
-        this.dataSource = new MatTableDataSource([]);
-        await this.get_all_experimental_designs()
-        this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        this.dataSource = new MatTableDataSource(this.experimental_designs);
-        //console.log(this.dataSource)
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        //this.extract_design(36,7,3)
-        //console.log(this.design)   
-    }
-    async get_all_experimental_designs() {
-        const data = await this.globalService.get_all_experimental_designs(this.model_key).toPromise()
-        if (data.length>0){
-            console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
-            this.experimental_designs=data
-            console.log(this.experimental_designs)
-            
-        }
-        /* return this.globalService.get_all_experimental_designs(this.model_key).toPromise().then(
-            data => {
-                if (data.length>0){
-                    console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
-                    this.experimental_designs=data
-                    
-                }
+    get_design_by_key(){
+        this.design=new ExperimentalDesign()
+        this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
+            console.log(data['Blocking'].value[0]['Plot design'].value)
+            if (data['Blocking'].value[0]['Complete Block Design'].value.length>0){
+                this.block_design_type='CompleteBlockDesign'
+                
+                this.available_designs=Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0])
+                this.available_designs.forEach(available_design=>{
+                     if (data['Blocking'].value[0]['Complete Block Design'].value[0][available_design].value===true){
+                        this.block_design_subtype=available_design
+                     }
+                })
+                console.log(Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign))
+                this.complete_block_design_type=data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign
             }
-        ) */
-      }
+            else{
+                this.block_design_type='IncompleteBlockDesign'
+                this.block_design_subtype=data['Blocking'].value[0]['Incomplete Block Design'].value[0].filter(obj => obj.value===true)[0]
+                this.available_designs=Object.keys(data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign)
+                this.incomplete_block_design_type=data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign
+            }
 
+
+            
+            let tmp_column_num=[]
+            data['Blocking'].value[0]['Plot design'].value.filter(val=>tmp_column_num.push(val['Column number'].value))
+            let tmp_row_num=[]
+            let RowPerPlot=0
+            //data['Blocking'].value[0]['Plot design'].value[0]['Row design'].value.filter(val=>tmp_row_num.push(val['Row number'].value))
+            let plot_designs=data['Blocking'].value[0]['Plot design'].value
+
+            data['Blocking'].value[0]['Plot design'].value.forEach(val=>{
+                val['Row design'].value.forEach(val2=>{
+                    tmp_row_num.push(val2['Row number'].value)
+                    RowPerPlot=val2['Row per plot'].value
+                })
+                
+            })    
+            let column_num= Array.from(new Set(tmp_column_num))
+            let row_num= Array.from(new Set(tmp_row_num))
+            this.design=data as ExperimentalDesign
+            //this.experimental_design_blocks=data['Blocking'].value
+            this.totalBlockControl.patchValue(this.get_design.Blocking.value.length)
+            this.totalBlockControl.setValue(this.get_design.Blocking.value.length)
+            this.totalColumnPerBlockControl.patchValue(column_num.length)
+            this.totalColumnPerBlockControl.setValue(column_num.length)
+            this.totalRowPerPlotControl.patchValue(RowPerPlot)
+            this.totalRowPerPlotControl.setValue(RowPerPlot)
+            this.totalRowPerBlockControl.patchValue(row_num.length)
+            this.totalRowPerBlockControl.setValue(row_num.length)
+            this.totalBlockPerRowControl.patchValue(4)
+            this.totalBlockPerRowControl.setValue(4)
+            console.log(this.design)
+            this.designLoaded=true
+            this.blockDesignLoaded=true
+        });
+    }
+    async ngOnInit(){
+        this.activeTab="exp_design_info"
+        this.block_design_type=""
+        console.warn(this.level)
+        console.warn(this.model_type)
+        console.warn(this.model_key)
+        console.warn(this.model_id)
+        console.warn(this.mode)
+        console.warn(this.parent_id)
+        console.warn(this.group_key)
+        console.warn(this.role)
+        console.warn(this.grand_parent_id)
+        console.warn(this.activeTab)
+        //this._cdr.detectChanges()
+        this.design=new ExperimentalDesign()
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
+        
+    }
+    ngAfterViewInit(){
+        /* this.route.queryParams.subscribe(params => {
+            this.activeTab = params['activeTab'];
+            this._cdr.detectChanges()
+        }); */
+    }
+    get get_design():ExperimentalDesign{
+        return this.design
+    }
+    changeTab(tab:string){
+        this.activeTab=tab
+        console.log(this.activeTab)
+    }
+    onDesignTypeChange(value:string){
+        this.block_design_type=value
+        console.log(this.block_design_type)
+        this.available_designs=[]
+        if (this.block_design_type==="CompleteBlockDesign"){
+            this.complete_block_design_type=new CompleteBlockDesign(false,false,false)
+            console.log(this.complete_block_design_type)
+            this.available_designs=Object.keys(this.complete_block_design_type)
+        }
+        else{
+            this.incomplete_block_design_type=new IncompleteBlockDesign(false,false)
+            this.available_designs=Object.keys(this.incomplete_block_design_type)
+            console.log(this.incomplete_block_design_type)
+        }
+        console.log(this.available_designs)    
+    }
+    onExtractDesign(){
+        this.designLoaded=false
+        this.blockDesignLoaded=false
+        console.warn(this.BlockDesignForm.controls)
+        this.BlockDesignForm.get('totalBlockControl').value
+        this.total_block_number= this.BlockDesignForm.get('totalBlockControl').value
+        this.total_column_per_block= this.BlockDesignForm.get('totalColumnPerBlockControl').value
+        this.total_row_per_block= this.BlockDesignForm.get('totalRowPerBlockControl').value
+        this.total_row_per_plot=this.BlockDesignForm.get('totalRowPerPlotControl').value
+        console.warn(this.total_row_per_plot)
+       // this.experimental_design_blocks=[]
+        /* let blocks=this.total_block_number
+        let columns=this.total_column_per_block
+        let rows=this.total_row_per_block */
+        delete this.design
+        
+        this.design=new ExperimentalDesign()
+        var replication:Replication=new Replication()
+        replication.set_replicate_number(3)
+        this.design.set_replication(replication)
+        //this.design.set_number_of_entries(this.total_block_number*this.total_column_per_block*this.total_row_per_block)
+        for (var block=1;block<(this.total_block_number+1);block++){
+            var block_design:BlockDesign=new BlockDesign(block, this.total_block_number)
+            //console.log(block_design)
+            //this.experimental_design_blocks.push(block_design)
+            this.design.add_block_design(block_design)
+        }
+        this.designLoaded=true
+        console.log(this.design)
+        //console.log(this.design.get_block_design(4))
+        //console.log(this.experimental_design_blocks)
+    }
+    addBiologicalMaterial(){
+        const dialogRef = this.dialog.open(SelectionComponent,
+            { width: '1400px', autoFocus: true, disableClose: true, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: []} }
+          );
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              console.log(result)
+
+            }
+        })
+    }    
+
+    onExtractBlockDesign(){
+        this.blockDesignLoaded=false
+        console.warn(this.BlockDesignForm.controls)
+        this.BlockDesignForm.get('totalBlockControl').value
+        this.total_block_number= this.BlockDesignForm.get('totalBlockControl').value
+        this.total_column_per_block= this.BlockDesignForm.get('totalColumnPerBlockControl').value
+        this.total_row_per_block= this.BlockDesignForm.get('totalRowPerBlockControl').value
+        this.total_row_per_plot=this.BlockDesignForm.get('totalRowPerPlotControl').value
+        console.warn(this.total_row_per_plot)
+
+       // this.experimental_design_blocks=[]
+        /* let blocks=this.total_block_number
+        let columns=this.total_column_per_block
+        let rows=this.total_row_per_block */
+        //delete this.design
+        
+        
+       /*  var replication:Replication=new Replication()
+        replication.set_replicate_number(3)
+        this.design.set_replication(replication) */
+        console.warn(this.total_block_number)
+        console.warn(this.total_column_per_block)
+        console.warn(this.total_row_per_block)
+        console.log(this.design)
+        let total_entries=this.total_block_number*this.total_column_per_block*this.total_row_per_block
+        this.design.set_number_of_entries(total_entries)
+        var plot=1
+        this.design.Blocking.value.forEach(block_design=>{
+            block_design.clean_plot_design()
+        })
+        this.design.Blocking.value.forEach(block_design=>{
+            
+            if (this.block_design_type==="CompleteBlockDesign"){
+                this.complete_block_design_type[this.block_design_subtype].value=true
+                block_design['Complete Block Design'].value.push(this.complete_block_design_type)
+            }
+            else{
+                this.incomplete_block_design_type[this.block_design_subtype]=true
+                block_design['Incomplete Block Design'].value.push(this.incomplete_block_design_type)
+            }
+            for (var column=1;column<this.total_column_per_block+1;column++){  
+                for (var row=1;row<this.total_row_per_block+1;row++){
+                    var row_design:RowDesign=new RowDesign()
+                    row_design.set_row_number(row/this.total_row_per_plot)
+                    row_design.set_row_per_plot(this.total_row_per_plot)
+                    var plot_design:PlotDesign=new PlotDesign()
+                    plot_design.set_column_number(column)
+                    if (row%this.total_row_per_plot===0){
+                        plot_design.set_plot_number(plot)
+                        plot_design.add_row_design(row_design)
+                        block_design.add_plot_design(plot_design)
+                        //var plot_design:PlotDesign=new PlotDesign()
+                        plot++    
+                    }
+                    else{ 
+                        plot_design.add_row_design(row_design)
+                    }
+                    /* else{
+                        block_design.add_plot_design(plot_design)
+                    } */
+                }
+                
+                
+            }
+        })
+        this.blockDesignLoaded=true
+    }
+    
     ngOnDestroy(): void {
         //Called once, before the instance is destroyed.
         //Add 'implements OnDestroy' to the class.
         
     }
-    public handlePageBottom(event: PageEvent) {
-        this.paginator.pageSize = event.pageSize;
-        this.paginator.pageIndex = event.pageIndex;
-        this.paginator.page.emit(event);
-    }
-
-    get total_block_control(){ return this.BlockDesignForm.get('totalBlockControl')}
-    get total_row_per_block_control(){ return this.BlockDesignForm.get('totalRowPerBlockControl')}
-    get total_column_per_block_control(){ return this.BlockDesignForm.get('totalColumnPerBlockControl')}
-    get total_row_per_plot_control(){ return this.BlockDesignForm.get('totalRowPerPlotControl')}
-    get total_block_per_row_control(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
-    save(){
-        this.globalService.add(this.design, this.model_type, this.study_id, false).pipe(first()).toPromise().then(
+    onSave(){
+        this.globalService.update_document(this.model_key, this.design, this.model_type, false).pipe(first()).toPromise().then(
             data => {
                 if (data["success"]) {
-                    this.ngOnInit();
+                    var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+                    this.alertService.success(message)
+                    return true;
+                }
+                else {
+                    this.alertService.error("this form contains errors! " + data["message"]);
+                    return false;
+                };
+
+
+            }
+        );
+    }
+    onAdd(){
+        this.globalService.add(this.design, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
+            data => {
+                if (data["success"]) {
+                    //this.ngOnInit();
+                    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });
+
                     return true;
                 }
                 else {
@@ -203,113 +412,65 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             //this.reloadComponent(['/projects'])
         });
     }
-    add(element:ExperimentalDesignInterface){
-  
-    }
-    onEdit(element:ExperimentalDesignInterface){
-  
-    }
+
     removeBlock(_block){
-        this.experimental_design_blocks.forEach( (block, index) => {
-          if(block === _block) this.experimental_design_blocks.splice(index,1);
+        this.get_design.Blocking.value.forEach( (block, index) => {
+          if(block === _block) this.get_design.Blocking.value.splice(index,1);
         });
      }
     display_block(_block:BlockDesignInterface){
         console.log(_block['Block number'].value)
-        console.log(this.experimental_design_blocks)
-        console.log(this.experimental_design_blocks.filter(block =>
+        console.log(this.get_design.Blocking.value)
+        console.log(this.get_design.Blocking.value.filter(block =>
             block['Block number'].value===_block['Block number'].value
         ))
-    }
-
-    onDesignTypeChange(value:string){
-        this.design_type=value
-        console.log(this.design_type)
     }
 
     onSubmit(){
         console.warn(this.BlockDesignForm.value);
     }
-    onExtractDesign(){
-        console.warn(this.BlockDesignForm.controls)
-        this.BlockDesignForm.get('totalBlockControl').value
-        this.total_block_number= this.BlockDesignForm.get('totalBlockControl').value
-        this.total_column_per_block= this.BlockDesignForm.get('totalColumnPerBlockControl').value
-        this.total_row_per_block= this.BlockDesignForm.get('totalRowPerBlockControl').value
-        this.total_row_per_plot=this.BlockDesignForm.get('totalRowPerPlotControl').value
-        this.experimental_design_blocks=[]
-        /* let blocks=this.total_block_number
-        let columns=this.total_column_per_block
-        let rows=this.total_row_per_block */
-        this.design=new ExperimentalDesign()
-        var replication:Replication=new Replication()
-        replication.set_replicate_number(3)
-        this.design.set_replication(replication)
-        this.design.set_number_of_entries(this.total_block_number*this.total_column_per_block*this.total_row_per_block)
-        var plot=1
-        for (var block=1;block<(this.total_block_number+1);block++){
-            var block_design:BlockDesign=new BlockDesign(block, this.total_block_number)
-            for (var column=1;column<this.total_column_per_block+1;column++){  
-                
-                
-                for (var row=1;row<this.total_row_per_block+1;row++){
-                    
-                    var row_design:RowDesign=new RowDesign()
-                    row_design.set_row_number(row/this.total_row_per_plot)
-                    row_design.set_row_per_plot(this.total_row_per_plot)
-                    var plot_design:PlotDesign=new PlotDesign()
-                    plot_design.set_column_number(column)
-                    if (row%this.total_row_per_plot===0){
-                        plot_design.set_plot_number(plot)
-                        plot_design.add_row_design(row_design)
-                        block_design.add_plot_design(plot_design)
-                        //var plot_design:PlotDesign=new PlotDesign()
-                        plot++
-                        
-                    }
-                    else{
-                        
-                        plot_design.add_row_design(row_design)
+    /* get total_block_control(){ return this.BlockDesignForm.get('totalBlockControl')}
+    get total_block_per_row_control(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
+    get total_row_per_block_control(){ return this.BlockDesignForm.get('totalRowPerBlockControl')}
+    get total_column_per_block_control(){ return this.BlockDesignForm.get('totalColumnPerBlockControl')}
+    get total_row_per_plot_control(){ return this.BlockDesignForm.get('totalRowPerPlotControl')}
+     */
+    get totalBlockControl(){ return this.BlockDesignForm.get('totalBlockControl');}
+    get totalBlockPerRowControl(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
+    get totalRowPerBlockControl(){ return this.BlockDesignForm.get('totalRowPerBlockControl');}
+    get totalColumnPerBlockControl(){ return this.BlockDesignForm.get('totalColumnPerBlockControl');}
+    get totalRowPerPlotControl(){ return this.BlockDesignForm.get('totalRowPerPlotControl'); }
+    
+    get get_BlockDesignForm(){ return this.BlockDesignForm }
+    get get_displayedColumns(){ return this.displayedColumns }  
+    get get_dataSource(){ return this.dataSource }
+    get get_design_type(){ return this.block_design_type}
+    get get_design_subtype(){ return this.block_design_subtype}
 
-                    }
-                    /* else{
-                        block_design.add_plot_design(plot_design)
-                    } */
-                }
-                
-                
-            }
-            //console.log(block_design)
-            this.experimental_design_blocks.push(block_design)
-            this.design.add_block_design(block_design)
-        }
-        //console.log(this.design)
-        //console.log(this.design.get_block_design(4))
-        //console.log(this.experimental_design_blocks)
+    get get_parent_id(){
+        return this.parent_id
     }
-    get get_design_type(){
-        return this.design_type
+    get get_mode(){
+        return this.mode
     }
-    get totalBlockControl(){
-        return this.BlockDesignForm.get('totalBlockControl');
+    get get_model_id(){
+        return this.model_id
     }
-    get totalColumnPerBlockControl(){
-        return this.BlockDesignForm.get('totalColumnPerBlockControl');
+    get get_model_key(){
+        return this.model_key
     }
-    get totalRowPerBlockControl(){
-        return this.BlockDesignForm.get('totalRowPerBlockControl');
+    get get_role(){
+        return this.role
     }
-    get totalRowPerPlotControl(){
-        return this.BlockDesignForm.get('totalRowPerPlotControl');
+    get get_group_key(){
+        return this.group_key
     }
-    get get_BlockDesignForm(){
-        return this.BlockDesignForm
-    }
-    get get_displayedColumns(){
-        return this.displayedColumns
-    }  
-    get get_dataSource(){
-        return this.dataSource
-    }
+    close(){
+        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });
+      
+          //this.notify.emit("close_study")
+          //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.get_role, group_key: this.group_key} });
+          // Same as delete project and all childs 
+      }
 
 }

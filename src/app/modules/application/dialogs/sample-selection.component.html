@@ -119,7 +119,7 @@
                       <textarea *ngIf="!model[field['key']].Format.includes('Free text')" mdbInput
                         placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                         (keyup)="onTaskAdd($event)"
-                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
+                        [ngClass]="{ 'is-invalid': group.errors}"></textarea>
                       <!-- <mat-slider formControlName="{{field['key']}}"
                         *ngIf="!model[field['key']].Format.includes('Free text') && field['key'].includes('coordinates')"
                         [displayWith]="formatLabel" step="0.01" thumbLabel min="0" max="1000" tickInterval="0.01">
@@ -142,13 +142,13 @@
                       <textarea *ngIf="model[field['key']].Format.includes('Free text')" mdbInput
                         placeholder="{{model[field['key']].Example}}" type="text" formControlName="{{field['key']}}"
                         (keyup)="onTaskAdd($event)"
-                        [ngClass]="{ 'is-invalid': group.controls[field['key']].errors}"></textarea>
-                      <div *ngIf="group.controls[field['key']].errors" class="invalid-feedback">
-                        <div style="color :red" *ngIf="group.controls[field['key']].errors.required">
+                        [ngClass]="{ 'is-invalid': group.errors}"></textarea>
+                      <div *ngIf="group.errors" class="invalid-feedback">
+                        <div style="color :red" *ngIf="group.errors.required">
                           {{field['key']}} is required</div>
-                        <div style="color :red" *ngIf="group.controls[field['key']].errors.minlength">minimum
+                        <div style="color :red" *ngIf="group.errors.minlength">minimum
                           length is required</div>
-                        <div style="color :red" *ngIf="group.controls[field['key']].errors.create">Unique ID is
+                        <div style="color :red" *ngIf="group.errors.create">Unique ID is
                           required - already used !! </div>
                       </div>
                     </div>

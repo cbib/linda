@@ -113,7 +113,20 @@
         <div *ngIf="get_role==='owner'">
           <app-study-form *ngIf="activeTab==='studydesign'" id="study_form_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-study-form>
           
-          <app-experimental-design-page *ngIf="activeTab==='studydesign'" id="study_design" (notify)="get_output_from_child($event)" [model_type]="'experimental_design'" [level]="3" [parent_id]="get_model_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-experimental-design-page>     
+          <app-experimental-designs-page 
+            *ngIf="activeTab==='studydesign'" 
+            id="study_design" 
+            (notify)="get_output_from_child($event)" 
+            [level]="3" 
+            [model_key]="get_model_key" 
+            [model_type]="'experimental_design'"
+            [parent_id]="get_model_id" 
+            [grand_parent_id]="get_parent_id" 
+            [mode]="get_mode" 
+            [role]="get_role"
+            [group_key]="get_group_key"
+          >
+          </app-experimental-designs-page>     
         </div>
 
       </mat-card>
@@ -183,8 +196,18 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-experimental-factors-page *ngIf="activeTab==='expfac'" (notify)="get_output_from_child($event)"
-          [model_type]="'experimental_factor'" [level]="1" [grand_parent_id]="get_parent_id" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode" [role]="get_role">
+          <app-experimental-factors-page 
+            *ngIf="activeTab==='expfac'" 
+            (notify)="get_output_from_child($event)"
+            [level]="1" 
+            [parent_id]="get_model_id" 
+            [model_key]="" 
+            [model_type]="'experimental_factor'"
+            [mode]="get_mode" 
+            [role]="get_role"
+            [grand_parent_id]="get_parent_id" 
+            [group_key]="get_group_key"
+            >
         </app-experimental-factors-page>
        </div>
       </mat-card>

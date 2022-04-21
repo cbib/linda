@@ -8,6 +8,7 @@ import { EventPageComponent } from './event-page.component';
 import { ObservedVariablePageComponent } from './observed-variable-page.component';
 import { EnvironmentVariablePageComponent } from './environment-variable-page.component';
 import { DataFilePageComponent } from './data-file-page.component';
+import { ExperimentalDesignPageComponent } from './experimental-design-page.component';
 
 const routes: Routes = [
   { path: '',children: [
@@ -19,7 +20,8 @@ const routes: Routes = [
                         { path: "event_page",component: EventPageComponent},
                         { path: "observed_variable_page",component: ObservedVariablePageComponent},
                         { path: "environmental_variable_page",component: EnvironmentVariablePageComponent},
-                        { path: "data_file_page",component: DataFilePageComponent}   
+                        { path: "data_file_page",component: DataFilePageComponent}  ,
+                        { path: "experimental_design_page",component: ExperimentalDesignPageComponent}   
                        ]}
 ];
 
