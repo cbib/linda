@@ -1,0 +1,248 @@
+<mat-card style="width: 95%;">
+    <div>
+        <h3>Define Experimental design</h3>
+        <!-- <button title="Save a new experimental design" class="btn btn-light btn-success"><span class="material-icons" (click)="save()">save</span></button> -->
+        <button title="Add a new experimental design" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+        <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
+        <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+            [matMenuTriggerFor]="helpMenu">
+        </div>
+        <mat-menu #helpMenu="matMenu">
+            <button style="float: right;" class="btn btn-light" mat-menu-item
+                [matMenuTriggerFor]="HelpSubMenu">Help</button>
+        </mat-menu>
+        <mat-menu #HelpSubMenu="matMenu">
+    <!--         <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
+                                    <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
+            <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
+            <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
+            <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
+            <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
+            <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+        </mat-menu>
+        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+            [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+        </div>
+        <mat-menu #contextMenu="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Experimental design</button>
+        </mat-menu>
+        <mat-menu #contextSubMenu="matMenu">
+            <button mat-menu-item (click)="onAdd(false)">from original model template</button>
+            <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+        </mat-menu>   
+        <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
+        
+            <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                <ng-container *ngIf="column==='Blocks per trial'">
+                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                <td mat-cell *matCellDef="let element"><a (click)="onEdit(element)">{{element.Blocking.value[0][column]['value']}}</a>  </td>
+                </ng-container>
+                <ng-container *ngIf="column==='number of entries'">
+                  <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                  <td mat-cell *matCellDef="let element"><a (click)="onEdit(element)">{{element['number of entries'].value}}</a> </td>
+                </ng-container>
+                 
+                <ng-container *ngIf="column==='edit'">
+                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                    <td mat-cell *matCellDef="let element"> 
+                        <div class="btn-group" style="float: right;">
+                            <button title="Edit experimental design" (click)="onEdit(element)" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                            <button title="Remove experimental design" (click)="onRemove(element)" class="btn btn-light btn-xs fa fa-trash"></button> 
+                        </div>
+                    </td>
+                </ng-container>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+            <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+        </table>
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+        
+        <!-- <div>
+        <select [ngModel]="get_design_type"  name="design_type" size="1" (change)="onDesignTypeChange($event.target.value)" >
+            <option *ngFor="let dt of design_types" [value]="dt">{{dt}}</option>
+        </select> 
+        </div>
+        <mat-card style="width: 95%;" *ngIf="get_design_type!==undefined">
+            <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractDesign()">
+                <label for="total-block-control" >Select total number of blocks</label>
+                <input mdbInput class="form-control" type="number" formControlName="totalBlockControl" id="total-block-control"/> 
+
+                <label for="total-block-per-row-control" >Select total number of block per row</label>
+                <input mdbInput class="form-control" type="number" formControlName="totalBlockPerRowControl" id="total-block-per-row-control" /> 
+
+                <label for="total-row-per-block-control" >Select total number of rows per block</label>
+                <input mdbInput class="form-control" type="number" formControlName="totalRowPerBlockControl" id="total-row-per-block-control" /> 
+                
+                <label for="total-column-per-block-control" >Select total number of column per block</label>
+                <input mdbInput class="form-control" type="number" formControlName="totalColumnPerBlockControl" id="total-column-per-block-control" /> 
+                
+                <label for="total-row-per-plot-control" >Select total number of row per plot</label>
+                <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
+
+                <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
+            </form>
+        </mat-card>
+        <h3>Experimental design representation</h3>
+        <mat-grid-list  cols="{{totalBlockPerRowControl.value}}" rowHeight="100px">
+            <mat-grid-tile
+                (click)="display_block(bd)"
+                *ngFor="let bd of experimental_design_blocks"
+                [colspan]="1"
+                [rowspan]="1"
+                [style.background]="'lightgreen'"
+                >
+            {{bd['Block number'].value}}
+            </mat-grid-tile>
+        </mat-grid-list> 
+
+        <h3>Define Block design</h3>
+
+        <h3>Define Block design</h3>
+        <table class="table table-bordered heading-hvr">  
+            <thead>  
+              <tr>  
+                <th> </th>  
+                <th width="50">Block number 
+              </th>  
+                <th width="50">Blocks per trial
+                </th>  
+                <th>Associated observations</th> 
+                
+
+              </tr>  
+            </thead>  
+
+            <tbody *ngFor="let experimental_design_block of experimental_design_blocks; let i = index">  
+
+              <tr>  
+                <td align="center">  
+                    <button *ngIf="!hideme[i]" (click)="showBlockInfo(i,experimental_design_block['Block number'].value)" ></button>
+                    <button *ngIf="hideme[i]" (click)="hideme[i] = !hideme[i]" ></button>
+                </td> 
+                <td align="center">{{experimental_design_block['Block number'].value}}</td>     
+                <td align="center">{{experimental_design_block['Blocks per trial'].value}}</td>
+                <td align="center">{{"Not define yet"}}</td>
+
+                
+              </tr>  
+
+              <tr [hidden]="!hideme[i]" class="sub-table no-bg">  
+                <td align="center"> </td>  
+                <td colspan="15" class="p-0">  
+                  <table class="table mb-0 table-striped">  
+                    <thead class="bg-dark text-white">  
+                      <tr>  
+                        <th>Plot number</th>  
+                        <th>Row number</th>  
+                        <th>Column number</th> 
+                        <th>Associated material</th> 
+                        <th>Associated material</th> 
+                        <th>Associated material</th> 
+                        <th>Associated material</th> 
+
+                          
+                      </tr>  
+                    </thead>  
+                    <tbody>  
+                      <tr *ngFor="let plotInfo of experimental_design_blocks[i]['Plot design'].value">  
+                          <ng-container *ngFor="let rowInfo of plotInfo['Row design'].value" >
+                              <td>{{plotInfo['Plot number'].value}}</td>
+                              <td>{{rowInfo['Row number'].value}}</td>  
+                              <td>{{plotInfo['Column number'].value}}</td>
+                              <td>{{'Not defined yet'}}</td> 
+                              <td>{{'Not defined yet'}}</td> 
+                              <td>{{'Not defined yet'}}</td> 
+                              <td>{{'Not defined yet'}}</td> 
+                          </ng-container>
+                          
+                      </tr>  
+                    </tbody>  
+                  </table>  
+                </td>  
+              </tr>  
+
+            </tbody>  
+          </table>  -->
+        </div> 
+        <!-- <div class="card">  
+            <div class="card-body pb-0">  
+              <h4 style="text-align: center;">Experiment design table by block</h4>  
+              <div class="row">  
+                <div class="col-12 col-md-12">  
+                  <div class="card">  
+            
+                    <div class="card-body position-relative">  
+                      <div class="table-responsive cnstr-record product-tbl">  
+                        <table class="table table-bordered heading-hvr">  
+                          <thead>  
+                            <tr>  
+                              <th> </th>  
+                              <th width="50">Block number 
+                            </th>  
+                              <th width="50">Blocks per trial
+                              </th>  
+                              <th>Associated observations</th> 
+                            
+                            </tr>  
+                          </thead>  
+            
+                          <tbody *ngFor="let experimental_design_block of experimental_design_blocks; let i = index">  
+            
+                            <tr>  
+                              <td align="center">  
+                                  <button *ngIf="!hideme[i]" (click)="showBlockInfo(i,experimental_design_block['Block number'].value)" ></button>
+                                  <button *ngIf="hideme[i]" (click)="hideme[i] = !hideme[i]" ></button>
+                              </td> 
+                              <td align="center">{{experimental_design_block['Block number'].value}}</td>     
+                              <td align="center">{{experimental_design_block['Blocks per trial'].value}}</td>
+                              <td align="center">{{"Not define yet"}}</td>
+
+                              
+                            </tr>  
+                            <tr [hidden]="!hideme[i]" class="sub-table no-bg">  
+                              <td align="center"> </td>  
+                              <td colspan="15" class="p-0">  
+                                <table class="table mb-0 table-striped">  
+                                  <thead class="bg-dark text-white">  
+                                    <tr>  
+                                       
+                                      <th>Row number</th>  
+                                      <th>Column number</th> 
+                                      <th>Associated material</th> 
+                                      <th>Associated material</th> 
+                                      <th>Associated material</th> 
+                                      <th>Associated material</th> 
+
+                                        
+                                    </tr>  
+                                  </thead>  
+                                  <tbody>  
+                                    <tr *ngFor="let plotInfo of experimental_design_blocks[i]['Plot design'].value">  
+                                        <ng-container *ngFor="let rowInfo of plotInfo['Row design'].value" >
+                                            <td>{{rowInfo['Row number'].value}}</td>  
+                                             
+                                            <td>{{plotInfo['Column number'].value}}</td>
+                                            <td>{{'Not defined yet'}}</td> 
+                                            <td>{{'Not defined yet'}}</td> 
+                                            <td>{{'Not defined yet'}}</td> 
+                                            <td>{{'Not defined yet'}}</td> 
+                                        </ng-container>
+                                        
+                                    </tr>  
+                                  </tbody>  
+                                </table>  
+                              </td>  
+                            </tr>  
+            
+                          </tbody>  
+                        </table>  
+                      </div>  
+                    </div>  
+                  </div>  
+                </div>  
+              </div>  
+            </div>  
+          </div>   -->
+    
+    </mat-card>
