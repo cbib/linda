@@ -946,12 +946,10 @@ router.post('/request-reset', (req, res) => {
             }
           }); */
         //var spawn = require('child_process').spawn
-
+        const { exec } = require('child_process');
         var command = "sh ./scripts/send_mail.sh " + email + " " + token;
         var sendmail = exec(command,
             (error, stdout, stderr) => {
-                //console.log(stdout);
-                //console.log(stderr);
                 if (error !== null) {
                     console.log(`exec error: ${error}`);
                     res.send({ success: false });
