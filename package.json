@@ -58,6 +58,7 @@
     "lodash": "^4.17.21",
     "material-design-icons": "^3.0.1",
     "mdb-ui-kit": "^3.4.0",
+    "minimist": "^1.2.6",
     "mkdirp": "^1.0.4",
     "moment": "^2.29.2",
     "ng-bootstrap": "^1.6.3",
