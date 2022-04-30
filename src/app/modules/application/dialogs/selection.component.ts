@@ -19,7 +19,6 @@ interface DialogData {
   bm_data:[];
 }
 
-
 const BM_ELEMENT_DATA: BiologicalMaterialDialogModel[] = []
 const EF_ELEMENT_DATA: ExperimentalFactorDialogModel[] = []
 
@@ -28,19 +27,24 @@ const EF_ELEMENT_DATA: ExperimentalFactorDialogModel[] = []
   templateUrl: './selection.component.html',
   styleUrls: ['./selection.component.css']
 })
+
 export class SelectionComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //@ViewChild(MatPaginator, { static: false }) paginatorbm: MatPaginator;
+  @ViewChild('bmpaginator', { static: false }) bmpaginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sortef: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginatoref: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sortbm: MatSort;
 
   //ATTRIBUTES
   private model_id: string;
-  private result: []
-  private bm_data: []
   model_type: string;
   private parent_id: string;
-  observation_id: string = ""
+  private result: []
+  private bm_data: []
   
+  
+  observation_id: string = ""
   private already_there: string[]
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
   displayedFactorColumns: string[] = ['experimentalFactorType', 'experimentalFactorDescription', 'experimentalFactorValues', 'experimentalFactorAccessionNumber', 'lindaID', 'select'];
@@ -48,7 +52,7 @@ export class SelectionComponent implements OnInit, AfterViewInit {
   pretty_displayedFactorColumns: string[] = ['Experimental factor type', 'Experimental factor description', 'Experimental factor values', 'Experimental factor accession number', 'database id', 'Select'];
   private materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
   private factordataSource = new MatTableDataSource(EF_ELEMENT_DATA);
-  private sources: {} = { "biological_material": this.materialdataSource, "experimental_factor": this.factordataSource }
+  private sources: {"biological_material":MatTableDataSource<BiologicalMaterialDialogModel>,"experimental_factor":MatTableDataSource<ExperimentalFactorDialogModel>} = { "biological_material": this.materialdataSource, "experimental_factor": this.factordataSource }
   private columns: {} = { "biological_material": this.displayedMaterialColumns, "experimental_factor": this.displayedFactorColumns }
   private columns_label: {} = { "biological_material": this.pretty_displayedMaterialColumns, "experimental_factor": this.pretty_displayedFactorColumns }
   //private return_data: {} = { "biological_material": { material_ids: [], biological_material_ids: [], data: [] }, "experimental_factor": { data: [] } }
@@ -58,10 +62,14 @@ export class SelectionComponent implements OnInit, AfterViewInit {
   private bmselection = new SelectionModel<BiologicalMaterialDialogModel>(true, this.initialbmSelection /* multiple */);
   private efselection = new SelectionModel<ExperimentalFactorDialogModel>(true, this.initialefSelection /* multiple */);
   loaded:boolean=false
-  ready_to_show: boolean = false
+  ready_to_show: boolean = true
 
-  constructor(private globalService: GlobalService, public dialogRef: MatDialogRef<SelectionComponent>,private _cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+  constructor(
+    private globalService: GlobalService, 
+    public dialogRef: MatDialogRef<SelectionComponent>,
+    private _cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    ) {
     this.model_id = this.data.model_id
     this.model_type = this.data.model_type
     this.parent_id = this.data.parent_id
@@ -69,14 +77,7 @@ export class SelectionComponent implements OnInit, AfterViewInit {
     this.already_there = this.data.already_there
     this.observation_id = this.data.observation_id
     this.bm_data= this.data.bm_data
-
   }
-  ngAfterViewInit() {
-    this.sources[this.model_type].sort= this.sort;
-    this.sources[this.model_type].paginator = this.paginator;
-    this._cdr.detectChanges()
-  }
-
   ngOnInit() {
     var parent_name = this.data.parent_id.split("/")[0]
     var parent_key = this.data.parent_id.split("/")[1]
@@ -85,92 +86,78 @@ export class SelectionComponent implements OnInit, AfterViewInit {
       .toPromise().then(
         data => {
           this.result = data;
-          console.log(data)
-          
-          //   this.result.forEach(attr=>{
-          //       if (this.model_type === "biological_material") {
-          //         this.load_material(attr)
-          //         //this.materialdataSource.data = this.load_material(attr)
-          //       }
-          //       else if (this.model_type === "experimental_factor") {
-          //         this.load_factor(attr)
-          //       }
-          //   });
-          //   this.ready_to_show = true
         }
       );
   }
+  ngAfterViewInit() {
+    if (this.model_type==='experimental_factor'){
+    this.sources[this.model_type].sort= this.sortef;
+    this.sources[this.model_type].paginator = this.paginatoref;
+  }
+  else{
+    this.sources[this.model_type].sort= this.sortbm;
+    this.sources[this.model_type].paginator = this.bmpaginator;
+  }
+    this._cdr.detectChanges()
+  }
+  get get_ready_to_show(){
+    return this.ready_to_show
+  }
   onSelect(model_id: string) {
-    this.ready_to_show = false
+    this.ready_to_show = true
+
     this.data.model_id = model_id
-    //this.sources[this.model_type].data=[]
     this.result.forEach(
-      attr => {
-        if (attr["_id"] === model_id) {
+      model => {
+        if (model["_id"] === model_id) {
           var alreadyThere: boolean = false
           this.data.values.forEach(element => {
-            if (element["_id"] === attr["_id"]) {
+            if (element["_id"] === model["_id"]) {
               alreadyThere = true
             }
           })
           if (!alreadyThere) {
-            this.data.values.push(attr)
+            this.data.values.push(model)
           }
           if (this.model_type === "biological_material") {
-            //this.sources[this.model_type].data=[];
-            //this.load_material(attr)
-            this.sources[this.model_type].data = this.load_material(attr)
-            //console.log(this.sources[this.model_type].data)
-            //console.log(this.ready_to_show)
+            this.sources[this.model_type].data = this.load_material(model)
             this.sources[this.model_type].data.forEach(row => {
-              //console.log('check row: ', row)
               this.bmselection.selected.forEach(selected_row => {
-                //console.log('compare to row: ', selected_row)
                 if (this.shallowEqual(row, selected_row)) {
                   this.bmselection.select(row)
-                  //console.log(row, ' equal to row: ', selected_row)
-                }
-                else {
-                  ///console.log(row, ' not equal to row: ', selected_row)
                 }
               });
             });
-            this.sources[this.model_type].sort= this.sort;
-            this.sources[this.model_type].paginator = this.paginator;
+            this.sources[this.model_type].sort= this.sortbm;
+            this.sources[this.model_type].paginator = this.bmpaginator;
             this._cdr.detectChanges()
             this.loaded=true
             
+            
+            
           }
           else if (this.model_type === "experimental_factor") {
-            this.factordataSource.data = this.load_factor(attr)
-            //console.log(this.sources[this.model_type].data)
-            //console.log(this.ready_to_show)
-
+            this.factordataSource.data = this.load_factor(model)
             //When there are multiple element in select list, keep trace of selected element
             this.sources[this.model_type].data.forEach(row => {
-              //console.log('check row: ', row)
               this.efselection.selected.forEach(selected_row => {
-                //console.log('compare to row: ', selected_row)
                 if (this.shallowEqual(row, selected_row)) {
                   this.efselection.select(row)
-                  //console.log(row, ' equal to row: ', selected_row)
-                }
-                else {
-                  //console.log(row, ' not equal to row: ', selected_row)
                 }
               });
             });
-            this.sources[this.model_type].sort= this.sort;
-            this.sources[this.model_type].paginator = this.paginator;
+            this.sources[this.model_type].sort= this.sortef;
+            this.sources[this.model_type].paginator = this.paginatoref;
             this._cdr.detectChanges()
             this.loaded=true
-
+           
+            
           }
-         
-
         }
       }
     );
+    console.log(this.loaded)
+    
   }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllBmSelected() {
@@ -210,30 +197,29 @@ export class SelectionComponent implements OnInit, AfterViewInit {
 
       });
   }
-
-  load_material(attr: {}): BiologicalMaterialDialogModel[] {
-
+  load_material(model: {}): BiologicalMaterialDialogModel[] {
     var data = []
-    var keys = Object.keys(attr);
+    var keys = Object.keys(model);
     var mat_ids = []
-    mat_ids = attr['Material source ID (Holding institute/stock centre, accession)']
+    mat_ids = model['Material source ID (Holding institute/stock centre, accession)']
     var mat_size = mat_ids.length
     for (var i = 0; i < mat_size; i++) {
       var mat_id = mat_ids[i]
-      var genus = attr['Genus'][i]
-      var species = attr['Species'][i]
+      var genus = model['Genus'][i]
+      var species = model['Species'][i]
       for (var j = 0; j < keys.length; j++) {
         if (!keys[j].startsWith("_") && !keys[j].startsWith("Definition")) {
           if (keys[j].includes("Biological material ID")) {
             var tmp_key_array = []
-            tmp_key_array = attr[keys[j]][i]
+            tmp_key_array = model[keys[j]][i]
             for (var k = 0; k < tmp_key_array.length; k++) {
               data.push({
                 biologicalMaterialId: tmp_key_array[k],
                 materialId: mat_id,
                 genus: genus,
                 species: species,
-                lindaID: attr["_id"]
+                lindaID: model["_id"],
+                obsUUID: this.observation_id
               })
             }
           }
@@ -244,8 +230,6 @@ export class SelectionComponent implements OnInit, AfterViewInit {
   }
   load_factor(attr: {}): ExperimentalFactorDialogModel[] {
     var data = []
-    // console.log(attr)
-    // console.log(attr["_id"])
     var obj={}
     obj={
       experimentalFactorType: attr['Experimental Factor type'],
@@ -255,11 +239,12 @@ export class SelectionComponent implements OnInit, AfterViewInit {
       lindaID: attr["_id"],
       obsUUID: this.observation_id
     }
-    // console.log(obj)
     data.push(obj)
-    // console.log(data)
     return data
 
+  }
+  get get_loaded(){
+    return this.loaded
   }
   //Same object check
   shallowEqual(object1, object2) {
@@ -308,40 +293,20 @@ export class SelectionComponent implements OnInit, AfterViewInit {
   get get_result() {
     return this.result;
   }
-  
-
   onNoClick(): void {
     this.dialogRef.close();
   }
-
   onOkClick(): void {
-    //var return_data = { material_ids: [], biological_material_ids: [], data: this.data.values }
-    // console.log(this.factordataSource.data)
-    // console.log(this.data.values)
-    // console.log(this.bmselection)
-    // console.log(this.efselection)
     if (this.model_type === "biological_material") {
       this.return_data[this.model_type].data = this.bmselection.selected
-      // this.return_data[this.model_type].data = this.data.values
-      // this.selection.selected.forEach(element => {
-      //   console.log(element.materialId)
-      //   this.return_data[this.model_type].material_ids.push(element.materialId)
-      //   this.return_data[this.model_type].biological_material_ids.push(element.biologicalMaterialId)
-      // });
-      // console.log(this.data.values)
     }
     else if (this.model_type === "experimental_factor") {
       this.efselection.selected.forEach(element => {
-        // console.log(this.efselection)
-        // console.log(this.data.values)
-        //this.return_data[this.model_type].data = this.data.values
         //it is better to use this.selection.selected than this.data.values to remove _id, _key attributes
         this.return_data[this.model_type].data = this.efselection.selected
 
       })
     }
-
-    //this.data.template_id=this.template_id
     this.dialogRef.close(this.return_data[this.model_type]);
   }
 

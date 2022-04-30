@@ -285,7 +285,7 @@ export class ExtractComponent implements OnInit {
   clickToggleExisting(value: string, filename: string) {
     var variable_name = value['Variable name']
     let user = JSON.parse(localStorage.getItem('currentUser'));
-    const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_existing_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value, headers: this.displayedcomponentColumns[filename] } });
+    const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, mode: 'extract_existing_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value, headers: this.displayedcomponentColumns[filename] } });
     dialogRef.afterClosed().subscribe((confirmResult) => {
       if (confirmResult) {
         if (confirmResult.event == 'Confirmed') {
@@ -312,7 +312,7 @@ export class ExtractComponent implements OnInit {
     //check if this header is already extracted from another file
     if (this.get_state(value, filename) === 'all_extracted') {
       this.alertService.error("This component has already been linked for all studies. Do you want to extract again ? ")
-      const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var_again', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value } });
+      const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var_again', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value } });
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
@@ -333,7 +333,7 @@ export class ExtractComponent implements OnInit {
     }
     //else open dialog to propose new component creation by template or not
     else {
-      const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value } });
+      const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, mode: 'extract_env_var', user_key: user._key, model_type: this.model_type, values: {}, parent_key: this.parent_id.split("/")[1], model_filename: this.selected_file, header: value } });
       dialogRef.afterClosed().subscribe((confirmResult) => {
         if (confirmResult) {
           if (confirmResult.event == 'Confirmed') {
@@ -366,7 +366,7 @@ export class ExtractComponent implements OnInit {
             //else , create a new component by opening form generic component
             else {
               console.log(this.model_type)
-              const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess" } });
+              const formDialogRef = this.dialog.open(FormGenericComponent, { disableClose: true, width: '1200px', data: { model_type: this.model_type, formData: {} , mode: "preprocess" } });
               formDialogRef.afterClosed().subscribe((result) => {
                 if (result) {
                   if (result.event == 'Confirmed') {
@@ -405,7 +405,7 @@ export class ExtractComponent implements OnInit {
                                   var biologicalMaterialData=[]
                                   console.log(d_cpt)
                                   if (d_cpt===0){
-                                    let formdialogRef2 = this.dialog2.open(SelectionComponent,{ width: '1400px', maxHeight: '500px', data: { model_id: "", parent_id: study_id, model_type: "biological_material", values: [], already_there: [], bm_data:headers_data } });
+                                    let formdialogRef2 = this.dialog2.open(SelectionComponent,{ width: '1400px', maxHeight: '800px', data: { model_id: "", parent_id: study_id, model_type: "biological_material", values: [], already_there: [], bm_data:headers_data } });
                                       formdialogRef2.afterClosed().subscribe(result2 => {
                                         if (result2) {
                                           console.log(result2)

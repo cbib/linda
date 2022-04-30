@@ -13,6 +13,9 @@ export class Replication implements ReplicationInterface{
     set_replicate_number(_replicate_number:number){
         this["Replicate number"]=_replicate_number
     }
+    get_replicate_number(){
+        return this["Replicate number"]
+    }
 }
 //Row Design interface and class
 export interface RowDesignInterface {
@@ -58,6 +61,16 @@ export class RowDesign implements RowDesignInterface{
     set_row_per_plot(_row_per_plot:number){
         this["Row per plot"].value=_row_per_plot
     }
+    static create_row_design(obj) {
+        var field = new RowDesign();
+        for (var prop in obj) {
+            if (field.hasOwnProperty(prop)) {
+                field[prop] = obj[prop];
+            }
+        }
+    
+        return field;
+    }
 }
 
 //Plot Design interface and class
@@ -83,6 +96,26 @@ export interface PlotDesignInterface {
         "value": RowDesign[];
         "ID": string;
     };
+    "Associate_material_source": {
+        "value": string;
+        "ID": string;
+    };
+    "Associated_biological_material": {
+        "value": string[];
+        "ID": string;
+    };
+    "Associated samples": {
+        "value": string[];
+        "ID": "ASSOCIATEDSAMPLES";
+    };
+    "Replicate number": {
+        "value": number;
+        "ID": string;
+    };
+    "Observation uuid": {
+        "value": string;
+        "ID": string;
+    };
 }
 export class PlotDesign implements PlotDesignInterface{
     'PlotDesign ID': "CO_715:0000150";
@@ -106,21 +139,62 @@ export class PlotDesign implements PlotDesignInterface{
         "value": RowDesign[];
         "ID": "CO_715:0000156";
     };
-    constructor(){
-        this["Column number"]={value:null,  "ID": "CO_715:0000151"}
+    "Associate_material_source": {
+        "value": string;
+        "ID": "ASSOCIATEDMAT";
+    };
+    "Associated_biological_material": {
+        "value": string[];
+        "ID": "ASSOCIATEDBIOMAT";
+    };
+    "Associated samples": {
+        "value": string[];
+        "ID": "ASSOCIATEDSAMPLES";
+    };
+    "Replicate number": {
+        "value": number;
+        "ID": "REPLICATENUMBER";
+    };
+    "Observation uuid": {
+        "value": string;
+        "ID": "OBSERVATIONUUID";
+    };
+    constructor(column_num:number=null, plot_num:number=null,associate_material_source:string=null, associated_biological_material:string[]=[], replicate_num:number=null, obs_uuid:string=null, associated_samples:string[]=[] ){
+        this["Column number"]={value:column_num,  "ID": "CO_715:0000151"}
         this["Plot size"]={value:null,  "ID": "CO_715:0000152"}
-        this["Plot number"]={value:null,  "ID": "CO_715:0000155"}
+        this["Plot number"]={value:plot_num,  "ID": "CO_715:0000155"}
+        this["Replicate number"]={value:replicate_num,  "ID": "REPLICATENUMBER"}
         this["Plant stand number"]={value:null,  "ID": "CO_715:0000154"}
         this["Row design"]={value: [],  "ID": "CO_715:0000156"}
+        this.Associate_material_source={value: associate_material_source,  "ID": "ASSOCIATEDMAT"}
+        this["Associated_biological_material"]={value:associated_biological_material,  "ID": "ASSOCIATEDBIOMAT"}
+        this["Observation uuid"]={value:obs_uuid,  "ID": "OBSERVATIONUUID"}
+        this["Associated samples"]={value:associated_samples,  "ID": "ASSOCIATEDSAMPLES"}
+
     }
     add_row_design(_row_design:RowDesign){
         this["Row design"].value.push(_row_design)
     }
     get_row_design(_row_number){
-        return this["Row design"].value.filter(row_design=> row_design["Row number"].value===_row_number)
+        return this["Row design"].value.filter(row_design=> row_design["Row number"].value===_row_number)[0]
+    }
+    set_observation_uuid(_obs_uuid:string){
+        this["Observation uuid"].value=_obs_uuid
+    }
+    get_observation_uuid(){
+        return this["Observation uuid"].value
     }
     set_plot_number(_plot_number:number){
         this["Plot number"].value=_plot_number
+    }
+    get_plot_number(){
+        return this["Plot number"].value
+    }
+    set_replicate_number(_plot_number:number){
+        this["Replicate number"].value=_plot_number
+    }
+    get_replicate_number(){
+        return this["Replicate number"].value
     }
     set_plant_stand_number(_plant_stand_number:number){
         this["Plant stand number"].value=_plant_stand_number
@@ -130,6 +204,34 @@ export class PlotDesign implements PlotDesignInterface{
     }
     set_column_number(_column_number:number){
         this["Column number"].value=_column_number
+    }
+    add_material(_material_id:string){
+        this["Associate_material_source"].value=_material_id
+    }
+    get_material(){
+        return this["Associate_material_source"].value
+    }
+    add_biological_material(_associate_material_id:string){
+        this["Associated_biological_material"].value.push(_associate_material_id)
+    }
+    get_biological_material(){
+        return this["Associated_biological_material"].value
+    }
+    add_sample(_associate_sample_id:string){
+        this["Associated samples"].value.push(_associate_sample_id)
+    }
+    get_sample(){
+        return this["Associated samples"].value
+    }
+    static create_plot_design(obj) {
+        var field = new PlotDesign();
+        for (var prop in obj) {
+            if (field.hasOwnProperty(prop)) {
+                field[prop] = obj[prop];
+            }
+        }
+    
+        return field;
     }
 }
 
@@ -257,7 +359,7 @@ export class BlockDesign implements BlockDesignInterface{
         this["Incomplete Block Design"]={value:[],  "ID": "CO_715:0000242"}
     }
     get_plot_design(_plot_number){
-        return this["Plot design"].value.filter(plot_design=> plot_design["Plot number"].value===_plot_number)
+        return this["Plot design"].value.filter(plot_design=> plot_design["Plot number"].value===_plot_number)[0]
     }
     add_plot_design(_plot_design:PlotDesign){
         this["Plot design"].value.push(_plot_design)
@@ -270,6 +372,16 @@ export class BlockDesign implements BlockDesignInterface{
     }
     add_incomplete_block_design(_incomplete_block_design:IncompleteBlockDesign){
         this["Incomplete Block Design"].value.push(_incomplete_block_design)
+    }
+    static create_block_design(obj) {
+        var field = new BlockDesign();
+        for (var prop in obj) {
+            if (field.hasOwnProperty(prop)) {
+                field[prop] = obj[prop];
+            }
+        }
+    
+        return field;
     }
 }
 
@@ -293,6 +405,14 @@ export interface ExperimentalDesignInterface     {
         "value":  Replication;
         "ID": string;
     };
+    "Associated biological Materials": {
+        "value":  string;
+        "ID": string;
+    };
+    "Associated observation units": {
+        "value":  string;
+        "ID": string;
+    };
 }
 export class ExperimentalDesign implements ExperimentalDesignInterface {
     // arango keys
@@ -314,15 +434,43 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         "value":  Replication;
         "ID": "CO_715:0000149";
     };
+    "Associated biological Materials": {
+        "value":  string;
+        "ID": "LindaDbId";
+    };
+    "Associated observation units": {
+        "value":  string;
+        "ID": "LindaObsUnitDbId";
+    };
+    "Associated sample": {
+        "value":  string;
+        "ID": "LindaSampleDbId";
+    };
     constructor(){
         this["Definition"]="The process of planning a study to meet specified objectives or the allocation of treatments (inputs) to the experimental units (plots). Planning an experiment properly is very important in order to ensure that the right type of data and a sufficient sample size and power are available to answer the research questions of interest as clearly and efficiently as possible."
         this["Blocking"]={value: [], "ID":"CO_715:0000245"}
         this["Replication"]={value: null, "ID": "CO_715:0000149"}
         this["number of entries"]={value:null,"ID": "CO_715:0000148"}
+        this["Associated biological Materials"]={value:null,"ID": "LindaDbId"}
+        this["Associated observation units"]={value:null,"ID": "LindaObsUnitDbId"}
+        this["Associated sample"]={value:null,"ID": "LindaSampleDbId"}
     }
-    get_block_design(_block_number){
+    get_block_design(_block_number:number){
         return this.Blocking.value.filter(block_design=> block_design["Block number"].value===_block_number)
     }
+
+    get_block_plot_design(_plot_number:number):PlotDesign{
+        let _plot_design:PlotDesign=null;
+        this.Blocking.value.forEach(block_design=> {
+            block_design["Plot design"].value.forEach(plot_design=>{
+                if (plot_design["Plot number"].value===_plot_number){
+                    _plot_design=plot_design
+                }
+            });
+        });
+        return _plot_design
+    }
+
     add_block_design(_block_design:BlockDesign){
         this.Blocking.value.push(_block_design)
     }
@@ -331,6 +479,35 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     }
     set_number_of_entries(_number_of_entries:number){
         this["number of entries"].value=_number_of_entries
+    }
+    get_biological_material_id(){
+        return this["Associated biological Materials"].value
+    }
+    set_biological_material_id(biological_material_id:string){
+        this["Associated biological Materials"].value=biological_material_id
+    }
+    set_observation_unit_id(observation_unit_id:string){
+        this["Associated observation units"].value=observation_unit_id
+    }
+    
+    get_observation_unit_id(){
+        return this["Associated observation units"].value
+    }
+    set_sample_id(sample_id:string){
+        this["Associated sample"].value=sample_id
+    }
+    get_sample_id(){
+        return this["Associated sample"].value
+    }
+    static create_design(obj) {
+        var field = new ExperimentalDesign();
+        for (var prop in obj) {
+            if (field.hasOwnProperty(prop)) {
+                field[prop] = obj[prop];
+            }
+        }
+    
+        return field;
     }
 }
 

@@ -525,7 +525,7 @@ export class AssignComponent implements OnInit {
         console.log(key)
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
         if (values === "time") {
-            const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
+            const dialogRef = this.dialog.open(DateformatComponent, { disableClose: true, width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
                 //this.associated_headers[key]={selected:true, associated_term_id:result.date_format, associated_component:"time", is_time_values:true, is_numeric_values:false}
                 this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
@@ -563,7 +563,7 @@ export class AssignComponent implements OnInit {
         console.log(values)
         console.log(key)
         if (values === "time") {
-            const dialogRef = this.dialog.open(DateformatComponent, { width: '1000px', data: { date_format: "" } });
+            const dialogRef = this.dialog.open(DateformatComponent, {  disableClose: true,width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
                 //this.associated_headers[key]={selected:true, associated_term_id:result.date_format, associated_component:"time", is_time_values:true, is_numeric_values:false}
                 this.associated_headers.filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
@@ -611,7 +611,7 @@ export class AssignComponent implements OnInit {
         //     }
         // }
         // else{
-        const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: values, selected_term: null, selected_set: [], multiple: false, uncheckable: false, observed: true } });
+        const dialogRef = this.dialog.open(OntologyTreeComponent, {  disableClose: true,width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: values, selected_term: null, selected_set: [], multiple: false, uncheckable: false, observed: true } });
         dialogRef.afterClosed().subscribe(result => {
             if (result !== undefined) {
                 this.ontology_type = result.ontology_id;
@@ -638,7 +638,7 @@ export class AssignComponent implements OnInit {
         // for example for extract-form mode , 
         // the help page is not the same as for the extract mode
 
-        const dialogRef = this.dialog.open(HelpLoaderComponent, { width: '1200px', data: { help_page: page } });
+        const dialogRef = this.dialog.open(HelpLoaderComponent, { disableClose: true, width: '1200px', data: { help_page: page } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -969,7 +969,7 @@ export class AssignComponent implements OnInit {
                 // mode extract with only data upload
                 if (this.labelPosition !== "only_data") {
                     //build study form for field 
-                    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, formData: {}  , mode: "preprocess"} });
+                    const formDialogRef = this.dialog.open(FormGenericComponent, { disableClose: true, width: '1200px', data: { model_type: this.model_type, formData: {}  , mode: "preprocess"} });
                     formDialogRef.afterClosed().subscribe((result) => {
                         if (result) {
                             if (result.event == 'Confirmed') {

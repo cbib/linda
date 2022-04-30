@@ -7,6 +7,7 @@ import { GlobalService, AlertService, OntologiesService } from '../../../../serv
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ObservationUnitInterface } from 'src/app/models/linda/observation-unit';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-observation-unit-page',
@@ -21,16 +22,20 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+
   @Input('level') level: number;
-  @Input('parent_id') parent_id: string;
+  @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
+  @Input('role') role: string;
   @Input('grand_parent_id') grand_parent_id: string;
+  @Input('group_key') group_key: string;
   
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ObservationUnitInterface>;
-  private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
+  //private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
+  private displayedColumns: string[] = ['Total Observations','Observation units type', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -48,27 +53,41 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
-        this.model_type = params['model_type'];
-        this.model_key = params['model_key'];
-        this.mode = params['mode'];
-        this.parent_id = params['parent_id']
-        this.grand_parent_id = params['grand_parent_id']
+          this.model_type = params['model_type'];
+          this.model_key = params['model_key'];
+          this.mode = params['mode'];
+          this.parent_id = params['parent_id']
+          this.group_key = params['group_key']
+          this.role=params['role']
+          this.grand_parent_id=params['grand_parent_id']
       }
     );
   }
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource([]);
-    console.log(this.parent_id)
     //await this.get_vertices()
     this.get_all_observation_units()
     this.loaded = true
+    console.warn(this.level)
+    console.warn(this.model_type)
+    console.warn(this.model_key)
+    console.warn(this.mode)
+    console.warn(this.parent_id)
+    console.warn(this.group_key)
+    console.warn(this.role)
+    console.warn(this.grand_parent_id)
 
   }
   async get_all_observation_units() {
     return this.globalService.get_all_observation_units(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         console.log(data)
+        data.forEach(obs_unit=>{
+          obs_unit['Total Observations']=obs_unit['Observation unit ID'].length
+          obs_unit['Observation units type']=Array.from(new Set(obs_unit['Observation unit type']))[0]
+        })
+
         this.dataSource = new MatTableDataSource(data);
         console.log(this.dataSource)
         this.dataSource.paginator = this.paginator;
@@ -100,18 +119,44 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
   get get_dataSource() {
     return this.dataSource
   }
-
-  onRemove(element: ObservationUnitInterface) {
+  get get_role() {
+    return this.role
   }
-  add(element: ObservationUnitInterface) {
-    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-
-
+  get get_group_key() {
+      return this.group_key
+  }
+  get get_model_type() {
+      return this.model_type
+  }
+  get get_parent_id() {
+      return this.parent_id
+  }
+  reloadComponent() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+}
+  onRemove(element: ObservationUnitInterface) {
+    this.globalService.remove(element._id).pipe(first()).toPromise().then(
+      data => {
+          ////console.log(data)
+          if (data["success"]) {
+              console.log(data["message"])
+              var message = element._id + " has been removed from your history !!"
+              this.alertService.success(message)
+              this.reloadComponent()
+          }
+          else {
+              this.alertService.error("this form contains errors! " + data["message"]);
+          }
+      });
+  }
+  add(template:boolean=false) {
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" , role:'owner', group_key:this.group_key, grand_parent_id:this.grand_parent_id} });
   }
   onEdit(element: ObservationUnitInterface) {
-    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit" } });
-
-
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit", role:this.role, group_key:this.group_key, grand_parent_id:this.grand_parent_id } });
   }
 }
 

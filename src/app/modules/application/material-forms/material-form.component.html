@@ -10,15 +10,25 @@
         <div class="form-group text-center" style="float: right;">
           <button (click)="onClickTour(true)" class="btn btn-xs btn-light">Help</button>
           <span style="margin-right:10px;"></span>
-          <button (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
+          <button *ngIf="get_mode!=='edit'" (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
             Cancel
           </button>
+          <button *ngIf="get_mode==='edit'" (click)="cancel(materialTable)" class="btn btn-xs btn-danger">
+            Close
+          </button>
           <span style="margin-right:10px;"></span>
-          <button joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="bottom"
+          <button *ngIf="get_mode!=='edit'" joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="bottom"
             [stepContentParams]="{'model_n':model_type}" class="btn btn-xs btn-info" type="submit"
             (click)="submitForm();"
             [disabled]="RowData.length===0">
             Submit
+            <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
+          </button>
+          <button *ngIf="get_mode==='edit'" joyrideStep="StepSubmit" title="" [stepContent]="submitcontent" [stepPosition]="bottom"
+            [stepContentParams]="{'model_n':model_type}" class="btn btn-xs btn-info" type="submit"
+            (click)="submitForm();"
+            [disabled]="RowData.length===0">
+            Save changes
             <span style="margin-left:10px;" class="glyphicon glyphicon-arrow-right"></span>
           </button>
           <ng-template #submitcontent let-nod="model_n">
@@ -64,7 +74,7 @@
         <option *ngFor="let md of get_unique_taxon_groups" [value]="md">{{md}}</option>
       </select> -->
       
-    <button (click)="getSelectedRows()">Add Selected Rows</button>
+    <button [disabled]="no_row_selected" (click)="getSelectedRows()">Add Selected Rows</button>
     <button *ngIf="!all_selected" (click)="select_all_filtered()">Select filtered rows</button>
     <button *ngIf="all_selected" (click)="deselect_all_filtered()">Deselect filtered rows</button>
     <div class="example-header">
@@ -97,6 +107,7 @@
     <h2>Biological Material grouped by Material source ID</h2>
     <p>Pick and choose material from INRAE Collection mmaterial sources</p>
     <button (click)="CleanTable()">Clear</button>
+    <button [disabled]="selected_bms.length===0" (click)="removeSelectedBmRows()">Remove Selected Rows</button>
     <div class="example-header">
       Page Size:
       <select (change)="onPageSizeChanged()" id="page-size">
@@ -126,6 +137,8 @@
     [animateRows]="true"
     [sideBar]="SideBar"
     [rowData]="RowData"
+    (rowSelected)="onRowSelected($event)"
+    (selectionChanged)="onSelectionChanged($event)"
     (gridReady)="onGridReady($event)"
     >
     </ag-grid-angular>

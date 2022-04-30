@@ -98,10 +98,21 @@
           [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
           inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role">
         </app-form>  -->
-        <app-study-form *ngIf="activeTab==='studysite'" id="study_site" (notify)="get_output_from_child($event)"
-        [model_type]="'study'" [level]="2" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"
-        inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role">
-      </app-study-form> 
+        <app-study-form 
+          *ngIf="activeTab==='studysite'" 
+          id="study_site" 
+          (notify)="get_output_from_child($event)"
+          [model_type]="'study'" 
+          [level]="2" 
+          [parent_id]="get_parent_id" 
+          [model_key]="get_model_key" 
+          [mode]="get_mode"
+          inline="true" 
+          onlyTemplate="false" 
+          asTemplate="false" 
+          [role]="get_role"
+        >
+        </app-study-form> 
         
     </div>
     <div [ngClass]="{ 'active':activeTab==='studydesign'}" role="tabpanel" class="tab-pane active" id="studydesign">
@@ -111,7 +122,18 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-study-form *ngIf="activeTab==='studydesign'" id="study_form_design" (notify)="get_output_from_child($event)" [model_type]="'study'" [level]="3" [parent_id]="get_parent_id" [model_key]="get_model_key" [mode]="get_mode"  inline="true"></app-study-form>
+          <app-study-form 
+            *ngIf="activeTab==='studydesign'" 
+            id="study_form_design" 
+            (notify)="get_output_from_child($event)" 
+            [model_type]="'study'" 
+            [level]="3" 
+            [parent_id]="get_parent_id" 
+            [model_key]="get_model_key" 
+            [mode]="get_mode"  
+            inline="true"
+          >
+          </app-study-form>
           
           <app-experimental-designs-page 
             *ngIf="activeTab==='studydesign'" 
@@ -139,12 +161,14 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-biological-material-page *ngIf="activeTab==='biomat'" (notify)="get_output_from_child($event)"
-          [model_type]="'biological_material'" 
+          <app-biological-material-page 
+          *ngIf="activeTab==='biomat'" 
+          (notify)="get_output_from_child($event)"
           [level]="1" 
+          [model_key]="" 
+          [model_type]="'biological_material'" 
           [grand_parent_id]="get_parent_id"  
           [parent_id]="get_model_id" 
-          [model_key]="" 
           [mode]="get_mode" 
           [role]="get_role"
           [group_key]="get_group_key"
@@ -161,9 +185,19 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-observations-page *ngIf="activeTab==='obs'" (notify)="get_output_from_child($event)"
-          [model_type]="'observation_unit'" [level]="1" [grand_parent_id]="get_parent_id"  [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-          [role]="get_role" </app-observations-page>
+          <app-observations-page 
+            *ngIf="activeTab==='obs'" 
+            (notify)="get_output_from_child($event)"
+            [level]="1" 
+            [model_key]="get_model_key" 
+            [model_type]="'observation_unit'"
+            [parent_id]="get_model_id" 
+            [grand_parent_id]="get_parent_id" 
+            [mode]="get_mode" 
+            [role]="get_role"
+            [group_key]="get_group_key"
+            >
+           </app-observations-page>
           
           <!-- <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
           [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
@@ -254,7 +288,7 @@
             [model_type]="'event'" 
             [level]="1" 
             [grand_parent_id]="get_parent_id" 
-            [study_id]="get_model_id" 
+            [parent_id]="get_model_id" 
             [model_key]="" 
             [mode]="get_mode" 
             [role]="get_role"  

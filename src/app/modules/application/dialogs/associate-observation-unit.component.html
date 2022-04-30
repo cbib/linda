@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>Extract Observation units from design</h1>
+<!-- <div *ngIf="get_bm_data.length >0" >
+  {{get_bm_data.length}}
+</div> -->
+
+  <div mat-dialog-content class="mat-typography">
+    <alert></alert>
+        <p> You have {{total_available_plots}} plots in your experimental design. </p>
+        <p> Do you want to extract {{total_available_plots}} observation units (one per plot)? To do so, select plot level in list below <br></p>
+        <h2>Define Observation unit level</h2>
+          <span class="span-project"></span>
+          <h3>Select levels of observations</h3>
+          <select [ngModel]="get_observation_unit_level"  name="design_type" size="1" (change)="onObservationUnitLevelChange($event.target.value)" >
+            <option *ngFor="let level of observation_levels" [value]="level.levelName">{{level.levelName}}</option>
+        </select> 
+        
+        <div *ngIf="get_loaded===true">
+          <p>You have selected <b>{{get_observation_unit_level}}</b> level and consequently preload {{return_data.observation_units.length}} observation units in your study <br>
+            associated with {{return_data.biological_materials.length*return_data.biological_materials[0].length}} biological materials . </p>
+          <p>
+            Click on <button>Add Observations</button> to create corresponding observation units. <br>
+            Click on <button>OK</button> button to link each observation unit with the corresponding level in your experimental design<br>
+          </p>
+          
+          <button (click)="save()">Add Observations</button>
+        </div>
+        <div *ngIf="get_building===true">
+          <ng-template #loading class="loaderHolder">
+            <div id="loader">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="loading"></div>
+            </div>
+          </ng-template>
+          <div *ngIf="!get_built; else loading">
+            You have sucessfully extracted observations
+          </div>
+        </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [disabled]="!get_built" (click)="onOkClick()">Ok</button>
+  </div>
+</div>
+

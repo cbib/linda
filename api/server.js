@@ -346,6 +346,17 @@ router.get('/get_groups/:user_key', function (req, res) {
  ******************************************************************************************
  ******************************************************************************************/
 
+// _user_id: User document _id
+// _edges: users edge collection 
+function get_person_id_from_user_id(_user_id, _edges) {
+    var person = db._query(aql`FOR edge IN ${_edges} FILTER edge._from == ${_user_id} AND CONTAINS(edge._to,"persons") RETURN edge._to`).toArray();
+    return person
+}
+
+function get_person(_person_id, _persons_edge) {
+    return db._query(aql`FOR entry IN ${_persons_edge} FILTER entry['Person ID'] == ${_person_id} RETURN entry`).toArray();
+}
+
 router.get('/get_person_id/:user_key', function (req, res) {
     var user_id = "users/" + req.pathParams.user_key;
     var person = [];
@@ -946,7 +957,7 @@ router.post('/request-reset', (req, res) => {
             }
           }); */
         //var spawn = require('child_process').spawn
-        
+
         var command = "sh ./scripts/send_mail.sh " + email + " " + token;
         var sendmail = exec(command,
             (error, stdout, stderr) => {
@@ -1856,26 +1867,98 @@ router.get('/get_elem/:collection/:key', function (req, res) {
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
 
 
-router.get('/get_biological_material_by_key/:key', function (req, res) {
+router.get('/get_observation_units_by_key/:key', function (req, res) {
     var errors = []
     var data = {};
     try {
         var key = req.pathParams.key;
-
-        const coll = db._collection("biological_materials");
+        const coll = db._collection("observation_units");
         if (!coll) {
             db._createDocumentCollection(datatype);
         }
         data = coll.firstExample('_key', key);
-
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
             errors.push(e)
             throw e;
-
         }
-        //res.throw(404, 'The entry does not exist', e);
+    }
+    if (errors.length === 0) {
+        res.send({ success: true, data: data });
+    }
+    else {
+        res.send({ success: false, data: {} });
+    }
+
+})
+    .pathParam('key', joi.string().required(), 'unique key.')
+    .response(
+        joi.object(
+            {
+                success: joi.boolean().required(),
+                data: joi.object().required()
+            }
+        ).required(), 'Entry stored in the collection.'
+    )
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "observation units" collection by key.');
+
+
+
+router.get('/get_biological_material_by_key/:key', function (req, res) {
+    var errors = []
+    var data = {};
+    try {
+        var key = req.pathParams.key;
+        const coll = db._collection("biological_materials");
+        if (!coll) {
+            db._createDocumentCollection(datatype);
+        }
+        data = coll.firstExample('_key', key);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            errors.push(e)
+            throw e;
+        }
+    }
+    if (errors.length === 0) {
+        res.send({ success: true, data: data });
+    }
+    else {
+        res.send({ success: false, data: {} });
+    }
+
+})
+    .pathParam('key', joi.string().required(), 'unique key.')
+    .response(
+        joi.object(
+            {
+                success: joi.boolean().required(),
+                data: joi.object().required()
+            }
+        ).required(), 'Entry stored in the collection.'
+    )
+    .summary('Retrieve an entry')
+    .description('Retrieves an entry from the "myFoxxCollection" collection by key.');
+
+router.get('/get_experimental_design_by_key/:key', function (req, res) {
+    var errors = []
+    var data = {};
+    try {
+        var key = req.pathParams.key;
+        const coll = db._collection("experimental_designs");
+        if (!coll) {
+            db._createDocumentCollection(datatype);
+        }
+        data = coll.firstExample('_key', key);
+    }
+    catch (e) {
+        if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
+            errors.push(e)
+            throw e;
+        }
     }
     if (errors.length === 0) {
         res.send({ success: true, data: data });
@@ -2575,7 +2658,7 @@ router.post('/update_template', function (req, res) {
     var _key = req.body._key;
     var values = req.body.values;
     var model_type = req.body.model_type;
-    var datatype ='templates';
+    var datatype = 'templates';
     const coll = db._collection(datatype);
     if (!coll) {
         db._createDocumentCollection(datatype);
@@ -5313,7 +5396,7 @@ router.post('/check', function (req, res) {
     var field = req.body.field;
     var value = req.body.value;
     var model_type = req.body.model_type;
-    var as_template=req.body.as_template;
+    var as_template = req.body.as_template;
     /////////////////////////////
     //first check if user exist
     /////////////////////////////
@@ -5351,11 +5434,11 @@ router.post('/check', function (req, res) {
         console.log(value)
         console.log(model_type)
         //var user_id = user[0]._id
-        if (as_template){
+        if (as_template) {
             check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} AND CONTAINS('e._to','templates') RETURN {eto:e._to, vertice:v}`).toArray();
-f
+            f
         }
-        else{
+        else {
             check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
         }
         //check = db._query(aql`FOR v, e IN 1..2 OUTBOUND ${user_id} GRAPH 'global' FILTER CONTAINS(e._to, ${coll}) AND v.${field} === ${value} RETURN {eto:e._to, vertice:v}`).toArray();
@@ -5383,7 +5466,7 @@ f
         field: joi.string().required(),
         value: joi.string().allow('').required(),
         model_type: joi.string().required(),
-        as_template:joi.boolean().required()
+        as_template: joi.boolean().required()
     }).required(), 'Values to check.')
     .response(joi.object({
         success: true,
@@ -5523,8 +5606,7 @@ router.post('/add_observation_units', function (req, res) {
         }
         //Document exists add edges in edge collection
         else {
-
-            // add from studdy to observation unit edge
+            // add from study parent to observation unit edge child
             var obj = {
                 "_from": parent_id,
                 "_to": data[0].id
@@ -5532,95 +5614,107 @@ router.post('/add_observation_units', function (req, res) {
                 // "biological_material_ids": []
             };
             var edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${studies_edge} RETURN NEW `);
-
             if (edges[0] === null) {
                 res.send({ success: false, message: model_type + ' study edge collection already have document with this title ', id: 'none' });
             }
             else {
-
+                var bm_obj = {}
+                var bm_db_id = ''
                 for (var i = 0; i < observation_units_data.length; i++) {
-
-
                     var biological_material_data = values['biological_materials'][i];
-                    var bm_db_id = ''
-                    var bm_obj = {}
+
+                    //var bm_obj = {}
                     // add biological_material link to observation unit edge 
-                    for (var j = 0; j < biological_material_data.length; j++) {
-                        if (biological_material_data[j]['lindaID'] !== bm_db_id) {
-                            if (bm_db_id !== '') {
-                                db._query(aql`UPSERT ${bm_obj} INSERT ${bm_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                    if (biological_material_data !== undefined) {
+                        for (var j = 0; j < biological_material_data.length; j++) {
+                            if (biological_material_data[j]['lindaID'] !== bm_db_id) {
+
+                                if (bm_db_id !== '') {
+                                    db._query(aql`UPSERT ${bm_obj} INSERT ${bm_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                                }
+                                bm_db_id = biological_material_data[j]['lindaID']
+                                bm_obj = {
+                                    "_from": data[0].id,
+                                    "_to": bm_db_id,
+                                    "biological_materials": []
+                                }
+                                bm_obj["biological_materials"].push(biological_material_data[j])
                             }
-                            bm_db_id = biological_material_data[j]['lindaID']
-                            bm_obj = {
-                                "_from": data[0].id,
-                                "_to": bm_db_id,
-                                "biological_materials": []
+                            else {
+                                bm_obj["biological_materials"].push(biological_material_data[j])
                             }
-                            bm_obj["biological_materials"].push(biological_material_data[j])
-
-
                         }
-                        else {
-                            bm_obj["biological_materials"].push(biological_material_data[j])
-
-
-
-                        }
+                        
 
                     }
-                    if ("_from" in bm_obj) {
-                        db._query(aql`UPSERT ${bm_obj} INSERT ${bm_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
-                    }
-
+                    //console.log(bm_obj)
 
                     //create sample document and add to observation unit edge
                     var sample_data = values['samples'][i];
-                    for (var j = 0; j < sample_data.length; j++) {
-                        var sample_data_bm = sample_data[j]
-                        for (var k = 0; k < sample_data_bm.length; k++) {
-                            var data_sample = []
-                            data_sample = db._query(aql`INSERT ${sample_data_bm[k]} IN ${sample_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
-                            if (data_sample[0].new === null) {
-                                res.send({ success: false, message: ' sample collection already have document with this title ', _id: 'none' });
-                            }
-                            //Document exists add edges in edge collection
-                            else {
-                                var sample_obj = {
-                                    "_from": data[0].id,
-                                    "_to": data_sample[0].id,
+                    if (sample_data !== undefined) {
+                        for (var j = 0; j < sample_data.length; j++) {
+                            var sample_data_bm = sample_data[j]
+                            for (var k = 0; k < sample_data_bm.length; k++) {
+                                var data_sample = []
+                                sample_data_bm[k]
+                                data_sample = db._query(aql`INSERT ${sample_data_bm[k]} IN ${sample_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                                if (data_sample[0].new === null) {
+                                    res.send({ success: false, message: ' sample collection already have document with this title ', _id: 'none' });
                                 }
-                                var edges3 = db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                                //Document exists add edges in edge collection
+                                else {
+                                    const edges3 = db._query(aql`
+                                        LET document = DOCUMENT(${data_sample[0].id})
+                                        UPDATE document WITH { 'External ID': ${data_sample[0].id} } IN ${sample_coll}
+                                        RETURN {before:OLD,after: NEW }
+                                    `).toArray();
+                                    if (edges3[0].after['External ID'] !== data_sample[0].id) {
+                                        db._query(`REMOVE ${data_sample[0].id.split('/')[1]} IN ${sample_coll}`);
+                                        res.send({ success: false, message: ' cannot link sample external ID with Linda ID - sample has been removed', _id: 'none' });
+                                    }
+                                    else {
 
+                                        var sample_obj = {
+                                            "_from": data[0].id,
+                                            "_to": data_sample[0].id,
+                                        }
+                                        var edges4 = db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                                    }
+                                }
                             }
                         }
-
                     }
-
                     //Add experimental factor link with each observation unit
                     var experimental_factor_data = values['experimental_factors'][i];
-                    var ef_db_id = ''
-                    var ef_obj = {}
-                    for (var j = 0; j < experimental_factor_data.length; j++) {
-                        if (experimental_factor_data[j]['lindaID'] !== ef_db_id) {
-                            if (ef_db_id !== '') {
-                                db._query(aql`UPSERT ${ef_obj} INSERT ${ef_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                    if (experimental_factor_data !== undefined) {
+                        var ef_db_id = ''
+                        var ef_obj = {}
+                        for (var j = 0; j < experimental_factor_data.length; j++) {
+                            if (experimental_factor_data[j]['lindaID'] !== ef_db_id) {
+                                if (ef_db_id !== '') {
+                                    db._query(aql`UPSERT ${ef_obj} INSERT ${ef_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                                }
+                                ef_db_id = experimental_factor_data[j]['lindaID']
+                                ef_obj = {
+                                    "_from": data[0].id,
+                                    "_to": ef_db_id,
+                                    "experimental_factors": []
+                                }
+                                ef_obj["experimental_factors"].push(experimental_factor_data[j])
                             }
-                            ef_db_id = experimental_factor_data[j]['lindaID']
-                            ef_obj = {
-                                "_from": data[0].id,
-                                "_to": ef_db_id,
-                                "experimental_factors": []
+                            else {
+                                ef_obj["experimental_factors"].push(experimental_factor_data[j])
                             }
-                            ef_obj["experimental_factors"].push(experimental_factor_data[j])
                         }
-                        else {
-                            ef_obj["experimental_factors"].push(experimental_factor_data[j])
+                        if ("_from" in ef_obj) {
+                            db._query(aql`UPSERT ${ef_obj} INSERT ${ef_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
                         }
-                    }
-                    if ("_from" in ef_obj) {
-                        db._query(aql`UPSERT ${ef_obj} INSERT ${ef_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
                     }
                 }
+                if ("_from" in bm_obj) {
+                    db._query(aql`UPSERT ${bm_obj} INSERT ${bm_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
+                }
+
                 res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
             }
         }
@@ -5980,7 +6074,33 @@ function add_sample_data(db, all_sample, observation_units_data, observation_uni
                     }
                     //Document exists add edges in edge collection
                     else {
-                        info_message.push("8- sample to add : " + observation_unit_id)
+                        const edges3 = db._query(aql`
+                            LET document = DOCUMENT(${data_sample[0].id})
+                                        UPDATE document WITH { 'External ID': ${data_sample[0].id} } IN ${sample_coll}
+                                        RETURN {before:OLD,after: NEW }
+                                    `).toArray();
+                        if (edges3[0].after['External ID'] !== data_sample[0].id) {
+                            db._query(`REMOVE ${data_sample[0].id.split('/')[1]} IN ${sample_coll}`);
+                            res.send({ success: false, message: ' cannot link sample external ID with Linda ID - sample has been removed', _id: 'none' });
+                        }
+                        else {
+                            //info_message.push("8- sample to add : " + observation_unit_id)
+                            var sample_obj = {
+                                "_from": observation_unit_id,
+                                "_to": data_sample[0].id,
+                            }
+                            try {
+
+                                db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
+                            }
+                            catch (e) {
+                                info_message.push("9- cannot replace sample: " + JSON.stringify(sample_obj) + e)
+                            }
+                        }
+
+
+
+                        /* info_message.push("8- sample to add : " + observation_unit_id)
                         var sample_obj = {
                             "_from": observation_unit_id,
                             "_to": data_sample[0].id
@@ -5990,8 +6110,8 @@ function add_sample_data(db, all_sample, observation_units_data, observation_uni
                             db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {}  IN ${observation_unit_edge} RETURN NEW `);
                         }
                         catch (e) {
-                            info_message.push("9- ccannot replace sample: " + JSON.stringify(sample_obj) + e)
-                        }
+                            info_message.push("9- cannot replace sample: " + JSON.stringify(sample_obj) + e)
+                        } */
 
                     }
                 }
@@ -6007,22 +6127,7 @@ function add_sample_data(db, all_sample, observation_units_data, observation_uni
 
 
 }
-
-// _user_id: User document _id
-// _edges: users edge collection 
-function get_person_id_from_user_id(_user_id, _edges) {
-    var person = db._query(aql`FOR edge IN ${_edges} FILTER edge._from == ${_user_id} AND CONTAINS(edge._to,"persons") RETURN edge._to`).toArray();
-    return person
-}
-
-function get_person(_person_id, _persons_edge) {
-    return db._query(aql`FOR entry IN ${_persons_edge} FILTER entry['Person ID'] == ${_person_id} RETURN entry`).toArray();
-}
-
-
-
-
-router.post('/update_observation_units', function (req, res) {
+router.post('/update_observation_units_with_bm', function (req, res) {
     //posted variables
     var username = req.body.username;
     var password = req.body.password;
@@ -6104,6 +6209,7 @@ router.post('/update_observation_units', function (req, res) {
         data = db._query(aql` FOR entry IN ${observation_unit_coll} FILTER entry._id == ${observation_unit_id} UPDATE entry WITH ${observation_unit_doc} IN ${observation_unit_coll} RETURN { before: OLD, after: NEW }`).toArray();
         //check if all previous obsuuid are 
         for (var i = 0; i < previous_obsuuids.length; i++) {
+            // this obsUUID is not present in the new updated document (observation_unit_doc)
             if (!data[0].after['obsUUID'].includes(previous_obsuuids[i])) {
                 var obsuuid_toremoved = previous_obsuuids[i]
                 update_unused_bm_from_obsUUID(db, observation_unit_edge, observation_unit_id, obsuuid_toremoved)
@@ -6115,7 +6221,167 @@ router.post('/update_observation_units', function (req, res) {
             //res.send({ success: false, message: model_type + ' collection already have document with this title ' });
             error_message.push(model_type + ' collection already have document with this title ')
         }
-        //Document exists update edges in edge collection
+        // Document exists 
+        // update edges in edge collection
+        else {
+            info_message.push("2- observation unit has been updated and child data has been cleaned \n" + data[0].after['obsUUID'])
+            // loop for each observation and get all bms, all efs, all samples
+            var all_bm = []
+            for (var i = 0; i < observation_units_data.length; i++) {
+                var biological_material_data = values['biological_materials'][i];
+                //get all biological material
+                for (var j = 0; j < biological_material_data.length; j++) {
+                    all_bm.push(biological_material_data[j])
+                }
+            }
+            //info_message.push("3- good: " + JSON.stringify(all_ef))
+            //first update 
+            //Remove bmuuid if they are not present anymore after removal from biological material table
+            var regex = "biological_materials%"
+            var previous_bmuuids = db._query(aql`FOR doc IN ${observation_unit_edge} FILTER doc._from == ${observation_unit_id} && doc._to LIKE ${regex} RETURN {bm_linda_id:doc._to,doc_bm_uuids:doc.biological_materials[*].bmUUID} `).toArray();
+            for (var i = 0; i < previous_bmuuids.length; i++) {
+                var doc_bm_uuids = previous_bmuuids[i]['doc_bm_uuids']
+                for (var j = 0; j < doc_bm_uuids.length; j++) {
+                    var found = false
+                    for (var k = 0; k < all_bm.length; k++) {
+                        if (all_bm[k]['bmUUID'] == doc_bm_uuids[j]) {
+                            found = true
+                        }
+                    }
+                    if (!found) {
+                        var bmuuid_to_removed = doc_bm_uuids[j]
+                        update_unused_sample_from_bmUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, sample_coll, bmuuid_to_removed)
+                        update_unused_bm_from_bmUUID(db, observation_unit_edge, observation_unit_edge_coll, observation_unit_id, bmuuid_to_removed, regex)
+                    }
+                }
+            }
+            //Add new bm biological material list in edge document or create document if they are not present
+            add_bm_data(db, all_bm, observation_unit_edge, observation_unit_id)
+            //info_message.push("3- good: " + JSON.stringify(all_ef))
+        }
+        if (error_message.length !== 0) {
+            res.send({ success: false, message: 'problems:  ' + error_message });
+        }
+        else {
+            res.send({ success: true, message: 'done: ' + info_message });
+        }
+
+    };
+})
+    .body(joi.object().keys({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        parent_id: joi.string().required(),
+        _key: joi.string().required(),
+        values: joi.object({
+            observation_units: joi.array().items(joi.object().required()).required(),
+            biological_materials: joi.array().items(joi.array().items(joi.object().allow(null)).allow(null)).optional(),
+        }).required(),
+        model_type: joi.string().required()
+    }).required(), 'Values to check.')
+    .response(joi.object().keys({
+        success: joi.boolean().required(),
+        message: joi.string().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('add MIAPPE description for given model.');
+
+router.post('/update_observation_units_and_childs', function (req, res) {
+    //posted variables
+    var username = req.body.username;
+    var password = req.body.password;
+    var parent_id = req.body.parent_id;
+    var _key = req.body._key;
+    var values = req.body.values;
+    var model_type = req.body.model_type;
+    //Studies edge 
+    var parent_type = parent_id.split("/")[0];
+    var study_edge_coll = parent_type + '_edge'
+    if (!db._collection(study_edge_coll)) {
+        db._createEdgeCollection(study_edge_coll);
+    }
+    var studies_edge = db._collection(study_edge_coll);
+    var datatype = "observation_units";
+    var observation_unit_id = datatype + '/' + _key;
+    //observation unit edge 
+    var observation_unit_edge_coll = datatype + '_edge'
+    if (!db._collection(observation_unit_edge_coll)) {
+        db._createEdgeCollection(observation_unit_edge_coll);
+    }
+    var observation_unit_edge = db._collection(observation_unit_edge_coll);
+    //observation units collection 
+    var observation_unit_coll = db._collection(datatype);
+    if (!observation_unit_coll) {
+        db._createDocumentCollection(datatype);
+    }
+
+    // var datatype = "experimental_factors";
+    //  //experimental factor edge 
+    //  var experimental_factor_edge_coll = datatype + '_edge'
+    //  if (!db._collection(experimental_factor_edge_coll)) {
+    //      db._createEdgeCollection(experimental_factor_edge_coll);
+    //  }
+    //  var experimental_factor_edge = db._collection(experimental_factor_edge_coll);
+
+    var sample_coll_name = 'samples'
+    //samples collection 
+    var sample_coll = db._collection(sample_coll_name);
+    if (!sample_coll) {
+        db._createDocumentCollection(sample_coll_name);
+    }
+    var error_message = []
+    var info_message = []
+
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+        FOR entry IN ${users}
+        FILTER entry.username == ${username}
+        FILTER entry.password == ${password}
+        RETURN entry
+      `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' });
+        error_message.push('Username ' + username + ' doesn\'t exists')
+    }
+    else {
+        info_message.push("1- users exists \n")
+        var data = [];
+        var update = [];
+        var diff = []
+        var observation_unit_doc = { "External ID": [], "Observation Unit factor value": [], "Observation unit ID": [], "Observation unit type": [], "Spatial distribution": [], "obsUUID": [] }
+        //var return_data = {"observation_units":[],"biological_materials":[],"samples":[], "experimental_factor":[] }
+        var observation_units_data = values['observation_units'];
+        for (var observation_unit in observation_units_data) {
+            observation_unit_doc["External ID"].push(observation_units_data[observation_unit]['External ID']);
+            observation_unit_doc["Observation unit ID"].push(observation_units_data[observation_unit]['Observation unit ID']);
+            observation_unit_doc["Observation Unit factor value"].push(observation_units_data[observation_unit]['Observation Unit factor value']);
+            observation_unit_doc["Observation unit type"].push(observation_units_data[observation_unit]['Observation unit type']);
+            observation_unit_doc["Spatial distribution"].push(observation_units_data[observation_unit]['Spatial distribution']);
+            observation_unit_doc["obsUUID"].push(observation_units_data[observation_unit]['obsUUID']);
+        }
+        var response;
+        //get previous obsuuid 
+        var previous_obsuuids = db._query(aql`FOR doc IN ${observation_unit_coll} FILTER doc._id==${observation_unit_id} RETURN doc.obsUUID `).toArray();
+        // info_message.push("1- users exists \n" +  previous_obsuuids[0])
+        data = db._query(aql` FOR entry IN ${observation_unit_coll} FILTER entry._id == ${observation_unit_id} UPDATE entry WITH ${observation_unit_doc} IN ${observation_unit_coll} RETURN { before: OLD, after: NEW }`).toArray();
+        //check if all previous obsuuid are 
+        for (var i = 0; i < previous_obsuuids.length; i++) {
+            // this obsUUID is not present in the new updated document (observation_unit_doc)
+            if (!data[0].after['obsUUID'].includes(previous_obsuuids[i])) {
+                var obsuuid_toremoved = previous_obsuuids[i]
+                update_unused_bm_from_obsUUID(db, observation_unit_edge, observation_unit_id, obsuuid_toremoved)
+                update_unused_ef_from_obsUUID(db, observation_unit_edge, observation_unit_id, obsuuid_toremoved)
+                update_unused_sample_from_obsUUID(db, observation_unit_edge, observation_unit_id, sample_coll, obsuuid_toremoved)
+            }
+        }
+        if (data[0].after === null) {
+            //res.send({ success: false, message: model_type + ' collection already have document with this title ' });
+            error_message.push(model_type + ' collection already have document with this title ')
+        }
+        // Document exists 
+        // update edges in edge collection
         else {
             info_message.push("2- observation unit has been updated and child data has been cleaned \n" + data[0].after['obsUUID'])
             // loop for each observation and get all bms, all efs, all samples
@@ -6290,6 +6556,19 @@ router.get('/get_observation_unit_childs/:observation_unit_key', function (req, 
     res.send(data);
 })
     .pathParam('observation_unit_key', joi.string().required(), 'observation unit id of the entry.')
+    .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+    .summary('List entry keys')
+    .description('Assembles a list of keys of entries in the collection.');
+
+router.get('/get_observation_unit_childs_by_type/:observation_unit_key/:model_type', function (req, res) {
+    var observation_unit_id = "observation_units/" + req.pathParams.observation_unit_key;
+    var model_type = req.pathParams.model_type;
+    var data = [];
+    data = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${observation_unit_id} GRAPH 'global' FILTER CONTAINS(e._to,${model_type})  RETURN {e:e}`);
+    res.send(data);
+})
+    .pathParam('observation_unit_key', joi.string().required(), 'observation unit id of the entry.')
+    .pathParam('model_type', joi.string().required(), 'model type of the entry.')
     .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');

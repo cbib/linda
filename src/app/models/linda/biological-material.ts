@@ -6,6 +6,7 @@ export interface BiologicalMaterialInterface {
     'Genus':string;
     'Species':string;
     'Organism':string;
+    'replication':number;
     'Infraspecific name': string;
     'Material source ID (Holding institute/stock centre, accession)': string;
     'Material source description': string;
@@ -30,6 +31,7 @@ export class BiologicalMaterial implements BiologicalMaterialInterface {
     'Genus':string;
     'Species':string;
     'Organism':string;
+    'replication':number;
     'Infraspecific name': string;
     'Material source ID (Holding institute/stock centre, accession)': string;
     'Material source description': string;
@@ -49,6 +51,7 @@ export class BiologicalMaterial implements BiologicalMaterialInterface {
        genus:string="", 
        species:string="",
        organism:string="",
+       replication:number=1,
        infraspecific_name:string="",
        material_source_id:string="",
        material_source_description:string="",
@@ -67,6 +70,7 @@ export class BiologicalMaterial implements BiologicalMaterialInterface {
         this['Genus']=genus
         this['Species']=species
         this['Organism']=organism
+        this.replication=replication
         this['Infraspecific name']=infraspecific_name
         this['Material source ID (Holding institute/stock centre, accession)']=material_source_id
         this['Material source description']=material_source_description
@@ -93,6 +97,7 @@ export interface BiologicalMaterialFullInterface {
     'Genus':string[];
     'Species':string[];
     'Organism':string[];
+    'replication':string[];
     'Infraspecific name': string[];
     'Material source ID (Holding institute/stock centre, accession)': string[];
     'Material source description': string[];

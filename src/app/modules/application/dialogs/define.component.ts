@@ -314,7 +314,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     var data_model = { ...this.data_file };
     if (this.associated_header.associated_component_field !== values && this.associated_header.associated_component_field !== "") {
       if (this.associated_header.associated_linda_id.length !== 0) {
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'change_field', model_type: "data_file" } });
+        const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'change_field', model_type: "data_file" } });
         dialogRef.afterClosed().subscribe(async (result) => {
           if (result) {
             if (result.event == 'Confirmed') {
@@ -519,7 +519,7 @@ export class DefineComponent implements OnInit, OnDestroy {
         }
         else {
           this.while_added = false
-          const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
+          const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
           dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
               if (result.event == 'Confirmed') {
@@ -577,7 +577,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       if (add_study_res['success']) {
         // if some studies are already present (values_to_link >0), just link the asssociated heaers to the corresponding study_id
         if (values_to_link.length !== 0) {
-          const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
+          const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
           dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
               if (result.event == 'Confirmed') {
@@ -605,7 +605,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
     else {
       if (values_to_link.length !== 0) {
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
+        const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'link_study', model_type: "data_file" } });
         dialogRef.afterClosed().subscribe(async (result) => {
           if (result) {
             if (result.event == 'Confirmed') {

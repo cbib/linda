@@ -5,6 +5,8 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { MatSort} from '@angular/material/sort'
 import { first } from 'rxjs/operators';
+import structuredClone from '@ungap/structured-clone';
+import * as uuid from 'uuid';
 import { 
     ExperimentalDesign,
     BlockDesign,
@@ -16,7 +18,8 @@ import {
     IncompleteBlockDesign, 
     ExperimentalDesignInterface,
     CompleteBlockDesignInterface,
-    IncompleteBlockDesignInterface } from 'src/app/models/linda/experimental-design';
+    IncompleteBlockDesignInterface, 
+    PlotDesignInterface} from 'src/app/models/linda/experimental-design';
 
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatTableDataSource} from '@angular/material/table';
@@ -24,6 +27,11 @@ import { ConfirmationComponent } from '../../dialogs/confirmation.component'
 import { MatDialog } from '@angular/material/dialog';
 import { UserInterface } from 'src/app/models/linda/person';
 import { SelectionComponent } from '../../dialogs/selection.component';
+import { AssociateBiologicalMaterial } from '../../dialogs/associate-biological-material.component';
+import { AssociateObservationUnit } from '../../dialogs/associate-observation-unit.component';
+import { BiologicalMaterialFullInterface } from 'src/app/models/linda/biological-material';
+import { timeStamp } from 'console';
+import { SampleSelectionComponent } from '../../dialogs/sample-selection.component';
 
 @Component({
   selector: 'app-experimental-design-page',
@@ -74,14 +82,22 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     private currentUser:UserInterface
     public designLoaded:boolean=false
     public blockDesignLoaded:boolean=false
+    public biologicalMaterialLoaded:boolean=false
+    public observationUnitLoaded:boolean=false
     public complete_block_design_type:CompleteBlockDesign;
     public incomplete_block_design_type:IncompleteBlockDesign;
     public available_designs:string[]
     public block_design_subtype:string
+    public block_index:number=0
+    public plot_index:number=0
+    public material_id:string=""
+    sample_data = []
 
     ///// TESST PART
-    hideme = [];  
-    Index: any;  
+    hideme = []; 
+    secondhideme = [];   
+    Index: any; 
+    SecondIndex: any;  
     /* products = [];  
     countryCode: any;  
     currencySymbol:any;  
@@ -100,6 +116,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         private formBuilder:FormBuilder,
         private _cdr: ChangeDetectorRef,
         public dialog: MatDialog){
+            this.block_index=0
             this.route.queryParams.subscribe(
                 params => {
                     this.level = params['level'];
@@ -111,9 +128,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     this.group_key = params['group_key']
                     this.role = params['role']
                     this.grand_parent_id = params['grand_parent_id']
-                    this.activeTab=params['activeTab']
-                    
-                    
+                    this.activeTab=params['activeTab'] 
                 }
               );
               if (this.model_key!==""){
@@ -121,72 +136,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
               }
               
     } 
-
-    
-
-    
-    showBlockInfo(i,ProductId){
-        this.hideme[i] = !this.hideme[i];  
-        this.Index = i; 
-    }
-    get_design_by_key(){
-        this.design=new ExperimentalDesign()
-        this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
-            console.log(data['Blocking'].value[0]['Plot design'].value)
-            if (data['Blocking'].value[0]['Complete Block Design'].value.length>0){
-                this.block_design_type='CompleteBlockDesign'
-                
-                this.available_designs=Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0])
-                this.available_designs.forEach(available_design=>{
-                     if (data['Blocking'].value[0]['Complete Block Design'].value[0][available_design].value===true){
-                        this.block_design_subtype=available_design
-                     }
-                })
-                console.log(Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign))
-                this.complete_block_design_type=data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign
-            }
-            else{
-                this.block_design_type='IncompleteBlockDesign'
-                this.block_design_subtype=data['Blocking'].value[0]['Incomplete Block Design'].value[0].filter(obj => obj.value===true)[0]
-                this.available_designs=Object.keys(data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign)
-                this.incomplete_block_design_type=data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign
-            }
-
-
-            
-            let tmp_column_num=[]
-            data['Blocking'].value[0]['Plot design'].value.filter(val=>tmp_column_num.push(val['Column number'].value))
-            let tmp_row_num=[]
-            let RowPerPlot=0
-            //data['Blocking'].value[0]['Plot design'].value[0]['Row design'].value.filter(val=>tmp_row_num.push(val['Row number'].value))
-            let plot_designs=data['Blocking'].value[0]['Plot design'].value
-
-            data['Blocking'].value[0]['Plot design'].value.forEach(val=>{
-                val['Row design'].value.forEach(val2=>{
-                    tmp_row_num.push(val2['Row number'].value)
-                    RowPerPlot=val2['Row per plot'].value
-                })
-                
-            })    
-            let column_num= Array.from(new Set(tmp_column_num))
-            let row_num= Array.from(new Set(tmp_row_num))
-            this.design=data as ExperimentalDesign
-            //this.experimental_design_blocks=data['Blocking'].value
-            this.totalBlockControl.patchValue(this.get_design.Blocking.value.length)
-            this.totalBlockControl.setValue(this.get_design.Blocking.value.length)
-            this.totalColumnPerBlockControl.patchValue(column_num.length)
-            this.totalColumnPerBlockControl.setValue(column_num.length)
-            this.totalRowPerPlotControl.patchValue(RowPerPlot)
-            this.totalRowPerPlotControl.setValue(RowPerPlot)
-            this.totalRowPerBlockControl.patchValue(row_num.length)
-            this.totalRowPerBlockControl.setValue(row_num.length)
-            this.totalBlockPerRowControl.patchValue(4)
-            this.totalBlockPerRowControl.setValue(4)
-            console.log(this.design)
-            this.designLoaded=true
-            this.blockDesignLoaded=true
-        });
-    }
     async ngOnInit(){
         this.activeTab="exp_design_info"
         this.block_design_type=""
@@ -211,12 +160,131 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             this._cdr.detectChanges()
         }); */
     }
-    get get_design():ExperimentalDesign{
-        return this.design
-    }
-    changeTab(tab:string){
-        this.activeTab=tab
-        console.log(this.activeTab)
+    get_design_by_key(){   
+        this.globalService.get_experimental_design_by_key(this.model_key).toPromise().then(res => {
+            if (res.success){
+                let data=res.data
+                console.log(data['Blocking'].value[0]['Plot design'].value)
+                
+                let tmp_column_num=[]
+                data['Blocking'].value[0]['Plot design'].value.filter(val=>tmp_column_num.push(val['Column number'].value))
+                let tmp_row_num=[]
+                let RowPerPlot=0
+                //data['Blocking'].value[0]['Plot design'].value[0]['Row design'].value.filter(val=>tmp_row_num.push(val['Row number'].value))
+                //let plot_designs=data['Blocking'].value[0]['Plot design'].value
+                data['Blocking'].value[0]['Plot design'].value.forEach(val=>{
+                    val['Row design'].value.forEach(val2=>{
+                        tmp_row_num.push(val2['Row number'].value)
+                        RowPerPlot=val2['Row per plot'].value
+                    })
+                    
+                })  
+                if (data['Blocking'].value[0]['Complete Block Design'].value.length>0){
+                    this.block_design_type='CompleteBlockDesign'
+                    this.available_designs=Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0])
+                    this.available_designs.forEach(available_design=>{
+                        if (data['Blocking'].value[0]['Complete Block Design'].value[0][available_design].value===true){
+                            this.block_design_subtype=available_design
+                        }
+                    })
+                    console.log(Object.keys(data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign))
+                    this.complete_block_design_type=data['Blocking'].value[0]['Complete Block Design'].value[0] as CompleteBlockDesign
+                }
+                else{
+                    this.block_design_type='IncompleteBlockDesign'
+                    this.available_designs=Object.keys(data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign)
+                    this.available_designs.forEach(available_design=>{
+                        if (data['Blocking'].value[0]['Incomplete Block Design'].value[0][available_design].value===true){
+                            this.block_design_subtype=available_design
+                        }
+                    })
+                    
+                    this.incomplete_block_design_type=data['Blocking'].value[0]['Incomplete Block Design'].value[0]  as IncompleteBlockDesign
+                }
+                
+                
+
+                let column_num= Array.from(new Set(tmp_column_num))
+                let row_num= Array.from(new Set(tmp_row_num))
+                this.design=new ExperimentalDesign()
+                var replication:Replication=new Replication()
+                Object.assign(replication, data.Replication.value)
+                this.design.set_replication(replication)
+
+                this.design.set_observation_unit_id(data['Associated observation units'].value)
+                //this.design=ExperimentalDesign.create_design(data)
+                console.log(this.design)
+                ///Object.assign(this.design, data);
+                //structuredClone
+                //this.design=JSON.parse(JSON.stringify(data))
+                //this.design=structuredClone(data)
+                //this.design=JSON.parse(JSON.stringify(data));
+                data.Blocking.value.forEach(block=>{
+                    let new_block_design=new BlockDesign(block['Block number'].value,data.Blocking.value.length)
+                    if (block['Complete Block Design'].value.length>0){
+                        new_block_design.add_complete_block_design(this.complete_block_design_type)
+                    }
+                    else{
+                        new_block_design.add_incomplete_block_design(this.incomplete_block_design_type)
+                    }
+                    //new_block_design=BlockDesign.create_block_design(block)
+                    block['Plot design'].value.forEach(plot_design=>{
+                        let new_plot_design=new PlotDesign(plot_design['Column number'].value,plot_design['Plot number'].value,plot_design['Associate_material_source'].value, plot_design['Associated_biological_material'].value, plot_design['Replicate number'].value)
+                        //new_plot_design=PlotDesign.create_plot_design(plot_design)
+                        //Object.assign(new_plot_design, plot_design)
+                        if (plot_design['Observation uuid'].value!==null){
+                            new_plot_design.set_observation_uuid(plot_design['Observation uuid'].value)
+                        }
+                        plot_design['Row design'].value.forEach(row_design=>{
+                            //let new_row_design=new RowDesign()
+                            let new_row_design=RowDesign.create_row_design(row_design)
+                            //Object.assign(new_row_design, row_design)
+                            this.total_row_per_plot=row_design['Row per plot'].value
+                            new_plot_design['Row design'].value.push(new_row_design)
+                            //Object.assign(new_row_design, row_design)
+                        }) 
+                        new_block_design['Plot design'].value.push(new_plot_design)
+                        //Object.assign(new_plot_design, plot_design)
+                    })
+                    this.design.Blocking.value.push(new_block_design)
+                    //Object.assign(new_block_design, block)
+                })
+                //replication.set_replicate_number(data.Replication.value.get_replicate_number())
+                this.total_block_number=data.Blocking.value.length
+                this.total_column_per_block=column_num.length
+                this.total_row_per_block=row_num.length
+                let total_entries=this.total_block_number*this.total_column_per_block*(this.total_row_per_block/this.total_row_per_plot)
+                this.design.set_number_of_entries(total_entries)
+                if (data["Associated biological Materials"].value!==null){
+                    this.material_id=data["Associated biological Materials"].value
+                    this.design.set_biological_material_id(data["Associated biological Materials"].value)
+                }
+                //this.design=data
+                //this.design=data as ExperimentalDesign
+                //console.log(Object.keys(this.design).filter((key) => typeof this.design[key] === 'function').map((key) => this.design[key]))
+                //this.experimental_design_blocks=data['Blocking'].value
+                this.totalBlockControl.patchValue(this.get_design.Blocking.value.length)
+                this.totalBlockControl.setValue(this.get_design.Blocking.value.length)
+                this.totalColumnPerBlockControl.patchValue(column_num.length)
+                this.totalColumnPerBlockControl.setValue(column_num.length)
+                this.totalRowPerPlotControl.patchValue(RowPerPlot)
+                this.totalRowPerPlotControl.setValue(RowPerPlot)
+                this.totalRowPerBlockControl.patchValue(row_num.length)
+                this.totalRowPerBlockControl.setValue(row_num.length)
+                this.totalBlockPerRowControl.patchValue(4)
+                this.totalBlockPerRowControl.setValue(4)
+                console.log(this.design)
+                this.designLoaded=true
+                this.blockDesignLoaded=true
+                if (data['Blocking'].value[0]['Plot design'].value[0]['Associate_material_source'].value!==null){
+                    this.biologicalMaterialLoaded=true
+                }
+                if (data['Associated observation units'].value!==null){
+                    this.observationUnitLoaded=true
+                }
+            }
+        });
+            
     }
     onDesignTypeChange(value:string){
         this.block_design_type=value
@@ -263,21 +331,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
         this.designLoaded=true
         console.log(this.design)
+        console.log(Object.keys(this.design).filter((key) => typeof this.design[key] === 'function').map((key) => this.design[key]))
         //console.log(this.design.get_block_design(4))
         //console.log(this.experimental_design_blocks)
     }
-    addBiologicalMaterial(){
-        const dialogRef = this.dialog.open(SelectionComponent,
-            { width: '1400px', autoFocus: true, disableClose: true, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: []} }
-          );
-          dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-              console.log(result)
-
-            }
-        })
-    }    
-
     onExtractBlockDesign(){
         this.blockDesignLoaded=false
         console.warn(this.BlockDesignForm.controls)
@@ -302,55 +359,166 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         console.warn(this.total_column_per_block)
         console.warn(this.total_row_per_block)
         console.log(this.design)
-        let total_entries=this.total_block_number*this.total_column_per_block*this.total_row_per_block
+        let total_entries=this.total_block_number*this.total_column_per_block*(this.total_row_per_block/this.total_row_per_plot)
         this.design.set_number_of_entries(total_entries)
+
         var plot=1
         this.design.Blocking.value.forEach(block_design=>{
             block_design.clean_plot_design()
         })
-        this.design.Blocking.value.forEach(block_design=>{
+        if (!this.block_design_subtype){
+            this.alertService.error("You have to define which design subtypes first")
+        }
+        else{
+            this.design.Blocking.value.forEach(block_design=>{
             
-            if (this.block_design_type==="CompleteBlockDesign"){
-                this.complete_block_design_type[this.block_design_subtype].value=true
-                block_design['Complete Block Design'].value.push(this.complete_block_design_type)
-            }
-            else{
-                this.incomplete_block_design_type[this.block_design_subtype]=true
-                block_design['Incomplete Block Design'].value.push(this.incomplete_block_design_type)
-            }
-            for (var column=1;column<this.total_column_per_block+1;column++){  
-                for (var row=1;row<this.total_row_per_block+1;row++){
-                    var row_design:RowDesign=new RowDesign()
-                    row_design.set_row_number(row/this.total_row_per_plot)
-                    row_design.set_row_per_plot(this.total_row_per_plot)
-                    var plot_design:PlotDesign=new PlotDesign()
-                    plot_design.set_column_number(column)
-                    if (row%this.total_row_per_plot===0){
-                        plot_design.set_plot_number(plot)
-                        plot_design.add_row_design(row_design)
-                        block_design.add_plot_design(plot_design)
-                        //var plot_design:PlotDesign=new PlotDesign()
-                        plot++    
-                    }
-                    else{ 
-                        plot_design.add_row_design(row_design)
-                    }
-                    /* else{
-                        block_design.add_plot_design(plot_design)
-                    } */
+                if (this.block_design_type==="CompleteBlockDesign"){
+                    this.complete_block_design_type[this.block_design_subtype].value=true
+                    block_design['Complete Block Design'].value.push(this.complete_block_design_type)
                 }
-                
-                
-            }
-        })
-        this.blockDesignLoaded=true
+                else{
+                    this.incomplete_block_design_type[this.block_design_subtype]=true
+                    block_design['Incomplete Block Design'].value.push(this.incomplete_block_design_type)
+                }
+                for (var column=1;column<this.total_column_per_block+1;column++){  
+                    var plot_design=new PlotDesign()
+                    for (var row=1;row<this.total_row_per_block+1;row++){
+                        var row_design:RowDesign=new RowDesign()
+                        row_design.set_row_number(row)
+                        row_design.set_row_per_plot(this.total_row_per_plot)
+                        
+                        if (row%this.total_row_per_plot===0){
+                            
+                            plot_design.set_column_number(column)
+                            plot_design.set_plot_number(plot)
+                            plot_design.add_row_design(row_design)
+                            block_design.add_plot_design(plot_design)
+                            //var plot_design:PlotDesign=new PlotDesign()
+                            plot++
+                                
+                        }
+                        else{ 
+                            plot_design.add_row_design(row_design)
+                        }
+                        /* else{
+                            block_design.add_plot_design(plot_design)
+                        } */
+                    }
+                    
+                    
+                    
+                }
+            })
+            this.blockDesignLoaded=true
+        }
+        
     }
-    
+    extractSample(){
+        const dialogRef = this.dialog.open(SampleSelectionComponent,
+            {disableClose: true, width: '1400px', autoFocus: true,  restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: [], model_type: "sample", values: [], observation_id: this.design['Associated observation units'].value} }
+          );
+          dialogRef.afterClosed().subscribe(res => {
+            if (res.event==='Confirmed') {
+              //console.log(result)
+              let result=res.sample_data
+              for (var i = 0; i < result.length; i++) {
+                result[i]['sampleUUID'] = uuid.v4()
+                ////console.log(result[i])
+                this.sample_data.push(result[i])
+              }
+              let message = "experimental factor selected! "
+              this.alertService.success(message);
+            }
+          });
+    }
+    addExperimentalFactor(){
+    }
+    removeExperimentalFactor(){
+    }
+    addObservationUnits(){
+        const dialogRef = this.dialog.open(AssociateObservationUnit,{ disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", total_available_plots:this.design['number of entries'].value,  material_id:this.material_id, design:this.design, mode:'create', model_key:''} });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result.event==='Confirmed') {
+                console.log(result.observation_unit_id)
+                this.design.set_observation_unit_id(result.observation_unit_id)
+                this.design.Blocking.value.forEach(block=>{
+                    block['Plot design'].value.forEach(plot=>{
+                        plot.set_observation_uuid(result.obsuuids[plot['Plot number'].value])
+                        this.observationUnitLoaded=true
+                    })
+                })
+            }
+        });
+        console.log(this.design) 
+    }
+    removeObservationUnits(){
+        this.design.set_observation_unit_id(null)
+        this.design.Blocking.value.forEach(block_design=>{
+            block_design['Plot design'].value.forEach(plot_design=>{
+                plot_design['Observation uuid'].value=null
+            })
+        })
+        this.observationUnitLoaded=false
+    }
+    addBiologicalMaterial(){
+        const dialogRef = this.dialog.open(AssociateBiologicalMaterial,{disableClose: true, width: '1400px', autoFocus: true,  maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", total_available_plots:this.design['number of entries'].value} });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              console.log(result)
+              let selected_material:BiologicalMaterialFullInterface=result.selected_material
+              let mat_list=selected_material['Material source ID (Holding institute/stock centre, accession)']
+              let plot_num=1
+              let rep=parseInt(selected_material.replication[0])
+              this.design.set_biological_material_id(selected_material["_id"])
+              this.material_id=selected_material["_id"]
+              for (let replicate_index = 0; replicate_index < parseInt(selected_material.replication[0]); replicate_index++) {
+                console.log(replicate_index)
+                for (let matindex = 0; matindex < mat_list.length; matindex++) {
+                    //console.log(matindex)
+                    const element = mat_list[matindex];
+                    //console.log(plot_num)
+                    //console.log(this.design.get_block_plot_design(plot_num))
+                    //this.design.get_block_plot_design(plot_num) as PlotDesign
+                    this.design.get_block_plot_design(plot_num).add_material(element)
+                    this.design.get_block_plot_design(plot_num).set_replicate_number(replicate_index+1)
+                    let bm_list=selected_material['Biological material ID'][matindex]
+                    bm_list=bm_list.filter(biomat=>biomat.includes("rep"+(replicate_index+1)+"_"))
+                    for (let bmindex = 0; bmindex < bm_list.length; bmindex++) {
+                        const element2 = bm_list[bmindex];
+                        this.design.get_block_plot_design(plot_num).add_biological_material(element2)
+                    }
+                    plot_num++
+                    this.biologicalMaterialLoaded=true
+                }    
+            }
+        }
+    })
+    /* const dialogRef = this.dialog.open(SelectionComponent,
+            { width: '1400px', autoFocus: true, disableClose: true, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: []} }
+          );
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              console.log(result)
+
+            }
+        }) 
+    */
+    } 
+    removeBiologicalMaterial(){
+        this.design.Blocking.value.forEach(block_design=>{
+            block_design['Plot design'].value.forEach(plot_design=>{
+                plot_design.Associate_material_source.value=null
+                plot_design.Associated_biological_material.value=[]
+                plot_design['Replicate number'].value=null
+            })
+        })
+        this.biologicalMaterialLoaded=false
+    }   
     ngOnDestroy(): void {
         //Called once, before the instance is destroyed.
         //Add 'implements OnDestroy' to the class.
-        
     }
+    //edit mode submission
     onSave(){
         this.globalService.update_document(this.model_key, this.design, this.model_type, false).pipe(first()).toPromise().then(
             data => {
@@ -368,6 +536,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             }
         );
     }
+    //create mode submission
     onAdd(){
         this.globalService.add(this.design, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
             data => {
@@ -384,13 +553,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             }
         );
     }
-    
-    
-
-
     onRemove(element:ExperimentalDesignInterface) {
         console.log(element)
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
+        const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true,width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -412,20 +577,23 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             //this.reloadComponent(['/projects'])
         });
     }
-
     removeBlock(_block){
         this.get_design.Blocking.value.forEach( (block, index) => {
           if(block === _block) this.get_design.Blocking.value.splice(index,1);
         });
-     }
+    }
     display_block(_block:BlockDesignInterface){
         console.log(_block['Block number'].value)
         console.log(this.get_design.Blocking.value)
         console.log(this.get_design.Blocking.value.filter(block =>
             block['Block number'].value===_block['Block number'].value
         ))
+        this.block_index=_block['Block number'].value-1
     }
-
+    display_plot(_plot:PlotDesignInterface){
+        console.log(_plot['Plot number'].value)
+        this.plot_index=_plot['Plot number'].value-1
+    }
     onSubmit(){
         console.warn(this.BlockDesignForm.value);
     }
@@ -435,35 +603,92 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     get total_column_per_block_control(){ return this.BlockDesignForm.get('totalColumnPerBlockControl')}
     get total_row_per_plot_control(){ return this.BlockDesignForm.get('totalRowPerPlotControl')}
      */
+    
+    get get_biological_material_loaded(){ return this.biologicalMaterialLoaded }
+    get get_observation_unit_loaded(){ return this.observationUnitLoaded }
     get totalBlockControl(){ return this.BlockDesignForm.get('totalBlockControl');}
     get totalBlockPerRowControl(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
     get totalRowPerBlockControl(){ return this.BlockDesignForm.get('totalRowPerBlockControl');}
     get totalColumnPerBlockControl(){ return this.BlockDesignForm.get('totalColumnPerBlockControl');}
     get totalRowPerPlotControl(){ return this.BlockDesignForm.get('totalRowPerPlotControl'); }
-    
     get get_BlockDesignForm(){ return this.BlockDesignForm }
     get get_displayedColumns(){ return this.displayedColumns }  
     get get_dataSource(){ return this.dataSource }
+    get get_design():ExperimentalDesign{ return this.design}
     get get_design_type(){ return this.block_design_type}
     get get_design_subtype(){ return this.block_design_subtype}
+    get get_parent_id(){ return this.parent_id }
+    get get_mode(){ return this.mode }
+    get get_model_id(){ return this.model_id }
+    get get_model_key(){ return this.model_key }
+    get get_role(){ return this.role }
+    get get_group_key(){ return this.group_key }
 
-    get get_parent_id(){
-        return this.parent_id
+    get_associated_material_source(_pd:PlotDesign){
+        if (_pd['Associate_material_source'].value!==null){
+            return _pd['Plot number'].value +": " +_pd['Associate_material_source'].value
+        }
+        else{
+            return _pd['Plot number'].value +": No material defined"
+        }
     }
-    get get_mode(){
-        return this.mode
+    get_observation_units(_expd:ExperimentalDesign):number|string{
+       // console.log(_expd)
+        if (_expd['Associated observation units'].value!==null){
+            return _expd['Associated observation units'].value
+        }
+        else{
+            return "No observation unit defined"
+        }
+
     }
-    get get_model_id(){
-        return this.model_id
+    get_bm(){
+        this.get_observation_units(this.design)
     }
-    get get_model_key(){
-        return this.model_key
+    get_samples(_expd:ExperimentalDesign){
+        if (_expd['Associated sample'].value!==null){
+            return _expd['Associated sample'].value
+        }
+        else{
+            return "No samples defined"
+        } 
     }
-    get get_role(){
-        return this.role
+    get_associated_biological_material(_pd:PlotDesign){
+        return _pd['Associated_biological_material'].value.length
     }
-    get get_group_key(){
-        return this.group_key
+    get_associated_sample(_pd:PlotDesign){
+        return _pd['Associated samples'].value.length  
+    }
+    get_replicate_number(_pd:PlotDesign):number|string{
+        if (_pd['Replicate number'].value!==null){
+            return _pd['Replicate number'].value
+        }
+        else{
+            return "No material defined"
+        }
+    }
+    get_observation_uuid(_pd:PlotDesign):number|string{
+        if (_pd['Observation uuid'].value===null || _pd['Observation uuid'].value===""){
+            return "No observations defined"
+        }
+        else{
+            return _pd['Observation uuid'].value
+            
+        }
+    }
+    changeTab(tab:string){
+        this.activeTab=tab
+        console.log(this.activeTab)
+    }
+    showBlockInfo(i,value){
+        console.log(value)
+        this.hideme[i] = !this.hideme[i];  
+        this.Index = i; 
+    }
+    showPlotInfo(j:number,value){
+        console.log(value)
+        this.secondhideme[j] = !this.secondhideme[j];  
+        this.SecondIndex = j; 
     }
     close(){
         this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });
@@ -471,6 +696,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
           //this.notify.emit("close_study")
           //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_id: this.parent_id, model_key: this.parent_id.split("/")[1], model_type:'investigation', activeTab: 'assStud', mode: "edit" , role: this.get_role, group_key: this.group_key} });
           // Same as delete project and all childs 
-      }
+    }
 
 }

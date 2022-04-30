@@ -5,7 +5,7 @@
 </div> -->
 
 <div *ngIf="get_result.length>0">
-  <div mat-dialog-content>
+  <div mat-dialog-content class="mat-typography">
     <p> Which {{model_type}}s do you plan to use ? </p>
   </div>
   <select name="select_template" size="1" (change)="onSelect($event.target.value)">
@@ -21,40 +21,56 @@
       </option>
     </ng-container>
   </select>
-
-  <ng-container *ngIf="model_type==='biological_material' && loaded">
-    <table style="width: 100%;" *ngIf="loaded" mat-table [dataSource]="get_sources[model_type]" matSort>
-      <!-- Position Column -->
-      <ng-container *ngFor="let column of get_columns[model_type] ; let i=index">
-        <!-- {{column}} -->
-        <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{get_columns_label[model_type][i]}} </th>
-          <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+  
+  <ng-container *ngIf="model_type==='biological_material'">
+    
+    
+      <ng-template #loading class="loaderHolder">
+        <div id="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="loading"></div>
+        </div>
+      </ng-template>
+      <table *ngIf="get_loaded;else loading" style="width: 100%;" mat-table [dataSource]="get_sources[model_type]" matSort>
+        <!-- Position Column -->
+        <ng-container *ngFor="let column of get_columns[model_type] ; let i=index">
+          <!-- {{column}} -->
+          <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{get_columns_label[model_type][i]}} </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+          </ng-container>
         </ng-container>
-      </ng-container>
 
-      <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterBmToggle() : null"
-            [checked]="get_bmselection.hasValue() && isAllBmSelected()"
-            [indeterminate]="get_bmselection.hasValue() && !isAllBmSelected()">
-          </mat-checkbox>
-        </th>
-        <td mat-cell class="flex-stretch" *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? get_bmselection.toggle(row) : null"
-            [checked]="get_bmselection.isSelected(row)"
-            [disabled]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId)">
-          </mat-checkbox>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterBmToggle() : null"
+              [checked]="get_bmselection.hasValue() && isAllBmSelected()"
+              [indeterminate]="get_bmselection.hasValue() && !isAllBmSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell class="flex-stretch" *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? get_bmselection.toggle(row) : null"
+              [checked]="get_bmselection.isSelected(row)"
+              [disabled]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="get_columns[model_type]"></tr>
-      <tr mat-row *matRowDef="let row; columns: get_columns[model_type];"
-        (click)="!get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && get_bmselection.toggle(row)"
-        [ngStyle]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && {'background-color': 'lightgrey'}">
-      </tr>
-    </table>
-    <mat-paginator [hidden] #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        <tr mat-header-row *matHeaderRowDef="get_columns[model_type]"></tr>
+        <tr mat-row *matRowDef="let row; columns: get_columns[model_type];"
+          (click)="!get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && get_bmselection.toggle(row)"
+          [ngStyle]="get_already_there.includes(row.materialId+'_'+row.biologicalMaterialId) && {'background-color': 'lightgrey'}">
+        </tr>
+      </table>
+      <mat-paginator [hidden] #bmpaginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
   </ng-container>
 
 
@@ -91,7 +107,7 @@
         [ngStyle]="get_already_there.includes(row.experimentalFactorType) && {'background-color': 'lightgrey'}"></tr>
 
     </table>
-    <mat-paginator [hidden] #paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    <mat-paginator [hidden] #paginatoref [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </ng-container>
 
   <div mat-dialog-actions>
@@ -104,7 +120,7 @@
 </div>
 
 <div *ngIf="get_result.length===0">
-  <div mat-dialog-content>
+  <div mat-dialog-content class="mat-typography">
     <p> There is no {{model_type.replace('_', ' ')}}s to use... Please add one to {{get_parent_id}} </p>
   </div>
   <div mat-dialog-actions>

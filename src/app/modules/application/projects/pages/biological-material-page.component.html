@@ -24,7 +24,6 @@
         <mat-menu #contextMenu="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Biological material</button>
         </mat-menu>
-        
         <mat-menu #contextSubMenu="matMenu">
             <button mat-menu-item (click)="add(false)">from original model template</button>
             <button mat-menu-item (click)="add(true)">from saved templates</button>
@@ -38,7 +37,7 @@
         <app-biological-material-table [data]="get_dataSource"></app-biological-material-table>
         </div> -->
         <div *ngIf="loaded===true">
-        <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" matSort cdkDropList
+            <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" matSort cdkDropList
         cdkDropListOrientation="horizontal"
         (cdkDropListDropped)="drop($event)">
             
@@ -72,11 +71,10 @@
             <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
             <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
         <!-- <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="example-second-footer-row"></tr> -->
-        </table>
-        <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
-
-        <!-- <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
-    </div>
+            </table>
+            <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
+            <!-- <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+        </div>
     </div>
     </mat-card>
     

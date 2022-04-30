@@ -110,6 +110,12 @@ export class EnvironmentVariablesPageComponent implements OnInit {
   get get_dataSource() {
     return this.dataSource
   }
+  reloadComponent() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "env", role: this.role, group_key: this.group_key } });
+  }
 
   onRemove(element: EnvironmentInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
@@ -118,7 +124,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
               console.log(data["message"])
               var message = element._id + " has been removed from your history !!"
               this.alertService.success(message)
-              this.ngOnInit()
+              this.reloadComponent()
           }
           else {
               this.alertService.error("this form contains errors! " + data["message"]);
@@ -141,7 +147,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

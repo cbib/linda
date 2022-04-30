@@ -56,7 +56,7 @@ export class GanttComponent implements OnInit {
     await this.get_vertices()
     //console.log(this.vertices)
     this.nodes = this.build_hierarchy(this.vertices)
-    //console.log(this.nodes)
+    console.log(this.nodes)
     this.data = this.build_gantt(this.nodes)
     //this.data = this.initialData2();
     //console.log(this.data)
@@ -154,141 +154,37 @@ export class GanttComponent implements OnInit {
       n => {
         let investigations = n.children
         for (let i = 0; i < investigations.length; i++) {
-          //const element = investigations[index];
-          /* investigations.forEach(
-            i => { */
-          var investigation = investigations[i];
-          //if (investigation)
-          //console.log(investigation)
-          var mgi = {} as ModelGant
-          mgi.pID = parseInt(investigation.model_key)
-          mgi.pName = investigation.name
-          mgi.pStart = ""
-          mgi.pEnd = ""
-          mgi.pClass = "ggroupblack"
-          mgi.pLink = ""
-          mgi.pMile = 0
-          mgi.pRes = "Project"
-          mgi.pComp = 14
-          mgi.pGroup = 1
-          mgi.pParent = 0
-          mgi.pOpen = 1
-          mgi.pDepend = ""
-          mgi.pCaption = ""
-          mgi.pNotes = "Some Notes text"
-          mymgs.push(mgi)
-          let studies = investigation.children
-          //console.log(studies)
-          let cpt = 0
+          if (investigations[i].model_key===this.model_key){
+            //const element = investigations[index];
+            /* investigations.forEach(
+              i => { */
+            var investigation = investigations[i];
+            //if (investigation)
+            //console.log(investigation)
+            var mgi = {} as ModelGant
+            mgi.pID = parseInt(investigation.model_key)
+            mgi.pName = investigation.name
+            mgi.pStart = ""
+            mgi.pEnd = ""
+            mgi.pClass = "ggroupblack"
+            mgi.pLink = ""
+            mgi.pMile = 0
+            mgi.pRes = "Project"
+            mgi.pComp = 14
+            mgi.pGroup = 1
+            mgi.pParent = 0
+            mgi.pOpen = 1
+            mgi.pDepend = ""
+            mgi.pCaption = ""
+            mgi.pNotes = "Some Notes text"
+            mymgs.push(mgi)
+            let studies = investigation.children
+            //console.log(studies)
+            let cpt = 0
 
-          studies.forEach(
-            s => {
-              if (s.children.length > 0 && !s.get_id().includes("data_files")) {
-                var mgs = {} as ModelGant
-                mgs.pID = parseInt(s.model_key)
-                mgs.pName = s.name
-                mgs.pStart = s.current_data_object['Start date of study']
-                mgs.pEnd = s.current_data_object['End date of study']
-                mgs.pClass = "gtaskblue"
-                mgs.pLink = ""
-                mgs.pMile = 0
-                mgs.pRes = "Study"
-                mgs.pComp = s.fill_percentage
-                mgs.pGroup = 1
-                mgs.pParent = parseInt(investigation.model_key)
-                mgs.pOpen = 1
-                mgs.pDepend = ""
-                mgs.pCaption = ""
-                mymgs.push(mgs)
-
-                //console.log(s.children)
-                s.children.forEach(child => {
-
-                  if (child.get_id().includes("events")) {
-                    var mge = {} as ModelGant
-                    let pname = "obsvar_" + child.model_key
-                    mge.pID = parseInt(child.model_key)
-                    //mge.pName = child.current_data_object['Event type']
-                    if (child.current_data_object['Event type']===""){
-                      mge.pName = child.current_data_object['Event accession number']
-                    }
-                    else{
-                      mge.pName = child.current_data_object['Event type']
-                    }
-                    mge.pStart = child.current_data_object['Event date']
-                    mge.pEnd = child.current_data_object['Event date']
-                    mge.pClass = "gmilestone"
-                    mge.pLink = ""
-                    mge.pMile = 1;
-                    mge.pRes = "Event"
-                    mge.pComp = 100;
-                    mge.pGroup = 0
-                    mge.pParent = parseInt(s.model_key)
-                    mge.pOpen = 1
-                    mge.pDepend = s.model_key
-                    mge.pCaption = child.current_data_object['Event type']
-                    mge.pNotes = child.current_data_object['Event type'] + " " + child.current_data_object['Event description'] + " " + child.current_data_object['Event accession number']
-                    mymgs.push(mge)
-                  }
-                  else if (child.get_id().includes("environments")) {
-                    var mge = {} as ModelGant
-                    let pname = "obsvar_" + child.model_key
-                    mge.pID = parseInt(child.model_key)
-                    //mge.pName = child.current_data_object['Environment parameter']
-                    if (child.current_data_object['Environment parameter']===""){
-                      mge.pName = child.current_data_object['Environment parameter accession number']
-                    }
-                    else{
-                      mge.pName = child.current_data_object['Environment parameter']
-                    }
-                    mge.pStart = s.current_data_object['Start date of study']
-                    mge.pEnd = s.current_data_object['End date of study']
-                    mge.pClass = "gtaskgreen"
-                    mge.pLink = ""
-                    mge.pMile = 0;
-                    mge.pRes = "Environmental parameter"
-                    mge.pComp = 100;
-                    mge.pGroup = 0
-                    mge.pParent = parseInt(s.model_key)
-                    mge.pOpen = 1
-                    mge.pDepend = s.model_key
-                    mge.pCaption = child.current_data_object['Environment parameter']
-                    mge.pNotes = child.current_data_object['Environment parameter'] + " " + child.current_data_object['Environment parameter accession number'] + " - value(s): " + child.current_data_object['Environment parameter value']
-                    mymgs.push(mge)
-
-                  }
-                  else if (child.get_id().includes("experimental_factors")) {
-                    //console.log(child.current_data_object)
-                    var mge = {} as ModelGant
-                    let pname = "obsvar_" + child.model_key
-                    mge.pID = parseInt(child.model_key)
-                    if (child.current_data_object['Experimental Factor type']===""){
-                      mge.pName = child.current_data_object['Experimental Factor accession number']
-                    }
-                    else{
-                      mge.pName = child.current_data_object['Experimental Factor type']
-                    }
-                    //mge.pName = child.current_data_object['Experimental Factor type']
-                    mge.pStart = s.current_data_object['Start date of study']
-                    mge.pEnd = s.current_data_object['End date of study']
-                    mge.pClass = "gtaskpurple"
-                    mge.pLink = ""
-                    mge.pMile = 0;
-                    mge.pRes = "Experimental Factor"
-                    mge.pComp = 100;
-                    mge.pGroup = 0
-                    mge.pParent = parseInt(s.model_key)
-                    mge.pOpen = 1
-                    mge.pDepend = s.model_key
-                    mge.pCaption = child.current_data_object['Experimental Factor type']
-                    mge.pNotes = "Description: " + child.current_data_object['Experimental Factor description'] + " " + child.current_data_object['Experimental Factor type'] + " " + child.current_data_object['Experimental Factor accession number'] + " - value(s): " + child.current_data_object['Experimental Factor values']
-                    mymgs.push(mge)
-                  }
-
-                });
-              }
-              else {
-                if (!s.get_id().includes("data_files")){
+            studies.forEach(
+              s => {
+                if (s.children.length > 0 && !s.get_id().includes("data_files")) {
                   var mgs = {} as ModelGant
                   mgs.pID = parseInt(s.model_key)
                   mgs.pName = s.name
@@ -299,17 +195,123 @@ export class GanttComponent implements OnInit {
                   mgs.pMile = 0
                   mgs.pRes = "Study"
                   mgs.pComp = s.fill_percentage
-                  mgs.pGroup = 0
+                  mgs.pGroup = 1
                   mgs.pParent = parseInt(investigation.model_key)
                   mgs.pOpen = 1
                   mgs.pDepend = ""
                   mgs.pCaption = ""
                   mymgs.push(mgs)
-                } 
-                
-              }
-            });
-          cpt += 1
+
+                  //console.log(s.children)
+                  s.children.forEach(child => {
+
+                    if (child.get_id().includes("events")) {
+                      var mge = {} as ModelGant
+                      let pname = "obsvar_" + child.model_key
+                      mge.pID = parseInt(child.model_key)
+                      //mge.pName = child.current_data_object['Event type']
+                      if (child.current_data_object['Event type']===""){
+                        mge.pName = child.current_data_object['Event accession number']
+                      }
+                      else{
+                        mge.pName = child.current_data_object['Event type']
+                      }
+                      mge.pStart = child.current_data_object['Event date']
+                      mge.pEnd = child.current_data_object['Event date']
+                      mge.pClass = "gmilestone"
+                      mge.pLink = ""
+                      mge.pMile = 1;
+                      mge.pRes = "Event"
+                      mge.pComp = 100;
+                      mge.pGroup = 0
+                      mge.pParent = parseInt(s.model_key)
+                      mge.pOpen = 1
+                      mge.pDepend = s.model_key
+                      mge.pCaption = child.current_data_object['Event type']
+                      mge.pNotes = child.current_data_object['Event type'] + " " + child.current_data_object['Event description'] + " " + child.current_data_object['Event accession number']
+                      mymgs.push(mge)
+                    }
+                    else if (child.get_id().includes("environments")) {
+                      var mge = {} as ModelGant
+                      let pname = "obsvar_" + child.model_key
+                      mge.pID = parseInt(child.model_key)
+                      //mge.pName = child.current_data_object['Environment parameter']
+                      if (child.current_data_object['Environment parameter']===""){
+                        mge.pName = child.current_data_object['Environment parameter accession number']
+                      }
+                      else{
+                        mge.pName = child.current_data_object['Environment parameter']
+                      }
+                      mge.pStart = s.current_data_object['Start date of study']
+                      mge.pEnd = s.current_data_object['End date of study']
+                      mge.pClass = "gtaskgreen"
+                      mge.pLink = ""
+                      mge.pMile = 0;
+                      mge.pRes = "Environmental parameter"
+                      mge.pComp = 100;
+                      mge.pGroup = 0
+                      mge.pParent = parseInt(s.model_key)
+                      mge.pOpen = 1
+                      mge.pDepend = s.model_key
+                      mge.pCaption = child.current_data_object['Environment parameter']
+                      mge.pNotes = child.current_data_object['Environment parameter'] + " " + child.current_data_object['Environment parameter accession number'] + " - value(s): " + child.current_data_object['Environment parameter value']
+                      mymgs.push(mge)
+
+                    }
+                    else if (child.get_id().includes("experimental_factors")) {
+                      //console.log(child.current_data_object)
+                      var mge = {} as ModelGant
+                      let pname = "obsvar_" + child.model_key
+                      mge.pID = parseInt(child.model_key)
+                      if (child.current_data_object['Experimental Factor type']===""){
+                        mge.pName = child.current_data_object['Experimental Factor accession number']
+                      }
+                      else{
+                        mge.pName = child.current_data_object['Experimental Factor type']
+                      }
+                      //mge.pName = child.current_data_object['Experimental Factor type']
+                      mge.pStart = s.current_data_object['Start date of study']
+                      mge.pEnd = s.current_data_object['End date of study']
+                      mge.pClass = "gtaskpurple"
+                      mge.pLink = ""
+                      mge.pMile = 0;
+                      mge.pRes = "Experimental Factor"
+                      mge.pComp = 100;
+                      mge.pGroup = 0
+                      mge.pParent = parseInt(s.model_key)
+                      mge.pOpen = 1
+                      mge.pDepend = s.model_key
+                      mge.pCaption = child.current_data_object['Experimental Factor type']
+                      mge.pNotes = "Description: " + child.current_data_object['Experimental Factor description'] + " " + child.current_data_object['Experimental Factor type'] + " " + child.current_data_object['Experimental Factor accession number'] + " - value(s): " + child.current_data_object['Experimental Factor values']
+                      mymgs.push(mge)
+                    }
+
+                  });
+                }
+                else {
+                  if (!s.get_id().includes("data_files")){
+                    var mgs = {} as ModelGant
+                    mgs.pID = parseInt(s.model_key)
+                    mgs.pName = s.name
+                    mgs.pStart = s.current_data_object['Start date of study']
+                    mgs.pEnd = s.current_data_object['End date of study']
+                    mgs.pClass = "gtaskblue"
+                    mgs.pLink = ""
+                    mgs.pMile = 0
+                    mgs.pRes = "Study"
+                    mgs.pComp = s.fill_percentage
+                    mgs.pGroup = 0
+                    mgs.pParent = parseInt(investigation.model_key)
+                    mgs.pOpen = 1
+                    mgs.pDepend = ""
+                    mgs.pCaption = ""
+                    mymgs.push(mgs)
+                  } 
+                  
+                }
+              });
+            cpt += 1
+          }
         }
         //console.log(mymgs)
       });

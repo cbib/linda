@@ -227,7 +227,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     // }
     onAccessGroup(_group_key: string) {
         //console.log(this.currentUser)
-        const dialogRef = this.dialog.open(GroupLoginComponent, { width: '500px', data: { group_key: _group_key, current_user: this.currentUser } });
+        const dialogRef = this.dialog.open(GroupLoginComponent, {disableClose: true, width: '500px', data: { group_key: _group_key, current_user: this.currentUser } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 //console.log(result['logged'])
@@ -247,7 +247,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     }
     onShare(element: InvestigationInterface) {
         //console.log(this.currentUser)
-        const dialogRef = this.dialog.open(ShareProject, { width: '500px', data: { model_id: element._id } });
+        const dialogRef = this.dialog.open(ShareProject, {disableClose: true, width: '500px', data: { model_id: element._id } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
 
@@ -262,7 +262,8 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
                             //console.log(data["_id"])
                             var message = "A new project " + data["_id"] + " has been successfully shared with " + guest_person['Person name'] + " !!"
                             this.alertService.success(message)
-                            this.router.navigate(['/projects_page']);
+                            //this.router.navigate(['/projects_page']);
+                            this.router.navigate(['/projects_page'], { queryParams: { activeTab: this.activeTab } });
                             return true;
                         }
                         else {
@@ -295,7 +296,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         });
     }
     onImport() {
-        const dialogRef = this.dialog.open(ProjectLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, group_key: this.group_key } });
+        const dialogRef = this.dialog.open(ProjectLoaderComponent, {disableClose: true, width: '1000px', data: { parent_id: this.parent_id, group_key: this.group_key } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -311,7 +312,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     }
     onExport(element: InvestigationInterface) {
         //console.log(element)
-        const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: true, is_investigation: true } });
+        const dialogRef = this.dialog.open(ExportComponent, {disableClose: true, width: '500px', data: { expandable: true, is_investigation: true } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -332,7 +333,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         var model_type = this.globalService.get_model_type(element._id)
         this.globalService.get_parent(element._id).toPromise().then(parent_data => {
             var is_investigation = parent_data["_from"].includes("users")
-            const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: true, is_investigation: true } });
+            const dialogRef = this.dialog.open(ExportComponent, {disableClose: true, width: '500px', data: { expandable: true, is_investigation: true } });
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
                     if (result.event == 'Confirmed') {
@@ -369,7 +370,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/design'])
     }
     async onRemove(element: InvestigationInterface) {
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
+        const dialogRef = this.dialog.open(ConfirmationComponent, {disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {

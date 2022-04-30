@@ -401,7 +401,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         //this.show_spinner = true;
         //console.log(key)
         //console.log(subclass_of)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple, sub_class_of:subclass_of, model_type:this.model_type} });
+        const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple, sub_class_of:subclass_of, model_type:this.model_type} });
         // dialogRef..afterOpened().subscribe(result => {
         //     this.show_spinner = false;
         // })

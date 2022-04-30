@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild,  Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild,  Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { GlobalService, AlertService, OntologiesService } from '../../../services';
 import { first } from 'rxjs/operators';
@@ -7,13 +7,27 @@ import { UniqueIDValidatorComponent } from '../validators/unique-id-validator.co
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
 import * as uuid from 'uuid';
+import * as _ from "lodash";
 import { SelectionComponent } from '../dialogs/selection.component';
 import { SampleSelectionComponent } from '../dialogs/sample-selection.component';
 import {JoyrideService} from 'ngx-joyride';
-import { BiologicalMaterialDialogModel } from '../../../models/biological_material_models'
+import { BiologicalMaterialDialogModel, BiologicalMaterialTableModel } from '../../../models/biological_material_models'
 import { ExperimentalFactorDialogModel } from '../../../models/experimental_factor_models' 
 import { UserInterface } from 'src/app/models/linda/person';
 import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
+import { ObservationUnit, ObservationUnitCompacted, ObservationUnitInterface } from 'src/app/models/linda/observation-unit';
+import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatPaginator, MatSort, MatTable, MatTabHeader,
+  MatHeaderRow, MatHeaderCell, MatHeaderCellDef, MatHeaderRowDef,
+  MatSortHeader, MatRow, MatRowDef,  MatCell, MatCellDef
+} from '@angular/material';
+import { ObservationUnitTableModel } from 'src/app/models/observation_unit_models';
+import { Sample } from 'src/app/models/linda/sample';
+import { ConfirmationComponent } from '../dialogs/confirmation.component';
+
+
+
 
 @Component({
   selector: 'app-observation-unit-form',
@@ -28,10 +42,17 @@ export class ObservationUnitFormComponent implements OnInit {
   @Input() model_key: string;
   @Input() model_type: string;
   @Input() mode: string;
+  @Input('role') role: string;
+  @Input('grand_parent_id') grand_parent_id: string;
+  @Input('group_key') group_key: string;
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
-
+  @ViewChild('paginator', { static: true }) paginator: MatPaginator;
+  @ViewChild('bmpaginator', { static: true }) bmpaginator: MatPaginator;
+  @ViewChild('samplepaginator', { static: true }) samplepaginator: MatPaginator;
   observationUnitTable: FormGroup;
+  secondObservationUnitTable: FormGroup;
   observationUnitControl: FormArray;
+  secondObservationUnitControl: FormArray;
   biologicalMaterialControl: FormArray;
   experimentalFactorControl: FormArray;
   sampleControl: FormArray;
@@ -45,11 +66,15 @@ export class ObservationUnitFormComponent implements OnInit {
   private startfilling: boolean = false;
   ontology_type: string;
   show_spinner: boolean = false;
-  ou_index_row=0
-  mat_index_row = 0
-  observation_id = ""
-  biological_material_id = ""
-  experimental_factor_id = ""
+  obs_loaded:boolean= false
+  mat_loaded:boolean= false
+  sample_loaded:boolean= false
+  ou_index_row:number=0
+  mat_index_row:number = 0
+  observation_id: string = ""
+  biological_material_id: string = ""
+  experimental_factor_id: string = ""
+  sample_id: string="";
   selected_term: OntologyTerm
   selected_set: []
   validated_term = {}
@@ -65,6 +90,40 @@ export class ObservationUnitFormComponent implements OnInit {
   bm_data = []
   ef_data = []
   sample_data = []
+  displayedColumns: string[] = [
+    'Observation unit ID', 
+    'External ID', 
+    'Observation unit type',
+    'Observation Unit factor value', 
+    'Spatial distribution', 
+    'obsUUID', 
+    'Edit'];
+  bmDisplayedColumns:string[] =[
+    'biologicalMaterialId',
+    'materialId',
+    'genus',
+    'species',
+    /* 'lindaID',
+    'obsUUID', */
+    'bmUUID',
+    'Samples'
+  ]
+  sampleDisplayedColumns:string[] =[
+    'Sample ID',
+    'Sample description',
+    /* 'bmUUID',
+    'obsUUID',
+    'sampleUUID', */
+    'Plant structure development stage',
+    'Plant anatomical entity',
+    'Edit'];
+
+  private obsDataSource: MatTableDataSource<ObservationUnitCompacted>;
+  private DataSource: MatTableDataSource<any>;
+  private bmDataSource:MatTableDataSource<BiologicalMaterialDialogModel>
+  private sampleDataSource:MatTableDataSource<any>
+  private original_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
+  
 
 
   constructor(private fb: FormBuilder, public globalService: GlobalService,
@@ -74,22 +133,34 @@ export class ObservationUnitFormComponent implements OnInit {
     private alertService: AlertService,
     private route: ActivatedRoute,
     private readonly joyrideService: JoyrideService,
+    private _cdr: ChangeDetectorRef,
     public dialog: MatDialog) {
-    this.route.queryParams.subscribe(
-      params => {
-        this.level = params['level'];
-        this.model_type = params['model_type'];
-        this.model_key = params['model_key'];
-        this.mode = params['mode'];
-        this.parent_id = params['parent_id']
-      }
-    );
-    console.log(this.model_key)
-    
+      this.route.queryParams.subscribe(
+        params => {
+          this.level = params['level'];
+          this.model_type = params['model_type'];
+          this.model_key = params['model_key'];
+          this.mode = params['mode'];
+          this.parent_id = params['parent_id']
+          this.role=params['role']
+          this.grand_parent_id=params['grand_parent_id']
+          this.group_key=params['group_key']
+        }
+      );
+      this.ou_index_row=0
+      this.mat_index_row=0
+      this.observationUnitTable = this.fb.group({
+        observationUnitRows: this.fb.array([]),
+        biologicalMaterialRows: this.fb.array([]),
+        experimentalFactorRows: this.fb.array([]),
+        sampleRows: this.fb.array([]),
+      });
 
-  }
-
-  async ngOnInit() {
+    this.obsDataSource = new MatTableDataSource([]);
+    this.DataSource = new MatTableDataSource([]);
+    this.bmDataSource = new MatTableDataSource([])
+    this.sampleDataSource = new MatTableDataSource([])
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.mode_table = false
     this.observationUnitTouchedRows = [];
     this.biologicalMaterialTouchedRows = [];
@@ -102,25 +173,26 @@ export class ObservationUnitFormComponent implements OnInit {
     this.mat_index_row = 0
     this.observation_id = ""
     this.experimental_factor_id = ""
-    this.observationUnitTable = this.fb.group({
-      observationUnitRows: this.fb.array([]),
-      biologicalMaterialRows: this.fb.array([]),
-      experimentalFactorRows: this.fb.array([]),
-      sampleRows: this.fb.array([]),
-    });
-    //this.get_model()
-    console.log(this.model_key)
-    console.log(this.model_type)
-    if (this.model_key !== "") {
-      this.get_model_by_key();
-    }
-    await this.get_model()
-    this.onClickTour()
-
+    this.build_form()
+  }
+  async ngOnInit() {
+    this.ou_index_row = 0
+    this.mat_index_row = 0
+    //this.onClickTour()
   }
   
-  
-  
+  ngAfterViewChecked(): void {
+    this._cdr.detectChanges();
+  }
+  ngAfterViewInit() {
+    this.ou_index_row = 0
+    this.mat_index_row = 0
+    //this.obsDataSource.paginator = this.paginator;
+    this.DataSource.paginator = this.paginator;
+    this.bmDataSource.paginator = this.bmpaginator;
+    this.sampleDataSource.paginator= this.samplepaginator
+    this._cdr.detectChanges()
+  }
   ngAfterOnInit() {
     this.ou_index_row = 0
     this.mat_index_row = 0
@@ -128,34 +200,89 @@ export class ObservationUnitFormComponent implements OnInit {
     this.biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
     this.experimentalFactorControl = this.observationUnitTable.get('experimentalFactorRows') as FormArray;
     this.sampleControl = this.observationUnitTable.get('sampleRows') as FormArray;
-
-
-  }
-  onTaskAdd(event) {
-    this.startfilling = false;
-    this.keys.forEach(attr => {
-      if (this.observationUnitTable.value[attr] !== "") {
-        this.startfilling = true;
-      }
-    });
-  }
-  addFactorValues(index: number, factor_value: string) {
+  } 
+  async build_form(){
+    await this.get_model()
     const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    var fv = observationUnitControl.controls[index].value["Observation Unit factor value"]
-    if (fv) {
-      fv += "/" + factor_value
-    }
-    else {
-      fv = factor_value
-    }
+    if (this.mode !== "create") {
+      this.model_to_edit= await this.globalService.get_by_key(this.model_key, this.model_type).toPromise()
+      this.bm_data = []
+      this.ef_data = []
+      this.sample_data = []
+      for (var i = 0; i < this.model_to_edit["Observation unit ID"].length; i++) {
+        observationUnitControl.push(this.initiateObservationUnitForm(this.mode, i));
+      }
+      this.DataSource = new MatTableDataSource((this.observationUnitTable.get('observationUnitRows') as FormArray).controls); 
+      this.DataSource.paginator = this.paginator;
+      this.observation_id = this.model_to_edit['obsUUID'][0]
+      this.obs_loaded=true
+      const observation_unit_childs_data=await this.globalService.get_all_observation_unit_childs(this.model_to_edit['_id'].split("/")[1]).toPromise()//.then(observation_unit_childs_data => {
+          console.log(observation_unit_childs_data)
+          //get all biological materials
+          for (var i = 0; i < observation_unit_childs_data.length; i++) {
+            var child_id: string = observation_unit_childs_data[i]['e']['_to']
+            if (child_id.includes("biological_materials")) {
+             
+              var tmp_bm: [] = observation_unit_childs_data[i]['e']['biological_materials']
+              this.bm_data = this.bm_data.concat(tmp_bm)
+              this.biological_material_id = this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)[0]['bmUUID']
+              this.bmDataSource = new MatTableDataSource(this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)); 
+              this.bmDataSource.paginator = this.bmpaginator;
+              this._cdr.detectChanges()
+              this.mat_loaded=true
+            }
+            else if (child_id.includes("experimental_factors")) {
+              var tmp_ef: [] = observation_unit_childs_data[i]['e']['experimental_factors']
+              this.ef_data = this.ef_data.concat(tmp_ef)
+            }
+            //type sample childs
+            else {
+              var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
+              let sample:Sample=new Sample(sample_data['Sample ID'],sample_data['Sample External ID'],sample_data['Plant anatomical entity'],sample_data['Plant structure development stage'],sample_data['Sample description'],sample_data['Collection date'],sample_data['bmUUID'],sample_data['obsUUID'],sample_data['sampleUUID'])
+              /* var sample_keys = Object.keys(sample_data);
+              var sample = {}
+              sample_keys.forEach(key => {
+                if (!key.startsWith("_") && !key.startsWith("Definition")) {
+                  sample[key] = sample_data[key]
+                }
+              }); */
+              this.sample_data.push(sample)
+              // var tmp_samples:[]=observation_unit_childs_data[i]['e']['samples']
+              // samples=samples.concat(tmp_samples)
+            }
+          }
+          if (this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id).length>0){
+            this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
+            this.sample_id=this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)[0]['sampleUUID']
+            this.sampleDataSource.paginator = this.samplepaginator;
+            this._cdr.detectChanges()
+            this.sample_loaded=true
+          }
+          
+          
+          //console.log(this.bmDataSource)
+          console.warn('Bm data : ', this.bm_data)
+          console.warn('Ef data : ',this.ef_data)
+          console.warn('sample data : ',this.sample_data)
 
-    observationUnitControl.controls[index].patchValue({ "Observation Unit factor value": fv })
+          this.original_data=this.build_result()
+          /* for (var i = 0; i < observationUnitControl.controls.length; i++) {
+            let obs_unit:{} = observationUnitControl.controls[i].value
+            //console.log(obs_unit)
+            this.original_data.observation_units.push(obs_unit)
+          }
+          this.original_data.biological_materials=this.bm_data
+          this.original_data.experimental_factors=this.ef_data
+          this.original_data.samples=this.sample_data */
+
+          
+        //});
+    }
   }
-
-  get_model() {
+  async get_model() {
     this.model = [];
     //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
-    this.globalService.get_model(this.model_type).toPromise().then(data => {
+    const data=await this.globalService.get_model(this.model_type).toPromise()
       this.model = data;
       this.keys = Object.keys(this.model);
       this.cleaned_model = []
@@ -173,202 +300,86 @@ export class ObservationUnitFormComponent implements OnInit {
           this.cleaned_model.push(dict)
         }
       }
-      const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
       this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
-      if (this.mode !== "create") {
-        console.log(this.model_to_edit)
-        this.bm_data = []
-        this.ef_data = []
-        this.sample_data = []
-
-        for (var i = 0; i < this.model_to_edit["Observation unit ID"].length; i++) {
-          observationUnitControl.push(this.initiateObservationUnitForm(this.mode, i));
-
-        }
-        this.observation_id = this.model_to_edit['obsUUID'][0]
-        this.globalService.get_all_observation_unit_childs(this.model_to_edit['_id'].split("/")[1]).toPromise().then(
-          observation_unit_childs_data => {
-            console.log(observation_unit_childs_data)
-            //get all biological materials
-
-            for (var i = 0; i < observation_unit_childs_data.length; i++) {
-              var child_id: string = observation_unit_childs_data[i]['e']['_to']
-              //console.log(observation_unit_childs_data[i])
-
-              if (child_id.includes("biological_materials")) {
-                //console.log(child_id)
-                //console.log(observation_unit_childs_data[i]['e']['biological_materials'])
-                this.biological_material_id = observation_unit_childs_data[i]['e']['biological_materials'][0]['bmUUID']
-                var tmp_bm: [] = observation_unit_childs_data[i]['e']['biological_materials']
-                this.bm_data = this.bm_data.concat(tmp_bm)
-
-              }
-              else if (child_id.includes("experimental_factors")) {
-                //console.log(child_id)
-                //console.log(observation_unit_childs_data[i]['e']['experimental_factors'])
-                var tmp_ef: [] = observation_unit_childs_data[i]['e']['experimental_factors']
-                this.ef_data = this.ef_data.concat(tmp_ef)
-              }
-              //type sample childs
-              else {
-                //console.log(child_id)
-
-                var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
-                //console.log(sample_data)
-                var sample_keys = Object.keys(sample_data);
-                var sample = {}
-                sample_keys.forEach(key => {
-                  if (!key.startsWith("_") && !key.startsWith("Definition")) {
-                    sample[key] = sample_data[key]
-                  }
-                });
-                this.sample_data.push(sample)
-                // var tmp_samples:[]=observation_unit_childs_data[i]['e']['samples']
-                // samples=samples.concat(tmp_samples)
-
-              }
-            }
-            console.log(this.bm_data)
-            console.log(this.ef_data)
-            console.log(this.sample_data)
-
-
-
-          }
-        );
-
-
-      }
-
-
-    });
   }
-  get_model_by_key() {
-    this.model_to_edit = [];
-    this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
-      this.model_to_edit = data;
-      console.log(this.model_to_edit)
-      //this.modelForm.patchValue(this.model_to_edit);
-    });
-  }
-
-  get_experimental_factor(observation_id: string) {
-    var obs_ef_data = []
-    this.ef_data.forEach(element => {
-      if (element.obsUUID === observation_id) {
-        obs_ef_data.push(element)
-      }
-    });
-
-    return obs_ef_data
-  }
-
   initiateObservationUnitForm(mode: string = "create", index: number = 0): FormGroup {
-    // console.log(this.cleaned_model)
-
-
+    //console.log(this.model_to_edit)
+    //console.log(this.cleaned_model)
     let attributeFilters = {};
     this.cleaned_model.forEach(attr => {
+      //console.log(attr)
       var value = ''
       if (mode !== "create") {
         value = this.model_to_edit[attr["key"]][index]
+        ////console.log(value)
       }
-
       this.validated_term[attr["key"]] = { selected: false, values: "" }
       if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
         // if (mode !== "create") {
         //   value = this.model_to_edit[attr["key"]][index]
         // }
-        if (attr["key"].includes("ID")) {
+        if (attr["key"].includes("Observation unit ID")) {
           //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
           //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+          //attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
+
         }
         else if (attr["key"].includes("Project Name")) {
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
         }
         else if (attr["key"].includes("Study Name")) {
           attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
-      }
+        }
         else {
           attributeFilters[attr["key"]] = [value];
         }
+
+
         if (mode === "create") {
-          attributeFilters['obsUUID'] = uuid.v4()
+          attributeFilters['obsUUID'] = [uuid.v4()]
         }
         else {
-          attributeFilters['obsUUID'] = this.model_to_edit["obsUUID"][index]
+          attributeFilters['obsUUID'] = [this.model_to_edit["obsUUID"][index]]
         }
-
-        this.observation_id = attributeFilters['obsUUID']
+        //this.observation_id = attributeFilters['obsUUID']
       }
-
-
+      ////console.log('attributes good')
     });
-    //console.log(attributeFilters)
-    //console.log(attributeFilters)
+    if (index===0){
+      this.observation_id = attributeFilters['obsUUID']
+      
+    }
+    
+    /* let obs_unit_model:ObservationUnitCompacted= new ObservationUnitCompacted();
+    obs_unit_model['Observation unit ID']=data.data['Observation unit ID'][index]
+    obs_unit_model['External ID']=data.data['External ID'][index]
+    obs_unit_model['Observation unit type']=data.data['Observation unit type'][index]
+    obs_unit_model['Observation unit factor value']=data.data['Observation Unit factor value'][index]
+    obs_unit_model['Spatial distribution']=data.data['Spatial distribution'][index]
+    obs_unit_model['obsUUID']=data.data['obsUUID'][index]
+    data_source.push(obs_unit_model)
 
+
+    const randomElementIndex = Math.floor(Math.random() * ELEMENT_DATA.length);
+    this.dataToDisplay = [...this.dataToDisplay, ELEMENT_DATA[randomElementIndex]];
+    this.dataSource.setData(this.dataToDisplay); */
+    //console.log(attributeFilters)
+    ////console.log(attributeFilters)
     return this.formBuilder.group(attributeFilters);
   }
-
-
-
-  ObservationTableRowSelected(i) {
-
-    this.ou_index_row = i
-
-    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    this.observation_id = observationUnitControl.controls[i].value['obsUUID']
-    const biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
-    if (biologicalMaterialControl.controls.length > 0) {
-      this.biological_material_id = biologicalMaterialControl.controls[0].value['bmUUID']
-      console.log(this.biological_material_id)
-    }
-    //console.log(control.controls[i].value)
-  }
-
-  MaterialTableRowSelected(i) {
-    //console.log(i)
-    this.mat_index_row = i
-    this.biological_material_id = this.bm_data[i]['bmUUID']
-  }
-
-
   addObservationUnitRow() {
     const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
     observationUnitControl.push(this.initiateObservationUnitForm("create"));
-    //this.index_row+=1
-    //console.log(this.material_id)
-    //console.log(this.index_row)
-  }
-  // addBiologicalMaterialRow() {
-  //   //console.log(this.material_id)
-  //   if (this.material_id === "") {
-  //     this.alertService.error("you need to select or create a material first !!!!")
-  //   }
-  //   else {
-  //     const biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
-  //     biologicalMaterialControl.push(this.initiateBiologicalMaterialForm());
-  //   }
-  // }
-
-  deleteSampleRow(index: number) {
-
-    this.sample_data.splice(index, 1);
-  }
-
-  deletebiologicalMaterialRow(index: number) {
-
-    if (index > -1) {
-      //neeed to remeove all sample associated with this 
-
-      this.sample_data = this.sample_data.reduce((p, c) => (c['bmUUID'] !== this.bm_data[index]['bmUUID'] && p.push(c), p), []);
-      this.bm_data.splice(index, 1);
-    }
+    this.DataSource = new MatTableDataSource((this.observationUnitTable.get('observationUnitRows') as FormArray).controls); 
+    this.DataSource.paginator = this.paginator;
+    this._cdr.detectChanges()
+    this.obs_loaded=true
+    this.biological_material_id=""
   }
   deleteObservationUnitRow(index: number) {
-    //console.log(this.index_row)
-    //console.log(index)
+    ////console.log(this.index_row)
+    ////console.log(index)
     
 
     if (index > -1) {
@@ -382,42 +393,35 @@ export class ObservationUnitFormComponent implements OnInit {
     }
 
   }
-  deleteExperimentalFactorRow(index: number) {
-    if (index > -1) {
-      this.ef_data.splice(index, 1);
+  ObservationTableRowSelected(i:number) {
+    //console.log(i)
+    this.ou_index_row = i
+    this.mat_index_row = 0
+    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    this.observation_id = observationUnitControl.controls[i].value['obsUUID']
+    
+    //console.log(this.observation_id)
+    this.bmDataSource = new MatTableDataSource(this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)); 
+    this.bmDataSource.paginator = this.bmpaginator;
+    this._cdr.detectChanges()
+    const biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
+    if (this.get_filtered_bm_data.length > 0) {
+      this.biological_material_id = this.get_filtered_bm_data[0]['bmUUID']
+      //console.log(this.biological_material_id)
+      this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
+      this.sampleDataSource.paginator = this.samplepaginator;
+      this._cdr.detectChanges()
+      if (this.get_filtered_sample_data.length > 0) {
+        this.sample_id = this.get_filtered_sample_data[0]['sampleUUID']
+        //console.log(this.biological_material_id)
+      }
     }
   }
 
-
-  get getObservationUnitFormControls() {
-
-    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    return observationUnitControl;
-  }
-  // get getBiologicalMaterialFormControls() {
-  //   const biologicalMaterialControl = this.observationUnitTable.get('biologicalMaterialRows') as FormArray;
-
-  //   return biologicalMaterialControl;
-  // }
-  // get getGeneralFormControls() {
-  //   const generalControl = this.observationUnitTable.get('generalRows') as FormArray;
-  //   return generalControl;
-
-  // }
-
-  get get_bm_field() {
-    return Object.keys(this.bm_data[0]);
-  }
-  get get_ef_field() {
-    return Object.keys(this.ef_data[0]);
-  }
-  get get_sample_field() {
-    return Object.keys(this.sample_data[0]);
-  }
-  
+  //BM
   addBiologicalMaterial() {
     const dialogRef = this.dialog.open(SelectionComponent,
-      { width: '1400px', autoFocus: true, disableClose: true, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: this.get_biological_material_list() } }
+      {  disableClose: true,width: '1400px', autoFocus: true, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", values: [], already_there: this.get_biological_material_list(), observation_id:this.observation_id } }
     );
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -427,32 +431,39 @@ export class ObservationUnitFormComponent implements OnInit {
           var bm: BiologicalMaterialDialogModel
           bm = biologicalMaterialData[h]
           bm.bmUUID = uuid.v4()
-          bm.obsUUID = this.observation_id
+          //bm['Samples']=0
+          //bm.obsUUID = this.observation_id
           this.biological_material_id = bm.bmUUID
           this.bm_data.push(bm)
-
         }
+        console.log(result)
+        this.bmDataSource = new MatTableDataSource(this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)); 
+        
+        this.bmDataSource.paginator = this.bmpaginator;
+        this._cdr.detectChanges()
+        this.mat_loaded=true
+        
       }
     });
-        // var material_ids=result['material_ids']
+/*         // var material_ids=result['material_ids']
         // var biological_material_ids=result['biological_material_ids']
         // var mat_index=0
         // var bio_mat_index=0
 
         // for (var h =0;h<biologicalMaterialData.length;h++){
-        //   console.log('biologicalMaterialData index: ', h)
+        //   //console.log('biologicalMaterialData index: ', h)
         //   for (var i =0;i<material_ids.length;i++){
-        //     console.log('MaterialData index: ', i, ' material_ids[',i,']: ', material_ids[i])
+        //     //console.log('MaterialData index: ', i, ' material_ids[',i,']: ', material_ids[i])
         //     if (biologicalMaterialData[h]["Material source ID (Holding institute/stock centre, accession)"].indexOf(material_ids[i])!==-1){
         //       var bm={}
         //       mat_index=biologicalMaterialData[h]["Material source ID (Holding institute/stock centre, accession)"].indexOf(material_ids[i])
-        //       console.log('Mat index in whole obj: ', mat_index)
+        //       //console.log('Mat index in whole obj: ', mat_index)
         //       bio_mat_index=biologicalMaterialData[h]["Biological material ID"][mat_index].indexOf(biological_material_ids[i])
         //       var keys = Object.keys(biologicalMaterialData[h]);
         //       keys.forEach(key => {
 
         //         if (!key.startsWith("_") ) {
-        //           console.log(key, biologicalMaterialData[h][key][mat_index])
+        //           //console.log(key, biologicalMaterialData[h][key][mat_index])
         //           if (key.includes("Biological material ID")) {
         //             bm[key]=biologicalMaterialData[h][key][mat_index][bio_mat_index]
         //           }
@@ -475,28 +486,108 @@ export class ObservationUnitFormComponent implements OnInit {
         //     }
 
         //   }
-        // }
+        // } */
+  }
+  deletebiologicalMaterialRow(index: number) {
 
+    if (index > -1) {
+      //neeed to remeove all sample associated with this 
 
-
-
-
-    
-
+      this.sample_data = this.sample_data.reduce((p, c) => (c['bmUUID'] !== this.bm_data[index]['bmUUID'] && p.push(c), p), []);
+      this.bm_data.splice(index, 1);
+    }
+  }
+  MaterialTableRowSelected(i:number) {
+    console.log(i)
+    this.mat_index_row = i
+    this.biological_material_id = this.get_filtered_bm_data[i]['bmUUID']
+    console.log(this.biological_material_id)
+    console.log(this.sample_data)
+    console.log(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id))
+    this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
+    this.sampleDataSource.paginator = this.samplepaginator;
+    this._cdr.detectChanges()
+    if (this.get_filtered_sample_data.length > 0) {
+      this.sample_id = this.get_filtered_sample_data[0]['sampleUUID']
+      //console.log(this.biological_material_id)
+    }
   }
   //return a list of secondary biological material id list
   get_biological_material_list() {
-  var bm_list_id = []
-  this.bm_data.forEach(element => {
-    if (element['obsUUID'] === this.observation_id) {
-      var secondary_id = element["materialId"] + "_" + element["biologicalMaterialId"]
-      //var secondary_id=element["Material source ID (Holding institute/stock centre, accession)"]+ "_" + element["Biological material ID"]
+    var bm_list_id = []
+    this.bm_data.forEach(element => {
+      if (element['obsUUID'] === this.observation_id) {
+        var secondary_id = element["materialId"] + "_" + element["biologicalMaterialId"]
+        //var secondary_id=element["Material source ID (Holding institute/stock centre, accession)"]+ "_" + element["Biological material ID"]
+  
+        bm_list_id.push(secondary_id)
+      }
+    });
+    //console.log(bm_list_id)
+    return bm_list_id
+  }
 
-      bm_list_id.push(secondary_id)
+
+  //Samples
+  addSamples() {
+    const dialogRef = this.dialog.open(SampleSelectionComponent,
+      { disableClose: true, width: '1400px', autoFocus: true, restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: this.observation_id } }
+    );
+    dialogRef.afterClosed().subscribe(res => {
+      if (res.event==='Confirmed') {
+        console.log(res)
+        let result=res.sample_data
+        
+        for (var i = 0; i < result.length; i++) {
+          result[i]['sampleUUID'] = uuid.v4()
+          ////console.log(result[i])
+          this.sample_data.push(result[i])
+        }
+        let message = "experimental factor selected! "
+        this.alertService.success(message);
+        this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
+        this.sampleDataSource.paginator = this.samplepaginator;
+        this._cdr.detectChanges()
+        this.sample_loaded=true
+      }
+    });
+  }
+  deleteSampleRow(index: number) {
+    this.sample_data.splice(index, 1);
+  }
+  SampleTableRowSelected(i:number) {
+  }
+  get_sample_by_material(row:{}):number{
+    return this.sample_data.length>0 ? this.sample_data.filter(sample=>sample['bmUUID']===row['bmUUID']).length : 0 
+  }
+
+
+  // Experimental factor
+  
+  addExperimentalFactor() {
+    const dialogRef = this.dialog.open(SelectionComponent,
+      {disableClose: true,  width: '1400px', autoFocus: true,restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "experimental_factor", values: [], already_there: this.get_experimental_factor_list(), observation_id: this.observation_id } }
+    );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        
+        this.alertService.success("experimental factor selected! ");
+        var experimentalFactorData = result['data']
+        for (var i = 0; i < experimentalFactorData.length; i++) {
+          var ef: ExperimentalFactorDialogModel
+          ef = experimentalFactorData[i]
+          ef.efUUID = uuid.v4()
+          this.experimental_factor_id = ef.efUUID
+          ef.obsUUID = this.observation_id
+          this.ef_data.push(ef)
+        }
+      }
+    });
+  }
+  deleteExperimentalFactorRow(index: number) {
+    if (index > -1) {
+      this.ef_data.splice(index, 1);
     }
-  });
-  console.log(bm_list_id)
-  return bm_list_id
   }
   get_experimental_factor_list() {
     var ef_list_id = []
@@ -507,84 +598,126 @@ export class ObservationUnitFormComponent implements OnInit {
     });
     return ef_list_id
   }
-  addExperimentalFactor() {
-
-
-    const dialogRef = this.dialog.open(SelectionComponent,
-      { width: '1400px', autoFocus: true, disableClose: true, restoreFocus: false, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, model_type: "experimental_factor", values: [], already_there: this.get_experimental_factor_list(), observation_id: this.observation_id } }
-    );
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
-        console.log(result)
-        let message = "experimental factor selected! "
-        this.alertService.success(message);
-
-        var experimentalFactorData = result['data']
-        for (var i = 0; i < experimentalFactorData.length; i++) {
-
-          var ef: ExperimentalFactorDialogModel
-          ef = experimentalFactorData[i]
-          console.log(experimentalFactorData[i])
-
-          // ef.experimentalFactorType=experimentalFactorData[i]['experimentalFactorType']
-          // ef.experimentalFactorDescription=experimentalFactorData[i]['experimentalFactorDescription']
-          // ef.experimentalFactorAccessionNumber=experimentalFactorData[i]['experimentalFactorAccessionNumber']
-          // ef.experimentalFactorValues=experimentalFactorData[i]['experimentalFactorValues']
-          // var ef={}
-          //var keys = Object.keys(experimentalFactorData[i]);
-          // keys.forEach(key => {
-          //   if (!key.startsWith("_") ) {
-          //     ef[key]=experimentalFactorData[i][key]
-          //   }
-          // });
-
-          ef.efUUID = uuid.v4()
-          this.experimental_factor_id = ef.efUUID
-          ef.obsUUID = this.observation_id
-          //ef.lindaID = experimentalFactorData[i]['_id']
-          
-          console.log(experimentalFactorData[i])
-          this.ef_data.push(ef)
-        }
+  get_experimental_factor(observation_id: string) {
+    var obs_ef_data = []
+    this.ef_data.forEach(element => {
+      if (element.obsUUID === observation_id) {
+        obs_ef_data.push(element)
       }
     });
 
+    return obs_ef_data
   }
-  addSamples() {
-    const dialogRef = this.dialog.open(SampleSelectionComponent,
-      { width: '1400px', autoFocus: true, disableClose: true, restoreFocus: false, maxHeight: '500px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: this.observation_id } }
-    );
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(result)
-        for (var i = 0; i < result.length; i++) {
-          result[i]['sampleUUID'] = uuid.v4()
-          //console.log(result[i])
-          this.sample_data.push(result[i])
-
-        }
-        let message = "experimental factor selected! "
-        this.alertService.success(message);
-
-      }
-    });
-
-
-  }
-  get_startfilling() {
-    return this.startfilling;
-  };
-  notify_checkbox_disabled() {
-    if (!this.startfilling) {
-      this.alertService.error('need to fill the form first');
-
+  addFactorValues(index: number, factor_value: string) {
+    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    var fv = observationUnitControl.controls[index].value["Observation Unit factor value"]
+    if (fv) {
+      fv += "/" + factor_value
     }
-
+    else {
+      fv = factor_value
+    }
+    observationUnitControl.controls[index].patchValue({ "Observation Unit factor value": fv })
+  }
+  
+  onEdit(index: number){
+    //navigate to generic form 
+  }
+  
+  
+  
+  getActualIndex(index : number)    { return index + this.DataSource.paginator.pageSize * this.DataSource.paginator.pageIndex; }
+  getBmActualIndex(index : number)    { return index + this.bmDataSource.paginator.pageSize * this.bmDataSource.paginator.pageIndex; }
+  getSampleActualIndex(index : number)    { return index + this.sampleDataSource.paginator.pageSize * this.sampleDataSource.paginator.pageIndex; }
+  
+  get get_filtered_bm_data(){ return this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)}
+  get get_filtered_sample_data(){return this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)}
+  get get_obs_loaded(){ return this.obs_loaded}
+  get get_mat_loaded(){ return this.mat_loaded }
+  get get_sample_loaded(){ return this.sample_loaded }
+  get get_obsDataSource(){ return this.obsDataSource }
+  get get_DataSource(){ return this.DataSource }
+  get get_bmDataSource(){ return this.bmDataSource }
+  get get_sampleDataSource(){ return this.sampleDataSource }
+  get get_parent_id(){ return this.parent_id }
+  get get_mode(){ return this.mode }
+  get get_model_id(){ return this.model_id }
+  get get_model_key(){ return this.model_key}
+  get get_ou_index_row(){ return this.ou_index_row ? this.ou_index_row :0  }
+  get get_mat_index_row(){return this.mat_index_row ? this.mat_index_row :0  }
+  //get observationUnitID(){ return (this.observationUnitTable.get('observationUnitRows') as FormArray).get('Observation unit ID') }
+  get getSecondObservationUnitFormControls() { return this.observationUnitTable.get('secondObservationUnitRows') as FormArray; }
+  get getObservationUnitFormControls() { return this.observationUnitTable.get('observationUnitRows') as FormArray; }
+  get getBiologicalMaterialFormControls() { return this.observationUnitTable.get('biologicalMaterialRows') as FormArray; }
+  get getGeneralFormControls() { return this.observationUnitTable.get('generalRows') as FormArray; }
+  get get_bm_field() { return Object.keys(this.bm_data[0]);}
+  get get_ef_field() { return Object.keys(this.ef_data[0]); }
+  get get_sample_field() { return Object.keys(this.sample_data[0]); }
+  get_startfilling() { return this.startfilling; };
+  onTaskAdd(event) {
+    this.startfilling = false;
+    this.keys.forEach(attr => {
+      if (this.observationUnitTable.value[attr] !== "") {
+        this.startfilling = true;
+      }
+    });
   }
   toggleVisibility(e) {
     this.marked = e.target.checked;
   };
+  build_result(){
+    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    this.observationUnitTouchedRows = observationUnitControl.controls.filter(row => row.touched).map(row => row.value);
+    var data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
+    var obs_unit: {}
+    //first loop for each obs unit
+    for (var i = 0; i < observationUnitControl.controls.length; i++) {
+      obs_unit = observationUnitControl.controls[i].value
+      //console.log(obs_unit)
+      data.observation_units.push(obs_unit)
+      //console.log("looking for observation unit :", obs_unit['Observation unit ID'], "with uuid: ", obs_unit['obsUUID'])
+      //for each bm, check if same observation id, then 
+      var bm_list = []
+      var global_sample_list = []
+      var bm: {}
+      for (var j = 0; j < this.bm_data.length; j++) { 
+        bm = this.bm_data[j]
+        //console.log("---------looking for biological material :", bm['biologicalMaterialId'], "with uuid: ", bm['bmUUID'])
+        if (bm['obsUUID'] === obs_unit['obsUUID']) {
+          //console.log("---------found biological material obs uuid:", bm['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
+          bm_list.push(bm)
+          var sample_list = []
+          var sample: {}
+          for (var k = 0; k < this.sample_data.length; k++) {
+            sample = this.sample_data[k]
+            if ((sample['obsUUID'] === obs_unit['obsUUID']) && (sample['bmUUID'] === bm['bmUUID'])) {
+              //console.log("-------------------------looking for sample :", sample['Sample ID'], "with uuid: ", sample['sampleUUID'])
+              sample_list.push(sample)
+            }
+          }
+          //console.log("sample list:", sample_list)
+          if (sample_list.length>0){
+            global_sample_list.push(sample_list)
+          }
+        }
+      }
+      data.biological_materials.push(bm_list)
+      data.samples.push(global_sample_list)
+      //console.log("bm list:", bm_list)
+      var ef_list = []
+      //console.log(this.ef_data)
+      for (var j = 0; j < this.ef_data.length; j++) {
+        //console.log("---------looking for experimental factor obs uuid:", this.ef_data[j]['obsUUID'], "equal to with OBS uuid: ", obs_unit['obsUUID'])
+        if (this.ef_data[j]['obsUUID'] === obs_unit['obsUUID']) {
+          //console.log("---------found experimental factor obs uuid:",this.ef_data[j]['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
+
+          ef_list.push(this.ef_data[j])
+        }
+      }
+      data.experimental_factors.push(ef_list)
+    }
+    return data
+  }
   cancel() {
     if  (!this.currentUser.tutoriel_done){
       if (this.currentUser.tutoriel_step==="15"){
@@ -592,110 +725,30 @@ export class ObservationUnitFormComponent implements OnInit {
         this.currentUser.tutoriel_step=new_step.toString()
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
       }
-      else{
-
-      }
     }
-    this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+    var return_data=this.build_result()
+    if (_.isEqual(return_data, this.original_data)){
+      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
 
-  };
-  submitForm() {
-    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
-    this.observationUnitTouchedRows = observationUnitControl.controls.filter(row => row.touched).map(row => row.value);
-
-    var return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
-    var obs_unit: {}
-    //first loop for each obs unit
-    for (var i = 0; i < observationUnitControl.controls.length; i++) {
-      obs_unit = observationUnitControl.controls[i].value
-      return_data.observation_units.push(obs_unit)
-      console.log("looking for observation unit :", obs_unit['Observation unit ID'], "with uuid: ", obs_unit['obsUUID'])
-      //for each bm, check if same observation id, then 
-      var bm_list = []
-
-      var global_sample_list = []
-      var bm: {}
-      for (var j = 0; j < this.bm_data.length; j++) {
-        
-        bm = this.bm_data[j]
-        console.log("---------looking for biological material :", bm['biologicalMaterialId'], "with uuid: ", bm['bmUUID'])
-        if (bm['obsUUID'] === obs_unit['obsUUID']) {
-          console.log("---------found biological material obs uuid:", bm['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
-          bm_list.push(bm)
-          var sample_list = []
-          var sample: {}
-          for (var k = 0; k < this.sample_data.length; k++) {
-            sample = this.sample_data[k]
-            if ((sample['obsUUID'] === obs_unit['obsUUID']) && (sample['bmUUID'] === bm['bmUUID'])) {
-              console.log("-------------------------looking for sample :", sample['Sample ID'], "with uuid: ", sample['sampleUUID'])
-              sample_list.push(sample)
-
+    }
+    else{
+      const dialogRef = this.dialog.open(ConfirmationComponent, {disableClose: true,  width: '500px', data: { validated: false, only_childs: false, all_childs: false, mode: 'unsaved_changes', model_type: "observation_unit" } });
+        dialogRef.afterClosed().subscribe(async (result) => {
+          if (result) {
+            if (result.event == 'Confirmed') {
+              this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
             }
           }
-
-          console.log("sample list:", sample_list)
-          if (sample_list.length>0){
-            global_sample_list.push(sample_list)
-          }
-
-
-
-        }
-
-
-
-      }
-      return_data.biological_materials.push(bm_list)
-      return_data.samples.push(global_sample_list)
-      console.log("bm list:", bm_list)
-      var ef_list = []
-      console.log(this.ef_data)
-      for (var j = 0; j < this.ef_data.length; j++) {
-        console.log("---------looking for experimental factor obs uuid:", this.ef_data[j]['obsUUID'], "equal to with OBS uuid: ", obs_unit['obsUUID'])
-        if (this.ef_data[j]['obsUUID'] === obs_unit['obsUUID']) {
-          console.log("---------found experimental factor obs uuid:",this.ef_data[j]['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
-
-          ef_list.push(this.ef_data[j])
-        }
-      }
-      return_data.experimental_factors.push(ef_list)
+        });
     }
-
-
-
-
-    // if (Object.getOwnPropertyNames(return_data).length == 0) {
-    //   this.save(return_data)
-    // }
-    // else{
-    //   this.alertService.error("nothing to load !!!!")
-    // }
+  };
+  submitForm() {
+    var return_data=this.build_result()
     console.log(return_data)
     this.save(return_data)
-    
-
-
   }
   save(form: any): boolean {
-
-
-    // if (this.marked) {
-    //   this.globalService.saveTemplate(form.value, this.model_type).pipe(first()).toPromise().then(
-    //     data => {
-    //       if (data["success"]) {
-    //         let message = "Template saved! " + data["message"]
-    //         this.alertService.success(message);
-    //       }
-    //       else {
-    //         let message = "Cannot save template! " + data["message"]
-    //         this.alertService.error(message);
-    //       }
-    //     }
-    //   );
-    // }
     if (this.mode === "create") {
-
-
       this.globalService.add_observation_units(form, this.model_type, this.parent_id).pipe(first()).toPromise().then(
         data => {
           if (data["success"]) {
@@ -711,11 +764,11 @@ export class ObservationUnitFormComponent implements OnInit {
                 this.alertService.error("You are not in the right form as requested by the tutorial")
               }
             }
-            this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
-            
-
             return true;
           }
           else {
@@ -728,36 +781,34 @@ export class ObservationUnitFormComponent implements OnInit {
     else {
       let element = event.target as HTMLInputElement;
       let value_field = element.innerText;
-      this.globalService.update_observation_units(form, this.model_key, this.model_type, this.parent_id).pipe(first()).toPromise().then(
+      this.globalService.update_observation_units_and_childs(form, this.model_key, this.model_type, this.parent_id).pipe(first()).toPromise().then(
         data => {
-          console.log(data)
+          //console.log(data)
           if (data["success"]) {
             var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
             this.alertService.success(message)
-            this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+
             return true;
           }
           else {
             this.alertService.error("this form contains errors! " + data["message"]);
-
             return false;
           };
-
-
         }
       );
     }
     return true;
   };
-
   toggleTheme() {
     this.mode_table = !this.mode_table;
   }
   onClickTour() {
-    console.log('start tour part 2')
+    //console.log('start tour part 2')
     this.currentUser = JSON.parse(localStorage.getItem('currentUser')); 
-    console.log(this.currentUser['tutoriel_step'])
-        console.log(this.currentUser)
+    //console.log(this.currentUser['tutoriel_step'])
+        //console.log(this.currentUser)
         if (this.currentUser['tutoriel_step'] === "11"){
             this.joyrideService.startTour(
                 { steps: ['generalContent', 'addObservationUnit', 'associateBiologicalMAterial', 'addBiologicalSample', 'StepDemoForm'], stepDefaultPosition: 'center'} // Your steps order
@@ -767,7 +818,7 @@ export class ObservationUnitFormComponent implements OnInit {
         }
   }
   onDone() {
-    console.log(this.currentUser['tutoriel_step'])
+    //console.log(this.currentUser['tutoriel_step'])
     if (this.currentUser['tutoriel_step']==="11"){
       this.observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
       //this.observationUnitControl.push(this.initiateObservationUnitForm("create", 0))
@@ -803,10 +854,10 @@ export class ObservationUnitFormComponent implements OnInit {
                   
                   this.observationUnitControl.push(this.initiateObservationUnitForm("create", i))
                   //get obs uuid 
-                  //console.log(this.observationUnitControl.controls[i].value["obsUUID"])
+                  ////console.log(this.observationUnitControl.controls[i].value["obsUUID"])
                   let obs_uuid=this.observationUnitControl.controls[i].value["obsUUID"]
                   ef_tmp.obsUUID=obs_uuid
-                  console.log(ef_tmp)
+                  //console.log(ef_tmp)
                   this.ef_data.push(ef_tmp)
 
 
@@ -837,14 +888,14 @@ export class ObservationUnitFormComponent implements OnInit {
                     mode_ef="watered"
                     this.observationUnitControl.controls[i].patchValue({ "Observation Unit factor value": mode_ef })
                   }
-                  console.log(mode_ef)
+                  //console.log(mode_ef)
                   // this.globalService.get_type_child_from_parent(parent_name, parent_key, "biological_materials").toPromise().then(
                   //   biological_material_data => {
-                  console.log(biological_material_data)
-                  console.log(i)
-                  console.log(obs_cpt)
-                  console.log(jmin)   
-                  console.log(jmax)
+                  //console.log(biological_material_data)
+                  //console.log(i)
+                  //console.log(obs_cpt)
+                  //console.log(jmin)   
+                  //console.log(jmax)
                   for (var j = jmin; j < jmax; j++) {
                     var mat_id=biological_material_data[0]["Material source ID (Holding institute/stock centre, accession)"][obs_cpt]
                     var id = mat_id +'_' + j
@@ -859,7 +910,7 @@ export class ObservationUnitFormComponent implements OnInit {
                     }
                     var bm_tmp: BiologicalMaterialDialogModel
                     bm_tmp = bm
-                    console.log(bm_tmp)
+                    //console.log(bm_tmp)
                     bm_tmp.bmUUID = uuid.v4()
                     bm.obsUUID = obs_uuid
                     this.bm_data.push(bm_tmp)
@@ -867,8 +918,8 @@ export class ObservationUnitFormComponent implements OnInit {
                   }
                   obs_cpt+=1
                 }
-                console.log(this.ef_data)
-                console.log(this.bm_data)
+                //console.log(this.ef_data)
+                //console.log(this.bm_data)
                 this.startfilling=true
               }
             );
@@ -885,5 +936,4 @@ export class ObservationUnitFormComponent implements OnInit {
       
     }
   }
-
 }

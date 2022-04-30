@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { BiologicalMaterialFullInterface, BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
 import { BiologicalMaterialTableModel } from '../../../../models/biological_material_models'
 import { first } from 'rxjs/operators';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-biological-material-page',
   templateUrl: './biological-material-page.component.html',
@@ -21,7 +21,6 @@ export class BiologicalMaterialPageComponent implements OnInit {
   @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
   @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @Input('level') level: number;
   @Input('parent_id') parent_id: string;
@@ -36,7 +35,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
   private dataSource: MatTableDataSource<BiologicalMaterialFullInterface>;
   //private displayedColumns: string[] = ['Infraspecific name', 'Species', 'Genus','total materials','total biological materials','edit'];
 
-  private displayedColumns: string[] = ['Genus', 'Species', 'Infraspecific name','total materials','total biological materials','edit'];
+  private displayedColumns: string[] = ['Genus', 'Species', 'Infraspecific name','total material sources','biological materials by replicate', 'replicates','total biological materials','edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -101,27 +100,37 @@ export class BiologicalMaterialPageComponent implements OnInit {
   }
   async set_all_biological_materials() {
     var data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
-    //console.log(data);
-    for (let index = 0; index < data.length; index++) {
-      //const element = data[index];
-      data[index]['total materials']=data[index]["Material source ID (Holding institute/stock centre, accession)"].length
-      data[index]['total biological materials']=data[index]["Biological material ID"][0].length*data[index]['total materials']
-      data[index]['Infraspecific name']=Array.from(new Set(data[index]['Infraspecific name']))
-      data[index]['Species']=Array.from(new Set(data[index]['Species']))
-      data[index]['Genus']=Array.from(new Set(data[index]['Genus']))
-      if (data[index]['Infraspecific name'].length>3){
-        data[index]['Infraspecific name']=data[index]['Infraspecific name'].slice(0, 3);
-        data[index]['Infraspecific name'].push("...")
+    console.log(data);
+    if (data.length>0){
+      for (let index = 0; index < data.length; index++) {
+        //const element = data[index];
+        data[index]['replicates']= Array.from(new Set(data[index]['replication']))[0]
+        data[index]['total material sources']=data[index]["Material source ID (Holding institute/stock centre, accession)"].length
+        data[index]['biological materials by replicate']=data[index]["Biological material ID"][0].length/ data[index]['replicates']
+        data[index]['total biological materials']=data[index]["Biological material ID"][0].length*data[index]['total material sources']
+        data[index]['Infraspecific name']=Array.from(new Set(data[index]['Infraspecific name']))
+        data[index]['Species']=Array.from(new Set(data[index]['Species']))
+        data[index]['Genus']=Array.from(new Set(data[index]['Genus']))
+        if (data[index]['Infraspecific name'].length>3){
+          data[index]['Infraspecific name']=data[index]['Infraspecific name'].slice(0, 3);
+          data[index]['Infraspecific name'].push("...")
+        }
+        if (data[index]['Species'].length>3){
+          data[index]['Species']=data[index]['Species'].slice(0, 3);
+          data[index]['Species'].push("...")
+        }
+        if (data[index]['Genus'].length>3){
+          data[index]['Genus']=data[index]['Genus'].slice(0, 3);
+          data[index]['Genus'].push("...")
+        }
+        
       }
-      if (data[index]['Species'].length>3){
-        data[index]['Species']=data[index]['Species'].slice(0, 3);
-        data[index]['Species'].push("...")
-      }
-      if (data[index]['Genus'].length>3){
-        data[index]['Genus']=data[index]['Genus'].slice(0, 3);
-        data[index]['Genus'].push("...")
-      }
-      
+      console.log(data[0]['Species']);
+    this.dataSource = new MatTableDataSource(data);
+    //console.log(this.dataSource);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
     }
     /* data[0]['total materials']=data[0]["Material source ID (Holding institute/stock centre, accession)"].length
     data[0]['total biological materials']=data[0]["Biological material ID"][0].length*data[0]['total materials']
@@ -139,11 +148,7 @@ export class BiologicalMaterialPageComponent implements OnInit {
     } */
     //data[0]['Species']=Array.from(new Set(data[0]['Species']))
     //data[0]['Genus']=Array.from(new Set(data[0]['Genus']))
-    console.log(data[0]['Species']);
-    this.dataSource = new MatTableDataSource(data);
-    //console.log(this.dataSource);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    
   }
 
   public handlePageBottom(event: PageEvent) {

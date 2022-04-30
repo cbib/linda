@@ -19,7 +19,7 @@ import { UserInterface } from 'src/app/models/linda/person';
 })
 export class EventsPageComponent implements OnInit, AfterViewInit {
   @Input('level') level: number;
-  @Input('study_id') study_id:string;
+  @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
@@ -57,7 +57,7 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
         this.level = params['level'];
         this.model_type = params['model_type'];
         this.model_key = params['model_key'];
-        this.study_id = params['study_id']
+        this.parent_id = params['parent_idparent_id']
         this.grand_parent_id=params['grand_parent_id']
         this.mode = params['mode'];
         this.role=params['role']
@@ -79,7 +79,7 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
     this._cdr.detectChanges()
   }
   async set_all_events() {
-    const data = await this.globalService.get_all_events(this.study_id.split('/')[1]).toPromise();
+    const data = await this.globalService.get_all_events(this.parent_id.split('/')[1]).toPromise();
     //console.log(data);
     this.dataSource = new MatTableDataSource(data);
     //console.log(this.dataSource);
@@ -116,12 +116,18 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
               //console.log(data["message"])
               var message = element._id + " has been removed from your history !!"
               this.alertService.success(message)
-              this.ngOnInit()
+              this.reloadComponent()
           }
           else {
               this.alertService.error("this form contains errors! " + data["message"]);
           }
       });
+  }
+  reloadComponent() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "events", role: this.role, group_key: this.group_key } });
   }
   add() {
     let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -136,13 +142,13 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
             this.alertService.error("You are not in the right form as requested by the tutorial")
         }
     }
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type, parent_id:this.study_id, formData: {} , mode: "preprocess"} });
+    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {
           //console.log(result)
           let event: LindaEvent= result["formData"]["form"]
-          this.globalService.add(event, this.model_type, this.study_id, false, "").pipe(first()).toPromise().then(
+          this.globalService.add(event, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
         data => {
             if (data["success"]) {
                 //console.log(data)
@@ -161,7 +167,7 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
     console.warn(element)
     //this.notify.emit(elem)
     //let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
-    this.router.navigate(['/event_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.study_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "event_info", role: this.role, group_key: this.group_key } });
+    this.router.navigate(['/event_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.parent_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "event_info", role: this.role, group_key: this.group_key } });
 
   }
 }

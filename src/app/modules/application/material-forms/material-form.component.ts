@@ -16,11 +16,13 @@ import { DataTableDirective } from 'angular-datatables';
 import {JoyrideService} from 'ngx-joyride';
 import { GermPlasmInterface } from 'src/app/models/linda/germplasm';
 import { Observable, Subject } from 'rxjs';
-import { ColDef, PaginationNumberFormatterParams, FirstDataRenderedEvent, GridReadyEvent, SideBarDef, GridApi, RefreshCellsParams } from 'ag-grid-community';
+import { ColDef, PaginationNumberFormatterParams, FirstDataRenderedEvent, GridReadyEvent, SideBarDef, GridApi, RefreshCellsParams,RowSelectedEvent, SelectionChangedEvent } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 //import { SetFilterModel} from 'ag-grid-enterprise';
 import { BiologicalMaterial, BiologicalMaterialFullInterface, BiologicalMaterialInterface } from 'src/app/models/linda/biological-material';
 import { CustomTooltip } from './custom-tooltip.component';
+import { BiologicalMaterialComponent } from '../dialogs/biological-material.component';
+import { TitleCasePipe } from '@angular/common';
 /* import {
   CheckboxSelectionCallbackParams,
   ColDef,
@@ -79,7 +81,7 @@ export class MaterialFormComponent implements OnInit {
   material_id = ""
   selected_term: OntologyTerm
   selected_set: []
-    ontology_type: string;
+  ontology_type: string;
 
   validated_term = {}
   marked = false;
@@ -111,6 +113,7 @@ export class MaterialFormComponent implements OnInit {
   germplasm_loaded:boolean=false
   unique_taxon_groups:{}={}
   selected_taxon:string=""
+  selected_bms:BiologicalMaterial[]=[]
   
   ///dtOptions: DataTables.Settings = {};
 
@@ -128,7 +131,7 @@ export class MaterialFormComponent implements OnInit {
   
   selectColumnDefs: ColDef[] = [
     //{ field: 'TaxonGroup', rowGroup: true, hide: true},
-    { field: 'AccessionName', rowGroup: true, hide: true},
+    { field: 'AccessionName', checkboxSelection: true},
     
     //{ field: 'AccessionName'},
     { field: 'TaxonGroup'},
@@ -146,24 +149,12 @@ export class MaterialFormComponent implements OnInit {
   
   public selectDefaultColDef: ColDef = {
     editable: false,
-    enableRowGroup: true,
-    enablePivot: true,
-    enableValue: true,
     sortable: true,
     resizable: true,
     filter: true,
     flex: 1,
     minWidth: 100
   };
-  /* public selectAutoGroupColumnDef: ColDef = {
-    headerName: 'Material Accession Name',
-    field: 'AccessionName',
-    minWidth: 250,
-    cellRenderer: 'agGroupCellRenderer',
-    cellRendererParams: {
-      checkbox: true,
-    },
-  }; */
   public selectAutoGroupColumnDef: ColDef = {
     headerName: 'Accession name',
     field: 'AccessionName',
@@ -186,9 +177,11 @@ export class MaterialFormComponent implements OnInit {
   public selectSideBar: SideBarDef | string | boolean | null = 'filters';
   public selectRowData!: any[];
   private selectGridApi!: GridApi;
-  private gridApi!: GridApi;
+  
   public doc:BiologicalMaterialFullInterface;
+  public SideBar: SideBarDef | string | boolean | null = 'filters';
   public RowData!: BiologicalMaterialInterface[];
+  private gridApi!: GridApi;
   public tooltipShowDelay = 0;
   public tooltipHideDelay = 2000;
 
@@ -196,7 +189,20 @@ export class MaterialFormComponent implements OnInit {
   // MATERIAL TABLE
   
   ColumnDefs: ColDef[] = [
-    { field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, tooltipField: 'Biological material ID',pinned: 'left' },
+    { field: 'Biological material ID', 
+      tooltipField: 'Biological material ID', 
+      pinned: 'left', 
+      
+      headerCheckboxSelection: true, 
+      headerCheckboxSelectionFilteredOnly: true,
+      /* headerCheckboxSelection: params => {
+        const displayedColumns = params.columnApi.getAllDisplayedColumns();
+        return displayedColumns[0] === params.column;
+      },  */
+      minWidth: 180, 
+      checkboxSelection: true},
+    { field: 'Material source ID (Holding institute/stock centre, accession)'},
+    //{ field: 'Material source ID (Holding institute/stock centre, accession)', rowGroup: true, tooltipField: 'Biological material ID',pinned: 'left' },
     //{ field: 'Genus', tooltipField: 'Biological material ID', pinned: 'left' },
     //{ field: 'Species', tooltipField: 'Biological material ID', pinned: 'left' },
     //{ field: 'Organism', pinned: 'left' },
@@ -217,9 +223,6 @@ export class MaterialFormComponent implements OnInit {
   ];
   public DefaultColDef: ColDef = {
     editable: false,
-    enableRowGroup: true,
-    enablePivot: true,
-    enableValue: true,
     sortable: true,
     resizable: true,
     filter: true,
@@ -237,7 +240,7 @@ export class MaterialFormComponent implements OnInit {
       checkbox: true,
     },
   };
-  public SideBar: SideBarDef | string | boolean | null = 'filters';
+
   public PaginationPageSize = 10;
   public PaginationNumberFormatter: (
     params: PaginationNumberFormatterParams
@@ -272,15 +275,10 @@ export class MaterialFormComponent implements OnInit {
     );
     if (this.model_key != "") {
       this.get_model_by_key();
-
     }
+  }
 
-  }
-  get get_mode(){
-    return this.mode
-  }
   RefreshAll() {
-
     var params = {
       force: true
     };
@@ -293,6 +291,7 @@ export class MaterialFormComponent implements OnInit {
     //this.gridApi.redrawRows();
   }
   async ngOnInit() {
+    this.selected_bms=[]
     this.RowData=[]
     console.log(this.columns)
     /* this.columns=[
@@ -331,63 +330,85 @@ export class MaterialFormComponent implements OnInit {
     //this.get_model()
     await this.get_ncbi_taxon()
     await this.get_germplasm_unique_taxon_groups()
-    console.log(this.mode)
+    ///console.log(this.mode)
     //this.onClickTour(); 
   }
-  
+  ngAfterOnInit() {
+    this.materialControl = this.materialTable.get('materialRows') as FormArray;
+    this.biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
+    this.generalControl = this.materialTable.get('generalRows') as FormArray;
+  }
+ 
   getSelectedRows():void{
     const selectedNodes = this.selectAgGrid.api.getSelectedNodes();
     console.log(selectedNodes)
     const selectedData = selectedNodes.map(node => node.data);
     console.log(selectedData)
-    //open dialog for number o mbiological materila by material source
+    let formDialogRef2 = this.bmdialog.open(BiologicalMaterialComponent, { width: '1200px', data: { material_type: 'Material ID', data_filename: "", mode:"no_data_files" } });
+    formDialogRef2.afterClosed().subscribe((result2) => {
+      if (result2) {
+        if (result2.event == 'Confirmed') {
+            let biological_material_n:number = (result2.biological_material_n as number)
+            let replication:number = (result2.replication as number)
+            for (let index = 0; index < selectedData.length; index++) {
+              const element = selectedData[index];
+              for (let repindex = 1; repindex < replication+1; repindex++) {
+                for (let bmindex = 1; bmindex < biological_material_n+1; bmindex++) {
+                  //materialControl.push(this.initiateMaterialFormWithValues(element))
+                  //biologicalMaterialControl.push(this.initiateBiologicalMaterialFormWithValues(selectedData));
+                  let bm_id=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]+ "_rep" + repindex + "_" +bmindex
+                  let bm:BiologicalMaterial=new BiologicalMaterial(bm_id)
+                  bm['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
+                  bm['Material source DOI']=element["DOI"]
+                  bm['Material source altitude']=""
+                  bm['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
+                  bm['Material source latitude']=""
+                  bm['Material source longitude']=""
+                  bm.Genus=element["Genus"] 
+                  bm.replication=replication
+                  bm.Species=element["TaxonScientificName"].split(" ")[1]
+                  bm.Organism=""
+                  bm['Infraspecific name']=element["TaxonScientificName"]
+                  this.RowData.push(bm)
+                }
+              }
+            }
+            this.RefreshAll()
+        }
+      }
+    });
+  }
+  onRowSelected(event: RowSelectedEvent) {
+    //console.log(event.node.data)
+    let bm:BiologicalMaterialFullInterface=event.node.data as BiologicalMaterialFullInterface
+    //this.selected_bms.push(bm)
+  }
+  onSelectionChanged(event: SelectionChangedEvent) {
+    var rowCount = event.api.getSelectedNodes().length;
+    this.selected_bms=[]
+    event.api.getSelectedNodes().forEach(node=>{
+      if (this.selected_bms.filter(bm=>bm['Biological material ID']===node.data['Biological material ID']).length===0){
+        this.selected_bms.push(node.data)
+      }
+    })
+    /* if (rowCount===0){
+      this.selected_bms=[]
 
-    //const materialControl = this.materialTable.get('materialRows') as FormArray;
-    //const biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-    for (let index = 0; index < selectedData.length; index++) {
-      const element = selectedData[index];
-      //materialControl.push(this.initiateMaterialFormWithValues(element))
-      //biologicalMaterialControl.push(this.initiateBiologicalMaterialFormWithValues(selectedData));
-      let bm_id=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]+ "_1"
-      let bm:BiologicalMaterial=new BiologicalMaterial(bm_id)
-      bm['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
-      bm['Material source DOI']=element["DOI"]
-      bm['Material source altitude']=""
-      bm['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
-      bm['Material source latitude']=""
-      bm['Material source longitude']=""
-      bm.Genus=element["Genus"]
-      bm.Species=element["TaxonScientificName"].split(" ")[1]
-      bm.Organism=""
-      bm['Infraspecific name']=element["TaxonScientificName"]
-      this.RowData.push(bm)
-
-      bm_id=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]+ "_2"
-      let bm2:BiologicalMaterial=new BiologicalMaterial(bm_id)
-      bm2['Material source ID (Holding institute/stock centre, accession)']=element["HoldingInstitution"].split(" - ")[0] +"_"+ element["AccessionNumber"]
-      bm2['Material source DOI']=element["DOI"]
-      bm2['Material source altitude']=""
-      bm2['Material source description']="Material from " + element["HoldingInstitution"] + " - Lot name: " +element['LotName']+ " - Panel names:" +element['PanelNames']+ " - Panel sizes: " + element['PanelSizes']
-      bm2['Material source latitude']=""
-      bm2['Material source longitude']=""
-      bm2.Genus=element["Genus"]
-      bm2.Species=element["TaxonScientificName"].split(" ")[1]
-      bm2.Organism=""
-      bm2['Infraspecific name']=element["TaxonScientificName"]
-      this.RowData.push(bm2)
-      
     }
-    console.log(this.RowData)
-    let group = this.RowData.reduce((r, a) => {
-      r[a['Material source ID (Holding institute/stock centre, accession)']] = [...r[a['Material source ID (Holding institute/stock centre, accession)']] || [], a];
-      return r;
-     }, {});
-     console.log("group", group);
-     console.log("group length", Object.keys(group).length);
-    //this.agGrid.api.setRowData(this.RowData);
-    this.RefreshAll()
-    //this.GridApi.refreshCells();
-    
+    else{
+      event.api.getSelectedNodes().forEach(node=>{
+        if (this.selected_bms.filter(bm=>bm['Biological material ID']===node.data['Biological material ID']).length===0){
+          this.selected_bms.push(node.data)
+        }
+      })
+    } */
+    console.log(this.selected_bms)
+  }
+  removeSelectedBmRows():void{
+    this.selected_bms.forEach(_bm=>{
+      this.RowData=this.RowData.filter(bm=>bm['Biological material ID']!==_bm['Biological material ID'])
+    })
+    this.selected_bms=[]
   }
   async get_model_by_key() {
     //console.log('test')
@@ -403,10 +424,112 @@ export class MaterialFormComponent implements OnInit {
     this.globalService.get_germplasms().subscribe((data) => {
 
       this.selectRowData = data; 
-      console.log(this.selectRowData)
-      this.selectRowData=this.selectRowData.filter(selectRow=>!selectRow['DOI'].includes('urn:URGI'))
+      //console.log(this.selectRowData)
+      //this.selectRowData=this.selectRowData.filter(selectRow=>!selectRow['DOI'].includes('urn:URGI'))
+      this.selectRowData = [...new Map(this.selectRowData.map(v => [JSON.stringify([v.AccessionNumber]), v])).values()]
+      //console.log(this.selectRowData)
       this.selectGridApi.setRowData(this.selectRowData)
     });
+  }
+  convertRowData(){
+    let doc_to_add = {
+      'Genus': [],
+      'Species': [],
+      'Organism': [],
+      'replication': [],
+      'Infraspecific name': [],
+      'Material source ID (Holding institute/stock centre, accession)': [],
+      'Material source description': [],
+      'Material source longitude': [],
+      'Material source altitude': [],
+      'Material source latitude': [],
+      'Material source DOI': [],
+      'Material source coordinates uncertainty': [],
+      'Biological material ID': [],
+      'Biological material preprocessing': [],
+      'Biological material coordinates uncertainty': [],
+      'Biological material longitude': [],
+      'Biological material latitude': [],
+      'Biological material altitude': []
+    };
+    let material_group = this.RowData.reduce((r, a) => {
+      r[a['Material source ID (Holding institute/stock centre, accession)']] = [...r[a['Material source ID (Holding institute/stock centre, accession)']] || [], a];
+      return r;
+    }, {});
+    /* console.log("group", material_group);
+    console.log("group length", Object.keys(material_group).length); */
+    let cpt_mat=0
+    Object.keys(material_group).forEach(material=>{
+      let materiel_doc=material_group[material] //array of bm
+      //console.log(materiel_doc)
+      doc_to_add.replication.push(materiel_doc[0].replication)
+      doc_to_add.Genus.push(materiel_doc[0].Genus)
+      doc_to_add.Species.push(materiel_doc[0].Species)
+      doc_to_add.Organism.push(materiel_doc[0].Organism)
+      doc_to_add['Infraspecific name'].push(materiel_doc[0]['Infraspecific name'])
+      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(materiel_doc[0]['Material source ID (Holding institute/stock centre, accession)'])
+      doc_to_add['Material source description'].push(materiel_doc[0]['Material source description'])
+      doc_to_add['Material source DOI'].push(materiel_doc[0]['Material source DOI'])
+      let keys=Object.keys(materiel_doc[0])
+      
+      for (let index = 0; index < keys.length; index++) {
+        if (keys[index].includes("Biological ")){
+          var element=keys[index]
+          let tmp_bm=[]
+          for (let j = 0; j < materiel_doc.length; j++) {
+            tmp_bm.push(materiel_doc[j][element])
+            
+          }
+          doc_to_add[element].push(tmp_bm)
+        }
+      }
+      
+      cpt_mat++
+      
+    });
+
+    /* let cpt_mat=0
+    for (let index = 0; index < this.RowData.length; index++) {
+      const materiel_doc = this.RowData[index];
+      console.log(materiel_doc)
+      doc_to_add.Genus.push(materiel_doc.Genus)
+      doc_to_add.Species.push(materiel_doc.Species)
+      doc_to_add.Organism.push(materiel_doc.Organism)
+      doc_to_add['Infraspecific name'].push(materiel_doc['Infraspecific name'])
+      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(materiel_doc['Material source ID (Holding institute/stock centre, accession)'])
+      doc_to_add['Material source description'].push(materiel_doc['Material source description'])
+      doc_to_add['Material source DOI'].push(materiel_doc['Material source DOI'])
+      let keys=Object.keys(materiel_doc)
+      
+      for (let bm_index = 0; bm_index < keys.length; bm_index++) {
+        if (keys[bm_index].includes("Biological ")){
+          var element=keys[index]
+          let tmp_bm=[]
+          for (let j = 0; j < this.RowData.length; j++) {
+            tmp_bm.push(materiel_doc[element])
+            
+          }
+          doc_to_add[element].push(tmp_bm)
+        }
+      }
+      
+      cpt_mat++ 
+    }
+    */
+
+    console.log(doc_to_add)
+    return doc_to_add
+    /* for (let index = 0; index < this.RowData.length; index++) {
+      const bm = this.RowData[index];
+      doc_to_add.Genus.push(bm.Genus)
+      doc_to_add.Species.push(bm.Species)
+      doc_to_add.Organism.push(bm.Organism)
+      doc_to_add['Infraspecific name'].push(bm['Infraspecific name'])
+      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(bm['Material source ID (Holding institute/stock centre, accession)'])
+      doc_to_add['Material source description'].push(bm['Material source description'])
+      doc_to_add['Material source DOI'].push(bm['Material source DOI'])
+      
+    } */
   }
   get_data(){
     this.RowData=[]
@@ -455,19 +578,10 @@ export class MaterialFormComponent implements OnInit {
     .value;
     this.gridApi.paginationSetPageSize(Number(value));
   }
-  
-
   onInputChanges(field:string,value: string){
     console.log(value)
   }
-  ngAfterOnInit() {
-    this.materialControl = this.materialTable.get('materialRows') as FormArray;
-    this.biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
-    this.generalControl = this.materialTable.get('generalRows') as FormArray;
-  }
-  get get_selected_taxon(){
-    return this.selected_taxon    
-  }
+  
   async get_ncbi_taxon(){
     this.taxons = await this.globalService.get_ncbi_taxon_data().toPromise()
     console.log(this.taxons[0])
@@ -495,6 +609,21 @@ export class MaterialFormComponent implements OnInit {
     });
   } */
   
+  get get_parent_id(){
+    return this.parent_id
+  }
+  get get_mode(){
+      return this.mode
+  }
+  get get_model_id(){
+      return this.model_id
+  }
+  get get_model_key(){
+      return this.model_key
+  }
+  get get_selected_taxon(){
+    return this.selected_taxon    
+  }
   get get_taxons(){
     return this.taxons
   }
@@ -522,6 +651,16 @@ export class MaterialFormComponent implements OnInit {
     console.log(selectedData)
     this.all_selected=true
   }
+  get no_row_selected():boolean{
+    if (this.selectAgGrid){
+      return this.selectAgGrid.api.getSelectedNodes().length===0
+    }
+    else{
+      return true
+    }
+    
+  }
+
   deselect_all_filtered():void{
     this.selectAgGrid.api.deselectAllFiltered()
     this.all_selected=false
@@ -803,67 +942,6 @@ export class MaterialFormComponent implements OnInit {
   editBiologicalMaterial(index: number){
     console.log("here  you have to open a new dialog component with the table for biologiccal material as in user tree")
   }  
-  // I/O part
-  /* read_csv(delimitor: string) {
-    let fileReader = new FileReader();
-    fileReader.onload = (e) => {
-        var csv = fileReader.result;
-        this.load_csv(csv, e.loaded,e.total, delimitor)
-    }
-    fileReader.readAsText(this.fileUploaded);
-  } */
-  /* readExcel() {
-    let fileReader = new FileReader();
-    fileReader.onload = (e) => {
-        var storeData:any = fileReader.result;
-        var data = new Uint8Array(storeData);
-        var arr = new Array();
-        for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-        var bstr = arr.join("");
-        var book = XLSX.read(bstr, { type: "binary" });
-        var first_sheet_name = book.SheetNames[0];
-        var worksheet = book.Sheets[first_sheet_name];
-        var csv = XLSX.utils.sheet_to_csv(worksheet);
-        this.load_csv(csv, e.loaded, e.total);
-    }
-    fileReader.readAsArrayBuffer(this.fileUploaded);
-    
-  } */
-  /* onFileChange(event) {
-    if (event.target.files.length > 0) {
-        this.uploadResponse.status = 'progress'
-        this.fileUploaded = event.target.files[0];
-        //let fileReader = new FileReader();
-        this.fileName = this.fileUploaded.name
-        if (this.fileUploaded.type === "text/csv") {
-            const dialogRef = this.dialog.open(DelimitorComponent, { width: '1000px', data: { delimitor: "" } });
-            dialogRef.afterClosed().subscribe(data => {
-                if (data !== undefined) {
-                    this.read_csv(data.delimitor)
-                };
-            });
-        }
-        else {
-            this.readExcel();
-        }
-        //this.loaded=true
-        //this.form.get('file').setValue(this.fileUploaded);
-
-    }
-  } */
-  /* load_csv(csvData: any, e_loaded: any, e_total: any,delimitor: string = ",") {
-    console.log(csvData)
-    let allTextLines = csvData.split(/\r|\n|\r/);
-    const dialogRef = this.dialog.open(CsvLoaderComponent, { width: '1200px', data: { material_data: allTextLines, delimitor:delimitor , cleaned_model:this.cleaned_model} });
-            dialogRef.afterClosed().subscribe(data => {
-                if (data !== undefined) {
-                    console.log(data)
-                };
-            });
-        ///console.log(allTextLines)
-    
-
-  } */
   deleteMaterialRow(index: number) {
     const materialControl = this.materialTable.get('materialRows') as FormArray;
     this.material_id = materialControl.controls[index].value['mat-id']
@@ -953,7 +1031,7 @@ export class MaterialFormComponent implements OnInit {
   onOntologyTermSelection(ontology_id: string, key: string, index: number, multiple: boolean = true) {
 
     //this.show_spinner = true;
-    const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
+    const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: true,  maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
     // dialogRef..afterOpened().subscribe(result => {
     //     this.show_spinner = false;
     // })
@@ -1072,78 +1150,11 @@ export class MaterialFormComponent implements OnInit {
       this.notify.emit(data);
     }
     else{
+      console.log(this.convertRowData())
       this.save(this.convertRowData())
     }
   }
-  convertRowData(){
-    let doc_to_add = {
-      'Genus': [],
-      'Species': [],
-      'Organism': [],
-      'Infraspecific name': [],
-      'Material source ID (Holding institute/stock centre, accession)': [],
-      'Material source description': [],
-      'Material source longitude': [],
-      'Material source altitude': [],
-      'Material source latitude': [],
-      'Material source DOI': [],
-      'Material source coordinates uncertainty': [],
-      'Biological material ID': [],
-      'Biological material preprocessing': [],
-      'Biological material coordinates uncertainty': [],
-      'Biological material longitude': [],
-      'Biological material latitude': [],
-      'Biological material altitude': []
-    };
-    let material_group = this.RowData.reduce((r, a) => {
-      r[a['Material source ID (Holding institute/stock centre, accession)']] = [...r[a['Material source ID (Holding institute/stock centre, accession)']] || [], a];
-      return r;
-    }, {});
-    console.log("group", material_group);
-    console.log("group length", Object.keys(material_group).length);
-    let cpt_mat=0
-    Object.keys(material_group).forEach(material=>{
-      let materiel_doc=material_group[material] //array of bm
-      console.log(materiel_doc)
-      doc_to_add.Genus.push(materiel_doc[0].Genus)
-      doc_to_add.Species.push(materiel_doc[0].Species)
-      doc_to_add.Organism.push(materiel_doc[0].Organism)
-      doc_to_add['Infraspecific name'].push(materiel_doc[0]['Infraspecific name'])
-      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(materiel_doc[0]['Material source ID (Holding institute/stock centre, accession)'])
-      doc_to_add['Material source description'].push(materiel_doc[0]['Material source description'])
-      doc_to_add['Material source DOI'].push(materiel_doc[0]['Material source DOI'])
-      let keys=Object.keys(materiel_doc[0])
-      
-      for (let index = 0; index < keys.length; index++) {
-        if (keys[index].includes("Biological ")){
-          var element=keys[index]
-          let tmp_bm=[]
-          for (let j = 0; j < materiel_doc.length; j++) {
-            tmp_bm.push(materiel_doc[j][element])
-            
-          }
-          doc_to_add[element].push(tmp_bm)
-        }
-      }
-      
-      cpt_mat++
-      
-    });
-
-    console.log(doc_to_add)
-    return doc_to_add
-    /* for (let index = 0; index < this.RowData.length; index++) {
-      const bm = this.RowData[index];
-      doc_to_add.Genus.push(bm.Genus)
-      doc_to_add.Species.push(bm.Species)
-      doc_to_add.Organism.push(bm.Organism)
-      doc_to_add['Infraspecific name'].push(bm['Infraspecific name'])
-      doc_to_add['Material source ID (Holding institute/stock centre, accession)'].push(bm['Material source ID (Holding institute/stock centre, accession)'])
-      doc_to_add['Material source description'].push(bm['Material source description'])
-      doc_to_add['Material source DOI'].push(bm['Material source DOI'])
-      
-    } */
-  }
+  
   save(form: any): boolean {
     if (this.mode === "create") {
       this.globalService.add(form, this.model_type, this.parent_id, this.marked).pipe(first()).toPromise().then(

@@ -158,7 +158,6 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
       data => {
           if (data["success"]) {
               this.alertService.success(data["message"])
-              this.router.navigate(['/projects_tree'])
               this.reloadComponent(['/templates'])
           }
           else {

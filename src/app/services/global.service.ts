@@ -12,7 +12,7 @@ import { ExperimentalFactorInterface } from '../models/linda/experimental_factor
 import { ObservationUnitInterface } from '../models/linda/observation-unit';
 import { AssociatedHeadersInterface, DataFileInterface } from '../models/linda/data_files'
 import { ObservedVariableInterface } from '../models/linda/observed-variable';
-import { ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
+import { ExperimentalDesign, ExperimentalDesignInterface } from 'src/app/models/linda/experimental-design';
 import { User } from '../models';
 import { UserInterface } from '../models/linda/person';
 import { PersonInterface } from '../models/linda/person';
@@ -255,6 +255,9 @@ export class GlobalService {
     get_all_observation_unit_childs(observation_unit_key: string) {
         return this.http.get<[]>(this.APIUrl + "get_observation_unit_childs/" + observation_unit_key);
     }
+    get_all_observation_unit_childs_by_type(observation_unit_key: string, model_type:string) {
+        return this.http.get<[]>(this.APIUrl + "get_observation_unit_childs_by_type/" + observation_unit_key+ "/" + model_type );
+    }
     get_all_vertices_by_model(model_type: string, model_key: string) {
         return this.http.get(this.APIUrl + "get_vertices_by_model/" + model_type + "/" + model_key).pipe(catchError(this.handleError));
     }
@@ -273,9 +276,16 @@ export class GlobalService {
         console.log(model_type)
         return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(map(this.extractData));
         //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
-    } 
+    }
+    get_experimental_design_by_key(key: string):Observable<{success:boolean,data:ExperimentalDesign}>{
+        return this.http.get<{success:boolean,data:ExperimentalDesign}>(this.APIUrl + 'get_experimental_design_by_key/' + '/' + key).pipe(catchError(this.handleError));
+    }  
     get_biological_material_by_key(key: string):Observable<{success:boolean,data:BiologicalMaterialFullInterface}>{
         return this.http.get<{success:boolean,data:BiologicalMaterialFullInterface}>(this.APIUrl + 'get_biological_material_by_key/' + '/' + key).pipe(catchError(this.handleError));
+        //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
+    } 
+    get_observation_units_by_key(key: string):Observable<{success:boolean,data:ObservationUnitInterface}>{
+        return this.http.get<{success:boolean,data:ObservationUnitInterface}>(this.APIUrl + 'get_observation_units_by_key/' + '/' + key).pipe(catchError(this.handleError));
         //return this.http.get(this.APIUrl + 'get_by_key/' + model_type + '/' + key).pipe(catchError(this.handleError));
     } 
     get_elem(collection: string, key: string) {
@@ -288,6 +298,9 @@ export class GlobalService {
     get_by_parent_key(parent_key: string, model_type: string) {
         return this.http.get(this.APIUrl + 'get_by_parent_key/' + model_type + '/' + parent_key).pipe(catchError(this.handleError));
     }
+
+
+
     // HTTP POST REQUEST
     is_exist(field: string, value: string, model_type: string, parent_id:string="", as_template:boolean=false): Observable<any> {
         if (model_type==="person"){
@@ -427,7 +440,19 @@ export class GlobalService {
             return this.http.post(`${this.APIUrl + "update_document"}`, obj2send);
         }
     }
-    update_observation_units(values: {}, key: string, model_type: string, parent_id: string) {
+    update_observation_units_with_bm(values: {}, key: string, model_type: string, parent_id: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            '_key': key,
+            'values': values,
+            'model_type': model_type
+        };
+        return this.http.post(`${this.APIUrl + "update_observation_units_with_bm"}`, obj2send);
+    }
+    update_observation_units_and_childs(values: {}, key: string, model_type: string, parent_id: string) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
@@ -525,7 +550,7 @@ export class GlobalService {
             //     }
             // }
         }
-        return this.http.post(`${this.APIUrl + "update_observation_units"}`, obj2send);
+        return this.http.post(`${this.APIUrl + "update_observation_units_and_childs"}`, obj2send);
     }
 
     //REMOVE REQUEST

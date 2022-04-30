@@ -394,7 +394,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           var model_type = this.globalService.get_model_type(node.id)
           this.globalService.get_parent(node.id).toPromise().then(parent_data => {
               var is_investigation = parent_data["_from"].includes("users")
-              const dialogRef = this.dialog.open(ExportComponent, { width: '500px', data: { expandable: node.expandable, is_investigation: is_investigation } });
+              const dialogRef = this.dialog.open(ExportComponent, {disableClose: true, width: '500px', data: { expandable: node.expandable, is_investigation: is_investigation } });
               dialogRef.afterClosed().subscribe(result => {
                   if (result) {
                       if (result.event == 'Confirmed') {
@@ -536,7 +536,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       onRemove(node: MiappeNode) {
           this.active_node = node
-          const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false , mode: 'remove', model_type:this.get_model_type(this.active_node)} });
+          const dialogRef = this.dialog.open(ConfirmationComponent, {disableClose: true, width: '500px', data: { validated: false, only_childs: false , mode: 'remove', model_type:this.get_model_type(this.active_node)} });
           dialogRef.afterClosed().subscribe((result) => {
               if (result) {
                   if (result.event == 'Confirmed') {
@@ -766,7 +766,7 @@ import { UserInterface } from 'src/app/models/linda/person';
           var model_coll = this.active_node.id.split("/")[0];
           let user = JSON.parse(localStorage.getItem('currentUser'));
           if (template == 'saved') {
-              const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: model_type, values: {}, parent_id: this.active_node.id } });
+              const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '500px', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: model_type, values: {}, parent_id: this.active_node.id } });
               dialogRef.afterClosed().subscribe(result => {
                   
                   if (result) {
@@ -848,7 +848,7 @@ import { UserInterface } from 'src/app/models/linda/person';
                       //     search_type="Biological material"
                       // }
   
-                      const dialogRef = this.dialog.open(TemplateSelectionComponent, { width: '500px', data: { search_type: model_type, model_id: "", parent_id: parent_id, user_key: user._key, model_type: model_type, values: {} } });
+                      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '500px', data: { search_type: model_type, model_id: "", parent_id: parent_id, user_key: user._key, model_type: model_type, values: {} } });
                       dialogRef.afterClosed().subscribe(result => {
                           if (result) {
                               ////////console.log(result.values)
@@ -1026,7 +1026,7 @@ import { UserInterface } from 'src/app/models/linda/person';
       }
       show_datatable(node: MiappeNode){
           this.model_key = node.id.split("/")[1]
-          const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: {model_key: this.model_key } });
+          const dialogRef = this.dialog.open(DatatableComponent, {disableClose: true, width: '1000px', data: {model_key: this.model_key } });
           dialogRef.afterClosed().subscribe(result => {
               if (result) {
                   if (result.event == 'Confirmed') {

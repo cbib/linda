@@ -142,7 +142,7 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, { width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess" } });
+    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true, width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess" } });
     formDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         if (result.event == 'Confirmed') {

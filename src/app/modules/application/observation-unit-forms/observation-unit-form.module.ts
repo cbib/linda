@@ -6,12 +6,14 @@ import { ObservationUnitFormRoutingModule } from './observation-unit-form-routin
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
 import { JoyrideModule, JoyrideService } from 'ngx-joyride';
 import { GlobalService, AlertService, UserService} from '../../../services';
 // Components
 import { ObservationUnitFormComponent } from './observation-unit-form.component';
 import { AuthGuard } from '../../../guards/auth.guards';
-
+import { CdkTableModule } from '@angular/cdk/table';
+import { MatPaginatorModule } from '@angular/material';
 
 @NgModule({
   imports: [
@@ -22,6 +24,9 @@ import { AuthGuard } from '../../../guards/auth.guards';
     MatIconModule,
     MatMenuModule,
     MatCardModule,
+    MatTableModule,
+    CdkTableModule,
+    MatPaginatorModule,
     JoyrideModule.forChild()
   ],
   exports: [

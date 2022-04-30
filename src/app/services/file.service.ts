@@ -424,10 +424,10 @@ export class FileService {
         //console.log(model)
         //console.log(isa_model)
         return_data = this.build_isa_model2(model_data, model, isa_model, return_data, model_type, filename, parent_id, parent_data)
-        console.log(submodels)
+        //console.log(submodels)
         submodels['models_data'].forEach(
             submodel => {
-                console.log(submodel)
+                //console.log(submodel)
                 var filename = ""
                 parent_id = submodel["e"]["_from"]
                 if (submodel["v"]["_id"].split('/')[0] === "studies") {
@@ -624,11 +624,8 @@ export class FileService {
     }
     public build_isa_model2(data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, edge={}) {
 
-
         var environment_obj = {}
-        
         var keys = Object.keys(data);
-
         if (model_type === "investigation") {
             var isa_file = "Investigation"
             //add the model
@@ -798,7 +795,7 @@ export class FileService {
                     // //console.log(parent_data['v']["obsUUID"][parent_index])
                     // //console.log(data["Biological material ID"][data_index][bm_data_index])
                     for (var i = 0; i < keys.length; i++) {
-                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID") || keys[i].startsWith("replication")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                             keys.splice(i, 1);
                             i--;
                         }
@@ -2246,17 +2243,23 @@ export class FileService {
         // //console.log(model)
         // //console.log(model[key])
         var mapping_data = {}
-        if (model[key]["Mapping"]) {
-            mapping_data = model[key]["Mapping"]
+        if (Object.keys(model).includes(key)){
+            if (model[key]["Mapping"]) {
+                mapping_data = model[key]["Mapping"]
+            }
         }
         return mapping_data
     }
     public is_ontology_key(model: {}, key: string) {
-
-        if (model[key]["Associated ontologies"]) {
-            return true
+        if (Object.keys(model).includes(key)){
+            if (model[key]["Associated ontologies"]) {
+                return true
+            }
+            else {
+                return false
+            }
         }
-        else {
+        else{
             return false
         }
 

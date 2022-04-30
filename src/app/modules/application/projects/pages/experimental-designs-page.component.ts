@@ -119,12 +119,6 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     } 
 
     
-
-    
-    showBlockInfo(i,ProductId){
-        this.hideme[i] = !this.hideme[i];  
-        this.Index = i; 
-    }
     
     async ngOnInit(){
         console.warn(this.level)
@@ -157,18 +151,9 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
             console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
             this.experimental_designs=data
             console.log(this.experimental_designs)
-            
         }
-        /* return this.globalService.get_all_experimental_designs(this.model_key).toPromise().then(
-            data => {
-                if (data.length>0){
-                    console.log(data[0].Blocking.value[0]['Blocks per trial']['value'])
-                    this.experimental_designs=data
-                    
-                }
-            }
-        ) */
     }
+
     onExtractDesign(){
         console.warn(this.BlockDesignForm.controls)
         this.BlockDesignForm.get('totalBlockControl').value
@@ -226,10 +211,10 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
         //console.log(this.design.get_block_design(4))
         //console.log(this.experimental_design_blocks)
     }
+
     ngOnDestroy(): void {
         //Called once, before the instance is destroyed.
-        //Add 'implements OnDestroy' to the class.
-        
+        //Add 'implements OnDestroy' to the class.   
     }
     public handlePageBottom(event: PageEvent) {
         this.paginator.pageSize = event.pageSize;
@@ -252,12 +237,9 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
         );
     }
     
-    
-
-
     onRemove(element:ExperimentalDesignInterface) {
         console.log(element)
-        const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
+        const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true,width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -267,8 +249,9 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
                             if (data["success"]) {
                                 console.log(data["message"])
                                 var message = element._id + " has been removed from your history !!"
+                                
                                 this.alertService.success(message)
-                                this.ngOnInit()
+                                this.reloadComponent()
                             }
                             else {
                                 this.alertService.error("this form contains errors! " + data["message"]);
@@ -279,6 +262,7 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
             //this.reloadComponent(['/projects'])
         });
     }
+
     onAdd(){
         this.router.navigate(['/experimental_design_page'], { queryParams: { 
             level: "1", 
@@ -292,7 +276,6 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
             role: this.role, 
             group_key: this.group_key 
         }}); 
-  
     }
     
     onEdit(element:ExperimentalDesignInterface){
@@ -309,17 +292,26 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
             group_key: this.group_key 
         }});
     }
+
     removeBlock(_block){
         this.experimental_design_blocks.forEach( (block, index) => {
           if(block === _block) this.experimental_design_blocks.splice(index,1);
         });
-     }
+    }
+
     display_block(_block:BlockDesignInterface){
         console.log(_block['Block number'].value)
         console.log(this.experimental_design_blocks)
         console.log(this.experimental_design_blocks.filter(block =>
             block['Block number'].value===_block['Block number'].value
         ))
+    }
+    
+    reloadComponent() {
+        let currentUrl = this.router.url;
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });
     }
 
     onDesignTypeChange(value:string){
@@ -346,5 +338,9 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     get get_displayedColumns(){ return this.displayedColumns }  
     get get_dataSource(){ return this.dataSource }
     get get_design_type(){ return this.design_type}
+    showBlockInfo(i,ProductId){
+        this.hideme[i] = !this.hideme[i];  
+        this.Index = i; 
+    }
 
 }

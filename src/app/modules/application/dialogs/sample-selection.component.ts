@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GlobalService, AlertService } from '../../../services';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -12,7 +12,9 @@ import { OntologyTreeComponent } from '../dialogs/ontology-tree.component';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
 import * as uuid from 'uuid';
 import {BiologicalMaterialDialogModel } from '../../../models/biological_material_models'
-
+import { MatPaginator } from '@angular/material';
+import { date, RxwebValidators } from "@rxweb/reactive-form-validators"
+import {  RxReactiveFormsModule } from "@rxweb/reactive-form-validators"
 
 interface DialogData {
   model_id: string;
@@ -44,10 +46,15 @@ const BM_ELEMENT_DATA: BiologicalMaterialDialogModel[] = []
 
 
 export class SampleSelectionComponent implements OnInit {
+  @ViewChild('matpaginator', { static: true }) matpaginator: MatPaginator;
+  @ViewChild('sampleselectionpaginator', { static: true }) sampleselectionpaginator: MatPaginator;
   ready_to_show: boolean = false
   sampleTable: FormGroup;
   sampleControl: FormArray;
   sampleTouchedRows: any;
+  panel_disabled:boolean=true
+  panel_expanded:boolean=false
+  model_loaded:boolean=false
   private model_id: string;
   private result: []
   private model_type: string;
@@ -63,22 +70,30 @@ export class SampleSelectionComponent implements OnInit {
   use_sample_list: boolean = false;
   autogenerateIsChecked: boolean = false
   technicalReplicateIsChecked: boolean = false
-  SampleNumber: number;
-
+  TechnicalReplicateNumber: number=1;
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
 
   //displayedMaterialColumns: string[] = ['Biological material ID', 'Material source ID (Holding institute/stock centre, accession)', 'Genus', 'Species', 'Database id', 'select'];
-  displayedSampleColumns: string[] = ['sampleID', 'plantAnatomicalEntity', 'plantStructureDevelopmentStage', 'sampleDescription', 'externalID', 'collectionDate'];
-  private sampledataSource = new MatTableDataSource(SAMPLE_ELEMENT_DATA);
+  displayedSampleColumns: string[] = ['Sample ID', 'Plant anatomical entity', 'Plant structure development stage', 'Sample description', 'External ID', 'Collection date', 'Edit'];
+  private sampledataSource: MatTableDataSource<any> = new MatTableDataSource([]);
   materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatTable, { static: false }) table: MatTable<BiologicalMaterialDialogModel>
   private initialSelection = []
   selection = new SelectionModel<BiologicalMaterialDialogModel>(true, this.initialSelection /* multiple */);
+  sample_index_row: number=0;
+  SampleDate: Date;
+  sample_ready: boolean=false;
+  totalSample: number=1;
+  totalSampleByMaterial: number=1;
+  SampleDescription: string="";
+  PlantAnatomicalEntity: string="";
+  PlantStructureDevelopmentStage:string=""
 
   constructor(
     private fb: FormBuilder,
     private globalService: GlobalService,
+    private _cdr: ChangeDetectorRef,
     private alertService: AlertService,
     public dialogRef: MatDialogRef<SampleSelectionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
@@ -87,12 +102,15 @@ export class SampleSelectionComponent implements OnInit {
     this.parent_id = this.data.parent_id;
     this.bm_data = this.data.bm_data
     this.observation_id=this.data.observation_id
-
-
     this.result = []
+    this.sampleTable = this.fb.group({
+      sampleRows: this.fb.array([])
+    });
   }
 
   async ngOnInit() {
+    console.warn(this.model_type)
+    console.warn(this.parent_id)
     this.materialdataSource.sort = this.sort
     this.observation_id=this.data.observation_id
     var parent_name = this.data.parent_id.split("/")[0]
@@ -100,40 +118,28 @@ export class SampleSelectionComponent implements OnInit {
     var child_type = this.model_type + "s"
     this.sampleTouchedRows = [];
     this.sample_id = ""
-    this.sampleTable = this.fb.group({
-      sampleRows: this.fb.array([])
-    });
-    console.log(this.materialdataSource)
-
+   
+    //console.log(this.materialdataSource)
     this.materialdataSource.data = this.load_material()
-    // this.bm_data.forEach(element => {
-    //   this.materialdataSource.data.push(element);
-    // });
-
-    //this.materialdataSource.data=this.materialdataSource.data
-    //this.materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
-    //this.materialdataSource.connect().next(this.bm_data)
+    this.materialdataSource.paginator = this.matpaginator;
+    this._cdr.detectChanges()
     await this.get_model()
   }
+  ngAfterViewInit() {
+    this.materialdataSource.paginator = this.matpaginator;
+    this._cdr.detectChanges()
+  }
+
 
   load_material(): BiologicalMaterialDialogModel[] {
-
     var data = []
     this.bm_data.forEach(element => {
       if (element["obsUUID"]===this.observation_id){
         data.push(element);
 
       }
-      
-      // data.push({
-      //   biologicalMaterialId: element['Biological material ID'],
-      //   materialId: element['Material source ID (Holding institute/stock centre, accession)'],
-      //   genus: element['Genus'],
-      //   species: element['Species'],
-      //   lindaID: element["Database id"]
-      // })
     });
-    console.log(data)
+    //console.log(data)
 
     // var mat_ids = []
     // mat_ids = attr['Material source ID (Holding institute/stock centre, accession)']
@@ -163,12 +169,12 @@ export class SampleSelectionComponent implements OnInit {
     return data
   }
 
-  get_model() {
+  async get_model() {
     this.model = [];
     //Get asynchronicly MIAPPE model => Remove useless keys (_, Definition) => build      
-    this.globalService.get_model(this.model_type).toPromise().then(data => {
+    await this.globalService.get_model(this.model_type).toPromise().then(data => {
       this.model = data;
-      // console.log(this.model)
+      // //console.log(this.model)
       var sample_keys = Object.keys(this.model);
       this.cleaned_model = []
       for (var i = 0; i < sample_keys.length; i++) {
@@ -183,127 +189,252 @@ export class SampleSelectionComponent implements OnInit {
           dict["level"] = this.model[sample_keys[i]]["Level"]
           dict["Associated_ontologies"] = this.model[sample_keys[i]]["Associated ontologies"]
           this.cleaned_model.push(dict)
+          this.validated_term[sample_keys[i]] = { selected: false, values: "" }
         }
       }
       this.cleaned_model = this.cleaned_model.sort(function (a, b) { return a.pos - b.pos; });
+      this.model_loaded=true
     });
   }
 
   ngAfterOnInit() {
     this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
   }
-
   //initiateSampleForm(bm_id:string="", obs_id=""): FormGroup {
-  initiateSampleForm(bm_id: string = "", obs_id = ""): FormGroup {
-
-    // console.log(this.cleaned_model)
-
-
-    let attributeFilters = {};
-    this.cleaned_model.forEach(attr => {
-      var value = ''
-      this.validated_term[attr["key"]] = { selected: false, values: "" }
-      if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
-        if (attr["key"].includes("ID")) {
-          //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
-          //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+    initiateSampleForm(bm_id: string = "", obs_id = ""): FormGroup {
+      let attributeFilters = {};
+      this.cleaned_model.forEach(attr => {
+        var value = ''
+        //this.validated_term[attr["key"]] = { selected: false, values: "" }
+        if (!attr["key"].startsWith("_") && !attr["key"].startsWith("Definition")) {
+          if (attr["key"].includes("Sample ID")) {
+            //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
+            //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
+            //attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+            attributeFilters[attr["key"]] = [value,  [RxwebValidators.unique(), RxwebValidators.required()]];
+  
+          }
+          else if (attr["key"].includes("External ID")) {
+            attributeFilters[attr["key"]] = [value, RxwebValidators.unique()];
+          }
+          else if (attr["key"].includes("Sample description")) {
+            attributeFilters[attr["key"]] = [this.SampleDescription, RxwebValidators.required()];
+          }
+          else if (attr["key"].includes("Plant anatomical entity")){
+            attributeFilters[attr["key"]] = [this.PlantAnatomicalEntity, RxwebValidators.required()];
+          
+          }
+          else if (attr["key"].includes("Plant structure development stage")){
+            attributeFilters[attr["key"]] = [this.PlantStructureDevelopmentStage, RxwebValidators.required()];
+          
+          }
+          else if (attr["key"].includes("Collection date")) {
+            attributeFilters[attr["key"]] = [this.SampleDate, RxwebValidators.required()];
+          }
+          else {
+            attributeFilters[attr["key"]] = [value];
+          }
+          //attributeFilters['sampleUUID'] = uuid.v4()
+          attributeFilters['bmUUID'] = bm_id
+          attributeFilters['obsUUID'] = this.observation_id
+          //this.sample_id = attributeFilters['sampleUUID']
         }
-        else if (attr["key"].includes("Project Name")) {
-          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
-        }
-        else if (attr["key"].includes("Study Name")) {
-          attributeFilters[attr["key"]] = [value, [Validators.required, Validators.minLength(4)]];
-        }
-        else {
-          attributeFilters[attr["key"]] = [value];
-        }
-        //attributeFilters['sampleUUID'] = uuid.v4()
-        attributeFilters['bmUUID'] = bm_id
-        attributeFilters['obsUUID'] = this.observation_id
-        //this.sample_id = attributeFilters['sampleUUID']
-      }
-
-
-    });
-
-    return this.fb.group(attributeFilters);
-  }
-
+      });
+      //console.log(attributeFilters)
+  
+      return this.fb.group(attributeFilters);
+    }
   addSampleRow() {
-    const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
-    // this.materialdataSource.data.forEach(row =>{
-    //   console.log(row["bm-id"])
-    //   console.log(row["observation_id"])
-    //   this.selection.select(row)
+    this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
+    this.sampleControl.clear()
+    this.totalSample=0
+    for (var i = 0; i < this.getTechnicalReplicateNumber(); i++) { 
+      for (var j = 0; j < this.selection.selected.length; j++) {
+        for (var k = 0; k < this.totalSampleByMaterial; k++) {
+          var select = this.selection.selected[j]
+          //console.log("selected: ", select)
+          var bm_id = select["bmUUID"]
+          //console.log(bm_id)
+          this.sampleControl.push(this.initiateSampleForm(bm_id=bm_id))
 
-    //   sampleControl.push(this.initiateSampleForm(row["bm-id"],row["observation_id"]));
-
-    // });
-    sampleControl.push(this.initiateSampleForm())
+          if (this.autogenerateIsChecked){
+            let rep_label="_rep_"+(k+1)
+            var select = this.selection.selected[j]
+            //console.log("selected: ", select)
+            
+            //console.log(bm_id)
+            
+          /* for (var j = 0; j < this.sampleControl.controls.length; j++) { */
+            //console.log(this.sampleControl.controls[j].value)
+            var auto_generated_sampleid=select['biologicalMaterialId']+'_sample_'+(i+1)+ rep_label
+            //this.sampleControl.controls[j].patchValue({'Sample ID': select['biologicalMaterialId'] })
+            this.sampleControl.controls[this.totalSample].get('Sample ID').patchValue(auto_generated_sampleid)
+            this.sampleControl.controls[this.totalSample].get('Sample ID').setValue(auto_generated_sampleid)
+            
+          }
+          this.totalSample++
+        }
+      }
+    }
+    /* if (this.autogenerateIsChecked){
+      this.autoGenerateID()
+    } */
+    this.sampledataSource = new MatTableDataSource((this.sampleTable.get('sampleRows') as FormArray).controls); 
+    this.sampledataSource.paginator = this.sampleselectionpaginator;
+    this._cdr.detectChanges()
     this.ready_to_show = true
   }
-
-  deleteSampleRow(index: number) {
-    const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
-    sampleControl.removeAt(index);
-    if (sampleControl.controls.length === 0) {
-      this.ready_to_show = false
+  autoGenerateID() {
+    this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
+    //console.log(this.sampleControl)
+    //console.log("autogenerate id activated")
+    //console.log('TechnicalReplicateNumber: ',this.getTechnicalReplicateNumber())
+    //console.log('this.selection.selected.length: ',this.selection.selected.length)
+    //console.log("autogenerate id activated")
+    this.totalSample=0
+    for (var k = 0; k < this.totalSampleByMaterial; k++) { 
+      for (var j = 0; j < this.selection.selected.length; j++) {
+        for (var i = 0; i < this.getTechnicalReplicateNumber(); i++) {
+          let rep_label="_rep_"+(i+1)
+          var select = this.selection.selected[j]
+          //console.log("selected: ", select)
+          var bm_id = select["bmUUID"]
+          //console.log(bm_id)
+        /* for (var j = 0; j < this.sampleControl.controls.length; j++) { */
+          //console.log(this.sampleControl.controls[j].value)
+          var auto_generated_sampleid=select['biologicalMaterialId']+'_sample_'+(k+1)+ rep_label
+          //this.sampleControl.controls[j].patchValue({'Sample ID': select['biologicalMaterialId'] })
+          this.sampleControl.controls[this.totalSample].get('Sample ID').patchValue(auto_generated_sampleid)
+          this.sampleControl.controls[this.totalSample].get('Sample ID').setValue(auto_generated_sampleid)
+          this.totalSample++
+        }
+      }
+    
     }
   }
 
-  get getSampleFormControls() {
+  
+  
+  getActualIndex(index : number)    { return index + this.sampledataSource.paginator.pageSize * this.sampledataSource.paginator.pageIndex; }
+
+  sampleTableRowSelected(i:number) {
+    ////console.log(i)
+    
+    this.sample_index_row = i
     const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
-    return sampleControl;
+    this.sample_id = sampleControl.controls[i].value
+  }
+  
+
+  deleteSampleRow(index: number) {
+    this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
+    this.sampleControl.removeAt(index);
+    if (this.sampleControl.controls.length === 0) {
+      this.ready_to_show = false
+    }
+  }
+  get get_sampledataSource(){ return this.sampledataSource}
+  
+  get getSampleDescription(){
+    return this.SampleDescription
+  }
+  get getPlantAnatomicalEntity(){
+    return this.PlantAnatomicalEntity
+  }
+  get getPlantStructureDevelopmentStage(){
+    return this.PlantStructureDevelopmentStage
   }
 
+  getSampleDate():Date{ 
+    //console.log(this.SampleDate)
+    return this.SampleDate 
+  }
+  getTotalSampleByMaterial():number{
+    return this.totalSampleByMaterial
+  }
+  getTechnicalReplicateNumber(){
+    return this.TechnicalReplicateNumber
+  }
+  onDateAdd(event){
+    //console.log(event)
+    this.sample_ready = true;
+  }
+  get get_model_loaded():boolean{
+    return this.model_loaded
+  }
+  get get_sample_ready(){
+    return this.sample_ready
+  } 
+
+  get getSampleFormControls() { return this.sampleTable.get('sampleRows') as FormArray; }
+  get get_ready_to_show(){ return this.ready_to_show }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.materialdataSource.data.length;
     return numSelected == numRows;
   }
-
+  rowToggle(row){
+    this.selection.toggle(row)
+    if (this.selection.selected.length===0){
+      this.panel_disabled=true
+    }
+    else(
+      this.panel_disabled=false
+    )
+  }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
-      this.materialdataSource.data.forEach(row => this.selection.select(row));
+      this.materialdataSource.data.forEach(row => this.selection.select(row));this.panel_disabled=false
   }
 
   //Event functions
-  autoGenerateID() {
-    this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
-    console.log("autogenerate id activated")
-    if (this.technicalReplicateIsChecked) {
-      for (var i = 0; i < this.SampleNumber; i++) {
-      }
-    }
-    else {
-      for (var j = 0; j < this.sampleControl.controls.length; j++) {
-        console.log(this.sampleControl.controls[j].value)
-        //var generate_id=this.sampleControl.controls[j]['bm-id']+"_"+
-        this.sampleControl.controls[j].patchValue({ 'Sample ID': this.sampleControl.controls[j].value['bm-id'] })
-      }
-
-
-    }
-  }
-
+  
+  
   onSampleNumberChange(value: number) {
-    this.SampleNumber = value
+    this.TechnicalReplicateNumber = value
   }
-
-  onOntologyTermSelection(ontology_id: string, key: string, index: number, multiple: boolean = true) {
+  onGlobalOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
     //this.show_spinner = true;
-    const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: true, disableClose: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], uncheckable: false, multiple: multiple } });
+    //console.log(key)
+    //console.log(ontology_id)
+    const dialogRef = this.dialog.open(OntologyTreeComponent, {  disableClose: true,width: '1000px', autoFocus: true,  maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], selected_key:"", uncheckable: false, multiple: multiple, model_type:this.model_type, mode_simplified:false,observed:false,sub_class_of:"" } });
     // dialogRef..afterOpened().subscribe(result => {
     //     this.show_spinner = false;
     // })
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        // console.log(multiple)
-        console.log(key)
+        // //console.log(multiple)
+        //console.log(result)
+        if (!multiple) {
+          if (result.selected_set !== undefined) {
+            if (key==="Plant structure development stage"){
+              this.PlantStructureDevelopmentStage=result.selected_set[0]['id']
+            }
+            else{
+              this.PlantAnatomicalEntity=result.selected_set[0]['id']  
+            }
+            this.validated_term[key] = { selected: true, values: result.selected_set[0]['id'] };
+          }
+        }
+        
+        
+        
+      }
+    });
+  }
+  onOntologyTermSelection(ontology_id: string, key: string, index: number, multiple: boolean = true) {
+    //this.show_spinner = true;
+    const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: true,  maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], selected_key:"", uncheckable: false, multiple: multiple, model_type:this.model_type, mode_simplified:false,observed:false,sub_class_of:"" } });
+    // dialogRef..afterOpened().subscribe(result => {
+    //     this.show_spinner = false;
+    // })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        // //console.log(multiple)
+        //console.log(key)
         //this.ontology_type = result.ontology_type;
         this.selected_set = result.selected_set;
         if (this.selected_set !== undefined) {
@@ -317,55 +448,34 @@ export class SampleSelectionComponent implements OnInit {
             this.getSampleFormControls.controls[index].value[key].patchValue(term_ids)
           }
           else {
-
             if (this.selected_set.length > 0) {
-
-              // console.log(this.getSampleFormControls)
-              // console.log(this.getSampleFormControls.controls)
-              // console.log(this.getSampleFormControls.controls[index].value)
-              // console.log(this.getSampleFormControls.controls[index].value[key])
-              // console.log(this.selected_set)
-              // console.log(this.selected_set)
-              // console.log(this.getSampleFormControls)
-              // console.log(result.selected_set[0]['id'])
               this.validated_term[key] = { selected: true, values: result.selected_set[0]['id'] };
               this.addSampleTerm(index, key, result.selected_set[0]['id'])
-
               //this.getSampleFormControls.controls[index].value[key].patchValue(result.selected_set[0]['id'])
-
             }
           }
         }
       }
     });
   }
-
   addSampleTerm(index: number, key: string, id: string) {
-    console.log(key)
-    console.log(index)
+    //console.log(key)
+    //console.log(index)
     const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
     sampleControl.controls[index].patchValue({ key: id })
-    console.log(sampleControl.controls[index])
+    //console.log(sampleControl.controls[index])
   }
-
   onTaskAdd(event) {
+    ////console.log(event.target.value)
   }
-
+  
   onNoClick(): void {
     this.dialogRef.close();
   }
-
   onOkClick(): void {
-    var sample_data = []
-    console.log(this.data.values)
-    console.log(this.selection)
-    const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
-
-    for (var i = 0; i < this.selection.selected.length; i++) {
-      var select = this.selection.selected[i]
-      console.log("selected: ", select)
-      var bm_id = select["bmUUID"]
-      console.log(bm_id)
+    if  (this.sampleTable.valid){
+      var sample_data = []
+      const sampleControl = this.sampleTable.get('sampleRows') as FormArray;
       for (var j = 0; j < sampleControl.controls.length; j++) {
         var element = sampleControl.controls[j]
         var keys = Object.keys(element.value)
@@ -373,15 +483,15 @@ export class SampleSelectionComponent implements OnInit {
         for (var k = 0; k < keys.length; k++) {
           tmp_data[keys[k]] = element.value[keys[k]]
         }
-        tmp_data['bmUUID'] = bm_id
-        tmp_data["obsUUID"] = select["obsUUID"]
-        console.log(tmp_data)
         sample_data.push(tmp_data)
       }
+  
+      this.dialogRef.close({event:"Confirmed", sample_data:sample_data});
     }
-    //this.materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
-
-    this.dialogRef.close(sample_data);
+    else(
+      this.alertService.error("Some sample do not have ID associated")
+    )
+    
 
   }
 }

@@ -140,7 +140,7 @@ export class DataFilesPageComponent implements OnInit {
   }
   async onRemove(element: DataFileInterface) {
     console.log(element._id)
-    const dialogRef = this.dialog.open(ConfirmationComponent, { width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: "data_file" } });
+    const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: "data_file" } });
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
@@ -185,7 +185,7 @@ export class DataFilesPageComponent implements OnInit {
     // dependding on parent id, remove either in investigations_edge, studies_edeg
   }
   onAdd(mode:string) {
-    const dialogRef = this.dialog.open(FilesLoaderComponent, { width: '1000px', data: { parent_id: this.parent_id, mode:mode } });
+    const dialogRef = this.dialog.open(FilesLoaderComponent, {disableClose: true,  width: '1000px', data: { parent_id: this.parent_id, mode:mode } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.event == 'Confirmed') {
@@ -211,7 +211,7 @@ export class DataFilesPageComponent implements OnInit {
   }
   onShow(elem: DataFileInterface) {
     console.log(elem)
-    const dialogRef = this.dialog.open(DatatableComponent, { width: '1000px', data: { model_key: elem._key, collection: this.collection } });
+    const dialogRef = this.dialog.open(DatatableComponent, {disableClose: true,  width: '1000px', data: { model_key: elem._key, collection: this.collection } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.event == 'Confirmed') {

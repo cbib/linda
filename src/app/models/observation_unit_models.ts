@@ -5,3 +5,4 @@ export interface ObservationUnitTableModel {
     'External ID': string;
     'Spatial distribution':string;
   }
+

@@ -53,6 +53,10 @@ import { AddColumnComponent } from './add-column.component';
 import { EditFormComponent } from './edit-form.component';
 import { ProjectLoaderComponent } from './project-loader.component';
 import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.module';
+import { AssociateBiologicalMaterial } from './associate-biological-material.component';
+import { MatInputModule } from '@angular/material/input';
+import { AssociateObservationUnit } from './associate-observation-unit.component';
+
 @NgModule({
   declarations: [
     ConfirmationComponent, 
@@ -77,7 +81,9 @@ import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.
     DefineComponent,
     AddColumnComponent,
     EditFormComponent,
-    ProjectLoaderComponent
+    ProjectLoaderComponent,
+    AssociateBiologicalMaterial,
+    AssociateObservationUnit
   ],
   imports: [
     CommonModule,
@@ -90,6 +96,8 @@ import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.
     MatSelectModule,
     MatPaginatorModule,
     MatProgressBarModule,
+    MatFormFieldModule,
+    MatInputModule,
     ProgressBarModule,
     MatExpansionModule,
     MatTreeModule,
@@ -134,7 +142,9 @@ import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.
     GroupLoginComponent,
     FilesLoaderComponent,
     EditFormComponent,
-    ProjectLoaderComponent
+    ProjectLoaderComponent,
+    AssociateBiologicalMaterial,
+    AssociateObservationUnit
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -159,7 +169,9 @@ import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.
     DefineComponent,
     AddColumnComponent,
     EditFormComponent,
-    ProjectLoaderComponent
+    ProjectLoaderComponent,
+    AssociateBiologicalMaterial,
+    AssociateObservationUnit
   ]
 })
 export class DialogModule { }
