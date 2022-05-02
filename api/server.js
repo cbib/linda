@@ -5765,7 +5765,7 @@ router.post('/add_observation_units2', function (req, res) {
 
                     //var sample_data = values['samples'];
                     var sample_obj = {
-                        "_from": parent_id,
+                        "_from": data[0].id,
                         "_to": sample_db_id,
                         "samples": []
                     }

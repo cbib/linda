@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4201 --host localhost --base-href /linda/ --deploy-url /linda/",
-    "startvm": "ng serve --port 4201 --host 0.0.0.0 --base-href /linda/ --deploy-url /linda/",
+    "startvm": "ng serve --port 4201 --host 0.0.0.0 --disable-host-check --base-href /linda/ --deploy-url /linda/",
     "build": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --aot",
     "build:stats": "ng build --stats-json",
     "test": "jest",

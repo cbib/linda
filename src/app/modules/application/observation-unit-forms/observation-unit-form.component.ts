@@ -801,7 +801,6 @@ export class ObservationUnitFormComponent implements OnInit {
     /* var return_data=this.build_result()
     console.log(return_data)
     this.save(return_data) */
-
     var return_data=this.build_result2()
     console.log(return_data)
     this.save2(return_data)
