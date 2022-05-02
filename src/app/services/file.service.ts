@@ -913,7 +913,7 @@ export class FileService {
             var isa_file = "Assay"
             //console.log("#############################################################model type", model_type)
 
-            //console.log("----data", data)
+            console.log("----data", data)
             
             //console.log("----parent id", parent_id)
             //console.log("----return data", return_data)
@@ -955,18 +955,13 @@ export class FileService {
                     return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].push(filename)
                 }
                 var parent_index = parent_data['v']["obsUUID"].indexOf(data["obsUUID"])
-                //console.log(data)
-                //console.log(return_data['Assay'])
-
                 //get index of sample obsUUID in parent_data['v'] i.e observation unit data
 
                 return_data['Assay'][index]["assay_data"]['Sample Name']["data"].push(parent_data['v']['Observation unit ID'][parent_index])
-                console.log(data)
                 var sample_data=edge['samples']
                 /// NEW CODE TO TEST
-                console.log(data)
-                var sample_data=edge['samples']
-                for (var sample_index = 0; sample_index < sample_data.length; bm_index++) {   
+         
+                /* for (var sample_index = 0; sample_index < sample_data.length; sample_index++) {   
                     for (var i = 0; i < keys.length; i++) {
                         if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                             keys.splice(i, 1);
@@ -1036,7 +1031,11 @@ export class FileService {
                             }
                         }
                     }
-                }
+                } */
+                
+
+
+
                 
                 
                 /* console.log(edge['samples'])

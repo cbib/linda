@@ -5741,45 +5741,47 @@ router.post('/add_observation_units2', function (req, res) {
                 res.send({ success: false, message: model_type + ' study edge collection already have document with this title ', id: 'none' });
             }
             else {
-                var data = [];
+                //var data = [];
                 var sample_doc = { "Sample ID": [], "External ID": [], "Plant anatomical entity": [], "Plant structure development stage": [], "Sample description": [], "Collection date": [], "obsUUID": [], "bmUUID": [], "sampleUUID": [] }
                 //var return_data = {"observation_units":[],"biological_materials":[],"samples":[], "experimental_factor":[] }
-                var sample_data = values['samples'];
-                console.log(sample_data)
-                for (var sample in sample_data) {
-                    sample_doc["Sample ID"].push(sample_data[sample]['Sample ID']);
-                    sample_doc["External ID"].push(sample_data[sample]['External ID']);
-                    sample_doc["Plant anatomical entity"].push(sample_data[sample]['Plant anatomical entity']);
-                    sample_doc["Plant structure development stage"].push(sample_data[sample]['Plant structure development stage']);
-                    sample_doc["Sample description"].push(sample_data[sample]['Sample description']);
-                    sample_doc["Collection date"].push(sample_data[sample]['Collection date']);
-                    sample_doc["bmUUID"].push(sample_data[sample]['bmUUID']);
-                    sample_doc["sampleUUID"].push(sample_data[sample]['sampleUUID']);
-                    sample_doc["obsUUID"].push(sample_data[sample]['obsUUID']);
-                }
-                console.log(sample_doc)
-                data = db._query(aql`INSERT ${sample_doc} IN ${sample_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
-                //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
-                if (data[0].id !== '') {
-                    var sample_db_id = data[0].id
-
-                    //var sample_data = values['samples'];
-                    var sample_obj = {
-                        "_from": data[0].id,
-                        "_to": sample_db_id,
-                        "samples": []
+                for (var i = 0; i < observation_units_data.length; i++) {
+                    var sample_data = values['samples'][i];
+                    console.log(sample_data)
+                    for (var sample in sample_data) {
+                        sample_doc["Sample ID"].push(sample_data[sample]['Sample ID']);
+                        sample_doc["External ID"].push(sample_data[sample]['External ID']);
+                        sample_doc["Plant anatomical entity"].push(sample_data[sample]['Plant anatomical entity']);
+                        sample_doc["Plant structure development stage"].push(sample_data[sample]['Plant structure development stage']);
+                        sample_doc["Sample description"].push(sample_data[sample]['Sample description']);
+                        sample_doc["Collection date"].push(sample_data[sample]['Collection date']);
+                        sample_doc["bmUUID"].push(sample_data[sample]['bmUUID']);
+                        sample_doc["sampleUUID"].push(sample_data[sample]['sampleUUID']);
+                        sample_doc["obsUUID"].push(sample_data[sample]['obsUUID']);
                     }
-                    // add biological_material link to observation unit edge 
-                    if (sample_data !== undefined) {
-                        for (var j = 0; j < sample_data.length; j++) {
-                            sample_data[j]['External ID'] = sample_db_id
-                            sample_obj["samples"].push(sample_data[j])
+                    console.log(sample_doc)
+                    var datasample = db._query(aql`INSERT ${sample_doc} IN ${sample_coll} RETURN { new: NEW, id: NEW._id } `).toArray();
+                    //data =db._query(aql`UPSERT ${values} INSERT ${values} UPDATE {}  IN ${coll} RETURN { before: OLD, after: NEW, id: NEW._id } `).toArray(); 
+                    if (datasample[0].id !== '') {
+                        var sample_db_id = datasample[0].id
+
+                        //var sample_data = values['samples'];
+                        var sample_obj = {
+                            "_from": data[0].id,
+                            "_to": sample_db_id,
+                            "samples": []
                         }
-                    }
-                    if ("_from" in sample_obj) {
-                        db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
-                        //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+                        // add biological_material link to observation unit edge 
+                        if (sample_data !== undefined) {
+                            for (var j = 0; j < sample_data.length; j++) {
+                                sample_data[j]['External ID'] = sample_db_id
+                                sample_obj["samples"].push(sample_data[j])
+                            }
+                        }
+                        if ("_from" in sample_obj) {
+                            db._query(aql`UPSERT ${sample_obj} INSERT ${sample_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
+                            //res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
 
+                        }
                     }
                 }
 
