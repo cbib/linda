@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Input, Inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Inject, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { GlobalService, OntologiesService, AlertService } from '../../../services';
 import { OntologyTerm } from '../../../models/ontology/ontology-term';
@@ -36,7 +36,7 @@ interface DialogData {
 })
 export class OntologyTreeComponent {
     @ViewChild(ProgressBarComponent,{static:false}) progress_bar: ProgressBarComponent;
-
+    //@ViewChild('progress_bar', { static: false }) public progress_bar: ProgressBarComponent;
     private ontology_id: string;
     private selected_set: OntologyTerm[]
     private selected_term: OntologyTerm;
@@ -93,6 +93,7 @@ export class OntologyTreeComponent {
         private router: Router,
         private alertService: AlertService,
         private route: ActivatedRoute,
+        private _cdr: ChangeDetectorRef,
         public dialogRef: MatDialogRef<OntologyTreeComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
@@ -123,12 +124,31 @@ export class OntologyTreeComponent {
         this.ontologyEnum = [];
         this.ontologyNode = [];
         this.search_string = ""
+        
+        //this.progress_bar=new ProgressBarComponent()
     }
     
     async ngOnInit() {
+        
         this.ontology_tree_loading_progress_value = 0
         await this.get_ontology()
         //this.ontology_tree_loading_progress_value = 100
+    }
+    ngAfterViewInit(): void {
+        //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+        //Add 'implements AfterViewInit' to the class.
+        this.progress_bar.set_progress(0)
+        
+    }
+    get_output_from_child(val:number){
+
+        if(this.progress_bar){
+            if(this.progress_bar.progress!==val){
+                this.progress_bar.progress=val
+                this._cdr.detectChanges()
+            }
+            
+        }
     }
     
     async get_ontology() {
@@ -220,7 +240,6 @@ export class OntologyTreeComponent {
     }
     onExtractWholeObservedVariable(node: OntologyTerm){
         console.log(node)
-
     }
 
     onValueAdd(event, node: OntologyTerm) {
@@ -324,9 +343,9 @@ export class OntologyTreeComponent {
         return this.observed
     }
     get progress() {
-        //console.log(this.ontology_tree_loading_progress_value)
+        console.log(this.progress_bar)
         if  (this.progress_bar){
-            return this.progress_bar.get_progress
+            return this.progress_bar.progress
         }
         else{
             return 0
@@ -444,7 +463,6 @@ export class OntologyTreeComponent {
         this.show_spinner = false;
         return this.ontologyNode;
     }
-    //
     build_C0_hierarchy2(ontology: {}): OntologyTerm[] {
 
         this.show_spinner = true;

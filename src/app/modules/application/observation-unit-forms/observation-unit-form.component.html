@@ -390,24 +390,26 @@
           </div>
         <table *ngIf="get_mat_loaded && get_filtered_bm_data.length>0" mat-table style="width: 100%;" [dataSource]="get_bmDataSource" >
           <ng-container matColumnDef="{{column}}" *ngFor="let column of bmDisplayedColumns">
-            <ng-container *ngIf="column!=='Samples'">
+            <ng-container *ngIf="column!=='Samples' && column!=='Edit'">
                 <th class="text-center align-middle" mat-header-cell *matHeaderCellDef> {{column}} </th>
                 <td class="text-center align-middle" mat-cell *matCellDef="let row; let index = index"> 
                   {{row[column]}}
             </td>
             </ng-container>
+            <ng-container *ngIf="column==='Edit'">
+              <th class="text-center align-middle" mat-header-cell *matHeaderCellDef> {{column}} </th>
+              <td class="text-center align-middle" mat-cell *matCellDef="let row; let index = index">
+                  <div class="btn-group" style="float: right;">
+                    <button title="Edit observed variable" (click)="onEdit(getBmActualIndex(index))" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                    <button title="Remove observed variable" (click)="deletebiologicalMaterialRow(getBmActualIndex(index))" class="btn btn-light btn-xs fa fa-trash"></button> 
+                    <!-- <mat-icon class="delete" (click)="deleteSampleRow(getSampleActualIndex(index))">delete_forever</mat-icon> -->
+                  </div>
+              </td>
+          </ng-container>
             <ng-container *ngIf="column==='Samples'">
                 <th class="text-center align-middle" mat-header-cell *matHeaderCellDef> {{column}} </th>
                 <td class="text-center align-middle" mat-cell *matCellDef="let row; let index = index">
                   {{get_sample_by_material(row)}}
-                    <!-- <div class="btn-group" style="float: right;">
-                      <mat-icon class="delete" (click)="deletebiologicalMaterialRow(getBmActualIndex(index))">delete_forever</mat-icon>
-                    </div> -->
-                    <div class="btn-group" style="float: right;">
-                      <button title="Edit observed variable" (click)="onEdit(getBmActualIndex(index))" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                      <button title="Remove observed variable" (click)="deletebiologicalMaterialRow(getBmActualIndex(index))" class="btn btn-light btn-xs fa fa-trash"></button> 
-                      <!-- <mat-icon class="delete" (click)="deleteSampleRow(getSampleActualIndex(index))">delete_forever</mat-icon> -->
-                    </div>
                 </td>
             </ng-container>
           </ng-container>

@@ -14,6 +14,7 @@ import { GlobalService, AlertService, UserService} from '../../../services';
 import { FormComponent } from './form.component';
 import { AuthGuard } from '../../../guards/auth.guards';
 import { StudyFormComponent } from './study-form.component';
+import { AlertModule } from '../alert/alert.module';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { StudyFormComponent } from './study-form.component';
     MatMenuModule,
     MatCardModule,
     MatBadgeModule,
+    AlertModule,
     JoyrideModule.forChild()
   ],
   exports: [

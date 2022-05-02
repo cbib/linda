@@ -38,3 +38,19 @@ export class Sample implements SampleInterface {
         this["sampleUUID"]=sampleuuid
     }
 }
+
+
+export interface SampleFullInterface {
+    '_id':string;
+    '_key':string;
+    '_rev':string;
+    'Sample ID':string[];
+    'External ID':string[];
+    'Plant anatomical entity': string[];
+    'Plant structure development stage':string[];
+    'Sample description':string[];
+    'Collection date':Date[];
+    'bmUUID':string[];
+    'obsUUID':string[];
+    'sampleUUID':string[];
+}

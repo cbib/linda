@@ -65,7 +65,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
 
     
  
-
+    bm_data = []
     //experimental_design_blocks:BlockDesign[]=[]
     design_types=["CompleteBlockDesign","IncompleteBlockDesign"]
     private design:ExperimentalDesign;
@@ -161,7 +161,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }); */
     }
     get_design_by_key(){   
-        this.globalService.get_experimental_design_by_key(this.model_key).toPromise().then(res => {
+        this.globalService.get_experimental_design_by_key(this.model_key).toPromise().then(async res => {
             if (res.success){
                 let data=res.data
                 console.log(data['Blocking'].value[0]['Plot design'].value)
@@ -211,7 +211,25 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 Object.assign(replication, data.Replication.value)
                 this.design.set_replication(replication)
 
-                this.design.set_observation_unit_id(data['Associated observation units'].value)
+                if (data['Associated observation units'].value!==null){
+                    this.design.set_observation_unit_id(data['Associated observation units'].value)
+
+                    const observation_unit_childs_data=await this.globalService.get_all_observation_unit_childs_by_type(data['Associated observation units'].value.split("/")[1], 'biological_materials').toPromise()//.then(observation_unit_childs_data => {
+                    console.log(observation_unit_childs_data)
+                    //get all biological materials
+                    if (observation_unit_childs_data.length>0){
+                        let data=[]
+                        data=observation_unit_childs_data
+                        var child_id: string = data[0]['e']['_to']
+                        var tmp_bm: [] = data[0]['e']['biological_materials']
+                        this.bm_data = this.bm_data.concat(tmp_bm)
+                    }
+                    
+                        
+                    
+
+                }
+                
                 //this.design=ExperimentalDesign.create_design(data)
                 console.log(this.design)
                 ///Object.assign(this.design, data);
@@ -381,14 +399,14 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     block_design['Incomplete Block Design'].value.push(this.incomplete_block_design_type)
                 }
                 for (var column=1;column<this.total_column_per_block+1;column++){  
-                    var plot_design=new PlotDesign()
+                    //var plot_design=new PlotDesign()
                     for (var row=1;row<this.total_row_per_block+1;row++){
                         var row_design:RowDesign=new RowDesign()
                         row_design.set_row_number(row)
                         row_design.set_row_per_plot(this.total_row_per_plot)
                         
                         if (row%this.total_row_per_plot===0){
-                            
+                            var plot_design=new PlotDesign()
                             plot_design.set_column_number(column)
                             plot_design.set_plot_number(plot)
                             plot_design.add_row_design(row_design)
@@ -413,31 +431,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
         
     }
-    extractSample(){
-        const dialogRef = this.dialog.open(SampleSelectionComponent,
-            {disableClose: true, width: '1400px', autoFocus: true,  restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: [], model_type: "sample", values: [], observation_id: this.design['Associated observation units'].value} }
-          );
-          dialogRef.afterClosed().subscribe(res => {
-            if (res.event==='Confirmed') {
-              //console.log(result)
-              let result=res.sample_data
-              for (var i = 0; i < result.length; i++) {
-                result[i]['sampleUUID'] = uuid.v4()
-                ////console.log(result[i])
-                this.sample_data.push(result[i])
-              }
-              let message = "experimental factor selected! "
-              this.alertService.success(message);
-            }
-          });
-    }
-    addExperimentalFactor(){
-    }
-    removeExperimentalFactor(){
-    }
     addObservationUnits(){
         const dialogRef = this.dialog.open(AssociateObservationUnit,{ disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", total_available_plots:this.design['number of entries'].value,  material_id:this.material_id, design:this.design, mode:'create', model_key:''} });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(async result => {
             if (result.event==='Confirmed') {
                 console.log(result.observation_unit_id)
                 this.design.set_observation_unit_id(result.observation_unit_id)
@@ -447,6 +443,16 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         this.observationUnitLoaded=true
                     })
                 })
+                const observation_unit_childs_data=await this.globalService.get_all_observation_unit_childs_by_type(result.observation_unit_id.split("/")[1], 'biological_materials').toPromise()//.then(observation_unit_childs_data => {
+                console.log(observation_unit_childs_data)
+                    //get all biological materials
+                    if (observation_unit_childs_data.length>0){
+                        let data=[]
+                        data=observation_unit_childs_data
+                        var child_id: string = data[0]['e']['_to']
+                        var tmp_bm: [] = data[0]['e']['biological_materials']
+                        this.bm_data = this.bm_data.concat(tmp_bm)
+                    }
             }
         });
         console.log(this.design) 
@@ -460,8 +466,27 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         })
         this.observationUnitLoaded=false
     }
+    
+    addExperimentalFactor(){
+    }
+    removeExperimentalFactor(){
+    }
+    
     addBiologicalMaterial(){
-        const dialogRef = this.dialog.open(AssociateBiologicalMaterial,{disableClose: true, width: '1400px', autoFocus: true,  maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "biological_material", total_available_plots:this.design['number of entries'].value} });
+        const dialogRef = this.dialog.open(AssociateBiologicalMaterial,{
+            disableClose: true, 
+            width: '1400px', 
+            autoFocus: true,  
+            maxHeight: '800px', 
+            data: { 
+                model_id: "", 
+                parent_id: this.parent_id, 
+                model_type: "biological_material", 
+                total_available_plots:this.design['number of entries'].value,
+                role:this.role,
+                grand_parent_id:this.grand_parent_id,
+                group_key:this.group_key
+             } });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
               console.log(result)
@@ -513,7 +538,36 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             })
         })
         this.biologicalMaterialLoaded=false
-    }   
+    }  
+    
+    
+    extractSample(){
+        //first  get bm data
+        let obs_uuids=[]
+        this.design.Blocking.value.forEach(block=>{
+            block['Plot design'].value.forEach(plot=>{
+                obs_uuids.push(plot.get_observation_uuid())
+            })
+        })
+        const dialogRef = this.dialog.open(SampleSelectionComponent,
+            {disableClose: true, width: '1400px', autoFocus: true,  restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: obs_uuids} }
+          );
+          dialogRef.afterClosed().subscribe(async res => {
+            if (res.event==='Confirmed') {
+              console.log(res.sample_data)
+              let result:[]=res.sample_data
+              const data= await this.globalService.add_observation_units_samples({"samples":result}, this.design['Associated observation units'].value).toPromise()
+
+              let message = "experimental factor selected! "
+              this.alertService.success(message);
+            }
+          });
+    }
+    removeSample(){
+
+    }
+
+
     ngOnDestroy(): void {
         //Called once, before the instance is destroyed.
         //Add 'implements OnDestroy' to the class.

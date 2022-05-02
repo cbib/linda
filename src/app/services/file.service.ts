@@ -470,7 +470,7 @@ export class FileService {
                     model_type=submodel["v"]["_id"].split('/')[0].slice(0, -1)
                     filename="a_assay_"+study_id.split('/')[1]+".txt"
                     if (parent_id.includes("observation_units")){
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data) 
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, submodel["e"]) 
                     }
                 }
                 else if (submodel["v"]["_id"].split('/')[0] === "observed_variables") {
@@ -782,7 +782,7 @@ export class FileService {
                 // //console.log(parent_index)
                 // //console.log(keys)
                 var bm_data=[]
-                var bm_data=edge['biological_materials']
+                bm_data=edge['biological_materials']
                 for (var bm_index = 0; bm_index < bm_data.length; bm_index++) {
                     var data_index = data["Material source ID (Holding institute/stock centre, accession)"].indexOf(bm_data[bm_index]["materialId"])
                     var bm_data_index=data["Biological material ID"][data_index].indexOf(bm_data[bm_index]["biologicalMaterialId"])
@@ -961,7 +961,85 @@ export class FileService {
                 //get index of sample obsUUID in parent_data['v'] i.e observation unit data
 
                 return_data['Assay'][index]["assay_data"]['Sample Name']["data"].push(parent_data['v']['Observation unit ID'][parent_index])
-                //console.log(return_data['Assay'])
+                console.log(data)
+                var sample_data=edge['samples']
+                /// NEW CODE TO TEST
+                console.log(data)
+                var sample_data=edge['samples']
+                for (var sample_index = 0; sample_index < sample_data.length; bm_index++) {   
+                    for (var i = 0; i < keys.length; i++) {
+                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                            keys.splice(i, 1);
+                            i--;
+                        }
+                        else {
+                            var is_ontology_key = this.is_ontology_key(model, keys[i])
+                            var mapping_data = this.get_mapping_data_by_key(model, keys[i])
+                            var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
+                            var isa_field: string = mapping_data["ISA-Tab Field"]
+                            console.log("----------------------get key ", keys[i], " write field ", isa_field, " in section ", isa_section, " for ", isa_file)
+                            if (return_data[isa_file][index]["assay_data"][isa_field]) {
+                                console.log("----------------------assay data ", return_data[isa_file][index]["assay_data"][isa_field], "for field ",isa_field )
+                                if (return_data[isa_file][index]["assay_data"][isa_field]["data"]) {
+                                    console.log("----------------------first if ", return_data[isa_file][index]["assay_data"][isa_field], "for field ",isa_field )
+
+                                    if (isa_field.includes("Characteristics")) {
+                                        var term_source_ref = ""
+                                        var term_accession_number = ""
+                                        if (is_ontology_key) {
+                                            console.log(data[keys[i]][sample_index])
+                                            term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                            term_accession_number = data[keys[i]][sample_index]
+                                        }
+                                        let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"].push(tmp_array)
+                                    }
+                                    
+
+                                    else {
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"].push(data[keys[i][sample_index]])
+                                    }
+                                }
+                                else {
+                                    if (isa_field.includes("Characteristics")) {
+                                        var term_source_ref = ""
+                                        var term_accession_number = ""
+                                        if (is_ontology_key) {
+                                            console.log(data[keys[i]][sample_index])
+                                            term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                            term_accession_number = data[keys[i]][sample_index]
+                                        }
+                                        let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"] = [tmp_array]
+                                    }
+                                    else{
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"] = [data[keys[i]][sample_index]]
+                                    }
+                                }
+                            }
+                            else {
+                                if (isa_field.includes("Characteristics")) {
+                                    var term_source_ref = ""
+                                    var term_accession_number = ""
+                                    if (is_ontology_key) {
+                                        console.log(data[keys[i]][sample_index])
+                                        term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                        term_accession_number = data[keys[i]][sample_index]
+                                    }
+                                    let tmp_array = [data[keys[i]][index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                    return_data[isa_file][index]["assay_data"][isa_field] = { "data": [tmp_array] }
+                                }
+                                else{
+                                    return_data[isa_file][index]["assay_data"][isa_field] = { "data": [data[keys[i]][sample_index]] }
+
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                
+                /* console.log(edge['samples'])
                 for (var i = 0; i < keys.length; i++) {
                     if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                         keys.splice(i, 1);
@@ -1026,7 +1104,7 @@ export class FileService {
                             }
                         }
                     }
-                }
+                } */
             }
         }
         else if (model_type === "experimental_factor") {

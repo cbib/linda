@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, ViewChildren, QueryList ,OnChanges} from '@angular/core'; 
+import { Component, OnInit, Input, ViewChildren, QueryList ,OnChanges, EventEmitter, Output} from '@angular/core'; 
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
    selector: 'app-progress-bar',
    template: `
    <div class="progress-bar-container">
       <div class="progress-bar {{color}}" 
-         [ngStyle]="{'width': progress + '%'}">
+         [ngStyle]="{'width': get_progress + '%'}">
       </div>
    </div>
    `,
@@ -13,15 +14,27 @@ import { Component, OnInit, Input, ViewChildren, QueryList ,OnChanges} from '@an
 }) 
 
 export class ProgressBarComponent implements OnInit, OnChanges {
-   @Input() progress: number;
-   @Input() total: number;
-   @ViewChildren(ProgressBarComponent) myChildren: QueryList<ProgressBarComponent>;
+   @Input('progress') progress: number;
+   @Input('total') total: number;
+   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
+   //@ViewChildren(ProgressBarComponent) myChildren: QueryList<ProgressBarComponent>;
    color: string; 
-   constructor() {
-      console.log(this.progress)
+   constructor(private route: ActivatedRoute,) {
+      
+      this.route.queryParams.subscribe(
+         params => {
+           this.progress = params['progress'];
+           this.total = params['total'];
+
+
+         }
+       );
+       console.log(this.progress)
+       console.log(this.total)
     } 
    ngOnInit() {
-      console.log(this.progress)
+       console.log(this.progress)
+       console.log(this.total)
       //if we don't have progress, set it to 0.
       if (!this.progress) {
          this.progress = 0;
@@ -50,10 +63,10 @@ export class ProgressBarComponent implements OnInit, OnChanges {
       console.log(_progress)
       this.progress = (_progress / this.total) * 100; 
       console.log(this.progress)
-      if (this.progress < 55) {
+      if (this.progress < 30) {
          this.color = 'red';
       } 
-      else if (this.progress < 75) {
+      else if (this.progress < 60) {
          this.color = 'yellow';
       } 
       else {
@@ -66,5 +79,7 @@ export class ProgressBarComponent implements OnInit, OnChanges {
    }
    ngOnChanges() {
        console.log("changing");
+       console.log(this);
+       this.notify.emit(this.get_progress);
    } 
 }

@@ -16,7 +16,7 @@
 <!-- <mat-progress-spinner *ngIf='show_spinner' mode="indeterminate"></mat-progress-spinner> -->
 <!-- <mat-progress-spinner class="progressSpinner" *ngIf='show_spinner' [value]="ontology_tree_loading_progress_value"></mat-progress-spinner> -->
 <!-- <mat-progress-bar mode="buffer" [value]="ontology_tree_loading_progress_value">{{ontology_tree_loading_progress_value}}</mat-progress-bar> -->
-<app-progress-bar [progress]="progress" [total]="100"></app-progress-bar>
+<app-progress-bar *ngIf="show_spinner" (notify)="get_output_from_child($event)" [progress]="progress" [total]="100"></app-progress-bar>
 <div mat-dialog-content >
 <!--<input type="text" matInput placeholder="search" #filter (keyup)="keyEvent.next($event)" [(ngModel)]="keyword">-->
 <!--<input matInput placeholder="Search" (input)="filterChanged($event.target.value)">-->

@@ -170,7 +170,7 @@
                                   <button class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
                                     Add experimental factor 
                                   </button>
-                                  <button class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
+                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples 
                                   </button>
                                 <table  class="table table-bordered heading-hvr">  

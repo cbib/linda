@@ -413,6 +413,10 @@ export interface ExperimentalDesignInterface     {
         "value":  string;
         "ID": string;
     };
+    "Associated sample": {
+        "value":  string[];
+        "ID": "LindaSampleDbIds";
+    };
 }
 export class ExperimentalDesign implements ExperimentalDesignInterface {
     // arango keys
@@ -443,8 +447,8 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         "ID": "LindaObsUnitDbId";
     };
     "Associated sample": {
-        "value":  string;
-        "ID": "LindaSampleDbId";
+        "value":  string[];
+        "ID": "LindaSampleDbIds";
     };
     constructor(){
         this["Definition"]="The process of planning a study to meet specified objectives or the allocation of treatments (inputs) to the experimental units (plots). Planning an experiment properly is very important in order to ensure that the right type of data and a sufficient sample size and power are available to answer the research questions of interest as clearly and efficiently as possible."
@@ -453,7 +457,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["number of entries"]={value:null,"ID": "CO_715:0000148"}
         this["Associated biological Materials"]={value:null,"ID": "LindaDbId"}
         this["Associated observation units"]={value:null,"ID": "LindaObsUnitDbId"}
-        this["Associated sample"]={value:null,"ID": "LindaSampleDbId"}
+        this["Associated sample"]={value:[],"ID": "LindaSampleDbIds"}
     }
     get_block_design(_block_number:number){
         return this.Blocking.value.filter(block_design=> block_design["Block number"].value===_block_number)
@@ -493,10 +497,10 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_observation_unit_id(){
         return this["Associated observation units"].value
     }
-    set_sample_id(sample_id:string){
-        this["Associated sample"].value=sample_id
+    set_sample_ids(sample_id:string){
+        this["Associated sample"].value.push(sample_id)
     }
-    get_sample_id(){
+    get_sample_ids(){
         return this["Associated sample"].value
     }
     static create_design(obj) {

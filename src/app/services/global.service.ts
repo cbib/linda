@@ -462,7 +462,7 @@ export class GlobalService {
             'values': values,
             'model_type': model_type
         };
-        var observation_unit_doc = { "External ID": [], "Observation Unit factor value": [], "Observation unit ID": [], "Observation unit type": [], "Spatial distribution": [], "obsUUID": [] }
+        /* var observation_unit_doc = { "External ID": [], "Observation Unit factor value": [], "Observation unit ID": [], "Observation unit type": [], "Spatial distribution": [], "obsUUID": [] }
         //var return_data = {"observation_units":[],"biological_materials":[],"samples":[], "experimental_factor":[] }
         var observation_units_data = values['observation_units'];
         for (var i = 0; i < observation_units_data.length; i++) {
@@ -549,8 +549,20 @@ export class GlobalService {
                     
             //     }
             // }
-        }
+        } */
         return this.http.post(`${this.APIUrl + "update_observation_units_and_childs"}`, obj2send);
+    }
+    update_observation_units_and_childs2(values: {}, key: string, model_type: string, parent_id: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            '_key': key,
+            'values': values,
+            'model_type': model_type
+        };
+        return this.http.post(`${this.APIUrl + "update_observation_units_and_childs2"}`, obj2send);
     }
 
     //REMOVE REQUEST
@@ -775,6 +787,18 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
     
+    add_observation_units_samples(values: {}, parent_id: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'values': values,
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_observation_units_samples"}`, obj2send);
+    }
+
     add_observation_units(values: {}, model_type: string, parent_id: string) {
         let user = this.get_user();
         let obj2send = {
@@ -786,6 +810,18 @@ export class GlobalService {
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_observation_units"}`, obj2send);
+    }
+    add_observation_units2(values: {}, model_type: string, parent_id: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'values': values,
+            'model_type': model_type
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_observation_units2"}`, obj2send);
     }
     saveTemplate(values: {}, model_type: string) {
         let user = this.get_user();

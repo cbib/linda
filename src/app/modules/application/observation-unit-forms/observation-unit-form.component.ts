@@ -106,6 +106,7 @@ export class ObservationUnitFormComponent implements OnInit {
     /* 'lindaID',
     'obsUUID', */
     'bmUUID',
+    'Edit',
     'Samples'
   ]
   sampleDisplayedColumns:string[] =[
@@ -236,28 +237,29 @@ export class ObservationUnitFormComponent implements OnInit {
               this.ef_data = this.ef_data.concat(tmp_ef)
             }
             //type sample childs
-            else {
-              var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
+            else {  
+              //All samples in once
+              var tmp_sample: [] = observation_unit_childs_data[i]['e']['samples']
+              this.sample_data = this.sample_data.concat(tmp_sample)
+              this.sample_id = this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)[0]['sampleUUID']
+              this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
+              this.sampleDataSource.paginator = this.samplepaginator;
+              this._cdr.detectChanges()
+              this.sample_loaded=true
+
+              //samples one by one
+              /* var sample_data = observation_unit_childs_data[i]['s']['vertices'][1]
               let sample:Sample=new Sample(sample_data['Sample ID'],sample_data['Sample External ID'],sample_data['Plant anatomical entity'],sample_data['Plant structure development stage'],sample_data['Sample description'],sample_data['Collection date'],sample_data['bmUUID'],sample_data['obsUUID'],sample_data['sampleUUID'])
-              /* var sample_keys = Object.keys(sample_data);
-              var sample = {}
-              sample_keys.forEach(key => {
-                if (!key.startsWith("_") && !key.startsWith("Definition")) {
-                  sample[key] = sample_data[key]
-                }
-              }); */
-              this.sample_data.push(sample)
-              // var tmp_samples:[]=observation_unit_childs_data[i]['e']['samples']
-              // samples=samples.concat(tmp_samples)
+              this.sample_data.push(sample) */
             }
           }
-          if (this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id).length>0){
+          /* if (this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id).length>0){
             this.sampleDataSource = new MatTableDataSource(this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)); 
             this.sample_id=this.sample_data.filter(sample=>sample['bmUUID']===this.biological_material_id)[0]['sampleUUID']
             this.sampleDataSource.paginator = this.samplepaginator;
             this._cdr.detectChanges()
             this.sample_loaded=true
-          }
+          } */
           
           
           //console.log(this.bmDataSource)
@@ -531,7 +533,7 @@ export class ObservationUnitFormComponent implements OnInit {
   //Samples
   addSamples() {
     const dialogRef = this.dialog.open(SampleSelectionComponent,
-      { disableClose: true, width: '1400px', autoFocus: true, restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: this.observation_id } }
+      { disableClose: true, width: '1400px', autoFocus: true, restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: [this.observation_id] } }
     );
     dialogRef.afterClosed().subscribe(res => {
       if (res.event==='Confirmed') {
@@ -703,6 +705,59 @@ export class ObservationUnitFormComponent implements OnInit {
       }
       data.biological_materials.push(bm_list)
       data.samples.push(global_sample_list)
+      
+      
+      //console.log("bm list:", bm_list)
+      var ef_list = []
+      //console.log(this.ef_data)
+      for (var j = 0; j < this.ef_data.length; j++) {
+        //console.log("---------looking for experimental factor obs uuid:", this.ef_data[j]['obsUUID'], "equal to with OBS uuid: ", obs_unit['obsUUID'])
+        if (this.ef_data[j]['obsUUID'] === obs_unit['obsUUID']) {
+          //console.log("---------found experimental factor obs uuid:",this.ef_data[j]['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
+
+          ef_list.push(this.ef_data[j])
+        }
+      }
+      data.experimental_factors.push(ef_list)
+    }
+    return data
+  }
+  build_result2(){
+    const observationUnitControl = this.observationUnitTable.get('observationUnitRows') as FormArray;
+    this.observationUnitTouchedRows = observationUnitControl.controls.filter(row => row.touched).map(row => row.value);
+    var data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
+    var obs_unit: {}
+    //first loop for each obs unit
+    for (var i = 0; i < observationUnitControl.controls.length; i++) {
+      obs_unit = observationUnitControl.controls[i].value
+      //console.log(obs_unit)
+      data.observation_units.push(obs_unit)
+      //console.log("looking for observation unit :", obs_unit['Observation unit ID'], "with uuid: ", obs_unit['obsUUID'])
+      //for each bm, check if same observation id, then 
+      var bm_list = []
+      var global_sample_list = []
+      var bm: {}
+      for (var j = 0; j < this.bm_data.length; j++) { 
+        bm = this.bm_data[j]
+        //console.log("---------looking for biological material :", bm['biologicalMaterialId'], "with uuid: ", bm['bmUUID'])
+        if (bm['obsUUID'] === obs_unit['obsUUID']) {
+          //console.log("---------found biological material obs uuid:", bm['obsUUID'], "equal to obs uuid: ", obs_unit['obsUUID'])
+          bm_list.push(bm)
+        }
+      }
+      data.biological_materials.push(bm_list)
+
+      var sample_list = []
+      var sample: {}
+      for (var k = 0; k < this.sample_data.length; k++) {
+        sample = this.sample_data[k]
+        if ((sample['obsUUID'] === obs_unit['obsUUID'])) {
+          //console.log("-------------------------looking for sample :", sample['Sample ID'], "with uuid: ", sample['sampleUUID'])
+          sample_list.push(sample)
+        }
+      }
+      data.samples.push(sample_list)
+      
       //console.log("bm list:", bm_list)
       var ef_list = []
       //console.log(this.ef_data)
@@ -743,10 +798,68 @@ export class ObservationUnitFormComponent implements OnInit {
     }
   };
   submitForm() {
-    var return_data=this.build_result()
+    /* var return_data=this.build_result()
     console.log(return_data)
-    this.save(return_data)
+    this.save(return_data) */
+
+    var return_data=this.build_result2()
+    console.log(return_data)
+    this.save2(return_data)
   }
+  save2(form: any): boolean {
+    if (this.mode === "create") {
+      this.globalService.add_observation_units2(form, this.model_type, this.parent_id).pipe(first()).toPromise().then(
+        data => {
+          if (data["success"]) {
+
+            this.model_id = data["id"];
+            if  (!this.currentUser.tutoriel_done){
+              if (this.currentUser.tutoriel_step==="11"){
+                  let new_step=12
+                  this.currentUser.tutoriel_step=new_step.toString()
+                  localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+              }
+              else{
+                this.alertService.error("You are not in the right form as requested by the tutorial")
+              }
+            }
+            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+
+            var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+            this.alertService.success(message)
+            return true;
+          }
+          else {
+            this.alertService.error("this form contains errors! " + data["message"]);
+            return false;
+          }
+        }
+      );
+    }
+    else {
+      let element = event.target as HTMLInputElement;
+      let value_field = element.innerText;
+      this.globalService.update_observation_units_and_childs2(form, this.model_key, this.model_type, this.parent_id).pipe(first()).toPromise().then(
+        data => {
+          //console.log(data)
+          if (data["success"]) {
+            var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+            this.alertService.success(message)
+            //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
+            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+
+            return true;
+          }
+          else {
+            this.alertService.error("this form contains errors! " + data["message"]);
+            return false;
+          };
+        }
+      );
+    }
+    return true;
+  };
   save(form: any): boolean {
     if (this.mode === "create") {
       this.globalService.add_observation_units(form, this.model_type, this.parent_id).pipe(first()).toPromise().then(

@@ -8,13 +8,16 @@ import {BiologicalMaterialDialogModel } from '../../../models/biological_materia
 import {ExperimentalFactorDialogModel} from '../../../models/experimental_factor_models' 
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BiologicalMaterialFullInterface } from 'src/app/models/linda/biological-material';
-
+import { Router } from '@angular/router';
 
 interface DialogData {
   model_id: string;
   parent_id: string;
   model_type: string;
   total_available_plots:number;
+  role:string;
+  grand_parent_id:string;
+  group_key:string;
 }
 
 
@@ -30,6 +33,9 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
     private model_id: string;
     model_type: string;
     private parent_id: string;
+    role:string=""
+    grand_parent_id:string=""
+    group_key:string=""
     loaded:boolean=false
     total_available_plots:number=0
     selected_material:BiologicalMaterialFullInterface;
@@ -38,6 +44,7 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
     constructor(
         private globalService: GlobalService, 
         public dialogRef: MatDialogRef<AssociateBiologicalMaterial>,
+        private router: Router,
         private _cdr: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
         ) {
@@ -45,6 +52,9 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
         this.model_type = this.data.model_type
         this.parent_id = this.data.parent_id
         this.total_available_plots=this.data.total_available_plots
+        this.role = this.data.role
+        this.grand_parent_id = this.grand_parent_id
+        this.group_key = this.data.group_key
     }
 
     async ngOnInit() {
@@ -55,6 +65,9 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
     }
     ngAfterViewInit() {
       
+    }
+    goto_material_form(){
+      this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create", role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });
     }
     async set_all_biological_materials() {
         var data = await this.globalService.get_all_biological_materials(this.parent_id.split('/')[1]).toPromise();
