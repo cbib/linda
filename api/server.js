@@ -48,6 +48,7 @@ const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
 const router = createRouter();
 module.context.use(router);
+module.context.trustProxy = true;
 const joi = require('joi');
 const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
