@@ -532,8 +532,8 @@ a.logo:hover, a.logo:focus {
 }
 
 a.logo span {
-    /* color: #4ECDC4; */
-    color: red;
+    color: #4ECDC4;
+    
 }
 .mat-row:hover {
     background-color: #7dfff6
