@@ -60,11 +60,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         totalRowPerPlotControl : new FormControl(''),
         totalBlockPerRowControl : new FormControl('')
     })
-
-    
-
-    
- 
+    plot_sub_components=['Associated_biological_material', 'Associated samples']
     bm_data = []
     //experimental_design_blocks:BlockDesign[]=[]
     design_types=["CompleteBlockDesign","IncompleteBlockDesign"]
