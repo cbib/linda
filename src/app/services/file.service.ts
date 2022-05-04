@@ -8,6 +8,7 @@ import * as JSZip from 'jszip';
 import * as fs from 'fs';
 import { element } from 'protractor';
 import * as XLSX from 'xlsx';
+import { AssociatedHeadersInterface } from '../models/linda/data_files';
 
 
 @Injectable({
@@ -16,16 +17,16 @@ import * as XLSX from 'xlsx';
 export class FileService {
     private APIUrl: string;
     fileUploaded: File;
-
-
     constructor(private httpClient: HttpClient) {
         this.APIUrl = Constants.APIConfig.APIUrl;
     }
-
     private extractData(res: Response) {
         
         let body = res;
         return body || {};
+    }
+    private get_csv(csvData: any) {
+        return csvData.split(/\r|\n|\r/);
     }
     public upload4(data:{}, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
@@ -103,7 +104,7 @@ export class FileService {
         })
         );
     }
-    read_csv(fileUploaded:File) {
+    public read_csv(fileUploaded:File) {
         let fileReader = new FileReader();
         var csv:string|ArrayBuffer=""
         fileReader.onload = (e) => {
@@ -112,7 +113,7 @@ export class FileService {
         fileReader.readAsText(fileUploaded);
         return this.get_csv(csv) 
     }
-    readExcel(fileUploaded:File) {
+    public readExcel(fileUploaded:File) {
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
             var storeData:any = fileReader.result;
@@ -129,37 +130,34 @@ export class FileService {
         fileReader.readAsArrayBuffer(fileUploaded);
         
     }
-    get_csv(csvData: any) {
-        return csvData.split(/\r|\n|\r/);
-    }
-    public build_path(root_id, models, selected_format) {
+    public async build_path(root_id, models, selected_format) {
         console.log(models)
-        var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
+        var _paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         models['models_data'].forEach(
-            result => {
-                var _from: string = result["e"]["_from"]
-                var _to: string = result["e"]["_to"]
+            model => {
+                var _from: string = model["e"]["_from"]
+                var _to: string = model["e"]["_to"]
                 let formats = Object.keys(selected_format);
                 let path = ''
                 if (_from == root_id) {
                     models['models_data'].forEach(
-                        result_bis => {
-                            var _from_bis: string = result_bis["e"]["_from"]
-                            var _to_bis: string = result_bis["e"]["_to"]
+                        model_bis => {
+                            var _from_bis: string = model_bis["e"]["_from"]
+                            var _to_bis: string = model_bis["e"]["_to"]
                             // ????????
                             if ((_to == _from_bis) && (_to == _to_bis)) {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _to.replace('/', '_') + '/' + _to_bis.replace('/', '_') + formats[i]
-                                        if (!paths['filepath'].includes(path)) {
-                                            paths['filepath'].push(path)
-                                            paths['data'].push(result["v"])
+                                        if (!_paths['filepath'].includes(path)) {
+                                            _paths['filepath'].push(path)
+                                            _paths['data'].push(model["v"])
                                             if (path.split('/').length > 2) {
-                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             //if (path.split('/').length == 2) 
                                             else {
-                                                paths['parent_id'].push(root_id)
+                                                _paths['parent_id'].push(root_id)
                                             }
                                         }
                                     }
@@ -169,15 +167,15 @@ export class FileService {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths['filepath'].includes(path)) {
-                                            paths['filepath'].push(path)
-                                            paths['data'].push(result["v"])
+                                        if (!_paths['filepath'].includes(path)) {
+                                            _paths['filepath'].push(path)
+                                            _paths['data'].push(model["v"])
                                             if (path.split('/').length > 2) {
-                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             //if (path.split('/').length == 2) 
                                             else {
-                                                paths['parent_id'].push(root_id)
+                                                _paths['parent_id'].push(root_id)
                                             }
                                         }
                                     }
@@ -190,17 +188,17 @@ export class FileService {
                         for (var i = 0; i < formats.length; i++) {
                             if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                 path = _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                if (!paths['filepath'].includes(path)) {
-                                    paths['filepath'].push(path)
-                                    paths['data'].push(result["v"])
+                                if (!_paths['filepath'].includes(path)) {
+                                    _paths['filepath'].push(path)
+                                    _paths['data'].push(model["v"])
                                     if (path.split('/').length > 2) {
-                                        paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                        _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                     }
                                     else if (path.split('/').length == 2) {
-                                        paths['parent_id'].push(path.split('/')[0])
+                                        _paths['parent_id'].push(path.split('/')[0])
                                     }
                                     else {
-                                        paths['parent_id'].push(root_id)
+                                        _paths['parent_id'].push(root_id)
                                     }
                                 }
                             }
@@ -216,17 +214,17 @@ export class FileService {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to_bis.replace('/', '_') + '/' + _to_bis.replace('/', '_') + formats[i]
-                                        if (!paths['filepath'].includes(path)) {
-                                            paths['filepath'].push(path)
-                                            paths['data'].push(result["v"])
+                                        if (!_paths['filepath'].includes(path)) {
+                                            _paths['filepath'].push(path)
+                                            _paths['data'].push(model["v"])
                                             if (path.split('/').length > 2) {
-                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths['parent_id'].push(path.split('/')[0])
+                                                _paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths['parent_id'].push(root_id)
+                                                _paths['parent_id'].push(root_id)
                                             }
                                         }
                                     }
@@ -236,17 +234,17 @@ export class FileService {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from_bis.replace('/', '_') + '/' + _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths['filepath'].includes(path)) {
-                                            paths['filepath'].push(path)
-                                            paths['data'].push(result["v"])
+                                        if (!_paths['filepath'].includes(path)) {
+                                            _paths['filepath'].push(path)
+                                            _paths['data'].push(model["v"])
                                             if (path.split('/').length > 2) {
-                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths['parent_id'].push(path.split('/')[0])
+                                                _paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths['parent_id'].push(root_id)
+                                                _paths['parent_id'].push(root_id)
                                             }
                                         }
                                     }
@@ -256,17 +254,17 @@ export class FileService {
                                 for (var i = 0; i < formats.length; i++) {
                                     if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                         path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                        if (!paths['filepath'].includes(path)) {
-                                            paths['filepath'].push(path)
-                                            paths['data'].push(result["v"])
+                                        if (!_paths['filepath'].includes(path)) {
+                                            _paths['filepath'].push(path)
+                                            _paths['data'].push(model["v"])
                                             if (path.split('/').length > 2) {
-                                                paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                                _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                             }
                                             else if (path.split('/').length == 2) {
-                                                paths['parent_id'].push(path.split('/')[0])
+                                                _paths['parent_id'].push(path.split('/')[0])
                                             }
                                             else {
-                                                paths['parent_id'].push(root_id)
+                                                _paths['parent_id'].push(root_id)
                                             }
                                         }
                                     }
@@ -279,17 +277,17 @@ export class FileService {
                         for (var i = 0; i < formats.length; i++) {
                             if (selected_format[formats[i]]['selected'] && formats[i] != "isa_tab (.txt)") {
                                 let path = _from.replace('/', '_') + '/' + _to.replace('/', '_') + '/' + _to.replace('/', '_') + formats[i]
-                                if (!paths['filepath'].includes(path)) {
-                                    paths['filepath'].push(path)
-                                    paths['data'].push(result["v"])
+                                if (!_paths['filepath'].includes(path)) {
+                                    _paths['filepath'].push(path)
+                                    _paths['data'].push(model["v"])
                                     if (path.split('/').length > 2) {
-                                        paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
+                                        _paths['parent_id'].push(path.split('/')[path.split('/').length - 3])
                                     }
                                     else if (path.split('/').length == 2) {
-                                        paths['parent_id'].push(path.split('/')[0])
+                                        _paths['parent_id'].push(path.split('/')[0])
                                     }
                                     else {
-                                        paths['parent_id'].push(root_id)
+                                        _paths['parent_id'].push(root_id)
                                     }
                                 }
                             }
@@ -298,7 +296,8 @@ export class FileService {
                 }
             }
         );
-        return paths
+        
+        return _paths
     }
     public build_zip(paths, zipFile: JSZip) {
         //let zipFile: JSZip = new JSZip();
@@ -307,7 +306,7 @@ export class FileService {
         var dict = { 'filepath': [], 'model_type': [], 'parent_id': [] }
         for (var i = 0; i < paths['filepath'].length; i++) {
             let model_type = paths['data'][i]["_id"].split('/')[0]
-            if (model_type == "metadata_files") {
+            if (model_type == "metadata_files" ||model_type =="data_files") {
 
                 if (paths['filepath'][i].includes(".csv")) {
                     let csvData = this.ConvertMetadataJsonTo(paths['data'][i], ",");
@@ -1656,12 +1655,13 @@ export class FileService {
         //console.log(return_data)
         return return_data
     }
-    public saveFiles(model_data, submodels, collection_name = 'data', model_id = "", selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
+    public async saveFiles(model_data, submodels, collection_name = 'data', model_id = "", selected_format = { '.csv': { 'selected': false, separator: ',', type: 'text/csv;charset=utf-8;' } }) {
         //console.log(submodels)
         var model_key = model_id.split("/")[1];
-        var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
+        //var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         var root_id = collection_name + '/' + model_key
-        paths = this.build_path(root_id, submodels, selected_format)
+        var paths:{ 'filepath': any[], 'data': any[], 'parent_id': any[] } = await this.build_path(root_id, submodels, selected_format)
+        console.log(paths)
         let zipFile: JSZip = new JSZip();
         // write the data for the selected root node
         var formats = Object.keys(selected_format);
@@ -1688,7 +1688,7 @@ export class FileService {
         for (var i = 0; i < formats.length; i++) {
             if (selected_format[formats[i]]['selected']) {
                 //console.log(model_type)
-                if (model_type == "metadata_file") {
+                if (model_type == "metadata_file" || model_type == "data_files") {
                     if (formats[i] == ".csv") {
                         let csvData = this.ConvertMetadataJsonTo(data, ",");
                         let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
@@ -2355,10 +2355,10 @@ export class FileService {
     }
     public ConvertMetadataJsonTo(objArray, sep = ',') {
         let data = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-
+        console.log(data)
         var headers = data["headers"];
-        var associated_headers = data["associated_headers"];
-        var lines = data["data"]
+        var associated_headers:AssociatedHeadersInterface[] = data["associated_headers"];
+        var lines = data["Data"]
 
         let row = '';
         let str = '';
@@ -2367,25 +2367,29 @@ export class FileService {
         }
         row = row.slice(0, -1);
         str += row + '\r\n';
+        console.log(str)
 
-        row = '';
+        /* row = '';
+        console.log(associated_headers)
         for (let index in headers) {
-            row += associated_headers[headers[index]]['associated_term_id'] + sep;
+            console.log(associated_headers.filter(associated_header=>associated_header.header===headers[index])[0])
+            row += associated_headers.filter(associated_header=>associated_header.header===headers[index])[0]['associated_parent_id'] + sep;
         }
         row = row.slice(0, -1);
-        str += row + '\r\n';
+        str += row + '\r\n'; */
 
         row = '';
         for (let index_data in lines) {
-            //console.log(lines[index_data])
+            console.log(lines[index_data])
             row = '';
-            for (let i = 0; i < lines[index_data].length; i++) {
-                row += lines[index_data][i] + sep;
+            var keys=Object.keys(lines[index_data])
+            for (let i = 0; i < keys.length; i++) {
+                row += lines[index_data][keys[i]] + sep;
             }
             row = row.slice(0, -1);
             str += row + '\r\n';
         }
-
+        console.log(str)
         return str;
     }
     public get_mapping_data_by_key(model: {}, key: string) {

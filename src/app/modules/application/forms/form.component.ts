@@ -278,7 +278,6 @@ export class FormComponent implements OnInit//, AfterViewInit
         return [year, month, day].join('-');
     }
     initiateForm(): FormGroup {
-        console.log(this.model_id)
         let attributeFilters = {};
         this.cleaned_model.forEach(attr => {
             this.validated_term[attr["key"]] = { selected: false, values: "" }
@@ -286,14 +285,9 @@ export class FormComponent implements OnInit//, AfterViewInit
                 if (attr["key"].includes("ID") || attr["key"].includes("accession number")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                     //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-                    if (this.model_id.includes('investigations')){
-                        attributeFilters[attr["key"]] = [this.model_id, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
+                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
 
-                    }
-                    else{
-                        attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
-
-                    }
+                    
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];

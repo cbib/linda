@@ -117,6 +117,7 @@ export class ObservationUnitFormComponent implements OnInit {
     'sampleUUID', */
     'Plant structure development stage',
     'Plant anatomical entity',
+    'Collection date',
     'Edit'];
 
   private obsDataSource: MatTableDataSource<ObservationUnitCompacted>;

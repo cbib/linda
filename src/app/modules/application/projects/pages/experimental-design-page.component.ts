@@ -639,9 +639,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     display_block(_block:BlockDesignInterface){
         console.log(_block['Block number'].value)
         console.log(this.get_design.Blocking.value)
-        console.log(this.get_design.Blocking.value.filter(block =>
-            block['Block number'].value===_block['Block number'].value
-        ))
         this.block_index=_block['Block number'].value-1
     }
     display_plot(_plot:PlotDesignInterface){

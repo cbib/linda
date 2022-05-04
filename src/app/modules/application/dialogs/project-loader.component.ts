@@ -74,6 +74,7 @@ export class ProjectLoaderComponent implements OnInit {
     this.parent_id = this.data.parent_id
     this.group_key = this.data.group_key
     console.log(this.parent_id)
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   }
   ngOnInit() {

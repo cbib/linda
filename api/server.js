@@ -569,7 +569,6 @@ router.post('/authenticate_group', function (req, res) {
                 "roles": roles
             };
             var edges = db._query(aql`UPSERT ${edge_obj} INSERT ${edge_obj} UPDATE {}  IN ${groups_edge} RETURN NEW `);
-
             res.send({ success: true, message: 'group key ' + group_key + ' found', group: group_array['_documents'][0] });
         }
     }
@@ -578,6 +577,7 @@ router.post('/authenticate_group', function (req, res) {
         username: joi.string().required(),
         password: joi.string().required(),
         group_key: joi.string().required(),
+        roles: joi.object().required(),
         group_password: joi.string().required()
     }).required(), 'Values to check.')
     .response(
@@ -5461,7 +5461,7 @@ router.post('/check', function (req, res) {
         //var user_id = user[0]._id
         if (as_template) {
             check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} AND CONTAINS('e._to','templates') RETURN {eto:e._to, vertice:v}`).toArray();
-            f
+            
         }
         else {
             check = db._query(aql`FOR v, e IN 1..3 OUTBOUND ${parent_id} GRAPH 'global' FILTER v.${field} == ${value} RETURN {eto:e._to, vertice:v}`).toArray();
