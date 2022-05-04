@@ -80,7 +80,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     //private dataSource: MatTableDataSource<InvestigationInterface>;
     private user_groups = []
     private model_type: string = 'investigation'
-    private displayedColumns: string[] = ['Investigation unique ID', 'Investigation description', 'edit'];
+    private displayedColumns: string[] = ['Project Name', 'Investigation description', 'edit'];
     private dataSource: MatTableDataSource<InvestigationInterface>
     private projects: InvestigationInterface[] = []
 

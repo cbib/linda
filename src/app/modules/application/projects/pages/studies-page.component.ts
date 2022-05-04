@@ -74,7 +74,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     tableData = [];
     private model_type: string = 'study'
     private dataSource: MatTableDataSource<StudyInterface>;
-    private displayedColumns: string[] = ['Study unique ID', 'Study description', 'edit'];
+    private displayedColumns: string[] = ['Study Name', 'Study description', 'edit'];
 
 
     constructor(

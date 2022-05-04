@@ -31,7 +31,13 @@ import { PersonInterface } from 'src/app/models/linda/person';
 export class PersonsPageComponent implements OnInit {
 
     @Input() search_string: string;
-    @Input('model_id') model_id:string;
+    @Input('parent_id') parent_id: string;
+    @Input('model_id') model_id: string;
+    @Input('model_key') model_key: string;
+    @Input('model_type') model_type: string;
+    @Input('activeTab') activeTab: string;
+    @Input('role') role: string;
+    @Input('group_key') group_key: string;
     @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
     @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
@@ -52,7 +58,7 @@ export class PersonsPageComponent implements OnInit {
     loaded: boolean = false
     private currentUser:UserInterface
     private multiple_selection: boolean = false;
-    private model_key: string;
+    //private model_key: string;
     private model_selected: string
     public vertices: PersonInterface[] = []
     public projects: any = []
@@ -65,7 +71,7 @@ export class PersonsPageComponent implements OnInit {
     dataTable: any;
     dtOptions: DataTables.Settings = {};
     tableData = [];
-    private model_type: string = 'investigation'
+    //private model_type: string = 'investigation'
     private displayedColumns: string[] = ['Person name', 'Person email', 'Person role', 'Person affiliation'];
 
     constructor(
@@ -83,12 +89,15 @@ export class PersonsPageComponent implements OnInit {
     ) {
         this.route.queryParams.subscribe(
             params => {
-
-                this.model_id = params['model_id'];
-                //console.log(this.model_id)
-                
+              this.model_id = params['model_id'];
+              this.parent_id = params['parent_id']
+              this.model_key = params['model_key']
+              this.model_type = params['model_type']
+              this.role = params['role']
+              this.group_key = params['group_key']
+      
             }
-        );
+          );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         this.dataSource = new MatTableDataSource([]);
         //console.log(this.model_id)
@@ -129,6 +138,10 @@ export class PersonsPageComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this._cdr.detectChanges()
     }
+    onRoleChanged(event){
+        event.target.value
+
+    }
     async get_all_persons() {
         //console.log(this.model_id.split('/')[1])
         if(this.model_id.split('/')[0]==="investigations"){
@@ -136,7 +149,7 @@ export class PersonsPageComponent implements OnInit {
                 data => {
                     //console.log(data)
                     this.dataSource = new MatTableDataSource(data);
-                    //console.log(this.dataSource)
+                    console.log(this.dataSource.data)
                     this.dataSource.paginator = this.paginator;
                     this.dataSource.sort = this.sort;
                     this._cdr.detectChanges();

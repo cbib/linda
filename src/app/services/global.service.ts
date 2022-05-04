@@ -686,13 +686,13 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_edge"}`, obj2send);
     }
-    add_multiple(values: any[], model_type: string, parent_id: string, as_template:boolean, group_key:string="",datafile_key:string="" ,datafile_header:string="" ,model_field:string="", parent_ids:string[]=[]) {
+    add_multiple(values: any[], model_type: string, parent_collections: string, as_template:boolean, group_key:string="",datafile_key:string="" ,datafile_header:string="" ,model_field:string="", parent_ids:string[]=[]) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
             'role': "owner",
-            'parent_id': parent_id,
+            'parent_collections': parent_collections,
             'values': values,
             'model_type': model_type,
             'as_template': as_template,

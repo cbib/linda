@@ -336,10 +336,11 @@ export class StudyFormComponent implements OnInit {
             if (attr["key"].includes("unique ID")) {
               //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
               if (this.model_to_edit[attr["key"]] === "") {
-                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
-                if (this.role !== 'owner' && ['study, investigation'].includes(this.model_type)) {
+                attributeFilters[attr["key"]] = ["LINDA:"+this.model_key, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id)];
+                this.disabled_id_keys.push(attr["key"])
+                /* if (this.role !== 'owner' && ['study, investigation'].includes(this.model_type)) {
                   this.disabled_id_keys.push(attr["key"])
-                }
+                } */
               }
               else {
                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];

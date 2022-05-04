@@ -458,12 +458,6 @@ export class DefineComponent implements OnInit, OnDestroy {
       this.while_added=false
 
     }
-
-      
-    
-
-    //let add_study_res = await this.globalService.add_multiple(header_value, this.data_file._key).toPromise()
-
   }
 
 
@@ -573,7 +567,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
     
     if (values.length > 0) {
-      let add_study_res = await this.globalService.add_multiple(values, 'study', this.parent_id, false, this.group_key, this.data_file._key, this.column_original_label, 'Study unique ID', parent_ids).toPromise()
+      let add_study_res = await this.globalService.add_multiple(values, 'study', 'investigations', false, this.group_key, this.data_file._key, this.column_original_label, 'Study unique ID', parent_ids).toPromise()
       if (add_study_res['success']) {
         // if some studies are already present (values_to_link >0), just link the asssociated heaers to the corresponding study_id
         if (values_to_link.length !== 0) {
@@ -779,7 +773,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       event_model['Event accession number'] = this.detected_values[index]
       values.push(event_model)
     }
-    let add_event_res = await this.globalService.add_multiple(values, 'event', this.parent_id, false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
+    let add_event_res = await this.globalService.add_multiple(values, 'event', 'studies', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
     if (add_event_res['success']) {
       this.data_file = add_event_res['datafile']
       this.while_added = false
@@ -962,7 +956,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       factor_model['Experimental Factor accession number'] = this.detected_values[index]
       values.push(factor_model)
     }
-    let add_factor_res = await this.globalService.add_multiple(values, 'experimental_factor', this.parent_id, false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
+    let add_factor_res = await this.globalService.add_multiple(values, 'experimental_factor', 'studies', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
     if (add_factor_res['success']) {
       this.data_file = add_factor_res['datafile']
       this.while_added = false
@@ -1232,7 +1226,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       env_model['Environment parameter accession number'] = this.detected_values[index]
       values.push(env_model)
     }
-    let add_env_res = await this.globalService.add_multiple(values, 'environment', this.parent_id, false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
+    let add_env_res = await this.globalService.add_multiple(values, 'environment', 'studies', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
     if (add_env_res['success']) {
       this.data_file = add_env_res['datafile']
       this.while_added = false
@@ -1405,7 +1399,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       env_model['Variable accession number'] = this.detected_values[index]
       values.push(env_model)
     }
-    let add_env_res = await this.globalService.add_multiple(values, 'observed_variable', this.parent_id, false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
+    let add_env_res = await this.globalService.add_multiple(values, 'observed_variable', 'observed_variables', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
     if (add_env_res['success']) {
       this.data_file = add_env_res['datafile']
       this.while_added = false

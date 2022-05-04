@@ -64,9 +64,18 @@
     <div [ngClass]="{ 'active':activeTab==='identifiers'}" role="tabpanel" class="tab-pane active" id="identifiers">
       <h3>Describe your project</h3>
       <mat-card style="width: 98%;">
-        <app-form *ngIf="activeTab==='identifiers'" (notify)="get_output_from_child($event)"
-          [model_type]="get_model_type" [level]="1" [parent_id]="get_parent_id" [model_key]="model_key" [mode]="get_mode"
-          inline="true" onlyTemplate="false" asTemplate="false" [role]="get_role" ></app-form>
+        <app-form 
+        *ngIf="activeTab==='identifiers'" 
+        (notify)="get_output_from_child($event)"
+        [model_type]="get_model_type" 
+        [level]="1" 
+        [parent_id]="get_parent_id" 
+        [model_key]="model_key" 
+        [mode]="get_mode"
+        inline="true" 
+        onlyTemplate="false" 
+        asTemplate="false" 
+        [role]="get_role" ></app-form>
       </mat-card>
     </div>
     <div [ngClass]="{ 'active':activeTab==='assStud'}" role="tabpanel" class="tab-pane" id="assStud">
@@ -174,10 +183,10 @@
           <!-- add filter in gantt as in redmine -->
           <app-gantt *ngIf="activeTab==='Gantt'" 
           [level]= "1"
+          [model_id]="get_model_id"
           [parent_id]="get_parent_id"
           [model_type]= "'investigation'"
           [model_key]="get_model_key"
-          [model_id]="get_model_id"
           [activeTab]="'Gantt'"
           [role]="get_role" 
           [group_key]="get_group_key"
@@ -196,7 +205,17 @@
         <div *ngIf="get_role==='owner'">
           <!-- add filter in gantt as in redmine -->
           <!-- add filter in gantt as in redmine -->
-          <app-persons-page *ngIf="activeTab==='People'" [model_id]="get_model_id"></app-persons-page>
+          <app-persons-page 
+          *ngIf="activeTab==='People'" 
+          [model_id]="get_model_id"
+          [parent_id]="get_parent_id"
+          [model_type]= "'investigation'"
+          [model_key]="get_model_key"
+          [activeTab]="'Gantt'"
+          [role]="get_role" 
+          [group_key]="get_group_key"
+          >
+        </app-persons-page>
         </div>
       </mat-card>
 

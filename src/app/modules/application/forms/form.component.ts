@@ -278,6 +278,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         return [year, month, day].join('-');
     }
     initiateForm(): FormGroup {
+        console.log(this.model_id)
         let attributeFilters = {};
         this.cleaned_model.forEach(attr => {
             this.validated_term[attr["key"]] = { selected: false, values: "" }
@@ -285,7 +286,14 @@ export class FormComponent implements OnInit//, AfterViewInit
                 if (attr["key"].includes("ID") || attr["key"].includes("accession number")) {
                     //var uniqueIDValidatorComponent:UniqueIDValidatorComponent=new UniqueIDValidatorComponent()
                     //attributeFilters[attr] = [this.model[attr].Example,[Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService,this.model_type, attr)];
-                    attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
+                    if (this.model_id.includes('investigations')){
+                        attributeFilters[attr["key"]] = [this.model_id, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
+
+                    }
+                    else{
+                        attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"], this.parent_id, this.asTemplate)];
+
+                    }
                 }
                 else if (attr["key"].includes("Short title")) {
                     attributeFilters[attr["key"]] = ['', [Validators.required, Validators.minLength(4)]];
@@ -343,10 +351,11 @@ export class FormComponent implements OnInit//, AfterViewInit
                         if (attr["key"].includes("unique ID")) {
                             //attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]];
                             if (this.model_to_edit[attr["key"]]=== ""){
-                                attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"],this.parent_id)];
-                                if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
+                                attributeFilters[attr["key"]] = ["LINDA:"+this.model_key, [Validators.required, Validators.minLength(4)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"],this.parent_id)];
+                                this.disabled_id_keys.push(attr["key"])
+                                /* if (this.role!=='owner' && ['study, investigation'].includes(this.model_type)){
                                     this.disabled_id_keys.push(attr["key"])
-                                }
+                                } */
                             }
                             else{
                                 attributeFilters[attr["key"]] = [this.model_to_edit[attr["key"]], [Validators.required, Validators.minLength(4)]]//, UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, this.model_type, attr["key"])];
@@ -590,6 +599,9 @@ export class FormComponent implements OnInit//, AfterViewInit
         });
         return this.startfilling
     }
+    get_startfilling() {
+        return this.startfilling;
+    };
 
     onTaskAdd(event) {
         this.startfilling = false;
@@ -616,42 +628,18 @@ export class FormComponent implements OnInit//, AfterViewInit
     isEmpty(obj) {
         return Object.keys(obj).length === 0;
     }
-    get f() {
-        return this.modelForm.controls;
-    }
+    get f() { return this.modelForm.controls;}
 
-    get get_modelForm() : FormGroup{
-        return this.modelForm
-    }
-    get diagnostic() {
-        return JSON.stringify(this.modelForm);
-    };
-    get get_left(): string{
-        return this.left
-    }
-
-    get get_cleaned_model() :{}[]{
-        return this.cleaned_model
-    }
-    get get_max_level() : number{
-        return this.max_level
-    }
-    get get_help_mode()
-    {
-        return this.help_mode
-    }
-    get get_model():{}{
-        return this.model
-    }
-    get get_level(): number{
-        return this.level
-    }
-    get get_validated_term(){
-        return this.validated_term
-    } 
-    get getChecked(){
-        return this.Checked
-    }
+    get get_modelForm() : FormGroup{ return this.modelForm }
+    get diagnostic() { return JSON.stringify(this.modelForm);};
+    get get_left(): string{ return this.left}
+    get get_cleaned_model() :{}[]{ return this.cleaned_model }
+    get get_max_level() : number{ return this.max_level }
+    get get_help_mode(){return this.help_mode}
+    get get_model():{}{return this.model}
+    get get_level(): number{return this.level}
+    get get_validated_term(){return this.validated_term} 
+    get getChecked(){return this.Checked}
     formatLatitudeLabel(value: number) {
         //north hemisphera
         if (value > 0) {
@@ -688,16 +676,11 @@ export class FormComponent implements OnInit//, AfterViewInit
             return value;
         }
     }
-    get_startfilling() {
-        return this.startfilling;
-    };
-
     notify_checkbox_disabled() {
         if (!this.startfilling) {
             this.alertService.error('need to fill the form first');
         }
     }
-
     toggleVisibility(e) {
         this.asTemplate = e.target.checked;
     };
@@ -723,6 +706,7 @@ export class FormComponent implements OnInit//, AfterViewInit
                 }
             }
             else{
+                console.log(this.modelForm.value)
                 var data={'form':this.modelForm.value, 'template':this.asTemplate}
                 this.notify.emit(data);
                 this.save(form)

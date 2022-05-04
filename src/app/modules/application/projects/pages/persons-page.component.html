@@ -68,12 +68,24 @@
                                 <input matInput (keyup)="applyFilter($event)" placeholder="PROJECT 101" #input>
                             </mat-form-field>
                             
+                            
                             <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
                                 
                                 <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
-                                    <ng-container *ngIf="column!=='edit'">
+                                    <ng-container *ngIf="column!=='Person role'">
                                         <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                                         <td  mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+                                    </ng-container>
+                                    <ng-container *ngIf="column==='Person role'">
+                                        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                                        <td mat-cell *matCellDef="let element">
+                                            <input [(ngModel)]="element['Person role']"  style="color:black" mdbInput placeholder="Author;co-author" type="text" (keypress)="onRoleChanged($event)" />
+
+                                            <!-- <input [type]="'text'" (change)="onRoleChanged($event)" matInput>
+                                            <mat-form-field>
+                                                <input [type]="'text'" (change)="onRoleChanged($event)" matInput [(ngModel)]="element['Person role']">
+                                            </mat-form-field> -->
+                                      </td>
                                     </ng-container>
  <!--                                     <ng-container  *ngIf="column==='edit'">
                                         <th mat-header-cell *matHeaderCellDef> {{column}} </th>

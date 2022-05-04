@@ -170,6 +170,7 @@ export class SignupComponent implements OnInit {
         this.registerForm.get('password').setValue(Md5.hashStr(this.registerForm.value.password))
         this.registerForm.get('confirmpassword').setValue(Md5.hashStr(this.registerForm.value.confirmpassword))
         this.registerForm.get('Person ID').setValue(Md5.hashStr(this.registerForm.value['Person ID']))
+        this.registerForm.get('Person role').setValue([])
         //this.loading = true;
         let date_created=new Date()
         this.registerForm.value['dateCreated']= date_created.toUTCString()

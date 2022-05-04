@@ -950,17 +950,93 @@ export class FileService {
                 }
 
             }
+            console.warn('##################ALREADY EXIST : ', already_exist)
             if (!already_exist) {
                 if (!return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].includes(filename)) {
                     return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].push(filename)
                 }
-                var parent_index = parent_data['v']["obsUUID"].indexOf(data["obsUUID"])
-                //get index of sample obsUUID in parent_data['v'] i.e observation unit data
-
-                return_data['Assay'][index]["assay_data"]['Sample Name']["data"].push(parent_data['v']['Observation unit ID'][parent_index])
                 var sample_data=edge['samples']
                 /// NEW CODE TO TEST
-         
+                for (var sample_index = 0; sample_index < sample_data.length; sample_index++) { 
+                    var parent_index = parent_data['v']["obsUUID"].indexOf(sample_data[sample_index]["obsUUID"])
+                    //get index of sample obsUUID in parent_data['v'] i.e observation unit data
+                    console.log(parent_index)
+
+                    return_data['Assay'][index]["assay_data"]['Sample Name']["data"].push(parent_data['v']['Observation unit ID'][parent_index])
+                
+                    console.log(sample_data[sample_index])
+                    for (var i = 0; i < keys.length; i++) {
+                        if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                            keys.splice(i, 1);
+                            i--;
+                        }
+                        else {
+                            var is_ontology_key = this.is_ontology_key(model, keys[i])
+                            var mapping_data = this.get_mapping_data_by_key(model, keys[i])
+                            var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
+                            var isa_field: string = mapping_data["ISA-Tab Field"]
+                            console.log("----------------------get key ", keys[i], " write field ", isa_field, " in section ", isa_section, " for ", isa_file)
+                            if (return_data[isa_file][index]["assay_data"][isa_field]) {
+                                console.log("----------------------assay data ", return_data[isa_file][index]["assay_data"][isa_field], "for field ",isa_field )
+                                if (return_data[isa_file][index]["assay_data"][isa_field]["data"]) {
+                                    console.log("----------------------first if ", return_data[isa_file][index]["assay_data"][isa_field], "for field ",isa_field ,"and key ", keys[i])
+                                    if (isa_field.includes("Characteristics")) {
+                                        var term_source_ref = ""
+                                        var term_accession_number = ""
+                                        if (is_ontology_key) {
+                                            console.log(data[keys[i]][sample_index])
+                                            term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                            term_accession_number = data[keys[i]][sample_index]
+                                        }
+                                        let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"].push(tmp_array)
+                                    }
+                                    
+
+                                    else {
+                                        /* console.log(data[sample_index])
+                                        console.log(data[keys[i]][sample_index]) */
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"].push(data[keys[i]][sample_index])
+                                    }
+                                }
+                                else {
+                                    if (isa_field.includes("Characteristics")) {
+                                        var term_source_ref = ""
+                                        var term_accession_number = ""
+                                        if (is_ontology_key) {
+                                            console.log(data[keys[i]][sample_index])
+                                            term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                            term_accession_number = data[keys[i]][sample_index]
+                                        }
+                                        let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"] = [tmp_array]
+                                    }
+                                    else{
+                                        return_data[isa_file][index]["assay_data"][isa_field]["data"] = [data[keys[i]][sample_index]]
+                                    }
+                                }
+                            }
+                            else {
+                                if (isa_field.includes("Characteristics")) {
+                                    var term_source_ref = ""
+                                    var term_accession_number = ""
+                                    if (is_ontology_key) {
+                                        console.log(data[keys[i]][sample_index])
+                                        term_source_ref = data[keys[i]][sample_index].split(":")[0]
+                                        term_accession_number = data[keys[i]][sample_index]
+                                    }
+                                    let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                    return_data[isa_file][index]["assay_data"][isa_field] = { "data": [tmp_array] }
+                                }
+                                else{
+                                    return_data[isa_file][index]["assay_data"][isa_field] = { "data": [data[keys[i]][sample_index]] }
+
+                                }
+                            }
+                        }
+                        
+                    }
+                }
                 /* for (var sample_index = 0; sample_index < sample_data.length; sample_index++) {   
                     for (var i = 0; i < keys.length; i++) {
                         if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
@@ -1021,7 +1097,7 @@ export class FileService {
                                         term_source_ref = data[keys[i]][sample_index].split(":")[0]
                                         term_accession_number = data[keys[i]][sample_index]
                                     }
-                                    let tmp_array = [data[keys[i]][index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
+                                    let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
                                     return_data[isa_file][index]["assay_data"][isa_field] = { "data": [tmp_array] }
                                 }
                                 else{
@@ -1033,11 +1109,7 @@ export class FileService {
                     }
                 } */
                 
-
-
-
-                
-                
+                 /// OLD CODE TO TEST
                 /* console.log(edge['samples'])
                 for (var i = 0; i < keys.length; i++) {
                     if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
@@ -2101,6 +2173,7 @@ export class FileService {
         //console.log(objArray)
 
         let obj = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        console.log(obj)
         let str = '';
         //Write header in assay isa file and count object
         var keys = Object.keys(obj);
@@ -2108,15 +2181,15 @@ export class FileService {
         var headers = []
         for (var i = 0; i < keys.length; i++) {
             var key_data = obj[keys[i]]
-            //console.log(key_data)
-            //console.log(keys[i])
+            console.log(key_data)
+            console.log(keys[i])
             if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                 keys.splice(i, 1);
                 i--;
             }
             else {
                 key_data["data"].forEach(element => {
-                    //console.log(element)
+                    console.log(element)
                     if (element) {
                         if (keys[i] === "Parameter Value[ ]") {
                             ////console.log(element[0]["parameter"]+ sep)
@@ -2191,9 +2264,9 @@ export class FileService {
 
             }
         }
-        //console.log(headers)
+        console.log(headers)
 
-        ////console.log(str)
+        console.log(str)
         ////console.log(biological_material_number)
         str = str.slice(0, -1);
         str += '\r\n';
@@ -2275,7 +2348,7 @@ export class FileService {
             str = str.slice(0, -1);
             str += '\r\n';
         }
-        ////console.log(str)
+        console.log(str)
         // str = str.slice(0, -1);
         // str += '\r\n';
         return str;

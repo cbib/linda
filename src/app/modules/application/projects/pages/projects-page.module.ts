@@ -61,6 +61,7 @@ import { TablesModule } from '../../tables/tables.module';
 import { TableModule} from 'primeng/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 
 
@@ -117,6 +118,7 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     DataTablesModule,
     MatCheckboxModule,
+    TextFieldModule,
     // Primeng modules
     TableModule
   ],

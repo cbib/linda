@@ -20,7 +20,7 @@ export class PersonComponent implements OnInit {
     'Person name': ['', Validators.required],
     'username': [''],
     'Person affiliation': ['', Validators.required],
-    'Person role': [''],
+    //'Person role': [''],
     'Person ID': ['', [Validators.required, Validators.minLength(12)], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", "Person ID")],
     'Person email': ['', [Validators.required, Validators.email], UniqueIDValidatorComponent.alreadyThere(this.globalService, this.alertService, "person", "Person email")],
   }
@@ -65,7 +65,7 @@ export class PersonComponent implements OnInit {
         this.Username.patchValue(this.currentUser.username)
         this.personID.patchValue(this.currentPerson['Person ID'])
         this.personAffiliation.patchValue(this.currentPerson['Person affiliation'])
-        this.personRole.patchValue(this.currentPerson['Person role'])
+        //this.personRole.patchValue(this.currentPerson['Person role'])
         this.personEmail.patchValue(this.currentPerson['Person email'])
         this.loaded = true
       }
@@ -134,7 +134,7 @@ export class PersonComponent implements OnInit {
   get personName() { return this.registerForm.get('Person name') }
   get Username() { return this.registerForm.get('username') }
   get personAffiliation() { return this.registerForm.get('Person affiliation') }
-  get personRole() { return this.registerForm.get('Person role') }
+  //get personRole() { return this.registerForm.get('Person role') }
   get personID() { return this.registerForm.get('Person ID') }
   get personEmail() { return this.registerForm.get('Person email') }
   get password() { return this.registerForm.get('password') }

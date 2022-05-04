@@ -48,7 +48,7 @@ const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
 const router = createRouter();
 module.context.use(router);
-module.context.trustProxy = true;
+//module.context.trustProxy = true;
 const joi = require('joi');
 const aql = require('@arangodb').aql;
 const db = require('@arangodb').db;
@@ -710,7 +710,7 @@ router.post('/register_person', function (req, res) {
             confirmpassword: joi.string().required(),
             "Person name": joi.string().required(),
             "Person ID": joi.string().required(),
-            "Person role": joi.string().required(),
+            "Person role": joi.array().allow([]).items().required(),
             "Person affiliation": joi.string().required(),
             "Person email": joi.string().required(),
             "dateCreated": joi.string().required()
@@ -4297,7 +4297,7 @@ router.post('/add_multiple', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var role = req.body.role;
-    var parent_id = req.body.parent_id;
+    var parent_collections = req.body.parent_collections;
     var values = req.body.values;
     var model_type = req.body.model_type;
     var as_template = req.body.as_template;
@@ -4319,8 +4319,8 @@ router.post('/add_multiple', function (req, res) {
         db._createDocumentCollection(datatype);
     }
 
-    var parent_type = parent_id.split("/")[0];
-    var edge_coll = parent_type + '_edge'
+    //var parent_type = parent_id.split("/")[0];
+    var edge_coll = parent_collections + '_edge'
     if (!db._collection(edge_coll)) {
         db._createEdgeCollection(edge_coll);
     }
@@ -4413,7 +4413,7 @@ router.post('/add_multiple', function (req, res) {
             var data = [];
             var ids = []
             for (let index = 0; index < values.length; index++) {
-                parent_id = parent_ids[index]
+                var parent_id = parent_ids[index]
 
                 const model_data = values[index];
                 data = db._query(aql`INSERT ${model_data} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
@@ -4546,7 +4546,7 @@ router.post('/add_multiple', function (req, res) {
         username: joi.string().required(),
         password: joi.string().required(),
         role: joi.string().required(),
-        parent_id: joi.string().required(),
+        parent_collections: joi.string().required(),
         values: joi.array().items(joi.object().required()).required(),
         model_type: joi.string().required(),
         as_template: joi.boolean().required(),
