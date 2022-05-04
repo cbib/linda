@@ -220,7 +220,16 @@ export class PlotDesign implements PlotDesignInterface{
     add_sample(_associate_sample_id:string){
         this["Associated samples"].value.push(_associate_sample_id)
     }
-    get_sample(){
+    get_sample_id(index:number){
+        return this["Associated samples"].value[index]
+    }
+    set_samples(_samples:string[]){
+        this["Associated samples"].value=_samples
+    }
+    add_samples(_samples:string[]){
+        this["Associated samples"].value=this["Associated samples"].value.concat(_samples)
+    }
+    get_samples(){
         return this["Associated samples"].value
     }
     static create_plot_design(obj) {
@@ -497,10 +506,19 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_observation_unit_id(){
         return this["Associated observation units"].value
     }
-    set_sample_ids(sample_id:string){
+    add_sample_ids(sample_id:string){
         this["Associated sample"].value.push(sample_id)
     }
-    get_sample_ids(){
+    get_sample_ids(index:number){
+        return this["Associated sample"].value[index]
+    }
+    set_associated_samples(sample_data:string[]){
+        this["Associated sample"].value=sample_data
+    }
+    add_associated_samples(sample_data:string[]){
+        this["Associated sample"].value=this["Associated sample"].value.concat(sample_data)
+    }
+    get_associated_samples(){
         return this["Associated sample"].value
     }
     static create_design(obj) {

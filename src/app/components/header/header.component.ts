@@ -28,7 +28,7 @@ export class HeaderComponent implements OnInit {
     public vertice_data: any = [];
     public search_string: string = ""
     constructor(private globalService: GlobalService, private searchService: SearchService, public dialog: MatDialog, private authenticationService: AuthenticationService, private router: Router) {
-        console.log("Welcome in Header component")
+        //console.log("Welcome in Header component")
         this.stats_advanced = {
             "investigations": [],
             "studies": [],
@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
         // });
     }
     async ngOnInit() {
-        console.log("Welcome in Header component")
+        //console.log("Welcome in Header component")
         this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
         if (this.currentUser !== null || this.currentUser !== undefined) {
             await this.get_vertices()
@@ -64,11 +64,11 @@ export class HeaderComponent implements OnInit {
     onSearch() {
         this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(
             data => {
-                console.log(data)
+                //console.log(data)
                 const dialogRef = this.dialog.open(SearchResultComponent, { disableClose: true, width: '1000px', autoFocus: false, maxHeight: '90vh', data: { search_type: this.search_string, model_id: "", values: data, parent_id: "" } });
                 dialogRef.afterClosed().subscribe(result => {
                     if (result) {
-                        console.log(result)
+                        //console.log(result)
                         var parent_id = result['parent_id']
                         var model_id = result['model_id']
                         var model_type = result['model_id'].split("/")[0]
@@ -145,15 +145,15 @@ export class HeaderComponent implements OnInit {
 
     /* onActivate(componentReference:any) {        
         if(componentReference instanceof UserTreeComponent){
-            console.log("This is a message from the UserTreeComponent");
+            //console.log("This is a message from the UserTreeComponent");
             ///this.currentUser=JSON.parse(localStorage.getItem('currentUser'));
             this.get_vertices()
             return;
          }
          else{
-            console.log("This is not the UserTreeComponent")
+            //console.log("This is not the UserTreeComponent")
             //this.currentUser=JSON.parse(localStorage.getItem('currentUser'));
-            ///console.log(this.currentUser)
+            /////console.log(this.currentUser)
             this.get_vertices()
             return;
          }
@@ -179,7 +179,7 @@ export class HeaderComponent implements OnInit {
                     this.vertice_data = data;
                     this.vertice_data.forEach(
                         d => {
-                            console.log(d)
+                            //console.log(d)
                             var stat_object = {
                                 'id': d["e"]["_to"],
                                 'percent_fill': 0,
@@ -191,7 +191,7 @@ export class HeaderComponent implements OnInit {
                             vertices.forEach(
                                 vertice => {
                                     var vertice_keys = Object.keys(vertice)
-                                    console.log(vertice_keys)
+                                    //console.log(vertice_keys)
                                     var vertice_id = vertice["_id"]
                                     var total = 0;
                                     for (var i = 0; i < vertice_keys.length; i++) {
@@ -211,7 +211,7 @@ export class HeaderComponent implements OnInit {
                             } */
                         }
                     );
-                    console.log(this.stats_advanced)
+                    //console.log(this.stats_advanced)
                 }
             )
         }

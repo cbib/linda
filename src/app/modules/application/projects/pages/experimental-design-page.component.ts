@@ -211,6 +211,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 Object.assign(replication, data.Replication.value)
                 this.design.set_replication(replication)
 
+                if (data['Associated sample'].value!==null){
+                    this.design.set_associated_samples(data['Associated sample'].value)
+                }
                 if (data['Associated observation units'].value!==null){
                     this.design.set_observation_unit_id(data['Associated observation units'].value)
 
@@ -252,6 +255,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         //Object.assign(new_plot_design, plot_design)
                         if (plot_design['Observation uuid'].value!==null){
                             new_plot_design.set_observation_uuid(plot_design['Observation uuid'].value)
+                        }
+                        if (plot_design['Associated samples'].value!==null){
+                            new_plot_design.set_samples(plot_design['Associated samples'].value)
                         }
                         plot_design['Row design'].value.forEach(row_design=>{
                             //let new_row_design=new RowDesign()
@@ -557,7 +563,15 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
               console.log(res.sample_data)
               let result:[]=res.sample_data
               const data= await this.globalService.add_observation_units_samples({"samples":result}, this.design['Associated observation units'].value).toPromise()
-
+              this.design.add_associated_samples(result)
+              this.design.Blocking.value.forEach(block=>{
+                  block['Plot design'].value.forEach(plot=>{
+                      plot.add_samples(result.filter(sample=>sample['obsUUID']===plot.get_observation_uuid()))
+                  })
+              })
+              result.forEach(sample=>{
+                sample
+              })
               let message = "experimental factor selected! "
               this.alertService.success(message);
             }
@@ -698,7 +712,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
     get_samples(_expd:ExperimentalDesign){
         if (_expd['Associated sample'].value!==null){
-            return _expd['Associated sample'].value
+            return _expd['Associated sample'].value.length
         }
         else{
             return "No samples defined"
