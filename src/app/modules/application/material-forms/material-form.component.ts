@@ -138,8 +138,8 @@ export class MaterialFormComponent implements OnInit {
     { field: 'Genus'},
     { field: 'TaxonScientificName'},
     { field: 'AccessionNumber'},
-    { field: 'CollectionNames'},
-    {field: 'CollectionTypes'},
+    /* { field: 'CollectionNames'},
+    {field: 'CollectionTypes'}, */
     {field: 'HoldingInstitution'},
     {field:'DOI'},
     {field:'LotName'},
@@ -638,6 +638,9 @@ export class MaterialFormComponent implements OnInit {
   }
   get get_germplasm_loaded():boolean{
     return this.germplasm_loaded
+  }
+  add_custom_material(){
+
   }
   CleanTable():void{
     this.RowData=[]

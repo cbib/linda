@@ -68,7 +68,7 @@
   <div>
     <mat-card>
       <h2>Material Lot Name grouped by taxon group and Material accession name</h2>
-      <p>Pick and choose material from INRAE Collection mmaterial sources</p>
+      <p>Pick and choose germplasm(s) from multiple holding institution material sources</p>
       <!-- <select [ngModel]="get_selected_taxon" [ngModelOptions]="{standalone: true}" name="select_model" size="1"
         (change)="onTaxonChange($event.target.value)">
         <option *ngFor="let md of get_unique_taxon_groups" [value]="md">{{md}}</option>
@@ -77,6 +77,7 @@
     <button [disabled]="no_row_selected" (click)="getSelectedRows()">Add Selected Rows</button>
     <button *ngIf="!all_selected" (click)="select_all_filtered()">Select filtered rows</button>
     <button *ngIf="all_selected" (click)="deselect_all_filtered()">Deselect filtered rows</button>
+    <button (click)="add_custom_material()">Add custom accession</button>
     <div class="example-header">
       Page Size:
       <select (change)="onSelectPageSizeChanged()" id="select-page-size">
