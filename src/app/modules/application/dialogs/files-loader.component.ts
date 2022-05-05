@@ -337,7 +337,7 @@ export class FilesLoaderComponent implements OnInit {
       }
       else{
         console.log(this.myTextarea.split('\n'))
-        //remove ddooublons
+        //remove doublons
 
         this.data_model['Data file description'] = 'Data have been extracted from ' + this.fileName
         this.data_model['Data file version'] = '1.0'
@@ -348,6 +348,18 @@ export class FilesLoaderComponent implements OnInit {
         })
         this.data_model['Data'] = model_data
         this.data_model['associated_headers'] = [
+          {
+            "header": "Study Name",
+            "selected": true,
+            "associated_term_id": "",
+            "associated_component": "study",
+            "associated_component_field": "Study Name",
+            "associated_values": [],
+            "associated_linda_id": [],
+            "associated_parent_id": [],
+            "is_time_values": false,
+            "is_numeric_values": false
+          },
           {
             "header": "Study id",
             "selected": true,
@@ -372,6 +384,7 @@ export class FilesLoaderComponent implements OnInit {
             "is_time_values": false,
             "is_numeric_values": false
           }
+          
         ]
         this.data_model['headers'] = ["Study id"]
         this.data_model['headers'].push('Study linda ID')
