@@ -344,7 +344,7 @@ export class FilesLoaderComponent implements OnInit {
         this.data_model['Data file link'] = this.fileName
         let model_data=[]
         this.myTextarea.split('\n').forEach(_study_id=>{
-          model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id,})
+          model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id})
         })
         this.data_model['Data'] = model_data
         this.data_model['associated_headers'] = [
