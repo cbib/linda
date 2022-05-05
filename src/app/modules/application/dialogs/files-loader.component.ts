@@ -344,7 +344,7 @@ export class FilesLoaderComponent implements OnInit {
         this.data_model['Data file link'] = this.fileName
         let model_data=[]
         this.myTextarea.split('\n').forEach(_study_id=>{
-          model_data.push({'Study id':_study_id, 'Study linda ID':""})
+          model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id,})
         })
         this.data_model['Data'] = model_data
         this.data_model['associated_headers'] = [
@@ -386,8 +386,7 @@ export class FilesLoaderComponent implements OnInit {
           }
           
         ]
-        this.data_model['headers'] = ["Study id"]
-        this.data_model['headers'].push('Study linda ID')
+        this.data_model['headers'] = ["Study Name","Study id","Study linda ID"]
         this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
           data => { 
             console.log(data); 
