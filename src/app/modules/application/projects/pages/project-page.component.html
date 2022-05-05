@@ -1,18 +1,7 @@
 <div id="project-page">
   <alert></alert>
-  <!-- <div class="border-head">
-        <h3>
-            <a href="index.html" class="logo" style="color: black;"><b>P<span>L</span>ant
-                    exper<span>I</span>me<span>N</span>tal
-                    meta<span>D</span>at<span>A</span></b></a>
-        </h3>           
-            <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button>
-    </div> -->
-  <!-- <button class="btn btn-success" style="float: right;" type="submit" (click)="submit();" [disabled]="">Save Project</button> -->
   <button class="btn btn-danger" style="float: right;" type="submit" (click)="cancel();" [disabled]="">Close
     Project</button>
-
-  <!-- Nav pills -->
   <ul class="nav nav-pills">
     <li class="nav-item">
       <a class="nav-link active" [ngClass]="{ 'active':activeTab==='identifiers'}" (click)="changeTab('identifiers')"
@@ -22,21 +11,6 @@
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='assStud'}" href="#assStud" (click)="changeTab('assStud')"
         aria-controls="assStud" role="tab" data-toggle="tab">2. Studies</a>
     </li>
-    <!-- <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='ExpSite'}" href="#ExpSite" (click)="changeTab('ExpSite')" aria-controls="ExpSite" role="tab" data-toggle="tab">3. Experimental site</a>
-    </li> -->
-    <!-- <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Data'}" href="#Data" (click)="changeTab('Data')"
-        aria-controls="Data" role="tab" data-toggle="tab">3. Data</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Assign'}" href="#Assign" (click)="changeTab('Assign')"
-        aria-controls="Assign" role="tab" data-toggle="tab">4. Assign</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" [ngClass]="{ 'active':activeTab==='Extract'}" href="#Extract" (click)="changeTab('Extract')"
-        aria-controls="Extract" role="tab" data-toggle="tab">5. Extract</a>
-    </li> -->
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='project_data_files'}" (click)="changeTab('project_data_files')"
         href="#project_data_files" aria-controls="expfac" role="tab" data-toggle="tab">3. Data files</a>
@@ -57,7 +31,6 @@
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" (click)="changeTab('People')"
         aria-controls="People" role="tab" data-toggle="tab">7. Project members</a>
     </li>
-
   </ul>
   <!-- Tab panes -->
   <div class="tab-content">
@@ -85,46 +58,6 @@
       </app-studies-page>
       <!--<app-study-page *ngIf="get_selected_study && activeTab==='assStud'" (notify)="get_output_from_child($event)" [level]="1" [model_key]="get_selected_study._key" [parent_id]="get_model_id" model_type="study" [model_id]="get_selected_study._id" [mode]="'edit'" ></app-study-page> -->
     </div>
-    <!-- <div [ngClass]="{ 'active':activeTab==='Data'}" role="tabpanel" class="tab-pane" id="Data">
-      <h3>Download experimental data files</h3>
-      <mat-card style="width: 98%;">
-        <div *ngIf="get_role!=='owner'">
-          <p>You do not have access to this part of the project. Please contact project owner to gain full project
-            access </p>
-        </div>
-        <div *ngIf="get_role==='owner'">
-          <app-download *ngIf="activeTab==='Data'" [parent_id]="get_model_id" [model_key]="get_model_key"
-            model_type="study" mode="download"></app-download>
-        </div>
-      </mat-card>
-    </div>
-    <div [ngClass]="{ 'active':activeTab==='Assign'}" role="tabpanel" class="tab-pane" id="Assign">
-      <h3>Define experimental data files columns</h3>
-      <mat-card style="width: 98%;">
-        <div *ngIf="get_role!=='owner'">
-          <p>You do not have access to this part of the project. Please contact project owner to gain full project
-            access </p>
-        </div>
-        <div *ngIf="get_role==='owner'">
-          <app-assign *ngIf="activeTab==='Assign'" [parent_id]="get_model_id" [model_key]="get_model_key"
-            model_type="study" mode="extract-again"></app-assign>
-        </div>
-      </mat-card>
-    </div>
-
-    <div [ngClass]="{ 'active':activeTab==='Extract'}" role="tabpanel" class="tab-pane" id="Extract">
-      <h3>Extract</h3>
-      <mat-card style="width: 98%;">
-        <div *ngIf="get_role!=='owner'">
-          <p>You do not have access to this part of the project. Please contact project owner to gain full project
-            access </p>
-        </div>
-        <div *ngIf="get_role==='owner'">
-          <app-extract *ngIf="activeTab==='Extract'" [parent_id]="get_model_id" [model_key]="get_model_key"
-            model_type="experimental_factor" mode="extract"></app-extract>
-        </div>
-      </mat-card>
-    </div> -->
     <div [ngClass]="{ 'active':activeTab==='project_data_files'}" role="tabpanel" class="tab-pane" id="project_data_files">
       <h3>Data files</h3>
       <mat-card style="width: 98%;">
@@ -159,19 +92,6 @@
         </div>
       </mat-card>
     </div>
-    <!-- <div [ngClass]="{ 'active':activeTab==='Download'}" role="tabpanel" class="tab-pane" id="Download">
-      <h3>Download project metadata files</h3>
-      <mat-card style="width: 98%;">
-        <div *ngIf="get_role!=='owner'">
-          <p>You do not have access to this part of the project. Please contact project owner to gain full project
-            access </p>
-        </div>
-        <div *ngIf="get_role==='owner'">
-          <app-download *ngIf="activeTab==='Download'" [parent_id]="get_model_id" [model_key]="get_model_key"
-            model_type="metadata_file" mode="create"></app-download>
-        </div>
-      </mat-card>
-    </div> -->
     <div [ngClass]="{ 'active':activeTab==='Gantt'}" role="tabpanel" class="tab-pane" id="Gantt">
       <h3>Gantt</h3>
       <mat-card style="width: 98%;">
@@ -203,8 +123,6 @@
             access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <!-- add filter in gantt as in redmine -->
-          <!-- add filter in gantt as in redmine -->
           <app-persons-page 
           *ngIf="activeTab==='People'" 
           [model_id]="get_model_id"
@@ -218,9 +136,6 @@
         </app-persons-page>
         </div>
       </mat-card>
-
     </div>
-    
-
   </div>
 </div>

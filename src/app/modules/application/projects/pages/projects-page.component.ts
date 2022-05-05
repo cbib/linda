@@ -80,7 +80,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     //private dataSource: MatTableDataSource<InvestigationInterface>;
     private user_groups = []
     private model_type: string = 'investigation'
-    private displayedColumns: string[] = ['Project Name', 'Investigation description', 'edit'];
+    private displayedColumns: string[] = ['Project Name', 'Investigation unique ID','Investigation description', 'edit'];
     private dataSource: MatTableDataSource<InvestigationInterface>
     private projects: InvestigationInterface[] = []
 
@@ -369,6 +369,31 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     onExperimental_design() {
         this.router.navigate(['/design'])
     }
+    onAdd() {
+        let user = JSON.parse(localStorage.getItem('currentUser'));
+        let new_step = 0
+        if (!this.currentUser.tutoriel_done) {
+            if (this.currentUser.tutoriel_step === "0") {
+                new_step = 1
+                this.currentUser.tutoriel_step = new_step.toString()
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+            else {
+                this.alertService.error("You are not in the right form as requested by the tutorial")
+            }
+        }
+        let new_investigation: Investigation = new Investigation()
+        //console.log(new_investigation)
+        this.globalService.add(new_investigation, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
+            data => {
+                if (data["success"]) {
+                    //console.log(data)
+                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner", group_key:this.group_key } });
+                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
+
+                }
+            });;
+    }
     async onRemove(element: InvestigationInterface) {
         const dialogRef = this.dialog.open(ConfirmationComponent, {disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'remove_brief', model_type: this.model_type } });
         dialogRef.afterClosed().subscribe(async (result) => {
@@ -395,31 +420,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         });
 
     }
-    onAdd() {
-        let user = JSON.parse(localStorage.getItem('currentUser'));
-        let new_step = 0
-        if (!this.currentUser.tutoriel_done) {
-            if (this.currentUser.tutoriel_step === "0") {
-                new_step = 1
-                this.currentUser.tutoriel_step = new_step.toString()
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            }
-            else {
-                this.alertService.error("You are not in the right form as requested by the tutorial")
-            }
-        }
-        let new_investigation: Investigation = new Investigation()
-        //console.log(new_investigation)
-        this.globalService.add(new_investigation, this.model_type, this.parent_id, false, this.group_key).pipe(first()).toPromise().then(
-            data => {
-                if (data["success"]) {
-                    //console.log(data)
-                    this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: data['_id'].split("/")[1], model_type: 'investigation', model_id: data['_id'], mode: "edit", activeTab: 'identifiers', role: "owner", group_key:this.group_key } });
-                    //this.router.navigate(['/project_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" } });
-
-                }
-            });;
-    }
+    
     invitePerson(group_key) {
         //console.log(group_key)
     }

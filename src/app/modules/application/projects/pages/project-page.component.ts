@@ -96,7 +96,6 @@ export class ProjectPageComponent implements OnInit {
 
     async get_vertices() {
         let user = JSON.parse(localStorage.getItem('currentUser'));
-        //////console.log(user)
         this.globalService.start()
         return this.globalService.get_all_vertices(user._key).toPromise().then(
             //return this.globalService.get_all_vertices(user._key).subscribe(
@@ -108,30 +107,6 @@ export class ProjectPageComponent implements OnInit {
         )
     }
     
-    get get_parent_id(){
-        return this.parent_id
-    }
-    get get_model_type(){
-        return this.model_type
-    }
-    get get_mode(){
-        return this.mode
-    }
-    get get_model_id(){
-        return this.model_id
-    }
-    get get_model_key(){
-        return this.model_key
-    }
-    get get_role(){
-        return this.role
-    }
-    get get_group_key(){
-        return this.group_key
-    }
-    get get_collection(){
-        return this.collection
-    }
     get_output_from_child(val:any){
         if (val === 'cancel the form'){
           console.log("Cancel form")
@@ -139,13 +114,18 @@ export class ProjectPageComponent implements OnInit {
         else{
             console.log(val)
             this.alertService.success("Changes have been successfully saved")
-            
-
         }
     }
+    get get_parent_id(){ return this.parent_id }
+    get get_model_type(){ return this.model_type }
+    get get_mode(){ return this.mode }
+    get get_model_id(){ return this.model_id }
+    get get_model_key(){ return this.model_key }
+    get get_role(){ return this.role }
+    get get_group_key(){ return this.group_key }
+    get get_collection(){ return this.collection }
     submit(){
         //Go back to project pages
-        
     }
     cancel(){
         //this.notify.emit("close_study")

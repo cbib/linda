@@ -10,10 +10,12 @@ import { AssociatedHeadersInterface}  from 'src/app/models/linda/data_files'
 import { DataFileInterface}  from 'src/app/models/linda/data_files'
 import { timeStamp } from 'console';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+import { Study } from 'src/app/models/linda/study';
 
 
 interface DialogData {
   parent_id: string;
+  group_key: string;
   mode:string;
 }
 
@@ -46,6 +48,8 @@ export class FilesLoaderComponent implements OnInit {
   private cleaned_data_file_model = []
   private data_model:{'Data file description':string,'Data file version':string, 'Data file link':string, 'Data':any[],'associated_headers':AssociatedHeadersInterface[], 'headers':string[]};
   form: FormGroup;
+
+  private group_key: string;
   private loaded:boolean=false
   private added:boolean=false
   private preview_request:boolean=false
@@ -59,6 +63,7 @@ export class FilesLoaderComponent implements OnInit {
     public delimdialog: MatDialog) {
       this.parent_id=this.data.parent_id
       this.mode=this.data.mode
+      this.group_key = this.data.group_key
       console.log(this.parent_id)
       console.log(this.mode)
       
@@ -326,13 +331,11 @@ export class FilesLoaderComponent implements OnInit {
     onNoClick(): void {
       this.dialogRef.close({event:"Cancelled"});
     }
-    onSubmit(): void {
+    async onSubmit(): Promise<void> {
       if (this.mode==='local_import'){
-        this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
-          data => { 
-            console.log(data); 
-            this.dialogRef.close({event:"Confirmed"});
-          })
+        const data= await this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise()//.then(
+        console.log(data); 
+        this.dialogRef.close({event:"Confirmed"});
 
       }
       else{
@@ -343,10 +346,11 @@ export class FilesLoaderComponent implements OnInit {
         this.data_model['Data file version'] = '1.0'
         this.data_model['Data file link'] = this.fileName
         let model_data=[]
-        this.myTextarea.split('\n').forEach(_study_id=>{
-          model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id})
-        })
-        this.data_model['Data'] = model_data
+        let study_names=[]
+        let study_ids=[]
+        let parent_ids=[]
+        console.log(this.parent_id)
+        //this.data_model['Data'] = model_data
         this.data_model['associated_headers'] = [
           {
             "header": "Study Name",
@@ -387,16 +391,74 @@ export class FilesLoaderComponent implements OnInit {
           
         ]
         this.data_model['headers'] = ["Study Name","Study id","Study linda ID"]
-        this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
+        console.log(this.data_model)
+        this.myTextarea.split('\n').forEach(async _study_name=>{
+          study_names.push(_study_name)
+        });
+        for (let index = 0; index < study_names.length; index++) {
+          const _study_name = study_names[index];
+          let study_model = new Study()
+          study_model['Study unique ID'] = _study_name
+          study_model['Study Name'] = _study_name
+          let add_study_res = await this.globalService.add(study_model, 'study', this.parent_id, false, this.group_key).toPromise()
+          if (add_study_res["success"]) {
+            console.log(add_study_res)
+            //console.log(add_study_res["message"])
+            let study_id = add_study_res["_id"]
+            study_ids.push(study_id)
+            this.data_model['Data'].push({'Study id':study_id, 'Study linda ID':study_id, 'Study Name':_study_name})
+            this.data_model['associated_headers'][0]['associated_values'].push(_study_name)
+            this.data_model['associated_headers'][0]['associated_linda_id'].push(study_id)
+            this.data_model['associated_headers'][0]['associated_parent_id'].push(this.parent_id)
+            this.data_model['associated_headers'][1]['associated_values'].push(study_id)
+            this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
+            this.data_model['associated_headers'][1]['associated_parent_id'].push(this.parent_id)
+            this.data_model['associated_headers'][2]['associated_linda_id'].push(study_id)
+            console.log(this.data_model);
+            
+          }
+          
+        }
+        const data= await this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise()//.then(
+        console.log(data); 
+        /* this.myTextarea.split('\n').forEach(async _study_name=>{
+          study_names.push(_study_name)
+          parent_ids.push(this.parent_id)
+          
+          let study_model = new Study()
+          study_model['Study unique ID'] = _study_name
+          study_model['Study Name'] = _study_name
+          let add_study_res = await this.globalService.add(study_model, 'study', this.parent_id, false, this.group_key).toPromise()
+          if (add_study_res["success"]) {
+            console.log(add_study_res)
+            //console.log(add_study_res["message"])
+            let study_id = add_study_res["_id"]
+            study_ids.push(study_id)
+            this.data_model['Data'].push({'Study id':study_id, 'Study linda ID':study_id, 'Study Name':_study_name})
+            this.data_model['associated_headers'][0]['associated_values'].push(_study_name)
+            this.data_model['associated_headers'][0]['associated_linda_id'].push(study_id)
+            this.data_model['associated_headers'][0]['associated_parent_id'].push(this.parent_id)
+            this.data_model['associated_headers'][1]['associated_values'].push(study_id)
+            this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
+            this.data_model['associated_headers'][1]['associated_parent_id'].push(this.parent_id)
+            this.data_model['associated_headers'][2]['associated_linda_id'].push(study_id)
+            console.log(this.data_model);
+            const data= await this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise()//.then(
+            console.log(data); 
+          }
+        }); */
+        /* this.myTextarea.split('\n').forEach(_study_id=>{
+          model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id})
+        }) */
+        
+        
+        this.dialogRef.close({event:"Confirmed"});
+        /* this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise().then(
           data => { 
             console.log(data); 
             this.dialogRef.close({event:"Confirmed"});
-          })
-
-
+        }) */
       }
-      
-  
     }
 
 }

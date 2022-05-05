@@ -63,7 +63,7 @@ export class DataFilesPageComponent implements OnInit {
             this.collection = params['collection'];
             this.parent_id = params['parent_id'];
             this.model_key = params['model_key'];
-            this.role == params['role'];
+            this.role = params['role'];
             this.group_key = params['group_key'];
             
             
@@ -185,7 +185,7 @@ export class DataFilesPageComponent implements OnInit {
     // dependding on parent id, remove either in investigations_edge, studies_edeg
   }
   onAdd(mode:string) {
-    const dialogRef = this.dialog.open(FilesLoaderComponent, {disableClose: true,  width: '1000px', data: { parent_id: this.parent_id, mode:mode } });
+    const dialogRef = this.dialog.open(FilesLoaderComponent, {disableClose: true,  width: '1000px', data: { parent_id: this.parent_id, mode:mode,group_key:this.group_key } });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (result.event == 'Confirmed') {

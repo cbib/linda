@@ -75,6 +75,7 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
     //this.globalService.start()
     this.myEventSubscription = this.globalService.get_data_file(this.model_key).subscribe(
       data => {
+        console.log(data)
         this.data_file = Object.assign(data)
         this.tableData = this.data_file.Data
         this.columns = []

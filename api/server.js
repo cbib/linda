@@ -555,7 +555,6 @@ router.post('/authenticate_group', function (req, res) {
             res.send({ success: false, message: 'group key ' + group_key + ' doesn\'t exists', group: {} });
         }
         else {
-
             // add edge in group edge
             var groups_edge_coll = 'groups_edge'
             if (!db._collection(groups_edge_coll)) {
@@ -4719,6 +4718,7 @@ router.post('/add', function (req, res) {
                         const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${investigations_edge} RETURN NEW `);
                     }
                     if (model_type === 'study') {
+                        
                         var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
                         console.log(person)
                         var obj2 = {

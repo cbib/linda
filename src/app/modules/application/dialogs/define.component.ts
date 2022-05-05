@@ -427,7 +427,6 @@ export class DefineComponent implements OnInit, OnDestroy {
   }
   onChangeHeader(){
     this.generalForm.get('Header').enable()
-
   }
   async onSaveHeader(){
     this.while_added = true
@@ -460,9 +459,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
   }
 
-
   /*STUDY PART ROUTINES*/
-
   async onExtractStudy(component_value, index: number) {
     this.while_added = true
     //console.log(component_value)
@@ -940,6 +937,7 @@ export class DefineComponent implements OnInit, OnDestroy {
   has_event_associated_header(): boolean {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event accession number').length > 0
   }
+  
   /*ExperimentalFactor PART ROUTINES*/
   async onExtractAllExperimentalFactors() {
     this.while_added = true
@@ -1205,12 +1203,8 @@ export class DefineComponent implements OnInit, OnDestroy {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Experimental Factor accession number').length > 0
   }
 
-
-
-
-
   /*Environment PART ROUTINES*/
-  /*EVENT PART ROUTINES*/
+  
   async onExtractAllEnvironments(){
     this.while_added = true
     let values: Environment[] = []
@@ -1380,9 +1374,6 @@ export class DefineComponent implements OnInit, OnDestroy {
       detected_environment.associated_linda_id.filter(x => !this.selected_value.ids.includes(x)).length === 0
     )
   }
-
-
-  
   /*Observed variable PART ROUTINES*/
   async onExtractAllObservedVariables(){
     this.while_added = true
