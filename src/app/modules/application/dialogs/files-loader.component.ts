@@ -364,7 +364,7 @@ export class FilesLoaderComponent implements OnInit {
             "is_time_values": false,
             "is_numeric_values": false
           },
-          {
+          /* {
             "header": "Study id",
             "selected": true,
             "associated_term_id": "",
@@ -375,7 +375,7 @@ export class FilesLoaderComponent implements OnInit {
             "associated_parent_id": [],
             "is_time_values": false,
             "is_numeric_values": false
-          },
+          }, */
           {
             "header": "Study linda ID",
             "selected": false,
@@ -390,33 +390,46 @@ export class FilesLoaderComponent implements OnInit {
           }
           
         ]
-        this.data_model['headers'] = ["Study Name","Study id","Study linda ID"]
+        this.data_model['headers'] = ["Study Name","Study linda ID"]
+        //this.data_model['headers'] = ["Study Name","Study id","Study linda ID"]
         console.log(this.data_model)
         this.myTextarea.split('\n').forEach(async _study_name=>{
           study_names.push(_study_name)
         });
         for (let index = 0; index < study_names.length; index++) {
           const _study_name = study_names[index];
-          let study_model = new Study()
-          study_model['Study unique ID'] = _study_name
-          study_model['Study Name'] = _study_name
-          let add_study_res = await this.globalService.add(study_model, 'study', this.parent_id, false, this.group_key).toPromise()
+          //let study_model = new Study(_study_name,_study_name)
+          //study_model['Study unique ID'] = _study_name
+          //study_model['Study Name'] = _study_name
+          //need to add studies before ?
+          /* let add_study_res = await this.globalService.add(study_model, 'study', this.parent_id, false, this.group_key).toPromise()
           if (add_study_res["success"]) {
             console.log(add_study_res)
             //console.log(add_study_res["message"])
             let study_id = add_study_res["_id"]
             study_ids.push(study_id)
-            this.data_model['Data'].push({'Study id':study_id, 'Study linda ID':study_id, 'Study Name':_study_name})
+            this.data_model['Data'].push({'Study linda ID':study_id, 'Study Name':_study_name})
+            //this.data_model['Data'].push({'Study id':study_id, 'Study linda ID':study_id, 'Study Name':_study_name})
             this.data_model['associated_headers'][0]['associated_values'].push(_study_name)
             this.data_model['associated_headers'][0]['associated_linda_id'].push(study_id)
             this.data_model['associated_headers'][0]['associated_parent_id'].push(this.parent_id)
-            this.data_model['associated_headers'][1]['associated_values'].push(study_id)
+            //this.data_model['associated_headers'][1]['associated_values'].push(study_id)
+            //this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
+            //this.data_model['associated_headers'][1]['associated_parent_id'].push(this.parent_id)
             this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
-            this.data_model['associated_headers'][1]['associated_parent_id'].push(this.parent_id)
-            this.data_model['associated_headers'][2]['associated_linda_id'].push(study_id)
             console.log(this.data_model);
             
-          }
+          } */
+
+          this.data_model['Data'].push({'Study linda ID':"", 'Study Name':_study_name})
+            //this.data_model['Data'].push({'Study id':study_id, 'Study linda ID':study_id, 'Study Name':_study_name})
+          //this.data_model['associated_headers'][0]['associated_values'].push(_study_name)
+            //this.data_model['associated_headers'][0]['associated_linda_id'].push(study_id)
+          //this.data_model['associated_headers'][0]['associated_parent_id'].push(this.parent_id)
+            //this.data_model['associated_headers'][1]['associated_values'].push(study_id)
+            //this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
+            //this.data_model['associated_headers'][1]['associated_parent_id'].push(this.parent_id)
+            //this.data_model['associated_headers'][1]['associated_linda_id'].push(study_id)
           
         }
         const data= await this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise()//.then(

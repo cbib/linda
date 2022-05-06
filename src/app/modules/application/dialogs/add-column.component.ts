@@ -493,7 +493,7 @@ export class AddColumnComponent implements OnInit {
     return this.term_ids
   }
   get filter_associated_headers(){ 
-    let accepted_component_field=["Study unique ID", "Experimental Factor accession number", "Event accession number", "Environment parameter accession number", "Variable accession number"]
+    let accepted_component_field=["Study Name", "Experimental Factor accession number", "Event accession number", "Environment parameter accession number", "Variable accession number"]
     return this.get_data_file.associated_headers.filter(associated_header=>accepted_component_field.includes(associated_header.associated_component_field) && associated_header.associated_linda_id.length>0)
   }
   get get_ontologies(){

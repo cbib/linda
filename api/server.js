@@ -1258,12 +1258,12 @@ router.get('/get_max_level/:model_type', function (req, res) {
     .description('Assembles a list of keys of entries in the collection.');
 
 
-router.get('/get_lindaID_by_studyID/:study_unique_id/:parent_key', function (req, res) {
-    var study_unique_id = req.pathParams.study_unique_id;
+router.get('/get_lindaID_by_studyName/:study_name/:parent_key', function (req, res) {
+    var study_name = req.pathParams.study_name;
     var parent_key = req.pathParams.parent_key;
     var parent_id = "investigations/" + parent_key;
     var data = {}
-    data = db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global' FILTER v['Study unique ID']==${study_unique_id} RETURN {_id:v._id}`).toArray();
+    data = db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global' FILTER v['Study Name']==${study_name} RETURN {_id:v._id}`).toArray();
     if (data.length > 0) {
         data[0]["success"] = true
         res.send(data[0]);
@@ -1274,7 +1274,7 @@ router.get('/get_lindaID_by_studyID/:study_unique_id/:parent_key', function (req
     }
 
 })
-    .pathParam('study_unique_id', joi.string().required(), 'username of the entry.')
+    .pathParam('study_name', joi.string().required(), 'username of the entry.')
     .pathParam('parent_key', joi.string().required(), 'username of the entry.')
     .response(joi.object().required(), 'Entry stored in the collection.')
     .summary('List entry keys')
@@ -3004,7 +3004,7 @@ router.post('/update_multiple_field', function (req, res) {
             if (model_data[field] === value) {
                 if (datafile_key !== '') {
                     let df_id = "data_files/" + datafile_key
-                    if (model_field === 'Study unique ID') {
+                    if (model_field === 'Study Name') {
                         const edges3 = db._query(aql`
                         LET document = DOCUMENT(${df_id})
                         LET alteredData = (
@@ -4438,7 +4438,11 @@ router.post('/add_multiple', function (req, res) {
 
                         const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
                         ///res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+                        var linda_unique_id="LINDA:"+data[0].id.split('/')[1]
                         if (model_type === 'investigation') {
+                            var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${data[0].id} UPDATE {_key:${data[0].id.split('/')[1]}} WITH {'Investigation unique ID': ${linda_unique_id}} IN ${coll} RETURN NEW`).toArray();
+
+
                             var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
                             console.log(person)
                             var obj2 = {
@@ -4451,6 +4455,8 @@ router.post('/add_multiple', function (req, res) {
                             const edges2 = db._query(aql`UPSERT ${obj2} INSERT ${obj2} UPDATE {} IN ${investigations_edge} RETURN NEW `);
                         }
                         if (model_type === 'study') {
+                            var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${data[0].id} UPDATE {_key:${data[0].id.split('/')[1]}} WITH {'Study unique ID': ${linda_unique_id}} IN ${coll} RETURN NEW`).toArray();
+
                             var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
                             console.log(person)
                             var obj2 = {
@@ -4685,6 +4691,7 @@ router.post('/add', function (req, res) {
             data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
 
             if (model_type !== 'observation_unit') {
+
                 // var data = [];
                 // data = db._query(aql`INSERT ${values} IN ${coll} RETURN { new: NEW, id: NEW._id } `).toArray();
 
@@ -4698,14 +4705,22 @@ router.post('/add', function (req, res) {
                 }
                 //Document exists add edges in edge collection
                 else {
+                    
                     var obj = {
                         "_from": parent_id,
                         "_to": data[0].id,
                     };
+                    var linda_unique_id="LINDA:"+data[0].id.split('/')[1]
 
                     const edges = db._query(aql`UPSERT ${obj} INSERT ${obj} UPDATE {}  IN ${edge} RETURN NEW `);
                     ///res.send({ success: true, message: 'Everything is good ', _id: data[0].id });
+                    
                     if (model_type === 'investigation') {
+                        //update Investigation unique ID
+
+                        var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${data[0].id} UPDATE {_key:${data[0].id.split('/')[1]}} WITH {'Investigation unique ID': ${linda_unique_id}} IN ${coll} RETURN NEW`).toArray();
+
+
                         var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
                         console.log(person)
                         var obj2 = {
@@ -4719,6 +4734,9 @@ router.post('/add', function (req, res) {
                     }
                     if (model_type === 'study') {
                         
+                        //update Study unique ID
+                        var update = db._query(aql` FOR entry IN ${coll} FILTER entry._id == ${data[0].id} UPDATE {_key:${data[0].id.split('/')[1]}} WITH {'Study unique ID': ${linda_unique_id}} IN ${coll} RETURN NEW`).toArray();
+
                         var person = get_person_id_from_user_id(user[0]['_id'], users_edge)
                         console.log(person)
                         var obj2 = {
@@ -5066,8 +5084,6 @@ router.post('/add_parent_and_child', function (req, res) {
             //Search unique id in studies collection for this parent id ??? 
             //check = db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global'  FILTER v['Study unique ID'] == ${ID}  RETURN {v_id:v._id,id:v['Study unique ID'], study:v}`).toArray();
             check = db._query(aql`FOR v, e IN 1..1 OUTBOUND ${parent_id} GRAPH 'global'  FILTER CONTAINS(v['Study unique ID'], ${ID})  RETURN {v_id:v._id,id:v['Study unique ID'], study:v}`).toArray();
-
-
             //check = db._query(aql` FOR entry IN ${coll} FILTER entry['Study unique ID'] == ${ID} RETURN entry`).toArray()
             // ID was not found
             if (check.length === 0) {

@@ -107,9 +107,9 @@
         </table>
         <mat-divider></mat-divider> -->
         <!-- Specific STUDY Part-->
-        <section *ngIf="get_extraction_component_field==='Study unique ID'">
+        <section *ngIf="get_extraction_component_field==='Study Name'">
             <h4>Column informations</h4>
-            <label for="lastName">Detected study unique ID(s) in this column</label>
+            <label for="lastName">Detected study name(s) in this column</label>
             <table datatable [dtOptions]="dtOptions"
                 class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center"
                 id="datatable_study_id">
@@ -175,7 +175,7 @@
                 </tbody>
             </table>
         </section>
-        <section *ngIf="get_extraction_component_field!=='Study unique ID'">
+        <section *ngIf="get_extraction_component_field!=='Study Name'">
             <div *ngIf="has_study_associated_header()">
                 <h4>Study informations</h4>
                 <label for="lastName">Detected study unique ID(s) in this data file</label>

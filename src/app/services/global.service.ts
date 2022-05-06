@@ -185,8 +185,8 @@ export class GlobalService {
         return this.http.post(`${this.APIUrl + "update_associated_headers_linda_id"}`, obj2send);
     }
 
-    get_lindaID_by_studyID(study_unique_id:string, parent_key:string):Observable<Object>{
-        return this.http.get(this.APIUrl + "get_lindaID_by_studyID/" + study_unique_id+ "/" + parent_key).pipe(catchError(this.handleError));
+    get_lindaID_by_studyName(study_name:string, parent_key:string):Observable<Object>{
+        return this.http.get(this.APIUrl + "get_lindaID_by_studyName/" + study_name+ "/" + parent_key).pipe(catchError(this.handleError));
     }
 
     get_all_vertices(user_key: string) {

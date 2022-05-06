@@ -67,7 +67,7 @@ export class DefineComponent implements OnInit, OnDestroy {
   private headers: string[] = []
   private projectPersons: { 'project_ids': string[], 'persons': PersonInterface[], 'roles': string[], 'groups': string[] };
   private studyPersons: { 'studies': StudyInterface[], 'persons': PersonInterface[], 'roles': string[] };
-  private existing_studies_ids: string[] = []
+  private existing_studies_names: string[] = []
   private existing_studies: StudyInterface[] = []
   private studies_to_remove: string[] = []
   private parent_id: string;
@@ -107,9 +107,13 @@ export class DefineComponent implements OnInit, OnDestroy {
   dtOptions: DataTables.Settings = {};
 
   //use when no study associated header exists 
-  private extract_study_options = [
+  /* private extract_study_options = [
     { disabled: true, header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '', fields: [] },
     { disabled: false, header: "", associated_linda_id: "", name: 'Study', value: 'study', fields: ['Study unique ID',] }
+  ] */
+  private extract_study_options = [
+    { disabled: true, header: "", associated_linda_id: "", name: 'Assign MIAPPE components', value: '', fields: [] },
+    { disabled: false, header: "", associated_linda_id: "", name: 'Study', value: 'study', fields: ['Study Name',] }
   ]
   private extract_component_options = {
     'options': [
@@ -243,14 +247,14 @@ export class DefineComponent implements OnInit, OnDestroy {
     //this.cleaned_study_model = this.get_model('study');
     //this.cleaned_experimental_factor_model = this.get_model('experimental_factor');
     // this.cleaned_event_model = this.get_model('event');
-    this.existing_studies_ids = []
+    this.existing_studies_names = []
     const edges = await this.globalService.get_studies_and_persons(this.parent_id.split('/')[1]).toPromise()
     //console.log(edges)
     // get persons and person roles by projects with _to contains "persons" edge to get all persons found in this investigations
     edges.filter(edge => edge['e']['_to'].includes("persons") && edge['e']['_from'].includes("investigations")).forEach(edge => { this.projectPersons.persons.push(edge["v"]); this.projectPersons.roles.push(edge["e"]["role"]); edge["e"]["group_keys"].forEach(element => { this.projectPersons.groups.push(element) }) })
     //console.log(this.projectPersons)
     // get studies in this investigation with _to contains "studies"
-    edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies_ids.push(edge["v"]["Study unique ID"]) })
+    edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies_names.push(edge["v"]["Study Name"]) })
     edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies.push(edge["v"]) })
     // then find all persons roles by studies
 
@@ -260,8 +264,8 @@ export class DefineComponent implements OnInit, OnDestroy {
       this.studyPersons.persons.push(edge["v"]);
       this.studyPersons.roles.push(edge["e"]["role"])
     })
-    for (let index = 0; index < this.existing_studies_ids.length; index++) {
-      const element = this.existing_studies_ids[index];
+    for (let index = 0; index < this.existing_studies_names.length; index++) {
+      const element = this.existing_studies_names[index];
       edges.filter(edge => edge['e']['_to'].includes("studies") && edge['e']['_to'] === element).forEach(edge => { this.studyPersons.studies.push(edge["v"]) })
     }
     //edges.filter(edge=> edge['e']['_to'].includes("studies")).forEach(edge=>{this.studyPersons.studies.push(edge["v"])})
@@ -286,28 +290,11 @@ export class DefineComponent implements OnInit, OnDestroy {
     this.studyValuesDictionary = this.data_file.Data.reduce((prev, curr) => {
       return {
         ...prev,
-        [curr["Study linda ID"]]: curr[this.column_original_label]
+        [curr["Study Name"]]: curr[this.column_original_label]
       }
     }, {})
     //console.log(this.studyValuesDictionary)
     //console.log(this.existing_studies_ids)
-  }
-  get get_studyValuesDictionary() {
-    return this.studyValuesDictionary
-  }
-  get_associated_studies(): string[] {
-    return Object.keys(this.studyValuesDictionary)
-  }
-  get_associated_study(key: string, index: number) {
-    /* const valuesDictionary = this.data_file.Data.reduce((prev, curr) => {
-      return {
-        ...prev,
-        //[curr[this.column_original_label]]: curr["Study linda ID"]
-        [curr["Study linda ID"]]: curr[this.column_original_label]
-      }
-    }, {})
-    //console.log(valuesDictionary) */
-    return Object.keys(this.studyValuesDictionary)[index]
   }
   onModify(values: string) {
 
@@ -416,6 +403,8 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
 
   }
+  
+  
   filteredByField(obj: {}) {
     if (obj[this.column_original_label] === this.current_study) {
       return true
@@ -466,7 +455,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     //console.log(this.extraction_component)
     //console.log(this.extraction_component_field)
     if (this.extraction_component === "study") {
-      if (this.extraction_component_field === "Study unique ID") {
+      if (this.extraction_component_field === "Study Name") {
         this.show_infos()
         /*  let study_model_dict = {}
          this.cleaned_study_model.forEach(attr => { study_model_dict[attr["key"]] = "" });
@@ -474,9 +463,9 @@ export class DefineComponent implements OnInit, OnDestroy {
          study_model['Study unique ID'] = component_value */
         //var data_model = { ...this.data_file };
         let study_model = new Study()
-        study_model['Study unique ID'] = component_value
+        //study_model['Study unique ID'] = component_value
         study_model['Study Name'] = component_value
-        if (!this.existing_studies_ids.includes(component_value)) {
+        if (!this.existing_studies_names.includes(component_value)) {
           let add_study_res = await this.globalService.add(study_model, 'study', this.parent_id, false, this.group_key).toPromise()
           if (add_study_res["success"]) {
             //console.log(add_study_res)
@@ -514,7 +503,7 @@ export class DefineComponent implements OnInit, OnDestroy {
           dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
               if (result.event == 'Confirmed') {
-                const add_study_res = await this.globalService.get_lindaID_by_studyID(component_value, this.parent_id.split('/')[1]).toPromise()
+                const add_study_res = await this.globalService.get_lindaID_by_studyName(component_value, this.parent_id.split('/')[1]).toPromise()
                 if (add_study_res['success']) {
                   let study_id = add_study_res["_id"]
                   this.data_file.associated_headers.filter(prop => prop.header === this.column_original_label)[0].associated_parent_id.push(this.parent_id)
@@ -552,10 +541,11 @@ export class DefineComponent implements OnInit, OnDestroy {
     let values: StudyInterface[] = []
     let values_to_link: string[] = []
     let parent_ids: string[] =[]
+    console.log(this.existing_studies_names)
     for (let index = 0; index < this.detected_values.length; index++) {
       const element = this.detected_values[index];
-      if (!this.existing_studies_ids.includes(element)) {
-        values.push(new Study(element))
+      if (!this.existing_studies_names.includes(element)) {
+        values.push(new Study(element,element))
       }
       else {
         values_to_link.push(element)
@@ -575,7 +565,7 @@ export class DefineComponent implements OnInit, OnDestroy {
                 let keys: string[] = []
                 for (let index = 0; index < values_to_link.length; index++) {
                   const element = values_to_link[index];
-                  const add_study_res = await this.globalService.get_lindaID_by_studyID(element, this.parent_id.split('/')[1]).toPromise()
+                  const add_study_res = await this.globalService.get_lindaID_by_studyName(element, this.parent_id.split('/')[1]).toPromise()
                   if (add_study_res['success']) {
                     keys.push(add_study_res["_id"].split("/")[1])
                   }
@@ -603,7 +593,7 @@ export class DefineComponent implements OnInit, OnDestroy {
               let keys: string[] = []
               for (let index = 0; index < values_to_link.length; index++) {
                 const element = values_to_link[index];
-                const add_study_res = await this.globalService.get_lindaID_by_studyID(element, this.parent_id.split('/')[1]).toPromise()
+                const add_study_res = await this.globalService.get_lindaID_by_studyName(element, this.parent_id.split('/')[1]).toPromise()
                 if (add_study_res['success']) {
                   keys.push(add_study_res["_id"].split("/")[1])
                 }
@@ -747,10 +737,10 @@ export class DefineComponent implements OnInit, OnDestroy {
   async onUnlinkAllStudies() {
   }
   has_study_associated_header(): boolean {
-    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID').length > 0
+    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study Name').length > 0
   }
   get study_associated_header() {
-    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID')[0]
+    return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study Name')[0]
   }
 
 
@@ -1625,6 +1615,23 @@ export class DefineComponent implements OnInit, OnDestroy {
     })
     return column_values
   }
+  get get_studyValuesDictionary() {
+    return this.studyValuesDictionary
+  }
+  get_associated_studies(): string[] {
+    return Object.keys(this.studyValuesDictionary)
+  }
+  get_associated_study(key: string, index: number) {
+    /* const valuesDictionary = this.data_file.Data.reduce((prev, curr) => {
+      return {
+        ...prev,
+        //[curr[this.column_original_label]]: curr["Study linda ID"]
+        [curr["Study linda ID"]]: curr[this.column_original_label]
+      }
+    }, {})
+    //console.log(valuesDictionary) */
+    return Object.keys(this.studyValuesDictionary)[index]
+  }
 
 
 
@@ -1854,7 +1861,7 @@ export class DefineComponent implements OnInit, OnDestroy {
 
   get detected_studies() {
     if (this.has_study_associated_header()) {
-      return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study unique ID')[0].associated_values
+      return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Study Name')[0].associated_values
     }
     else {
       return []
@@ -1864,7 +1871,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     ////console.log(this.get_data_by_header(this.column_original_label))
     if (this.extraction_component === 'study') {
       ////console.log(this.get_data_by_header(this.column_original_label))
-      if (this.extraction_component_field === 'Study unique ID') {
+      if (this.extraction_component_field === 'Study Name') {
         ////console.log(this.get_data_by_header(this.column_original_label))
         return Array.from(new Set(this.get_data_by_header(this.column_original_label)));
       }
@@ -1944,7 +1951,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     return this.studyPersons
   }
   get get_existing_studies_ids() {
-    return this.existing_studies_ids
+    return this.existing_studies_names
   }
   get_component(field: string) {
     return this.extract_component_options.options.filter(prop => prop.fields.includes(field))[0]['value']
