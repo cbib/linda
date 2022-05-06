@@ -36,6 +36,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
     { 
       this.dataSource = new MatTableDataSource([]);
       this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      this.selected_model='Experimental factor'
       this.get_templates()
     }
 
