@@ -93,15 +93,15 @@
                                 </div>
                                 <mat-menu #contextMenu="matMenu">
                                     <button mat-menu-item [matMenuTriggerFor]="AddSubMenu" class="btn btn-light fas fa-tools">Add</button>
-                                    <button mat-menu-item [matMenuTriggerFor]="ImportSubMenu" class="btn btn-light fas fa-tools">Import</button>
+                                    <!-- <button mat-menu-item [matMenuTriggerFor]="ImportSubMenu" class="btn btn-light fas fa-tools">Import</button> -->
                                 </mat-menu>
                                 
                                 <mat-menu #AddSubMenu="matMenu">
                                     <button mat-menu-item (click)="onAdd()">new project</button>
                                 </mat-menu>
-                                <mat-menu #ImportSubMenu="matMenu">
+                                <!-- <mat-menu #ImportSubMenu="matMenu">
                                     <button mat-menu-item (click)="onImport()">from files</button>
-                                </mat-menu>
+                                </mat-menu> -->
                                 <span class="span-project"></span>
                                 <mat-form-field appearance="standard">
                                     <mat-label>Filter</mat-label>
