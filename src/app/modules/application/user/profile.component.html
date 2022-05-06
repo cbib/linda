@@ -6,12 +6,12 @@
         <li class="nav-item">
           <a class="nav-link" href="#personal_infos" aria-controls="personal_infos" role="tab" data-toggle="tab"  [ngClass]="{ 'active':activeTab==='personal_infos'}" (click)="changeTab('personal_infos')">Account</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="#messages" aria-controls="messages" role="tab" data-toggle="tab" [ngClass]="{ 'active':activeTab==='messages'}" (click)="changeTab('messages')">Messages</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#settings" tabindex="-1" aria-controls="settings" role="tab" data-toggle="tab" [ngClass]="{ 'active':activeTab==='settings'}" (click)="changeTab('settings')">Settings</a>
-        </li>
+        </li> -->
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
@@ -19,14 +19,15 @@
           <app-person *ngIf="activeTab==='personal_infos'" ></app-person>
           <!-- <app-person *ngIf="activeTab==='personal_infos'"  [currentPerson]="get_currentPerson"></app-person> -->
         </div>
-        <div [ngClass]="{ 'active':activeTab==='messages'}" role="tabpanel" class="tab-pane active" id="messages">
 
+        <!-- To complete
+        <div [ngClass]="{ 'active':activeTab==='messages'}" role="tabpanel" class="tab-pane active" id="messages">
             Messages
             <app-message *ngIf="activeTab==='messages'"></app-message>
         </div>
         <div [ngClass]="{ 'active':activeTab==='settings'}" role="tabpanel" class="tab-pane active" id="settings">
             Settings
-        </div>
+        </div> -->
       </div>
     
       <!-- <div>
