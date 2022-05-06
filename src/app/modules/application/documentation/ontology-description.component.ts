@@ -16,7 +16,7 @@ export class OntologyDescriptionComponent implements OnInit {
 
   onSelect(values:string) {
         console.log(values)
-        const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: values, selected_term: null, selected_key:"", selected_set: [], multiple: false, uncheckable: true, observed: true, mode_simplified:true } });
+        const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: values, selected_term: null, selected_key:"", selected_set: [], multiple: false, uncheckable: true, observed: true, mode_simplified:false } });
         //const dialogRef = this.dialog.open(OntologyTreeComponent, { width: '1000px', autoFocus: false, maxHeight: '90vh', data: { ontology_id: values, selected_term: null, selected_set:[], uncheckable: true, multiple:false}});
         dialogRef.afterClosed().subscribe(result => {
             if (result!==undefined){
