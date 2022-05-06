@@ -12,7 +12,7 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
 const routes: Routes = [
   { path: '', redirectTo: 'home2', pathMatch: 'full' },
   //{ path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  { path: 'home2',component: HomeNewComponent, canActivate: [AuthGuard]},
+  { path: 'home2',component: HomeNewComponent},
   { path: 'response-reset',component: ResponseResetComponent},
   {
     path: 'login',

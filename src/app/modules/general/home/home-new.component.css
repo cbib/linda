@@ -1,15 +1,17 @@
 .nga-gradient {
-  padding: 1.5rem 0;
+  padding: 0.5rem 0;
   background: linear-gradient(225deg, #10857f, #4ECDC4);
+  margin-right: auto;
+margin-left: auto;
 }
 
 .nga-btn-home {
   font-family: inherit;
   color: inherit;
   display: inline-block;
-  line-height: 32px;
-  line-height: 3.2rem;
-  padding: 0 16px;
+  line-height: 12px;
+  line-height: 2rem;
+  padding: 0 12px;
   font-size: 14px;
   font-size: 1.4rem;
   font-weight: 400;
@@ -22,13 +24,13 @@
 
 .nga-btn-home {
   background-color:#2f323a;
-  padding: 2px 34px 0;
-  font-size: 16px;
+  padding: 2px 24px 0;
+  font-size: 12px;
   font-size: 1.6rem;
   font-weight: 600;
   line-height: 30px;
-  line-height: 3rem;
-  border-radius: 48px;
+  line-height: 2rem;
+  border-radius: 28px;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
   box-sizing: border-box;
   cursor: pointer
