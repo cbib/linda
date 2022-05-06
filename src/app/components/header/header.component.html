@@ -13,20 +13,20 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li *ngIf="!currentUser" class="nav-item">
-            <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login<span class="sr-only">(current)</span></a>
-          </li>
-          <li *ngIf="currentUser" class="nav-item">
-            <a class="nav-link" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout<span class="sr-only">(current)</span></a>
-          </li>
-
-          <li *ngIf="currentUser" class="nav-item">
-            <a class="nav-link" (click)="user_page()"><i class="fa fa-user"></i> Profile<span class="sr-only">(current)</span></a>
-          </li>
-          <li *ngIf="currentUser" class="nav-item">
-            <a class="nav-link" [routerLink]="['/help']"><i class="fa fa-user"></i> Help<span class="sr-only">(current)</span></a>
-          </li>
           
+          <li class="nav-item" style="list-style: none">
+            <a class="nav-link" [routerLink]="['/home2']" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+              <i class="fa fa-home">
+              </i>
+            Home</a>
+          </li>
+          <li class="nav-item" style="list-style: none">
+            <a class="nav-link"  [routerLink]="['/projects_page']" routerLinkActive="active-link">
+              <i class="fa fa-leaf">
+              </i>
+            Projects
+            </a>
+          </li>
           <li class="nav-item dropdown">
             <a data-toggle="dropdown" class="nav-link dropdown-toggle" href="index.html#">
               Tasks
@@ -69,6 +69,157 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item" style="list-style: none">
+            <a class="nav-link"  [routerLink]="['/templates']" routerLinkActive="active-link"><i class="fa fa-copy"></i>Templates</a>
+          </li>
+          <li *ngIf="currentUser" class="nav-item">
+            <a class="nav-link" (click)="user_page()"><i class="fa fa-user"></i> Profile<span class="sr-only">(current)</span></a>
+          </li>
+          <li *ngIf="currentUser" class="nav-item">
+            <a class="nav-link" [routerLink]="['/help']"><i class="fa fa-user"></i> Help<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown">
+            <a data-toggle="dropdown" class="nav-link dropdown-toggle" href="index.html#">
+              Documentation
+              </a>
+            <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+              <div class="notify-arrow notify-arrow-green"></div>
+              <li>
+                <p class="green" style="font-size: 14px;">MIAPPE description</p>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/investigation']" routerLinkActive="active-link">Investigation</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/study']" routerLinkActive="active-link">Study</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/observation_unit']" routerLinkActive="active-link">Observation Unit</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/biological_material']" routerLinkActive="active-link">Biological Material</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/event']" routerLinkActive="active-link">Event</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/observed_variable']" routerLinkActive="active-link">Observed Variable</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/experimental_factor']" routerLinkActive="active-link">Experimental Factor</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/environmental_parameter']" routerLinkActive="active-link">Environmental Parameter</a>
+              </li>
+              <li>
+                <a class="green"  [routerLink]="['/sample']" routerLinkActive="active-link">Sample</a>
+              </li>
+            </ul>
+          </li>
+          
+          
+          
+          <!-- <li style="list-style: none">
+            <a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-book"></i>Documentation </a>
+            <ul id="documentationdropdownDropdown" class="collapse show list-unstyled ">
+              <li>
+                <a href="#documentationdropdownDropdown2" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-leaf"></i>MIAPPE components</a>
+                <ul id="documentationdropdownDropdown2" class="collapse list-unstyled ">
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link">Investigation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/study']" routerLinkActive="active-link">Study</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/observation_unit']" routerLinkActive="active-link">Observation Unit</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/biological_material']" routerLinkActive="active-link">Biological Material</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/event']" routerLinkActive="active-link">Event</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/observed_variable']" routerLinkActive="active-link">Observed Variable</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/experimental_factor']" routerLinkActive="active-link">Experimental Factor</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/environmental_parameter']" routerLinkActive="active-link">Environmental Parameter</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/sample']" routerLinkActive="active-link">Sample</a>
+                  </li>
+                  
+                </ul>
+              </li>
+              <li class="nav-item">
+                 <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fa fa-file-text"></i>Ontologies description</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"  [routerLink]="['/data_exploration']" routerLinkActive="active-link"><i class="fa fa-search"></i>Data exploration</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"  [routerLink]="['/project_example']" routerLinkActive="active-link"><i class="fa fa-leaf"></i>Project example</a>
+              </li> 
+              <li class="nav-item">
+                <a class="nav-link"  [routerLink]="['/public_data']" routerLinkActive="active-link"><i class="fa fa-users"></i>Public data</a>
+              </li>
+            </ul>
+          </li> -->
+          <!-- <li class="nav-item dropdown">
+            <a href="#documentationdropdownDropdown" aria-expanded="false" data-toggle="dropdown"> 
+              <i class="fa fa-book">
+                
+              </i>Documentation </a>
+            <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+              <li>
+                <a href="#documentationdropdownDropdown2" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-leaf"></i>MIAPPE components</a>
+                <ul class="dropdown-menu extended tasks-bar scroll-menu scroll-menu-2x scrollable-menu">
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/investigation']" routerLinkActive="active-link">Investigation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/study']" routerLinkActive="active-link">Study</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/observation_unit']" routerLinkActive="active-link">Observation Unit</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/biological_material']" routerLinkActive="active-link">Biological Material</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/event']" routerLinkActive="active-link">Event</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/observed_variable']" routerLinkActive="active-link">Observed Variable</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/experimental_factor']" routerLinkActive="active-link">Experimental Factor</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/environmental_parameter']" routerLinkActive="active-link">Environmental Parameter</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  [routerLink]="['/sample']" routerLinkActive="active-link">Sample</a>
+                  </li>
+                  
+                </ul>
+              </li>
+              <li class="nav-item">
+                 <a class="nav-link"  [routerLink]="['/ontologies']" routerLinkActive="active-link"><i class="fa fa-file-text"></i>Ontologies description</a>
+              </li>
+            </ul>
+          </li> -->
+          
+          <li *ngIf="!currentUser" class="nav-item">
+            <a class="nav-link" [routerLink]="['/login']" ><i class="fas fa-user-crown"></i> Login<span class="sr-only">(current)</span></a>
+          </li>
+          <li *ngIf="currentUser" class="nav-item">
+            <a class="nav-link" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout<span class="sr-only">(current)</span></a>
+          </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" (keyup)="searchStart($event)" >
@@ -77,59 +228,3 @@
       </div>
     </nav>
   </header>
-<!-- <header class="navbar navbar-expand-lg navbar-dark fixed-top nga-navbar">
-  <nav class="container" aria-label="Main navigation">
-    <a href="https://github.com/ganatan/angular-app" class="d-none d-sm-block">
-      <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 2000;"
-        src="https://api.ganatan.com/articles/img/forkme.png" alt="Fork me on GitHub"
-        data-canonical-src="https://api.ganatan.com/articles/img/forkme.png" />
-    </a>
-    <a routerLink="/" class="navbar-brand" alt="Accueil" aria-label="Ganatan">
-      <img src="./assets/params/images/logo/ganatan-logo.png" srcset="./assets/params/images/logo/ganatan-logo.png,
-      ./assets/params/images/logo/ganatan-logo@2x.png 2x" width="25" height="25" alt="Ganatan Logo">
-      <span class="nga-navbar-logo mx-1">ganatan</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/angular">
-            <i class="fab fa-angular me-1"></i>Angular</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/bootstrap">
-            <i class="fab fa-bootstrap me-1"></i>Bootstrap</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/news">
-            <i class="fas fa-photo-video me-1"></i>News</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/boxoffice">
-            <i class="fas fa-film me-1"></i>Boxoffice</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/about">
-            <i class="far fa-question-circle me-1"></i>About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" routerLink="/contact">
-            <i class="fas fa-envelope me-1"></i>Contact</a>
-        </li>
-      </ul>
-      <form class="d-flex">
-        <button type="button" class="btn btn-sm nga-btn-navbar me-2" routerLink="/signup"><i
-            class="fas fa-user-plus me-2"></i>Sign up</button>
-        <button type="button" class="btn btn-sm btn-outline-light me-2" routerLink="/login"><i
-            class="fas fa-sign-in-alt me-2"></i>Login</button>
-      </form>
-    </div>
-  </nav>
-</header> -->
