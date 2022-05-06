@@ -1,4 +1,40 @@
-aside {
+/* aside {
     float: left;
     width: 15%;
+  } */
+  @media only screen and (min-width:480px) {
+    aside {
+      float: left;
+      width: 15%;
+    }
   }
+@media only screen and (max-width:480px) {
+    section.page, section.content {
+        display    : block;     /* override flexbox */
+        min-height : inherit;
+    }
+    section.page {
+        padding    : 0.5em 0.25em 0.5em 0.25em;
+    }
+    aside {
+        display    : none;      /* hide sidebar */
+    }
+    article {
+        min-height : 20em;
+        margin     : 4em 0 1em 0;
+    }
+    header, nav {               /* compress header & nav */
+        min-height : 2em;
+        position   : absolute;
+        top        : 0.5em;
+    }
+    header {
+        left       : 0.5em;
+        width      : 60%;
+    }
+    nav {
+        right      : 0.5em;
+        width      : 20%;
+        min-width  : inherit;
+    }
+}
