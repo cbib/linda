@@ -554,7 +554,7 @@ export class DefineComponent implements OnInit, OnDestroy {
     }
     
     if (values.length > 0) {
-      let add_study_res = await this.globalService.add_multiple(values, 'study', 'investigations', false, this.group_key, this.data_file._key, this.column_original_label, 'Study unique ID', parent_ids).toPromise()
+      let add_study_res = await this.globalService.add_multiple(values, 'study', 'investigations', false, this.group_key, this.data_file._key, this.column_original_label, 'Study Name', parent_ids).toPromise()
       if (add_study_res['success']) {
         // if some studies are already present (values_to_link >0), just link the asssociated heaers to the corresponding study_id
         if (values_to_link.length !== 0) {
