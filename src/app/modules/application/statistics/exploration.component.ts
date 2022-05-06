@@ -81,7 +81,7 @@ export class ExplorationComponent implements OnInit {
       data[0].forEach(
         data_file => {
           //console.log(data_file)
-          let stud_ass_header=data_file.associated_headers.filter(associated_header => associated_header["associated_component_field"]==="Study unique ID")[0]
+          let stud_ass_header=data_file.associated_headers.filter(associated_header => associated_header["associated_component_field"]==="Study Name")[0]
           stud_ass_header.associated_linda_id.forEach(linda_id=>{
             if (!this.filename_used.includes(data_file.filename)) {
               this.datafile_ids[data_file.filename] = data_file.eto
