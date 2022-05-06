@@ -83,6 +83,7 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
     private displayedColumns: string[] = ['Project Name', 'Investigation unique ID','Investigation description', 'edit'];
     private dataSource: MatTableDataSource<InvestigationInterface>
     private projects: InvestigationInterface[] = []
+    help_message: string;
 
     constructor(
         private globalService: GlobalService,
@@ -156,6 +157,14 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this._cdr.detectChanges()
+    }
+    help(button_type:string){
+        if(button_type==='edit'){
+            this.help_message="Edit project page"
+        }
+    }
+    get get_help_message(){
+        return this.help_message
     }
     
     async get_projects() {

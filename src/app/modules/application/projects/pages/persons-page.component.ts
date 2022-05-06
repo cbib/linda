@@ -139,7 +139,7 @@ export class PersonsPageComponent implements OnInit {
         this._cdr.detectChanges()
     }
     onRoleChanged(event){
-        event.target.value
+        console.log(event)
 
     }
     async get_all_persons() {

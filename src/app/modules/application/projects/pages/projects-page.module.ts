@@ -17,7 +17,7 @@ import { MatSortModule} from '@angular/material/sort';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule} from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input';
-
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule} from '@angular/material/divider';
 import { MatGridListModule } from '@angular/material/grid-list'; 
 import { MatSelectModule } from '@angular/material/select';
@@ -108,6 +108,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     MatRadioModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     AlertModule,
     ExplorationModule,
     GanttModule,

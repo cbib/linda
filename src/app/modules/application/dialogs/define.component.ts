@@ -293,7 +293,7 @@ export class DefineComponent implements OnInit, OnDestroy {
         [curr["Study Name"]]: curr[this.column_original_label]
       }
     }, {})
-    //console.log(this.studyValuesDictionary)
+    console.log(this.studyValuesDictionary)
     //console.log(this.existing_studies_ids)
   }
   onModify(values: string) {
@@ -1804,7 +1804,8 @@ export class DefineComponent implements OnInit, OnDestroy {
     } */
     //return this.associated_header.associated_linda_id.filter(value => value === key).length !== 0
   }
-  has_associated_header_parent_id_by_index(_parent_id: string, index: number) {
+  has_associated_header_parent_id_by_index(_study_id: string, index: number) {
+    var _parent_id=this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(_study_id)]
     return this.associated_header.associated_parent_id.filter(parent_id => parent_id === _parent_id).length > 0
   }
   has_associated_header_linda_id_by_index(key: string, index: number) {
