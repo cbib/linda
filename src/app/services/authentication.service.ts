@@ -24,8 +24,8 @@ export class AuthenticationService {
     public user: UserInterface;
     public person: UserInterface
 
-    constructor(private http: HttpClient, private router: Router) {
-        ///localStorage.removeItem('currentUser');
+    constructor(private http: HttpClient, private rosuter: Router) {
+        localStorage.removeItem('currentUser');
         //console.log(localStorage)
         var tmp: any = localStorage.getItem('currentUser')
         this.currentUserSubject = new BehaviorSubject<UserInterface>(JSON.parse(tmp));
