@@ -36,7 +36,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
     { 
       this.dataSource = new MatTableDataSource([]);
       this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      this.selected_model='Experimental factor'
+      
       this.get_templates()
     }
 
@@ -62,6 +62,7 @@ export class TemplatesComponent implements OnInit, AfterViewInit {
           console.log(this.dataSource);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
+          this.selected_model='Experimental factor'
           this._cdr.detectChanges();
         }
       }
