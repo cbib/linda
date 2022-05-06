@@ -7,6 +7,7 @@ import { SearchResultComponent } from '../../modules/application/dialogs/search-
 import { Router } from '@angular/router';
 import { User } from '../../models';
 import { UserInterface } from 'src/app/models/linda/person';
+import { Investigation } from 'src/app/models/linda/investigation';
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -179,9 +180,10 @@ export class HeaderComponent implements OnInit {
                     this.vertice_data = data;
                     this.vertice_data.forEach(
                         d => {
-                            //console.log(d)
+                            console.log(d)
                             var stat_object = {
                                 'id': d["e"]["_to"],
+                                'name':"",
                                 'percent_fill': 0,
                                 'parent_id': d["e"]["_from"]
                             }
@@ -192,7 +194,7 @@ export class HeaderComponent implements OnInit {
                                 vertice => {
                                     var vertice_keys = Object.keys(vertice)
                                     //console.log(vertice_keys)
-                                    var vertice_id = vertice["_id"]
+                                    var vertice_id:string = vertice["_id"]
                                     var total = 0;
                                     for (var i = 0; i < vertice_keys.length; i++) {
                                         if (vertice[vertice_keys[i]] !== "") {
@@ -202,6 +204,12 @@ export class HeaderComponent implements OnInit {
                                     var percent = Math.round(100 * ((total - 3) / (vertice_keys.length - 3)))
                                     if (vertice_id === stat_object['id']) {
                                         stat_object['percent_fill'] = percent
+                                        if (vertice_id.includes('Investigations')){
+                                            stat_object['name'] = vertice['Project Name']
+                                        }
+                                        else{
+                                            stat_object['name'] = vertice['Study Name']
+                                        }
                                     }
                                 }
                             )
