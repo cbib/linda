@@ -46,10 +46,10 @@
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='events'}" (click)="changeTab('events')" href="#events"
         aria-controls="events" role="tab" data-toggle="tab">8. Events</a>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='data_files'}" (click)="changeTab('data_files')" href="#data_files"
         aria-controls="expfac" role="tab" data-toggle="tab">9. Data files</a>
-    </li>
+    </li> -->
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='People'}" href="#People" 
       (click)="changeTab('People')" aria-controls="People" role="tab" data-toggle="tab">9. Study members</a>
@@ -298,7 +298,7 @@
        </div>
       </mat-card>
     </div>
-    <div [ngClass]="{ 'active':activeTab==='data_files'}" role="tabpanel" class="tab-pane" id="data_files">
+    <!--<div [ngClass]="{ 'active':activeTab==='data_files'}" role="tabpanel" class="tab-pane" id="data_files">
       <h3>Explore associated datafiles</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
@@ -316,51 +316,50 @@
           >
           </app-data-files-page>
        </div>
-      
-<!--       <table  class="table table-hover table-bordered  table-striped text-center">
-        <tbody>
-          <tr *ngFor="let key of get_data() ; index as j;">
+      <table  class="table table-hover table-bordered  table-striped text-center">
+          <tbody>
+            <tr *ngFor="let key of get_data() ; index as j;">
 
-            <td *ngIf="key != 'headers'" style="font-size:14px;text-align: center; " scope="row">
-              {{key}}
-            </td>
+              <td *ngIf="key != 'headers'" style="font-size:14px;text-align: center; " scope="row">
+                {{key}}
+              </td>
 
-            <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
-              <a href="{{get_current_data_object(node)[key]}}" target="_blank">{{get_current_data_object(node)[key]}}</a>
-            </td>
+              <td *ngIf="key.includes('file link')" style="font-size:14px;text-align: center; color: blue; " scope="row">
+                <a href="{{get_current_data_object(node)[key]}}" target="_blank">{{get_current_data_object(node)[key]}}</a>
+              </td>
 
-            <td *ngIf="key.includes('file version') || key.includes('file description')"
-              style="font-size:14px;text-align: center;" scope="row">
-              {{get_current_data_object(node)[key]}}
-            </td>
-            <td *ngIf="key === 'Data'" style="font-size:14px;text-align: center;" scope="row">
-              <button (click)="show_datatable(node)" class="btn btn-primary btn-xs" title="{{node.id}}">Show
-                data
-              </button>
-            </td>
-            <td *ngIf="key === 'associated_headers'" style="font-size:14px;text-align: center;" scope="row">
-              <div class="btn-group mr-3" *ngFor="let headers of get_current_data_file_headers(node) ; index as k;">
-                <div *ngIf="headers['associated_linda_id'] === ''" class="btn-group" role="group"
-                  aria-label="Button group with nested dropdown">
-                  <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
-                    class="btn btn-primary btn-xs"
-                    title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
-                  </button>
+              <td *ngIf="key.includes('file version') || key.includes('file description')"
+                style="font-size:14px;text-align: center;" scope="row">
+                {{get_current_data_object(node)[key]}}
+              </td>
+              <td *ngIf="key === 'Data'" style="font-size:14px;text-align: center;" scope="row">
+                <button (click)="show_datatable(node)" class="btn btn-primary btn-xs" title="{{node.id}}">Show
+                  data
+                </button>
+              </td>
+              <td *ngIf="key === 'associated_headers'" style="font-size:14px;text-align: center;" scope="row">
+                <div class="btn-group mr-3" *ngFor="let headers of get_current_data_file_headers(node) ; index as k;">
+                  <div *ngIf="headers['associated_linda_id'] === ''" class="btn-group" role="group"
+                    aria-label="Button group with nested dropdown">
+                    <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
+                      class="btn btn-primary btn-xs"
+                      title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
+                    </button>
+                  </div>
+                  <div *ngIf="headers['associated_linda_id'] !== ''" class="btn-group" role="group"
+                    aria-label="Button group with nested dropdown">
+                    <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
+                      class="btn btn-primary btn-xs"
+                      title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
+                    </button>
+                  </div>
                 </div>
-                <div *ngIf="headers['associated_linda_id'] !== ''" class="btn-group" role="group"
-                  aria-label="Button group with nested dropdown">
-                  <button style="float: left;" [ngStyle]="getIconStyle(headers['associated_component'])"
-                    class="btn btn-primary btn-xs"
-                    title="{{headers['header']}}:{{headers['associated_linda_id']}}">{{headers['associated_component']}}
-                  </button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table> -->
-    </mat-card>
-    </div>
+              </td>
+            </tr>
+          </tbody>
+        </table> 
+      </mat-card>
+    </div>-->
     <div [ngClass]="{ 'active':activeTab==='People'}"  role="tabpanel" class="tab-pane" id="People">
       <h3>Project members</h3>
       <!-- add filter in gantt as in redmine -->

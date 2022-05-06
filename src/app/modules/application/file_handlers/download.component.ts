@@ -265,13 +265,13 @@ export class DownloadComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.observation_unit_type = "select observation unit type"
         this.selected_file = ""
-        console.log(this.mode)
-        console.log(this.model_type)
-        console.log(this.parent_id)
+        //console.log(g(this.mode)
+        //console.log(g(this.model_type)
+        //console.log(g(this.parent_id)
         if (this.mode.includes('edit')) {
             this.globalService.get_by_key(this.model_key, this.model_type).pipe(first()).toPromise().then(received_data => {
                 this.data = received_data;
-                console.log(this.data)
+                //console.log(g(this.data)
                 this.selected_file = this.data["filename"]
                 this.headers = this.data["headers"];
                 this.associated_headers = this.data["associated_headers"];
@@ -337,7 +337,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 this.extract_fields_options['options'].push({ header: "", associated_linda_id: "", name: "associated_biological_material_id", value: "" })
             }
 
-            console.log(this.data_files)
+            //console.log(g(this.data_files)
             if (this.data_files.length === 2) {
                 this.data_files[0].forEach(data_file => {
                     if (!this.filename_used.includes(data_file.filename)) {
@@ -623,8 +623,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     onModify(values: string, key: string, filename: string) {
 
-        console.log(values)
-        console.log(key)
+        //console.log(g(values)
+        //console.log(g(key)
         // Mark this associated_header as selected
         this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.selected = true; });
         if (values === "time") {
@@ -656,16 +656,16 @@ export class DownloadComponent implements OnInit, OnDestroy {
             this.associated_headers_by_filename[filename].filter(prop => prop.header == key).forEach(prop => { prop.is_time_values = false; });
 
             //this.associated_headers[key]={selected:true, associated_term_id:"", associated_component:values, is_time_values:false}
-            console.log(this.associated_headers_by_filename[filename])
+            //console.log(g(this.associated_headers_by_filename[filename])
         }
     }
     onExtractField(values: string, key: string, filename: string) {
-        console.log(values)
+        //console.log(g(values)
     }
     // Only used for model_type metadata file
     onExtractStudy(values: string, key: string) {
-        console.log(values)
-        console.log(key)
+        //console.log(g(values)
+        //console.log(g(key)
         if (values === "time") {
             const dialogRef = this.dialog.open(DateformatComponent, { disableClose: true, width: '1000px', data: { date_format: "" } });
             dialogRef.afterClosed().subscribe(result => {
@@ -736,7 +736,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         //}
     }
     Focused(values: string, key: string) {
-        console.log(values)
+        //console.log(g(values)
     }
     onShowHelp(page: string) {
         // Add argument for mode : 
@@ -747,7 +747,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    console.log("hello")
+                    //console.log(g("hello")
                 }
             }
         });
@@ -806,8 +806,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     // used for visualization
     itemSelectionDataFileToggle(key: string, filename: string): void {
-        console.log(this.associated_headers)
-        console.log(this.associated_headers_by_filename[this.fileName])
+        //console.log(g(this.associated_headers)
+        //console.log(g(this.associated_headers_by_filename[this.fileName])
         this.checklistSelection.toggle(key);
         // selected row
         if (this.checklistSelection.isSelected(key)) {
@@ -854,8 +854,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
     /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
     // used only for (model_type==='data_file' || model_type==='study') && (mode==='extract-again' || mode==='download')
     itemSelectionToggle(key: string): void {
-        console.log(this.associated_headers)
-        console.log(this.associated_headers_by_filename[this.fileName])
+        //console.log(g(this.associated_headers)
+        //console.log(g(this.associated_headers_by_filename[this.fileName])
         this.checklistSelection.toggle(key);
         // selected row
         if (this.checklistSelection.isSelected(key)) {
@@ -916,7 +916,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     * @beta
     */
     onSelectChart(data): void {
-        console.log('Item clicked', JSON.parse(JSON.stringify(data)));
+        //console.log(g('Item clicked', JSON.parse(JSON.stringify(data)));
     }
     /**
     * display Stringify Json data from chart when chart is activated - Event function from ngx-charts-line-chart
@@ -930,7 +930,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     * @beta
     */
     onActivate(data): void {
-        console.log('Activate', JSON.parse(JSON.stringify(data)));
+        //console.log(g('Activate', JSON.parse(JSON.stringify(data)));
     }
     /**
     * display Stringify Json data from chart when chart is deactivated - Event function from ngx-charts-line-chart
@@ -944,7 +944,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     * @beta
     */
     onDeactivate(data): void {
-        console.log('Deactivate', JSON.parse(JSON.stringify(data)));
+        //console.log(g('Deactivate', JSON.parse(JSON.stringify(data)));
     }
     /**
     * get scale type for data
@@ -1237,10 +1237,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     onNext(index: any) {
         // this.demo_subset+=1
-        console.log(index)
-        console.log(this.loaded)
+        //console.log(g(index)
+        //console.log(g(this.loaded)
         if (index == "load_csv") {
-            console.log("step2")
+            //console.log(g("step2")
             this.fileName = "my_data.csv"
             var csv_text = "Study_ID,plotID,treatment,plant.height,code_ID\nMaizeStudy1,plot1,rainfed,23,B73\nMaizeStudy1,plot2,rainfed,22,PH207\nMaizeStudy1,plot3,rainfed,24,Oh43\nMaizeStudy1,plot4,rainfed,21.8,W64A\nMaizeStudy1,plot5,rainfed,23.4,EZ47\nMaizeStudy1,plot6,watered,48.3,B73\nMaizeStudy1,plot7,watered,49.5,PH207\nMaizeStudy1,plot8,watered,52,Oh43\nMaizeStudy1,plot9,watered,48,W64A\nMaizeStudy1,plot10,watered,45,EZ47"
             this.load_csv(csv_text, 100, 100, ",")
@@ -1275,7 +1275,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
     }
     onClickTour() {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        console.log(this.currentUser)
+        //console.log(g(this.currentUser)
         if (this.currentUser['tutoriel_step'] === "13") {
             this.joyrideService.startTour(
                 { steps: ['StepMenuForm', 'StepExampleForm', 'StepTableForm', 'Row0', 'Row1', 'Row2', 'Row3', 'Row4', 'StepUpload1Form', 'StepUpload2Form', 'StepUpload3Form'], stepDefaultPosition: 'bottom' } // Your steps order
@@ -1287,20 +1287,20 @@ export class DownloadComponent implements OnInit, OnDestroy {
     /** 
     * // TODO: need to review this part => Now files are child of investigations and study will be created in extract.component.ts
     */
-    onSubmit() {
+    async onSubmit() {
         //metadatafiles creation (obsolete ? )
         if (this.mode === "create") {
-            console.log(this.csv_lines_array.length)
+            //console.log(this.csv_lines_array.length)
             if (this.csv_lines_array.length !== 0) {
-                console.log(this.csv_lines_dict)
+                //console.log(this.csv_lines_dict)
                 const formData = new FormData();
                 formData.append('file', this.form.get('file').value);
                 let user = JSON.parse(localStorage.getItem('currentUser'));
                 //let parent_id="studies/981995"
                 //this.associated_headers['associated_linda_id']=this.parent_id
-                //this.fileService.upload2(this.fileName,this.csv_lines_array,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
+                //this.fileService.upload2(this.fileName,this.csv_lines_array,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {//console.log(g(data);})
 
-                this.fileService.upload3(this.fileName, this.csv_lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise().then(data => { console.log(data); })
+                const data=await this.fileService.upload3(this.fileName, this.csv_lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise()//.then(data => { //console.log(g(data); })
 
                 //this.router.navigate(['/projects_tree'], { queryParams: { key: user._key } });
                 this.router.navigate(['/projects_page']);
@@ -1312,11 +1312,11 @@ export class DownloadComponent implements OnInit, OnDestroy {
         ///extract from files 
         else if (this.mode === "download") {
             /* if (Object.keys(this.data_to_extract).length === 0) {
-                console.log(this.data_to_extract)
+                //console.log(g(this.data_to_extract)
                 this.alertService.error("You need to assign one original header for Study component Label; see Help button for more details")
             }
-            console.log(this.data_to_extract)
- */
+            //console.log(g(this.data_to_extract)
+            */
 
             if (this.data_to_extract['Study unique ID']) {
                 let groups_label = []
@@ -1383,7 +1383,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                         this.globalService.add_parent_and_childs(study_model, data_model, 'study', this.parent_id, 'data_file').pipe(first()).toPromise().then(
                                             add_study_res => {
                                                 if (add_study_res["success"]) {
-                                                    console.log(add_study_res["message"])
+                                                    //console.log(g(add_study_res["message"])
                                                     this.router.navigate(['/projects_page']);
                                                 }
                                             });
@@ -1394,7 +1394,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                         this.globalService.add(study_model, 'study', this.parent_id, false).pipe(first()).toPromise().then(
                                             add_study_res => {
                                                 if (add_study_res["success"]) {
-                                                    console.log(add_study_res["message"])
+                                                    //console.log(g(add_study_res["message"])
                                                     this.router.navigate(['/projects_tree']);
                                                 }
                                             }
@@ -1414,7 +1414,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                     var study_component_set_array = Array.from(study_component_set);
                     // foreach study identifier found other than Study unique ID
                     for (var i = 0; i < study_component_set_array.length; i++) {
-                        console.log(study_component_set_array[i])
+                        //console.log(g(study_component_set_array[i])
                         let unique_study_label = study_component_set_array[i]
                         // // get the header label for study column in the csv file
                         // var study_column_name = this.data_to_extract['study']
@@ -1461,12 +1461,12 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                 // console.log(unique_study_label)
                                 // console.log(this.parent_id.split("/")[1])
                                 data['study_ids'].forEach(study_id => {
-                                    console.log(study_id)
+                                    //console.log(g(study_id)
                                     this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
                                         data_upload => {
-                                            console.log(data_upload)
+                                            //console.log(g(data_upload)
                                             if (data_upload[0]["id"]) {
-                                                console.log(data_upload[0]["new"]["Data file description"])
+                                                //console.log(g(data_upload[0]["new"]["Data file description"])
 
 
                                                 if (!this.currentUser.tutoriel_done) {
@@ -1500,10 +1500,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 if (this.labelPosition === "no_study_id") {
                     return this.userService.get_person_id(this.currentUser._key).toPromise().then(
                         person_id => {
-                            console.log(person_id)
+                            //console.log(g(person_id)
                             this.globalService.get_studies(this.parent_id.split("/")[1],person_id[0].split("/")[1]).pipe(first()).toPromise().then(
                                 data => {
-                                    console.log(data)
+                                    //console.log(g(data)
                                     let unique_study_label=""
                                     // add dataffiles to all studies found
                                     let data_model_dict = {}
@@ -1515,17 +1515,17 @@ export class DownloadComponent implements OnInit, OnDestroy {
                                     data_model['Data'] = this.csv_lines_dict
                                     data_model['associated_headers'] = this.associated_headers_by_filename[this.fileName]
                                     data_model['headers'] = this.headers
-                                    console.log(data_model)
+                                    //console.log(g(data_model)
                                     data.forEach(study => {
                                         let study_id=study['_id']
 
                                         data_model['Data file description'] = 'Data have been extracted for ' + study_id + ' from ' + this.fileName
-                                        console.log(study_id)
+                                        //console.log(g(study_id)
                                         this.fileService.upload4(data_model, study_id).pipe(first()).toPromise().then(
                                             data_upload => {
-                                                console.log(data_upload)
+                                                //console.log(g(data_upload)
                                                 if (data_upload[0]["id"]) {
-                                                    console.log(data_upload[0]["new"]["Data file description"])
+                                                    //console.log(g(data_upload[0]["new"]["Data file description"])
 
 
                                                     if (!this.currentUser.tutoriel_done) {
@@ -1564,7 +1564,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 if (this.csv_lines_array.length !== 0) {
                     let user = JSON.parse(localStorage.getItem('currentUser'));
                     //let parent_id="studies/981995"
-                    this.globalService.update_document(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
+                    const data=await this.globalService.update_document(this.model_key, this.data, this.model_type).pipe(first()).toPromise()//.then(data => { console.log(data); })
                     this.router.navigate(['/projects_tree']);
                 }
                 else {
@@ -1573,7 +1573,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
             }
             ///observations unit mode
             else if (this.mode === 'extract-form') {
-                console.log("extract observation units")
+                //console.log("extract observation units")
 
             }
             //mode extract-again

@@ -917,7 +917,7 @@ export class AssignComponent implements OnInit {
             //localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         }
     }
-    onSubmit() {
+    async onSubmit() {
         //metadatafiles creation (obsolete ? )
         if (this.mode === "create") {
             console.log(this.lines_arr.length)
@@ -930,7 +930,7 @@ export class AssignComponent implements OnInit {
                 //this.associated_headers['associated_linda_id']=this.parent_id
                 //this.fileService.upload2(this.fileName,this.lines_arr,this.headers,this.associated_headers,this.parent_id).pipe(first()).toPromise().then(data => {console.log(data);})
 
-                this.fileService.upload3(this.fileName, this.lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise().then(data => { console.log(data); })
+                const data=await this.fileService.upload3(this.fileName, this.lines_dict, this.headers, this.associated_headers, this.parent_id).pipe(first()).toPromise()//.then(data => { console.log(data); })
 
                 this.router.navigate(['/projects_tree'], { queryParams: { key: user._key } });
             }
@@ -1131,7 +1131,7 @@ export class AssignComponent implements OnInit {
                 if (this.lines_arr.length !== 0) {
                     let user = JSON.parse(localStorage.getItem('currentUser'));
                     //let parent_id="studies/981995"
-                    this.globalService.update_document(this.model_key, this.data, this.model_type).pipe(first()).toPromise().then(data => { console.log(data); })
+                    const data=await this.globalService.update_document(this.model_key, this.data, this.model_type).pipe(first()).toPromise()//.then(data => { console.log(data); })
                     this.router.navigate(['/projects_tree']);
                 }
                 else {

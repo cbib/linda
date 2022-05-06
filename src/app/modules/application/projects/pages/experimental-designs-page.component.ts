@@ -302,9 +302,7 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     display_block(_block:BlockDesignInterface){
         console.log(_block['Block number'].value)
         console.log(this.experimental_design_blocks)
-        console.log(this.experimental_design_blocks.filter(block =>
-            block['Block number'].value===_block['Block number'].value
-        ))
+        console.log(this.experimental_design_blocks.filter(block => block['Block number'].value===_block['Block number'].value))
     }
     
     reloadComponent() {
