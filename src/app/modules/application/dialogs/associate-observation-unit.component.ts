@@ -34,8 +34,10 @@ export class AssociateObservationUnit implements OnInit {
   private model_id: string;
   private model_key: string;
   private mode: string;
+  private existing_observation_units: []
   model_type: string;
   material_id:string
+  private already_there:string[]=[]
   private parent_id: string;
   plot_dict={}
   return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
@@ -119,9 +121,26 @@ export class AssociateObservationUnit implements OnInit {
   async ngOnInit() {
     console.log(this.material_id)
     console.log(this.parent_id)
+    this.globalService.get_type_child_from_parent('studies', this.parent_id.split('/')[1], 'observation_units').toPromise().then(
+        data => {
+          this.existing_observation_units=data
+
+        });
+    
     this.biological_model= (await this.globalService.get_biological_material_by_key(this.material_id.split('/')[1]).toPromise()).data
     console.log(this.biological_model)
   }
+  onSelectObservationUnit(event){
+    console.log(event.target.value)
+  }
+  get get_existing_observation_units(){
+    return this.existing_observation_units
+  }
+
+  get get_already_there(){
+    return this.already_there
+  }
+
   onObservationUnitLevelChange(value){
     console.log(value)
     this.observation_unit_level=value
@@ -134,8 +153,6 @@ export class AssociateObservationUnit implements OnInit {
         block['Plot design'].value.forEach(plot=>{
           let obs_unit={}
           let sub_bm_list:BiologicalMaterialDialogModel[]=[]
-          
-          
           obs_unit['External ID']=""
           obs_unit['Observation Unit factor value']=""
           obs_unit['Observation unit ID']=value+":"+plot['Plot number'].value
@@ -148,19 +165,16 @@ export class AssociateObservationUnit implements OnInit {
             sub_bm_list.push(load_mat)
           })
           bm_list.push(sub_bm_list)
-          
           this.return_data.observation_units.push(obs_unit)
           //this.load_material(this.biological_model, obs_id, plot.Associate_material_source.value, plot.Associated_biological_material.value)
-          
         })
       })
-      this.return_data.biological_materials=bm_list
-      
-      
+      this.return_data.biological_materials=bm_list 
       console.log(this.return_data)
     }
     this.loaded=true
   }
+
   load_material(model: BiologicalMaterialFullInterface, obs_uuid:string, material_id:string, biological_material_ids:string[]): BiologicalMaterialDialogModel[] {
     var data = []
     var keys = Object.keys(model);

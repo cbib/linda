@@ -5,8 +5,18 @@
 
   <div mat-dialog-content class="mat-typography">
     <alert></alert>
+    <div mat-dialog-content class="mat-typography">
+      <p> Which {{model_type}}s do you plan to use ? </p>
+    </div>
+    <select name="select_template" size="1" (change)="onSelectObservationUnit($event.target.value)">
+      <option value="" disabled>Select {{model_type}}s</option>
+        <option [disabled]="get_already_there.includes(t._id)" *ngFor="let t of get_existing_observation_units" value="{{t._id}}">
+          {{t._id}}
+        </option>
+    </select>
         <p> You have {{total_available_plots}} plots in your experimental design. </p>
-        <p> Do you want to extract {{total_available_plots}} observation units (one per plot)? To do so, select plot level in list below <br></p>
+        <p> Do you want to extract {{total_available_plots}} observation units (one per plot)? 
+          To do so, select plot level in list below <br></p>
         <h2>Define Observation unit level</h2>
           <span class="span-project"></span>
           <h3>Select levels of observations</h3>

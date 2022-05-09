@@ -6,9 +6,9 @@
 }
 
 .navbar.navbar-dark .navbar-nav .nav-item .nav-link:hover {
-  color: yellow;
-  border-top: 1px solid yellow;
-  border-bottom: 1px solid yellow;
+  color: #4ECDC4;
+  border-top: 1px solid #4ECDC4;
+  border-bottom: 1px solid #4ECDC4;
 }
 
 .nga-navbar {
@@ -37,4 +37,6 @@
   background-color: #0b5ed7;
   border-color: #0a58ca;
 }
+
+
 

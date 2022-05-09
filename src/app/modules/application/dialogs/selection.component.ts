@@ -88,7 +88,7 @@ export class SelectionComponent implements OnInit, AfterViewInit {
           this.result = data;
         }
       );
-  }
+    }
   ngAfterViewInit() {
     if (this.model_type==='experimental_factor'){
     this.sources[this.model_type].sort= this.sortef;

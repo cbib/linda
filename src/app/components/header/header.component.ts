@@ -63,33 +63,36 @@ export class HeaderComponent implements OnInit {
 
     }
     onSearch() {
-        this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(
-            data => {
-                //console.log(data)
-                const dialogRef = this.dialog.open(SearchResultComponent, { disableClose: true, width: '1000px', autoFocus: false, maxHeight: '90vh', data: { search_type: this.search_string, model_id: "", values: data, parent_id: "" } });
-                dialogRef.afterClosed().subscribe(result => {
-                    if (result) {
-                        //console.log(result)
-                        var parent_id = result['parent_id']
-                        var model_id = result['model_id']
-                        var model_type = result['model_id'].split("/")[0]
-                        var model_key = result['model_id'].split("/")[1]
-                        if (model_type == "metadata_files") {
-                            //this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
-                        }
-                        else {
-                            if (model_type === 'studies') {
-                                model_type = 'study'
+        if (this.search_string!==""){
+
+            this.searchService.startSearch(this.search_string).pipe(first()).toPromise().then(
+                data => {
+                    //console.log(data)
+                    const dialogRef = this.dialog.open(SearchResultComponent, { disableClose: true, width: '1000px', autoFocus: false, maxHeight: '90vh', data: { search_type: this.search_string, model_id: "", values: data, parent_id: "" } });
+                    dialogRef.afterClosed().subscribe(result => {
+                        if (result) {
+                            //console.log(result)
+                            var parent_id = result['parent_id']
+                            var model_id = result['model_id']
+                            var model_type = result['model_id'].split("/")[0]
+                            var model_key = result['model_id'].split("/")[1]
+                            if (model_type == "metadata_files") {
+                                //this.router.navigate(['/download'],{ queryParams: {parent_id: parent_id, model_key:model_key,model_type:"metadata_file",mode:"edit"}});
                             }
                             else {
-                                model_type = model_type.slice(0, -1)
+                                if (model_type === 'studies') {
+                                    model_type = 'study'
+                                }
+                                else {
+                                    model_type = model_type.slice(0, -1)
+                                }
+                                //this.router.navigate(['/generic_form'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit", inline:"false", asTemplate:false, onlyTemplate:false}, skipLocationChange: true});
                             }
-                            //this.router.navigate(['/generic_form'],{ queryParams: {level:"1", parent_id:parent_id, model_key:model_key,model_type:model_type,mode:"edit", inline:"false", asTemplate:false, onlyTemplate:false}, skipLocationChange: true});
                         }
-                    }
-                });
-            }
-        );
+                    });
+                }
+            );
+        }
     }
     user_page() {
         this.router.navigate(['/profile']);

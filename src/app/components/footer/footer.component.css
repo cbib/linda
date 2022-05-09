@@ -1,6 +1,5 @@
 .nga-footer {
   background-color: #2f323a;;
-  
   color: white;
 }
 
@@ -11,7 +10,7 @@
 
 .nga-footer a:hover,
 .nga-footer a:focus {
-  color: yellow;
+  color: #4ECDC4;
   text-decoration: underline;
 }
 
