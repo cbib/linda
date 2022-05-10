@@ -34,8 +34,9 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div [ngClass]="{ 'active':activeTab==='exp_design_info'}" role="tabpanel" class="tab-pane active" id="expdesigninfo">
-                <h3>Describe your experimental design</h3>
-                <mat-card *ngIf="activeTab==='exp_design_info'" style="width: 95%;">
+                
+                <h3>Build your experimental design</h3>
+                <mat-card *ngIf="activeTab==='exp_design_info'">
                     <div>
                         <div>
                         <select [ngModel]="get_design_type"  name="design_type" size="1" (change)="onDesignTypeChange($event.target.value)" >
@@ -154,6 +155,18 @@
                             <!-- Table of design -->
                             
                             <mat-card *ngIf="blockDesignLoaded && designLoaded">
+                                <app-observation-unit-page 
+                                (notify)="get_output_from_child($event)"
+                                [level]="1" 
+                                [model_type]="'observation_unit'" 
+                                [model_key]="" 
+                                [grand_parent_id]="get_grand_parent_id" 
+                                [parent_id]="get_parent_id" 
+                                [mode]="get_mode"
+                                [role]="get_role" 
+                                [group_key]="get_group_key"
+                                >
+                                </app-observation-unit-page>
                                 <h3> Experimental design table and observationsassociation</h3>
                                 <button *ngIf="!get_biological_material_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterial()">
                                     Associate Biological Material
@@ -161,17 +174,20 @@
                                   <button *ngIf="get_biological_material_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeBiologicalMaterial()">
                                     Unlink Biological Material
                                   </button>
-                                  <button *ngIf="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addObservationUnits()">
+                                  <button [disabled]="!biologicalMaterialLoaded" *ngIf="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addObservationUnits()">
                                     Define Observation Units 
                                   </button>
                                   <button *ngIf="get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeObservationUnits()">
                                     Unlink Observation Units 
                                   </button>
-                                  <button class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
+                                  <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
                                     Add experimental factor 
                                   </button>
-                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
+                                  <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples 
+                                  </button>
+                                  <button *ngIf="get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeSample()">
+                                    Delete samples 
                                   </button>
                                 <table  class="table table-bordered heading-hvr">  
                                     <thead>  
@@ -194,7 +210,7 @@
                                             <td align="center">{{experimental_design_block['Block number'].value}}</td>     
                                             <td align="center">{{experimental_design_block['Blocks per trial'].value}}</td>
                                             <td align="center">{{get_observation_units(get_design)}}</td> 
-                                            <td align="center">{{get_samples(get_design)}}</td>
+                                            <td align="center">{{get_samples(get_design, experimental_design_block['Block number'].value)}}</td>
                                         </tr>  
                                         <!-- <div id="myresult" class="img-zoom-result"></div> -->  
                                         <tr [hidden]="!hideme[i]" class="sub-table no-bg">  

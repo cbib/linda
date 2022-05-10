@@ -3004,7 +3004,7 @@ router.post('/update_multiple_field', function (req, res) {
             if (model_data[field] === value) {
                 if (datafile_key !== '') {
                     let df_id = "data_files/" + datafile_key
-                    if (model_field === 'Study Name') {
+                    if (model_field === 'Study unique ID') {
                         const edges3 = db._query(aql`
                         LET document = DOCUMENT(${df_id})
                         LET alteredData = (

@@ -30,21 +30,25 @@
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='biomat'}" (click)="changeTab('biomat')" href="#biomat"
         aria-controls="biomat" role="tab" data-toggle="tab">4. Biological materials</a>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='obs'}" (click)="changeTab('obs')" href="#obs"
         aria-controls="obs" role="tab" data-toggle="tab">5. Observations</a>
+    </li> -->
+    <li class="nav-item">
+      <a class="nav-link" [ngClass]="{ 'active':activeTab==='obsvar'}" (click)="changeTab('obsvar')" href="#obsvar"
+        aria-controls="obsvar" role="tab" data-toggle="tab">6. Observed variables</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='expfac'}" (click)="changeTab('expfac')" href="#expfac"
-        aria-controls="expfac" role="tab" data-toggle="tab">6. Experimental Factors</a>
+        aria-controls="expfac" role="tab" data-toggle="tab">7. Experimental Factors</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='env'}" (click)="changeTab('env')" href="#env"
-        aria-controls="env" role="tab" data-toggle="tab">7. Environmental parameters</a>
+        aria-controls="env" role="tab" data-toggle="tab">8. Environmental parameters</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='events'}" (click)="changeTab('events')" href="#events"
-        aria-controls="events" role="tab" data-toggle="tab">8. Events</a>
+        aria-controls="events" role="tab" data-toggle="tab">9. Events</a>
     </li>
     <!-- <li class="nav-item">
       <a class="nav-link" [ngClass]="{ 'active':activeTab==='data_files'}" (click)="changeTab('data_files')" href="#data_files"
@@ -122,18 +126,31 @@
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-study-form 
-            *ngIf="activeTab==='studydesign'" 
-            id="study_form_design" 
-            (notify)="get_output_from_child($event)" 
-            [model_type]="'study'" 
-            [level]="3" 
-            [parent_id]="get_parent_id" 
-            [model_key]="get_model_key" 
-            [mode]="get_mode"  
-            inline="true"
-          >
-          </app-study-form>
+          <h3>Describe your experimental design</h3>
+          <mat-accordion>
+                    <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                            General description
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <app-study-form 
+                        id="study_form_design" 
+                        (notify)="get_output_from_child($event)" 
+                        [level]="3" 
+                        [model_type]="'study'" 
+                        [model_key]="get_model_key" 
+                        [parent_id]="get_parent_id" 
+                        [mode]="'edit'"  
+                        [role]="get_role"
+                        onlyTemplate="false"
+                        inline="true"
+                        >
+                        </app-study-form>
+                    </mat-expansion-panel>
+          </mat-accordion>
+          <mat-divider></mat-divider>
+          <br>
           
           <app-experimental-designs-page 
             *ngIf="activeTab==='studydesign'" 
@@ -148,7 +165,20 @@
             [role]="get_role"
             [group_key]="get_group_key"
           >
-          </app-experimental-designs-page>     
+          </app-experimental-designs-page>
+          <app-observations-page 
+            *ngIf="activeTab==='studydesign'" 
+            (notify)="get_output_from_child($event)"
+            [level]="1" 
+            [model_key]="get_model_key" 
+            [model_type]="'observation_unit'"
+            [parent_id]="get_model_id" 
+            [grand_parent_id]="get_parent_id" 
+            [mode]="get_mode" 
+            [role]="get_role"
+            [group_key]="get_group_key"
+            >
+           </app-observations-page>     
         </div>
 
       </mat-card>
@@ -178,7 +208,7 @@
         
       </mat-card>
     </div>
-    <div [ngClass]="{ 'active':activeTab==='obs'}" role="tabpanel" class="tab-pane" id="obs">
+   <!--  <div [ngClass]="{ 'active':activeTab==='obs'}" role="tabpanel" class="tab-pane" id="obs">
       <h3>Describe observation units</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
@@ -195,32 +225,37 @@
             [grand_parent_id]="get_parent_id" 
             [mode]="get_mode" 
             [role]="get_role"
-            [group_key]="get_group_key"
-            >
+            [group_key]="get_group_key">
            </app-observations-page>
-          
-          <!-- <app-observation-unit-page *ngIf="activeTab==='obsunit'" (notify)="get_output_from_child($event)"
-          [model_type]="'observation_unit'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-        </app-observation-unit-page> -->
        </div>
-        
-        <!-- observation unit form -->
       </mat-card>
-    </div>
+    </div> -->
 
-    <!-- <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
+    <div [ngClass]="{ 'active':activeTab==='obsvar'}" role="tabpanel" class="tab-pane" id="obsvar">
       <h3>Observed variables</h3>
       <mat-card style="width: 98%;">
         <div *ngIf="get_role!=='owner'">
           <p>You do not have access to this part of the project. Please contact project owner to gain full project access </p>
         </div>
         <div *ngIf="get_role==='owner'">
-          <app-observed-variable-page *ngIf="activeTab==='obsvar'" (notify)="get_output_from_child($event)"
+          <!-- <app-observed-variable-page *ngIf="activeTab==='obsvar'" (notify)="get_output_from_child($event)"
           [model_type]="'observed_variable'" [level]="1" [parent_id]="get_model_id" [model_key]="" [mode]="get_mode">
-        </app-observed-variable-page>
+        </app-observed-variable-page> -->
+        
+          <app-observed-variables-page 
+          (notify)="get_output_from_child($event)" 
+          [grand_parent_id]="get_parent_id" 
+          [model_type]="'observed_variable'" 
+          [level]="1" 
+          [parent_id]="get_model_id" 
+          [model_key]="" 
+          [mode]="get_mode" 
+          [role]="get_role" 
+          [group_key]="get_group_key">
+        </app-observed-variables-page>
        </div>       
       </mat-card>
-    </div> -->
+    </div>
     <div [ngClass]="{ 'active':activeTab==='expfac'}" role="tabpanel" class="tab-pane" id="expfac">
       <h3>Describe experimental factors</h3>
       <mat-card style="width: 98%;">

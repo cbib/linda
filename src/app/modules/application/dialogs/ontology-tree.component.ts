@@ -51,7 +51,7 @@ export class OntologyTreeComponent {
     private mode_simplified: boolean = false
     private sub_class_of:string="";
     private model_type:string="";
-    private multiple: boolean
+    private multiple: boolean =false
     panel_disabled:boolean=true
     panel_expanded:boolean=true
     //model ontology    
@@ -117,6 +117,11 @@ export class OntologyTreeComponent {
             this.model_type=this.data.model_type
         }
         console.log("sub_class_of is given: ", this.sub_class_of)
+        console.log("uncheckable is given: ", this.uncheckable)
+        console.log("multiple is given: ", this.multiple)
+        console.log("selected_key is given: ", this.selected_key)
+        console.log("mode_simplified is given: ", this.mode_simplified)
+        console.log("observed is given: ", this.observed)
         this.ontology_tree = [];
         this.ontologyTerms = [];
         this.ontologyContext = [];

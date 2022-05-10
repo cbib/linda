@@ -75,6 +75,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     private model_type: string = 'study'
     private dataSource: MatTableDataSource<StudyInterface>;
     private displayedColumns: string[] = ['Study Name', 'Study description', 'edit'];
+    help_message: string;
 
 
     constructor(
@@ -93,7 +94,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
             params => {
                 this.parent_id = params['parent_id'];
                 this.group_key = params['group_key'];
-                this.role == params['role'];
+                this.role = params['role'];
             }
         );
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -129,6 +130,14 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
         //console.log(this.parent_id)
         //this.wizardService.onClickTour(this.vertices, this.currentUser)
+    }
+    help(button_type:string){
+        if(button_type==='edit'){
+            this.help_message="Edit project page"
+        }
+    }
+    get get_help_message(){
+        return this.help_message
     }
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
@@ -191,7 +200,7 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
         console.warn(elem)
         //this.notify.emit(elem)
         let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
-        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo", role: role, group_key: this.group_key } });
+        this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: elem['_key'], model_id: elem['_id'], model_type: this.model_type, mode: "edit", activeTab: "studyinfo", role: role, group_key: this.group_key, grand_parent_id:this.parent_id } });
 
     }
     onNext(node: string) {

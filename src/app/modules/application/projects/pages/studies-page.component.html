@@ -41,6 +41,24 @@
     </mat-menu>
     <div style="overflow: auto">
         <mat-card>
+            <p> Below is the Investigation table. This table summarizes all your projects in LINDA database.
+                Click on add investigation button it to expand Project Menu and select add new project. 
+            </p>
+             <mat-accordion>
+                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Details Options
+                    </mat-panel-title>
+                    <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+                </mat-expansion-panel-header>
+                <button title="Edit project" (click)="help('edit')" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                <button  title="Remove project" (click)="help('reemove')" class="btn btn-light btn-xs fa fa-trash"></button> 
+                <button  title="Share project with other users" (click)="help('share')"  class="btn btn-light">Share</button>
+                <p>{{get_help_message}}</p>
+                </mat-expansion-panel><br>
+
+                </mat-accordion>
             
             <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
 

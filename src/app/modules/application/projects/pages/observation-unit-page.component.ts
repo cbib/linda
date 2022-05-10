@@ -35,7 +35,7 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
   @Output() notify: EventEmitter<{}> = new EventEmitter<{}>();
   private dataSource: MatTableDataSource<ObservationUnitInterface>;
   //private displayedColumns: string[] = ['Observation unit ID','Observation unit type', 'edit'];
-  private displayedColumns: string[] = ['Total Observations','Observation units type', 'edit'];
+  private displayedColumns: string[] = ['Total Observation units','Observation units type', 'edit'];
   loaded: boolean = false
   contextMenuPosition = { x: '0px', y: '0px' };
   userMenuPosition = { x: '0px', y: '0px' };
@@ -84,7 +84,7 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
       data => {
         console.log(data)
         data.forEach(obs_unit=>{
-          obs_unit['Total Observations']=obs_unit['Observation unit ID'].length
+          obs_unit['Total Observation units']=obs_unit['Observation unit ID'].length
           obs_unit['Observation units type']=Array.from(new Set(obs_unit['Observation unit type']))[0]
         })
 

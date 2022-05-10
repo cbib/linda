@@ -80,7 +80,7 @@
         </li>
     </ul>
     <mat-tree *ngIf="!active_list && !get_mode_simplified" #tree [dataSource]="get_dataSource" [treeControl]="get_treeControl">
-        
+  
         <!-- This is the tree node template for leaf nodes -->
         <mat-tree-node  *matTreeNodeDef="let node" matTreeNodePadding title="{{node.def}}">
             <div [ngStyle]="getStyle()">
@@ -191,20 +191,19 @@
                     {{node.name}}
                 </mat-checkbox> -->
                 <ng-container *ngIf="get_uncheckable">
-                    <!-- {{node.name}} -->
+                    {{node.name}}
                 </ng-container>
                 <ng-container *ngIf="!get_uncheckable">
-                    <mat-checkbox *ngIf="get_model_type==='observed_variable' || get_model_type==='sample'" class="checklist-leaf-node" [checked]="get_selected_term && get_selected_term.id===node.id" (change)="todoLeafItemSelectionToggle(node)">
+                    {{node.name}}
+                    <mat-checkbox *ngIf="get_model_type==='observed_variable' || get_model_type==='sample'|| get_model_type==='study'" class="checklist-leaf-node" [checked]="get_selected_term && get_selected_term.id===node.id" (change)="todoLeafItemSelectionToggle(node)">
                         
                     </mat-checkbox>
                 </ng-container>
-                {{node.name}}
+                
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">TRAIT</p><button (click)="onExtractWholeObservedVariable(node)" *ngIf="node.namespace!='' && node.namespace.includes('Trait')">Add Trait as Observed variable</button>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Variable')">VARIABLE</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Method')">METHOD</p>
                 <p style="float:right;" *ngIf="node.namespace!='' && node.namespace.includes('Scale')">SCALE</p>
-                
-
                 <mat-accordion>
                     <mat-expansion-panel  (opened)="panelOpenState = true" (click)="show_info(node)" (closed)="panelOpenState = false">
                         <mat-expansion-panel-header>

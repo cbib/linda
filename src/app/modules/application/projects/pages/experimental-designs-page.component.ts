@@ -264,6 +264,14 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     }
 
     onAdd(){
+        console.warn(this.level)
+        console.warn(this.model_type)
+        console.warn(this.model_key)
+        console.warn(this.mode)
+        console.warn(this.parent_id)
+        console.warn(this.group_key)
+        console.warn(this.role)
+        console.warn(this.grand_parent_id)
         this.router.navigate(['/experimental_design_page'], { queryParams: { 
             level: "1", 
             grand_parent_id:this.grand_parent_id, 
@@ -279,6 +287,14 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     }
     
     onEdit(element:ExperimentalDesignInterface){
+        console.warn(this.level)
+        console.warn(this.model_type)
+        console.warn(this.model_key)
+        console.warn(this.mode)
+        console.warn(this.parent_id)
+        console.warn(this.group_key)
+        console.warn(this.role)
+        console.warn(this.grand_parent_id)
         this.router.navigate(['/experimental_design_page'], { queryParams: { 
             level: "1", 
             grand_parent_id:this.grand_parent_id, 

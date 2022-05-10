@@ -21,6 +21,7 @@ import { GlobalService} from '../../../services';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule} from '@angular/material/radio' 
 import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule,FormsModule }    from '@angular/forms';
 import { MatFormFieldModule} from '@angular/material/form-field'; 
@@ -107,6 +108,7 @@ import { AssociateObservationUnit } from './associate-observation-unit.component
     MatSliderModule,
     TextFieldModule,
     ScrollingModule,
+    MatRadioModule,
     MatTableModule,
     FormModule,
     MaterialFormModule,

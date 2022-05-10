@@ -1,4 +1,7 @@
-<mat-card>
+
+    <h3>Define Observations units</h3>
+        <p>Here you can easily create Observations units that will hold all of your biological materials, samples and 
+          allows user to easily extract sampless and observations at any level define in Study form </p>
     <div>
         <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
         <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
@@ -59,5 +62,5 @@
         <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
 
     </div>
-    </mat-card>
+
     

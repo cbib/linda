@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GlobalService } from '../../../services';
+import { GlobalService, AlertService } from '../../../services';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -43,6 +43,7 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
     private displayedColumns: string[] = ['Genus', 'Species', 'Infraspecific name','total materials','biological materials by replicate', 'replicates','total biological materials'];
     constructor(
         private globalService: GlobalService, 
+        private alertService:AlertService,
         public dialogRef: MatDialogRef<AssociateBiologicalMaterial>,
         private router: Router,
         private _cdr: ChangeDetectorRef,
@@ -131,6 +132,7 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
       onSelect(element: BiologicalMaterialFullInterface) {
           console.log(element)
           this.selected_material=element
+          this.alertService.success("You have selected "+ this.selected_material['Material source ID (Holding institute/stock centre, accession)'] +" !!!! Clicck  OK to associate this biological material to your experimental design ")
       }
       onNoClick(): void {
         this.dialogRef.close({event:"Cancel", selected_material: null});

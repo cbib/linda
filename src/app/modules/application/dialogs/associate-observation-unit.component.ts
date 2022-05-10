@@ -21,7 +21,6 @@ interface DialogData {
   parent_id: string;
   model_type: string;
   material_id:string;
-  total_available_plots:number;
   design:ExperimentalDesign;
 }
 
@@ -44,6 +43,7 @@ export class AssociateObservationUnit implements OnInit {
   
   design:ExperimentalDesign;
   total_available_plots:number=0
+  total_available_blocks:number=0
   observation_unit_level:string=""
   current_material_id:string=""
   biological_model:BiologicalMaterialFullInterface;
@@ -108,8 +108,16 @@ export class AssociateObservationUnit implements OnInit {
       this.model_type = this.data.model_type
       this.parent_id = this.data.parent_id
       this.material_id=this.data.material_id
-      this.total_available_plots=this.data.total_available_plots
+      
       this.design=this.data.design
+      
+      this.design.Blocking.value.forEach(block=>{
+        this.total_available_blocks+=1
+        block['Plot design'].value.forEach(plot=>{
+          this.total_available_plots+=1
+        })
+      });
+      console.log(this.total_available_blocks)
       this.mode=this.data.mode
       console.log(this.design)
       this.building=false
@@ -121,17 +129,16 @@ export class AssociateObservationUnit implements OnInit {
   async ngOnInit() {
     console.log(this.material_id)
     console.log(this.parent_id)
-    this.globalService.get_type_child_from_parent('studies', this.parent_id.split('/')[1], 'observation_units').toPromise().then(
-        data => {
-          this.existing_observation_units=data
-
-        });
-    
+    this.existing_observation_units=await this.globalService.get_type_child_from_parent('studies', this.parent_id.split('/')[1], 'observation_units').toPromise()//.then(
     this.biological_model= (await this.globalService.get_biological_material_by_key(this.material_id.split('/')[1]).toPromise()).data
     console.log(this.biological_model)
+    console.log(this.existing_observation_units)
   }
   onSelectObservationUnit(event){
-    console.log(event.target.value)
+    console.log(event)
+    let current_obs_unit=this.existing_observation_units.filter(obs_unit=>obs_unit['_id']===event)[0]
+    this.observation_unit_level=current_obs_unit['Observation unit type'][0]
+
   }
   get get_existing_observation_units(){
     return this.existing_observation_units
@@ -146,8 +153,48 @@ export class AssociateObservationUnit implements OnInit {
     this.observation_unit_level=value
     this.current_material_id=this.design['Associated biological Materials'].value
     this.return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
-    if(value==='plot'){
+    if(value==='study'){
+    }
+    else if(value==='field'){
+    }
+    else if(value==='entry'){
+    }
+    else if (value==='rep'){
       
+    }
+    else if (value==='block'){
+      let bm_list:BiologicalMaterialDialogModel[][]=[]
+      this.design.Blocking.value.forEach(block=>{
+        let obs_unit={}
+        
+        obs_unit['External ID']=""
+        obs_unit['Observation Unit factor value']=""
+        obs_unit['Observation unit ID']=value+":"+ block['Block number'].value
+        obs_unit['Observation unit type']=value
+        obs_unit['Spatial distribution']=value+":"+ block['Block number'].value
+        let obs_id=uuid.v4()
+        obs_unit['obsUUID']=obs_id
+        let sub_bm_list:BiologicalMaterialDialogModel[]=[]
+        block['Plot design'].value.forEach(plot=>{
+          
+          this.plot_dict[plot['Plot number'].value]=obs_id
+          this.load_material(this.biological_model, obs_id, plot.Associate_material_source.value, plot.Associated_biological_material.value).forEach(load_mat=>{
+            sub_bm_list.push(load_mat)
+          })
+          
+          
+        });
+        bm_list.push(sub_bm_list)
+        this.return_data.observation_units.push(obs_unit)
+      });
+      console.log(bm_list)
+      console.log(this.return_data.observation_units)
+      this.return_data.biological_materials=bm_list 
+    }
+    else if (value==='sub-block'){
+
+    }
+    else if(value==='plot'){
       let bm_list:BiologicalMaterialDialogModel[][]=[]
       this.design.Blocking.value.forEach(block=>{
         block['Plot design'].value.forEach(plot=>{
@@ -171,6 +218,19 @@ export class AssociateObservationUnit implements OnInit {
       })
       this.return_data.biological_materials=bm_list 
       console.log(this.return_data)
+    }
+    else if (value==='sub-plot'){
+      
+    }
+    else if (value==='plant'){
+      
+    }
+    else if(value==='sample'){
+
+    }
+    //pot
+    else{
+
     }
     this.loaded=true
   }

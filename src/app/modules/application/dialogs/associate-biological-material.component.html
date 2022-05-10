@@ -6,13 +6,34 @@
 
 <div *ngIf="loaded">
   <div mat-dialog-content class="mat-typography">
-
+    <h2>Biological material and experimental design</h2>
+    <p>
+      Depending on the experimental design you defined previously, you need to pick up biological materials that match your requirements. 
+      Otherwise some plots will not be filled with any materials or materials will not be assigned to any plots in your experimental design.
+    </p> 
+    <h2>Experimental design details</h2>
     <p> You have {{total_available_plots}} plots in your experimental design. 
-        Take care to assign materials in respect of design capability !!<br>
-        Which Biological materials do you plan to use ? </p>
+        Take care to assign materials in respect of design capability !!
+        You could use differents configurations
+    </p>
+        <ul>
+          <li>
+            {{total_available_plots}} material source (with n plants) with one replicate each
+          </li>
+          <li>
+            1 material source but replicated {{total_available_plots}} times
+          </li>
+          <li>
+            {{total_available_plots/2}} material source (with n plants) with 2 replicate for each
+          </li>
+        </ul> 
+        <br>
+        <p>
+        Which Biological materials do you plan to use ? 
+      </p>
 
-    <p>The material you want is not there, create using <button (click)="goto_material_form()">Add material</button></p>
-    
+    <p>The material you want is not there, create it using <button (click)="goto_material_form()">Add material</button></p>
+    <alert></alert>
     <span class="span-project"></span>
         <mat-form-field appearance="standard">
             <mat-label>Filter</mat-label>

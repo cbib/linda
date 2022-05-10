@@ -13,6 +13,7 @@ import { first } from 'rxjs/operators';
 import { timeStamp } from 'console';
 import { isBuffer } from 'util';
 import { OntologyTreeComponent } from './ontology-tree.component';
+//import { ConsoleReporter } from 'jasmine';
 
 interface DialogData {
   data_file: DataFileInterface;
@@ -192,7 +193,7 @@ export class AddColumnComponent implements OnInit {
   generalForm: FormGroup ;
   //private initialSelection = []
   //private useSameNumberCheck = new SelectionModel<string>(true, this.initialSelection /* multiple */);
-
+  labelPosition: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
   constructor(
     private globalService: GlobalService,
     private formBuilder: FormBuilder,
@@ -269,6 +270,7 @@ export class AddColumnComponent implements OnInit {
 /*     console.log(this.standardTerm.value)
     console.log(values) */
     this.associated_model=this.standardTerm.value.model
+    console.log(this.associated_model)
     /* console.log(values)
     this.field_submitted=true
     console.log(this.generalForm)*/
@@ -283,6 +285,13 @@ export class AddColumnComponent implements OnInit {
   }
 
   async onLink(values: string) {
+    console.log(this.linkTerm.value['field'])
+    if (this.linkTerm.value['component']!=='study'){
+      this.extract_component_options.options.filter(opt=>opt.value===this.linkTerm.value['component'])[0].fields=this.extract_component_options.options.filter(opt=>opt.value===this.linkTerm.value['component'])[0].fields.filter(field=>field!==this.linkTerm.value['field'])
+      this.extract_component_options.options.filter(opt=>opt.value===this.linkTerm.value['component']).forEach(opt_2=>{opt_2.disabled=false})
+      this.extract_component_options.options.filter(opt=>opt.value!==this.linkTerm.value['component']).forEach(opt_2=>{opt_2.disabled=true})
+    }
+
 /*     console.log(values)
     console.log(this.linkTerm.value.values.length)
     console.log(this.linkTerm.value.ids) */
@@ -323,12 +332,21 @@ export class AddColumnComponent implements OnInit {
     }
     console.log(this.linked_values) */
   }
+  onPaste(event: ClipboardEvent) {
+    let clipboardData = event.clipboardData;
+    let pastedText = clipboardData.getData('text');
+    console.log(pastedText)
+  }
+  
+  onInput(content: string) {
+    console.log(content)
+  }
 
   async onAdd(){
     //delete this.tmp_data_file
     this.tmp_data_file = { ...this.data_file };
-/*     console.log(this.aliases.controls)
-    console.log(this.linkTerm.value) */
+    console.log(this.aliases.controls)
+    console.log(this.linkTerm.value)
     //header does not exist
     //if (this.data_file.headers.filter(header=>header===this.header.value).length===0){
     
@@ -441,7 +459,6 @@ export class AddColumnComponent implements OnInit {
       this.alertService.success(" else  case : data file has been modified ! Press OK to update data")
       //this.ready_to_add=true
     }
-
     let data: {} = await this.globalService.update_document(this.data_file._key,  this.data_file, 'data_file').toPromise()
     console.log(data);
             //let data = await this.globalService.update_associated_headers(this.data_file._id, data_model.associated_headers, 'data_files').toPromise()
@@ -529,4 +546,5 @@ export class AddColumnComponent implements OnInit {
   async onOkClick() {  
       this.dialogRef.close({event:"Confirmed", data_file:  this.data_file});
   }
+
 }

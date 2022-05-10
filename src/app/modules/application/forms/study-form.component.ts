@@ -66,12 +66,6 @@ export class StudyFormComponent implements OnInit {
     private readonly joyrideService: JoyrideService,
     private route: ActivatedRoute,
     public dialog: MatDialog) {
-
-    /*         this.level = 1;
-            this.model_type = '';
-            this.model_key = '';
-            this.mode = '';
-            this.parent_id = ''; */
     this.route.queryParams.subscribe(
       params => {
         this.level = params['level'];
@@ -86,17 +80,31 @@ export class StudyFormComponent implements OnInit {
 
       }
     );
+    console.warn(this.parent_id)
+    console.warn(this.mode)
+    console.warn(this.model_key)
+    console.warn(this.model_type)
+    console.warn(this.inline )
+    console.warn(this.onlyTemplate)
+    console.warn(this.role)
     if (this.model_key != "") {
-      //console.log(this.model_key)
+      console.log(this.model_key)
       this.get_model_by_key();
     }
     //console.log(this.mode)
-    console.warn(this.role)
+    
     //console.log(this.mode)
 
   }
 
   ngOnInit() {
+    console.warn(this.parent_id)
+    console.warn(this.mode)
+    console.warn(this.model_key)
+    console.warn(this.model_type)
+    console.warn(this.inline )
+    console.warn(this.onlyTemplate)
+    console.warn(this.role)
     ///const id = this.activatedRoute.snapshot.params.id;
 
     ////console.log(this.mode)
@@ -387,7 +395,7 @@ export class StudyFormComponent implements OnInit {
           }  */
 
         }
-        ////console.log(this.modelForm.value)
+        console.log(this.modelForm.value)
       }
     });
   };
@@ -552,7 +560,7 @@ export class StudyFormComponent implements OnInit {
     }
     else {
       this.globalService.get_by_key(this.model_key, this.model_type).toPromise().then(data => {
-        //console.log(data)
+        console.log(data)
         this.model_to_edit = data;
         this.modelForm.patchValue(this.model_to_edit);
         this.startfilling = true;

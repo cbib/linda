@@ -80,6 +80,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     public blockDesignLoaded:boolean=false
     public biologicalMaterialLoaded:boolean=false
     public observationUnitLoaded:boolean=false
+    public sampleLoaded: boolean=false;
     public complete_block_design_type:CompleteBlockDesign;
     public incomplete_block_design_type:IncompleteBlockDesign;
     public available_designs:string[]
@@ -88,12 +89,15 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     public plot_index:number=0
     public material_id:string=""
     sample_data = []
+    panel_disabled: boolean = false
+    panel_expanded: boolean = false
 
     ///// TESST PART
     hideme = []; 
     secondhideme = [];   
     Index: any; 
     SecondIndex: any;  
+    
     /* products = [];  
     countryCode: any;  
     currencySymbol:any;  
@@ -207,8 +211,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 Object.assign(replication, data.Replication.value)
                 this.design.set_replication(replication)
 
-                if (data['Associated sample'].value!==null){
+                if (data['Associated sample'].value.length>0){
                     this.design.set_associated_samples(data['Associated sample'].value)
+                    this.sampleLoaded=true
                 }
                 if (data['Associated observation units'].value!==null){
                     this.design.set_observation_unit_id(data['Associated observation units'].value)
@@ -434,7 +439,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         
     }
     addObservationUnits(){
-        const dialogRef = this.dialog.open(AssociateObservationUnit,{ disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", total_available_plots:this.design['number of entries'].value,  material_id:this.material_id, design:this.design, mode:'create', model_key:''} });
+        const dialogRef = this.dialog.open(AssociateObservationUnit,{ disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit",  material_id:this.material_id, design:this.design, mode:'create', model_key:''} });
         dialogRef.afterClosed().subscribe(async result => {
             if (result.event==='Confirmed') {
                 console.log(result.observation_unit_id)
@@ -531,6 +536,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }) 
     */
     } 
+
     removeBiologicalMaterial(){
         this.design.Blocking.value.forEach(block_design=>{
             block_design['Plot design'].value.forEach(plot_design=>{
@@ -540,8 +546,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             })
         })
         this.biologicalMaterialLoaded=false
-    }  
-    
+        this.removeObservationUnits()
+    }
     
     extractSample(){
         //first  get bm data
@@ -570,11 +576,18 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
               })
               let message = "experimental factor selected! "
               this.alertService.success(message);
+              this.sampleLoaded=true
             }
           });
     }
     removeSample(){
-
+        this.design['Associated sample'].value=[]
+        this.design.Blocking.value.forEach(block_design=>{
+            block_design['Plot design'].value.forEach(plot_design=>{
+                plot_design['Associated samples'].value=[]
+            })
+        })
+        this.sampleLoaded=false
     }
 
 
@@ -667,6 +680,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     
     get get_biological_material_loaded(){ return this.biologicalMaterialLoaded }
     get get_observation_unit_loaded(){ return this.observationUnitLoaded }
+    get get_sample_loaded(){return this.sampleLoaded}
     get totalBlockControl(){ return this.BlockDesignForm.get('totalBlockControl');}
     get totalBlockPerRowControl(){ return this.BlockDesignForm.get('totalBlockPerRowControl')}
     get totalRowPerBlockControl(){ return this.BlockDesignForm.get('totalRowPerBlockControl');}
@@ -684,6 +698,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     get get_model_key(){ return this.model_key }
     get get_role(){ return this.role }
     get get_group_key(){ return this.group_key }
+    get get_grand_parent_id(){
+        return this.grand_parent_id
+    }
 
     get_associated_material_source(_pd:PlotDesign){
         if (_pd['Associate_material_source'].value!==null){
@@ -706,13 +723,26 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     get_bm(){
         this.get_observation_units(this.design)
     }
-    get_samples(_expd:ExperimentalDesign){
-        if (_expd['Associated sample'].value!==null){
-            return _expd['Associated sample'].value.length
+    get_samples(_expd:ExperimentalDesign, block_num:number){
+        let tmp_block:BlockDesign=_expd.Blocking.value.filter(block=>block['Block number'].value===block_num)[0]
+        let samples=[]
+        tmp_block['Plot design'].value.forEach(plot=>{
+            samples=samples.concat(plot['Associated samples'].value)
+        })
+        console.log(samples)
+        if (samples.length>0){
+            return samples.length
         }
         else{
             return "No samples defined"
         } 
+
+        /* if (_expd['Associated sample'].value!==null){
+            return _expd['Associated sample'].value.length
+        }
+        else{
+            return "No samples defined"
+        }  */
     }
     get_associated_biological_material(_pd:PlotDesign){
         return _pd['Associated_biological_material'].value.length
@@ -735,6 +765,14 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         else{
             return _pd['Observation uuid'].value
             
+        }
+    }
+    get_output_from_child(val:any){
+        if (val === 'cancel the form'){
+          console.log("Cancel form")
+        }
+        else{
+            console.log("Cancel form")
         }
     }
     changeTab(tab:string){

@@ -33,6 +33,8 @@ export class StudyPageComponent implements OnInit {
     startTime: Date;
     endTime: Date;
     timeDiff: number;
+    panel_disabled: boolean = false
+    panel_expanded: boolean = false
 
     constructor(private globalService: GlobalService,
         private searchService: SearchService,
