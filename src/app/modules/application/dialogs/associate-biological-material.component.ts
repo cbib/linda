@@ -132,7 +132,7 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
       onSelect(element: BiologicalMaterialFullInterface) {
           console.log(element)
           this.selected_material=element
-          this.alertService.success("You have selected "+ this.selected_material['Material source ID (Holding institute/stock centre, accession)'] +" !!!! Clicck  OK to associate this biological material to your experimental design ")
+          this.alertService.success("You have selected "+ this.selected_material['Material source ID (Holding institute/stock centre, accession)'] +" !!!! Click on OK to associate this biological material with your experimental design ")
       }
       onNoClick(): void {
         this.dialogRef.close({event:"Cancel", selected_material: null});

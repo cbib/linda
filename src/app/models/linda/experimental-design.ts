@@ -424,6 +424,10 @@ export interface ExperimentalDesignInterface     {
     };
     "Associated sample": {
         "value":  string[];
+        "ID": "LindaSamples";
+    };
+    "Associated sample ID": {
+        "value":  string;
         "ID": "LindaSampleDbIds";
     };
 }
@@ -457,6 +461,10 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     };
     "Associated sample": {
         "value":  string[];
+        "ID": "LindaSamples";
+    };
+    "Associated sample ID": {
+        "value":  string;
         "ID": "LindaSampleDbIds";
     };
     constructor(){
@@ -466,7 +474,8 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["number of entries"]={value:null,"ID": "CO_715:0000148"}
         this["Associated biological Materials"]={value:null,"ID": "LindaDbId"}
         this["Associated observation units"]={value:null,"ID": "LindaObsUnitDbId"}
-        this["Associated sample"]={value:[],"ID": "LindaSampleDbIds"}
+        this["Associated sample"]={value:[],"ID": "LindaSamples"}
+        this["Associated sample ID"]={value:null,"ID": "LindaSampleDbIds"}
     }
     get_block_design(_block_number:number){
         return this.Blocking.value.filter(block_design=> block_design["Block number"].value===_block_number)
@@ -508,6 +517,12 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     }
     add_sample_ids(sample_id:string){
         this["Associated sample"].value.push(sample_id)
+    }
+    set_sample_id(sample_id:string){
+        this["Associated sample ID"].value=sample_id
+    }
+    get_sample_id(){
+        return this["Associated sample ID"].value
     }
     get_sample_ids(index:number){
         return this["Associated sample"].value[index]

@@ -39,35 +39,44 @@
                 <mat-card *ngIf="activeTab==='exp_design_info'">
                     <div>
                         <div>
-                        <select [ngModel]="get_design_type"  name="design_type" size="1" (change)="onDesignTypeChange($event.target.value)" >
-                            <option *ngFor="let dt of design_types" [value]="dt">{{dt}}</option>
-                        </select> 
+                            <select [ngModel]="get_design_type"  name="design_type" size="1" (change)="onDesignTypeChange($event.target.value)" >
+                                <option *ngFor="let dt of design_types" [value]="dt">{{dt}}</option>
+                            </select> 
                         </div>
                         <mat-divider></mat-divider>
+                        
                         <div *ngIf="get_design_type!=''">
-                            <!-- <label id="example-radio-group-label">Select block design</label> -->
-                            <span>
+                            <mat-accordion>
+                                <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>
+                                          Block design settings
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <span>
+                                        <h3>Experimental design representation</h3>
+                                            <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractDesign()">
+                                                <label for="total-block-control" >Select total number of blocks</label>
+                                                <input mdbInput class="form-control" type="number" formControlName="totalBlockControl" id="total-block-control"/> 
+                                
+                                                <label for="total-block-per-row-control" >Select total number of block per row</label>
+                                                <input mdbInput class="form-control" type="number" formControlName="totalBlockPerRowControl" id="total-block-per-row-control" /> 
+                                
+                                                <!-- <label for="total-row-per-block-control" >Select total number of rows per block</label>
+                                                <input mdbInput class="form-control" type="number" formControlName="totalRowPerBlockControl" id="total-row-per-block-control" /> 
+                                                
+                                                <label for="total-column-per-block-control" >Select total number of column per block</label>
+                                                <input mdbInput class="form-control" type="number" formControlName="totalColumnPerBlockControl" id="total-column-per-block-control" /> 
+                                                
+                                                <label for="total-row-per-plot-control" >Select total number of row per plot</label>
+                                                <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
+                                -->
+                                                <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
+                                            </form>
+                                        </span>
+                                </mat-expansion-panel>
+                            </mat-accordion>
                             
-                            <h3>Experimental design representation</h3>
-                                <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractDesign()">
-                                    <label for="total-block-control" >Select total number of blocks</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalBlockControl" id="total-block-control"/> 
-                    
-                                    <label for="total-block-per-row-control" >Select total number of block per row</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalBlockPerRowControl" id="total-block-per-row-control" /> 
-                    
-                                    <!-- <label for="total-row-per-block-control" >Select total number of rows per block</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalRowPerBlockControl" id="total-row-per-block-control" /> 
-                                    
-                                    <label for="total-column-per-block-control" >Select total number of column per block</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalColumnPerBlockControl" id="total-column-per-block-control" /> 
-                                    
-                                    <label for="total-row-per-plot-control" >Select total number of row per plot</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
-                    -->
-                                    <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
-                                </form>
-                            </span>
                             
                             <mat-card *ngIf="designLoaded">
                                 <mat-grid-list  cols="{{totalBlockPerRowControl.value}}" rowHeight="100px">
@@ -83,10 +92,17 @@
                                 </mat-grid-list> 
                                 
                             </mat-card>
-                            <mat-card *ngIf="designLoaded">
+                            <div *ngIf="designLoaded">
                             <alert></alert>
-                            <h3>Select Factor repartition</h3>
-                            <mat-card-content *ngIf="!available_designs.includes('Balanced')">
+                            <mat-accordion>
+                                <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>
+                                        Plot design settings
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <h3>Select Factor repartition</h3>
+                                <mat-card-content *ngIf="!available_designs.includes('Balanced')">
                                 <h4>Completely randomized design</h4>
                                 <p>
                                     The simplest, least restrictive experimental design is the Completely Randomized Design (CRD). In a CRD, the treatments are assigned 
@@ -103,7 +119,7 @@
                                     In the latin square, the number of plots is the square of the number of treatments. For practical purposes, its use is restricted to trials with more than four
                                     but fewer than 10 treatments.
                                 </p>
-                            </mat-card-content>
+                                </mat-card-content>
                                 <mat-radio-group
                                 aria-labelledby="example-radio-group-label"
                                 class="example-radio-group"
@@ -113,6 +129,7 @@
                                     {{available_design}}
                                 </mat-radio-button>
                                 </mat-radio-group>
+                            
                                 <h3>block design representation (rows and columns)</h3>
                                 <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractBlockDesign()">
                                     <label for="total-row-per-block-control" >Select total number of rows per block</label>
@@ -126,12 +143,18 @@
                     
                                     <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
                                 </form>
+                                </mat-expansion-panel>
+                            </mat-accordion>
                                 
-                            </mat-card>
+                                
+                        </div>
                             <mat-card *ngIf="blockDesignLoaded">
                                 
                                 <mat-card-title>Plot Design in block {{get_design.Blocking.value[block_index]['Block number'].value}}</mat-card-title>
                                 <mat-card-content>
+                                    <p> 
+                                        You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}} plots defined in block {{get_design.Blocking.value[block_index]['Block number'].value}}
+                                    </p>
                                 <mat-grid-list  cols="{{totalColumnPerBlockControl.value}}" rowHeight="100px">
                                     <mat-grid-tile
                                         (click)="display_plot(pd)"
@@ -144,8 +167,7 @@
                                     <!-- {{pd['Plot number'].value + ":" + pd['Associate_material_source'].value}} -->
                                     </mat-grid-tile>
                                 </mat-grid-list> 
-                                <p> You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}} plots defined in block {{get_design.Blocking.value[block_index]['Block number'].value}}
-                                </p>
+                                
                             </mat-card-content>
                                 <!-- <mat-card-footer>
                                     <p> You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}} plots defined in block {{get_design.Blocking.value[block_index]['Block number'].value}}
@@ -155,19 +177,8 @@
                             <!-- Table of design -->
                             
                             <mat-card *ngIf="blockDesignLoaded && designLoaded">
-                                <app-observation-unit-page 
-                                (notify)="get_output_from_child($event)"
-                                [level]="1" 
-                                [model_type]="'observation_unit'" 
-                                [model_key]="" 
-                                [grand_parent_id]="get_grand_parent_id" 
-                                [parent_id]="get_parent_id" 
-                                [mode]="get_mode"
-                                [role]="get_role" 
-                                [group_key]="get_group_key"
-                                >
-                                </app-observation-unit-page>
-                                <h3> Experimental design table and observationsassociation</h3>
+                                
+                                <h3> Experimental design table: Observations unit, biological material, samples and observations association</h3>
                                 <button *ngIf="!get_biological_material_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterial()">
                                     Associate Biological Material
                                   </button>
@@ -348,6 +359,21 @@
                         
                                     </tbody>  
                                 </table>  
+                            </mat-card>
+                            <mat-card *ngIf="get_observation_unit_loaded">
+                                <app-observation-unit-page 
+                                (notify)="get_output_from_child($event)"
+                                [level]="1" 
+                                [model_type]="'observation_unit'" 
+                                [model_key]="" 
+                                [design_id]="get_model_id"
+                                [grand_parent_id]="get_grand_parent_id" 
+                                [parent_id]="get_parent_id" 
+                                [mode]="get_mode"
+                                [role]="get_role" 
+                                [group_key]="get_group_key"
+                                >
+                                </app-observation-unit-page>
                             </mat-card>
                            
                             

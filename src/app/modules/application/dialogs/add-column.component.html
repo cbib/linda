@@ -110,9 +110,9 @@
                 <label class="example-margin">Align:</label>
                 <mat-radio-group [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">
                   <mat-radio-button class="example-margin" value="autogenerate ids">Autogenerate ids</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="paste ids">Paste idds</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>
                 </mat-radio-group>
-              </section>
+            </section>
             <mat-card *ngIf="labelPosition==='autogenerate ids'">
              <label for="obsunit">Select total number of observation units:</label>
              <input id="obsunit" type="number">

@@ -57,6 +57,7 @@ import { ProgressBarModule } from 'src/app/components/progress-bar/progress-bar.
 import { AssociateBiologicalMaterial } from './associate-biological-material.component';
 import { MatInputModule } from '@angular/material/input';
 import { AssociateObservationUnit } from './associate-observation-unit.component';
+import { MatMenuModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { AssociateObservationUnit } from './associate-observation-unit.component
     MatPaginatorModule,
     MatProgressBarModule,
     MatFormFieldModule,
+    MatMenuModule,
     MatInputModule,
     ProgressBarModule,
     MatExpansionModule,

@@ -39,6 +39,7 @@ export class ObservationUnitFormComponent implements OnInit {
   //Input parameters from user tree component
   @Input() level;
   @Input() parent_id;
+  @Input() design_id;
   @Input() model_key: string;
   @Input() model_type: string;
   @Input() mode: string;
@@ -147,6 +148,7 @@ export class ObservationUnitFormComponent implements OnInit {
           this.role=params['role']
           this.grand_parent_id=params['grand_parent_id']
           this.group_key=params['group_key']
+          this.design_id=params['design_id']
         }
       );
       this.ou_index_row=0
@@ -420,7 +422,6 @@ export class ObservationUnitFormComponent implements OnInit {
       }
     }
   }
-
   //BM
   addBiologicalMaterial() {
     const dialogRef = this.dialog.open(SelectionComponent,
@@ -784,15 +785,17 @@ export class ObservationUnitFormComponent implements OnInit {
     }
     var return_data=this.build_result()
     if (_.isEqual(return_data, this.original_data)){
-      this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
-
+      //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+      this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
     }
     else{
       const dialogRef = this.dialog.open(ConfirmationComponent, {disableClose: true,  width: '500px', data: { validated: false, only_childs: false, all_childs: false, mode: 'unsaved_changes', model_type: "observation_unit" } });
         dialogRef.afterClosed().subscribe(async (result) => {
           if (result) {
             if (result.event == 'Confirmed') {
-              this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+              this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
+
+              //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
             }
           }
         });
@@ -824,7 +827,8 @@ export class ObservationUnitFormComponent implements OnInit {
               }
             }
             //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
 
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
@@ -847,7 +851,8 @@ export class ObservationUnitFormComponent implements OnInit {
             var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
             this.alertService.success(message)
             //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+           //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
 
             return true;
           }
@@ -878,7 +883,8 @@ export class ObservationUnitFormComponent implements OnInit {
               }
             }
             //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
 
             var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
             this.alertService.success(message)
@@ -901,7 +907,8 @@ export class ObservationUnitFormComponent implements OnInit {
             var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
             this.alertService.success(message)
             //this.router.navigate(['/projects_tree'], { queryParams: { key: this.parent_id.split('/')[1] } });
-            this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+            this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.design_id.split('/')[1], model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
 
             return true;
           }

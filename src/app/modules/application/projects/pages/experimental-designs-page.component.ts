@@ -295,6 +295,7 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
         console.warn(this.group_key)
         console.warn(this.role)
         console.warn(this.grand_parent_id)
+        console.log(element['_id'])
         this.router.navigate(['/experimental_design_page'], { queryParams: { 
             level: "1", 
             grand_parent_id:this.grand_parent_id, 

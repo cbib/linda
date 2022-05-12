@@ -14,6 +14,7 @@ import * as uuid from 'uuid';
 import { cpuUsage } from 'process';
 import { first, switchMap, takeUntil } from 'rxjs/operators';
 import { timer } from 'rxjs';
+import { SelectionComponent } from './selection.component';
 interface DialogData {
   model_id: string;
   mode:string;
@@ -96,11 +97,21 @@ export class AssociateObservationUnit implements OnInit {
   loaded:boolean=false
   building:boolean=false
   built: boolean=false;
+  labelPosition: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
+
+
+  autogenerateIsChecked: boolean = false
+  ef_data: any;
+  experimental_factor_id: string="";
+  experimental_factor_value: string="";
+  ExternalID:string
+
   constructor(
     private globalService: GlobalService, 
     public dialogRef: MatDialogRef<AssociateObservationUnit>,
     private _cdr: ChangeDetectorRef,
     private alertService:AlertService,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
     ) {
       this.model_id = this.data.model_id
@@ -123,7 +134,8 @@ export class AssociateObservationUnit implements OnInit {
       this.building=false
       this.loaded=false
       this.built=false
-
+      this.existing_observation_units=[]
+      this.ef_data=[]
      }
 
   async ngOnInit() {
@@ -146,6 +158,47 @@ export class AssociateObservationUnit implements OnInit {
 
   get get_already_there(){
     return this.already_there
+  }
+  get_experimental_factor() {
+    return this.ef_data
+  }
+  onIDAdd(event){
+    console.log(event)
+
+  }
+  addFactorValues(factor_value: string) {
+    console.log(factor_value)
+  }
+  onTaskAdd(event) {
+  }
+  addExperimentalFactor() {
+    const dialogRef = this.dialog.open(SelectionComponent,
+      {disableClose: true,  width: '1400px', autoFocus: true,restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, model_type: "experimental_factor", values: [], already_there: [], observation_id: "" } }
+    );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        
+        this.alertService.success("experimental factor selected! ");
+        var experimentalFactorData = result['data']
+        for (var i = 0; i < experimentalFactorData.length; i++) {
+          var ef: ExperimentalFactorDialogModel
+          ef = experimentalFactorData[i]
+          ef.efUUID = uuid.v4()
+          this.experimental_factor_id = ef.efUUID
+          ef.obsUUID = ""
+          this.ef_data.push(ef)
+        }
+      }
+    });
+  }
+  onPaste(event: ClipboardEvent) {
+    let clipboardData = event.clipboardData;
+    let pastedText = clipboardData.getData('text');
+    console.log(pastedText)
+  }
+  
+  onInput(content: string) {
+    console.log(content)
   }
 
   onObservationUnitLevelChange(value){
@@ -302,7 +355,7 @@ export class AssociateObservationUnit implements OnInit {
       if (data["success"]) {
 
         this.model_id = data["_id"];
-        var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully integrated in your history !!"
+        var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " object has been successfully integrated in your history !!"
         this.alertService.success(message)
         this.building=false
         this.built=true

@@ -26,6 +26,7 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
   @Input('level') level: number;
   @Input('parent_id') parent_id:string;
   @Input('model_key') model_key: string;
+  @Input('design_id') design_id: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
   @Input('role') role: string;
@@ -55,6 +56,7 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
         this.level = params['level'];
           this.model_type = params['model_type'];
           this.model_key = params['model_key'];
+          this.design_id=params['design_id'];
           this.mode = params['mode'];
           this.parent_id = params['parent_id']
           this.group_key = params['group_key']
@@ -135,7 +137,9 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
     let currentUrl = this.router.url;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
-    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+    //this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obs", role: this.role, group_key: this.group_key } });
+    this.router.navigate(['/experimental_design_page'], { queryParams: { level: "1", parent_id:this.parent_id, grand_parent_id: this.grand_parent_id, model_key: this.model_key, model_id:  this.design_id, model_type: 'experimental_design', mode: "edit", activeTab: "exp_design_info", role: this.role, group_key: this.group_key } });
+
 }
   onRemove(element: ObservationUnitInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
@@ -153,10 +157,10 @@ export class ObservationUnitPageComponent implements OnInit,AfterViewInit {
       });
   }
   add(template:boolean=false) {
-    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: this.model_type, mode: "create" , role:'owner', group_key:this.group_key, grand_parent_id:this.grand_parent_id} });
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, design_id:this.design_id, model_key: "", model_type: this.model_type, mode: "create" , role:'owner', group_key:this.group_key, grand_parent_id:this.grand_parent_id} });
   }
   onEdit(element: ObservationUnitInterface) {
-    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: element._key, model_type: this.model_type, mode: "edit", role:this.role, group_key:this.group_key, grand_parent_id:this.grand_parent_id } });
+    this.router.navigate(['/Observationunitform'], { queryParams: { level: "1", parent_id: this.parent_id, design_id:this.design_id, model_key: element._key, model_type: this.model_type, mode: "edit", role:this.role, group_key:this.group_key, grand_parent_id:this.grand_parent_id } });
   }
 }
 

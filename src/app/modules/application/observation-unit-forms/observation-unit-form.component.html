@@ -336,8 +336,8 @@
                   <button [disabled]="getObservationUnitFormControls.controls.length===0" class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
                     Add Experimental factor
                   </button>
-                </ng-container>
-                <ng-container  *ngIf="get_experimental_factor(getObservationUnitFormControls.controls[getActualIndex(obsindex)].value['obsUUID']).length>0">
+              </ng-container>
+              <ng-container  *ngIf="get_experimental_factor(getObservationUnitFormControls.controls[getActualIndex(obsindex)].value['obsUUID']).length>0">
                 <button mat-button [matMenuTriggerFor]="menu">select factor value</button>
                 <mat-menu  #menu="matMenu">
                   <ng-container *ngFor="let ef of get_experimental_factor(getObservationUnitFormControls.controls[getActualIndex(obsindex)].value['obsUUID']) ; let k=index">
@@ -345,7 +345,7 @@
                   <mat-menu #efMenu="matMenu">
                     <button *ngFor="let value of ef['experimentalFactorValues'].split(';') ; let j=index" mat-menu-item (click)="addFactorValues(getActualIndex(obsindex), value, getObservationUnitFormControls.controls[getActualIndex(obsindex)].value['obsUUID'])">{{value}}</button>
                   </mat-menu>
-                </ng-container>
+                  </ng-container>
                 </mat-menu>
                 <input mdbInput placeholder="Watered" type="text" formControlName="Observation Unit factor value" class="form-control" (keypress)="onTaskAdd($event)" />
               </ng-container>
