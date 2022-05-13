@@ -1,0 +1,58 @@
+<h1 mat-dialog-title>Select Biological materials</h1>
+
+<!-- <div *ngIf="get_bm_data.length >0" >
+  {{get_bm_data.length}}
+</div> -->
+
+<div>
+  <div mat-dialog-content class="mat-typography">
+    <h2>Observed variable and experimental design</h2>
+    <p>
+      <b>Definition:</b> An observed variable describes how a measurement has been made. 
+      It typically takes the form of a measured characteristic of the observation unit 
+      (plant or environmental trait), associated to the method and unit of measurement.
+    </p> 
+    <h2>Experimental design details</h2>
+    <p> You have {{total_available_plots}} plots in your experimental design. 
+        Take care to assign materials in respect of design capability !!
+        You could use differents configurations
+    </p>
+    <p>You do not find corresponding variable, create one</p>
+    <button (click)="add_observed_variables()">Add new Observed variables</button>
+    <table style="width: 100%;" mat-table matSort [dataSource]="dataSource">
+        <ng-container *ngFor="let column of displayedColumns ; let i=index">
+          <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[i]}} </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+          </ng-container>
+        </ng-container>
+    
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell class="flex-stretch" *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+              [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator #matpaginator [hidden]  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+      
+      <div *ngIf="selection.hasValue()">
+        <button (click)="add_data()">Link observations measures</button>
+      </div>
+      
+  </div>
+
+    <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="onOkClick()">Ok</button>
+  </div>
+</div>
