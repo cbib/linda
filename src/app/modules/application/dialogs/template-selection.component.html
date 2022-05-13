@@ -4,10 +4,39 @@
     <div mat-dialog-content >
         <p> Which {{search_type}}s do you plan to use ? </p>
     </div>
-    <select name="select_template" size="1" (change)="onSelect($event.target.value)">
+    <!-- <select name="select_template" size="1" (change)="onSelect($event.target.value)">
         <option value="" disabled>Select {{search_type}}s</option>
         <option *ngFor="let t of get_result" value="{{t._id}}">{{t._id}}</option>
-    </select> 
+    </select>  -->
+
+    <table style="width: 100%;" mat-table matSort [dataSource]="dataSource">
+        <ng-container *ngFor="let column of displayedColumns ; let i=index">
+          <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[i]}} </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+          </ng-container>
+        </ng-container>
+    
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell class="flex-stretch" *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+              [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator #matpaginator [hidden]  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+    
+    
+
     <div mat-dialog-actions>
         <button mat-button (click)="onNoClick()">Cancel</button>
         <button mat-button  (click)="onOkClick()">Ok</button>

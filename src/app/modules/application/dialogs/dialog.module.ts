@@ -59,6 +59,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AssociateObservationUnit } from './associate-observation-unit.component';
 import { MatMenuModule } from '@angular/material';
 import {ChipListComponent} from 'src/app/components/chip-list/chip-list.component'
+import { AssociateObservedVariable } from './associate-observed-variable.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import {ChipListComponent} from 'src/app/components/chip-list/chip-list.componen
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
+    AssociateObservedVariable,
     ChipListComponent
   ],
   imports: [
@@ -151,6 +153,7 @@ import {ChipListComponent} from 'src/app/components/chip-list/chip-list.componen
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
+    AssociateObservedVariable,
     ChipListComponent
   ],
   entryComponents:[
@@ -179,6 +182,7 @@ import {ChipListComponent} from 'src/app/components/chip-list/chip-list.componen
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
+    AssociateObservedVariable,
     ChipListComponent
   ]
 })

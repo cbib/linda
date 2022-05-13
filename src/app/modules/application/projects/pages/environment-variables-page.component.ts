@@ -10,6 +10,7 @@ import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-g
 import { MatDialog } from '@angular/material/dialog';
 import { UserInterface } from 'src/app/models/linda/person';
 import { EnvironmentInterface, Environment } from 'src/app/models/linda/environment';
+import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 
 @Component({
   selector: 'app-environment-variables-page',
@@ -131,7 +132,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
           }
       });
   }
-  add() {
+  add(template:boolean=false) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let new_step = 0
     if (!this.currentUser.tutoriel_done) {
@@ -147,22 +148,32 @@ export class EnvironmentVariablesPageComponent implements OnInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
-    formDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.event == 'Confirmed') {
+    if (template){
+      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'event', values: {}, parent_id: this.parent_id } });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
           console.log(result)
-          let environment: Environment= result["formData"]["form"]
-          this.globalService.add(environment, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
-        data => {
-            if (data["success"]) {
-                console.log(data)
-                this.ngOnInit()
-            }
-        });;
         }
-      }
-    });
+      });
+    }
+    else{
+      const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
+      formDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          if (result.event == 'Confirmed') {
+            console.log(result)
+            let environment: Environment= result["formData"]["form"]
+            this.globalService.add(environment, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+          data => {
+              if (data["success"]) {
+                  console.log(data)
+                  this.ngOnInit()
+              }
+          });;
+          }
+        }
+      });
+    }
 
 
   }

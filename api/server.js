@@ -7449,10 +7449,10 @@ router.get('/get_templates/:person_key', function (req, res) {
 
 
 //Get templates - used in template selection dialog component
-router.get('/get_templates_by_user/:user_key/:model_coll/', function (req, res) {
+router.get('/get_templates_by_user/:user_key/:model_type/', function (req, res) {
     try {
         var user_key = req.pathParams.user_key;
-        var model_coll = req.pathParams.model_coll;
+        var model_type = req.pathParams.model_type;
 
         var coll_name = 'templates'
         var data = [];
@@ -7477,8 +7477,7 @@ router.get('/get_templates_by_user/:user_key/:model_coll/', function (req, res) 
         }
 
         //data = coll.byExample().toArray();
-
-
+        data=data.filter(template=>template['_model_type']===model_type)
         res.send(data);
     }
     catch (e) {
@@ -7490,7 +7489,7 @@ router.get('/get_templates_by_user/:user_key/:model_coll/', function (req, res) 
 
 })
     .pathParam('user_key', joi.string().required(), 'model requested.')
-    .pathParam('model_coll', joi.string().required(), 'unique key.')
+    .pathParam('model_type', joi.string().required(), 'unique key.')
     .response(joi.array().items(joi.object().required()).required(), 'Entry stored in the collection.')
     .summary('Retrieve an entry')
     .description('Retrieves an entry from the "myFoxxCollection" collection by key.');

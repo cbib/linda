@@ -229,7 +229,7 @@ export class PlotDesign implements PlotDesignInterface{
     add_samples(_samples:string[]){
         this["Associated samples"].value=this["Associated samples"].value.concat(_samples)
     }
-    get_samples(){
+    get_samples():{}[]{
         return this["Associated samples"].value
     }
     static create_plot_design(obj) {

@@ -133,7 +133,13 @@ export class StudiesPageComponent implements OnInit,AfterViewInit {
     }
     help(button_type:string){
         if(button_type==='edit'){
-            this.help_message="Edit project page"
+            this.help_message="Edit Study details"
+        }
+        else if (button_type==='remove'){
+            this.help_message="Remove study and all components associated "
+        }
+        else{
+            this.help_message="Share your study with other Linda users (admin only) "
         }
     }
     get get_help_message(){

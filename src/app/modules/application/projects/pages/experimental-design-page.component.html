@@ -194,12 +194,18 @@
                                   <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
                                     Add experimental factor 
                                   </button>
-                                  <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
+                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
+                                    Extract samples 
+                                  </button>
+                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addObservations()">
+                                    Add Observations 
+                                  </button>
+                                  <!-- <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples 
                                   </button>
                                   <button *ngIf="get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeSample()">
                                     Delete samples 
-                                  </button>
+                                  </button> -->
                                 <table  class="table table-bordered heading-hvr">  
                                     <thead>  
                                         <tr>  
@@ -256,7 +262,7 @@
                                                 </tr>  
                                                 </tbody>   -->
                                                 <!-- Mode par block et par plot (deux niveaux d'ouvverture (par block et par plot)) --> 
-                                                <thead class="bg-dark text-white">  
+                                                <!-- <thead class="bg-dark text-white">  
                                                     <tr>  
                                                         <th> </th> 
                                                         <th>Plot number</th>  
@@ -301,19 +307,20 @@
                                                         </table>
                                                         </td>
                                                     </tr>
-                                                </tbody>  
+                                                </tbody> -->  
                                                 <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) --> 
                                                 <!-- <thead class="bg-dark text-white">  
                                                     <tr>  
                                                         <th> </th> 
-                                                        <th>Plot number</th>  
+                                                        <th>Plot number</th> 
+                                                        <th>Row number</th>  
                                                         <th>Column number</th> 
                                                         <th>Associated material source</th> 
                                                         <th># biological material </th> 
                                                         <th>replicate number</th> 
                                                         <th>Observation unit uuid</th> 
                                                         <th>Samples</th> 
-                                                        <th>Row number</th> 
+                                                        
                                                         <th>Harvested date</th>
                                                     </tr>  
                                                  </thead> 
@@ -324,13 +331,14 @@
                                                             <button *ngIf="secondhideme[j]" (click)="secondhideme[j] = !secondhideme[j]" ></button>
                                                         </td> 
                                                         <td>{{plotInfo['Plot number'].value}}</td>
+                                                        <td>{{rowInfo['Row number'].value}}</td> 
                                                         <td>{{plotInfo['Column number'].value}}</td>
                                                         <td>{{get_associated_material_source(plotInfo)}}</td>
                                                         <td>{{get_associated_biological_material(plotInfo)}}</td>
                                                         <td>{{get_replicate_number(plotInfo)}}</td>
                                                         <td>{{get_observation_uuid(plotInfo)}}</td> 
                                                         <td>{{get_associated_sample(plotInfo)}}</td>
-                                                        <td>{{rowInfo['Row number'].value}}</td>  
+                                                         
                                                          <td>{{'Not defined yet'}}</td> 
                                                     </tr>
                                                     <tr [hidden]="!secondhideme[j]" class="sub-table no-bg">  
@@ -339,20 +347,158 @@
                                                         <table class="table mb-0 table-striped"> 
                                                             <thead>  
                                                                 <tr>   
-                                                                    <th width="50" >Row number</th> 
-                                                                    <th width="50">Harvested date</th>
+                                                                    <th width="50">Associated sample ID</th> 
+                                                                    <th width="50">Sample description</th>
+                                                                    <th width="50">Biological material UUID</th>  
+                                                                    <th width="50"> Harvested date</th>
                                                                 </tr>  
                                                             </thead> 
                                                             <tbody>
-                                                                <tr class="nga-card-step" *ngFor="let comp of plot_sub_components">  
-                                                                    <td>{{rowInfo['Row number'].value}}</td>  
-                                                                    <td>{{'Not defined yet'}}</td> 
-                                                                    </tr>  
+                                                                <tr class="nga-card-step" *ngFor="let comp of get_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value)">  
+                                                                    <td>{{comp['Sample ID']}}</td>  
+                                                                    <td>{{comp['Sample description']}}</td>  
+                                                                    <td>{{comp['bmUUID']}}</td> 
+                                                                    <td>{{comp['Collection date']}}</td> 
+                                                                </tr>
+                                                                  
                                                                 </tbody>
                                                         </table>
                                                         </td>
                                                     </tr>
-                                                </tbody> -->  
+                                                </tbody>  -->
+                                                <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) + third levle on harvested date--> 
+                                                <thead class="bg-dark text-white">  
+                                                    <tr>  
+                                                        <th> </th> 
+                                                        <th>Plot number</th> 
+                                                        <th>Row number</th>  
+                                                        <th>Column number</th> 
+                                                        <th>Associated material source</th> 
+                                                        <th># biological material </th> 
+                                                        <th>replicate number</th> 
+                                                        <th>Observation unit uuid</th> 
+                                                        <!-- <th>Samples</th>  -->
+                                                    </tr>  
+                                                 </thead> 
+                                                <tbody *ngFor="let plotInfo of get_design.Blocking.value[i]['Plot design'].value; let j = index" >  
+                                                    <tr class="nga-card-step" *ngFor="let rowInfo of plotInfo['Row design'].value">
+                                                        <td align="center">  
+                                                            <button *ngIf="!secondhideme[j]" (click)="showPlotInfo(j,plotInfo['Plot number'].value)" ></button>
+                                                            <button *ngIf="secondhideme[j]" (click)="secondhideme[j] = !secondhideme[j]" ></button>
+                                                        </td> 
+                                                        <td>{{plotInfo['Plot number'].value}}</td>
+                                                        <td>{{rowInfo['Row number'].value}}</td> 
+                                                        <td>{{plotInfo['Column number'].value}}</td>
+                                                        <td>{{get_associated_material_source(plotInfo)}}</td>
+                                                        <td>{{get_associated_biological_material(plotInfo)}}</td>
+                                                        <td>{{get_replicate_number(plotInfo)}}</td>
+                                                        <td>{{get_observation_uuid(plotInfo)}}</td> 
+                                                        <!-- <td>{{get_associated_sample(plotInfo)}}</td> -->
+                                                    </tr>
+                                                    <tr [hidden]="!secondhideme[j]" class="sub-table no-bg">  
+                                                        <td align="center"> </td>  
+                                                        <td colspan="15" class="p-0">   
+                                                        <table class="table mb-0 table-striped"> 
+                                                            <thead>  
+                                                                <tr> 
+                                                                    <th> </th>   
+                                                                    <th>Collection date</th> 
+                                                                    <th>Samples</th> 
+
+   
+                                                                    
+                                                                </tr>  
+                                                            </thead> 
+                                                            <tbody *ngFor="let date of get_collection_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as k">
+                                                                <tr class="nga-card-step" >  
+                                                                    <td align="center">  
+                                                                        <button *ngIf="!thirdhideme[k]" (click)="showSampleDateInfo(k,plotInfo['Plot number'].value)" ></button>
+                                                                        <button *ngIf="thirdhideme[k]" (click)="thirdhideme[k] = !thirdhideme[k]" ></button>
+                                                                    </td> 
+                                                                    <td>{{date}}</td>
+                                                                    <td>{{get_associated_sample(plotInfo, date)}}</td>
+                                                                    
+                                                                     
+                                                                </tr>
+                                                                <tr [hidden]="!thirdhideme[k]" class="sub-table no-bg">  
+                                                                    <td align="center"> </td>  
+                                                                    <td colspan="15" class="p-0">   
+                                                                    <table class="table mb-0 table-striped"> 
+                                                                        <thead>  
+                                                                            <tr>   
+                                                                                <th width="50">Associated sample ID</th> 
+                                                                                <th width="50">Sample description</th> 
+                                                                                <th width="50">Biological material UUID</th>  
+                                                                                
+                                                                            </tr>  
+                                                                        </thead> 
+                                                                        <tbody>
+                                                                            <tr class="nga-card-step" *ngFor="let comp of get_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
+                                                                                <td>{{comp['Sample ID']}}</td>  
+                                                                                <td>{{comp['Sample description']}}</td>  
+                                                                                <td>{{comp['bmUUID']}}</td> 
+                                                                                
+                                                                            </tr>
+                                                                              
+                                                                            </tbody>
+                                                                    </table>
+                                                                    </td>
+                                                                </tr>
+                                                                  
+                                                                </tbody>
+                                                        </table>
+                                                        <table class="table mb-0 table-striped"> 
+                                                            <thead>  
+                                                                <tr> 
+                                                                    <th> </th>   
+                                                                    <th>Observation date</th> 
+                                                                    <th>Observations</th> 
+
+   
+                                                                    
+                                                                </tr>  
+                                                            </thead> 
+                                                            <tbody *ngFor="let date of get_collection_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as k">
+                                                                <tr class="nga-card-step" >  
+                                                                    <td align="center">  
+                                                                        <button *ngIf="!thirdhideme[k]" (click)="showSampleDateInfo(k,plotInfo['Plot number'].value)" ></button>
+                                                                        <button *ngIf="thirdhideme[k]" (click)="thirdhideme[k] = !thirdhideme[k]" ></button>
+                                                                    </td> 
+                                                                    <td>{{date}}</td>
+                                                                    <td>{{get_associated_sample(plotInfo, date)}}</td>
+                                                                    
+                                                                     
+                                                                </tr>
+                                                                <tr [hidden]="!thirdhideme[k]" class="sub-table no-bg">  
+                                                                    <td align="center"> </td>  
+                                                                    <td colspan="15" class="p-0">   
+                                                                    <table class="table mb-0 table-striped"> 
+                                                                        <thead>  
+                                                                            <tr>   
+                                                                                <th width="50">Associated sample ID</th> 
+                                                                                <th width="50">Sample description</th> 
+                                                                                <th width="50">Biological material UUID</th>  
+                                                                                
+                                                                            </tr>  
+                                                                        </thead> 
+                                                                        <tbody>
+                                                                            <tr class="nga-card-step" *ngFor="let comp of get_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
+                                                                                <td>{{comp['Sample ID']}}</td>  
+                                                                                <td>{{comp['Sample description']}}</td>  
+                                                                                <td>{{comp['bmUUID']}}</td> 
+                                                                                
+                                                                            </tr>
+                                                                              
+                                                                            </tbody>
+                                                                    </table>
+                                                                    </td>
+                                                                </tr>
+                                                                  
+                                                                </tbody>
+                                                        </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody> 
                                             </table>  
                                             </td>  
                                         </tr>  

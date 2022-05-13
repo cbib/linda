@@ -5,12 +5,13 @@ import { MatSort } from '@angular/material/sort'
 import { GlobalService, AlertService, OntologiesService } from '../../../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { ObservedVariableInterface, ObservedVariable} from 'src/app/models/linda/observed-variable';
+import { ObservedVariableInterface, ObservedVariable } from 'src/app/models/linda/observed-variable';
 import { UserInterface } from 'src/app/models/linda/person';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 
 @Component({
   selector: 'app-observed-variables-page',
@@ -19,7 +20,7 @@ import { Observable } from 'rxjs';
 })
 export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
   @Input('level') level: number;
-  @Input('parent_id') parent_id:string;
+  @Input('parent_id') parent_id: string;
   @Input('model_key') model_key: string;
   @Input('model_type') model_type: string;
   @Input('mode') mode: string;
@@ -68,7 +69,7 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this._cdr.detectChanges()
-}
+  }
 
   async ngOnInit() {
     this.dataSource = new MatTableDataSource([]);
@@ -80,7 +81,7 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
 
   }
 
-  async get_all_observed_variables(){
+  async get_all_observed_variables() {
     await this.globalService.get_all_observed_variables(this.parent_id.split('/')[1]).toPromise().then(
       data => {
         this.dataSource = new MatTableDataSource(data);
@@ -88,8 +89,8 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
-        
-      
+
+
   }
   public handlePageBottom(event: PageEvent) {
     this.paginator.pageSize = event.pageSize;
@@ -114,57 +115,99 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
   onRemove(element: ObservedVariableInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
-          ////console.log(data)
-          if (data["success"]) {
-              console.log(data["message"])
-              var message = element._id + " has been removed from your history !!"
-              this.alertService.success(message)
-              this.ngOnInit()
-          }
-          else {
-              this.alertService.error("this form contains errors! " + data["message"]);
-          }
+        ////console.log(data)
+        if (data["success"]) {
+          console.log(data["message"])
+          var message = element._id + " has been removed from your history !!"
+          this.alertService.success(message)
+          this.ngOnInit()
+        }
+        else {
+          this.alertService.error("this form contains errors! " + data["message"]);
+        }
       });
   }
-  add() {
+  add(template: boolean = false) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let new_step = 0
     if (!this.currentUser.tutoriel_done) {
-        if (this.currentUser.tutoriel_step === "0") {
-            new_step = 1
-            this.currentUser.tutoriel_step = new_step.toString()
-            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-        else {
-            this.alertService.error("You are not in the right form as requested by the tutorial")
-        }
+      if (this.currentUser.tutoriel_step === "0") {
+        new_step = 1
+        this.currentUser.tutoriel_step = new_step.toString()
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+      else {
+        this.alertService.error("You are not in the right form as requested by the tutorial")
+      }
     }
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true, width: '1200px', data: { model_type: this.model_type,  parent_id:this.parent_id, formData: {} , mode: "preprocess" } });
-    formDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.event == 'Confirmed') {
+    if (template) {
+      const dialogRef = this.dialog.open(TemplateSelectionComponent, { disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'observed_variable', values: {}, parent_id: this.parent_id } });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
           console.log(result)
-          let obs_variable: ObservedVariable= result["formData"]["form"]
-          this.globalService.add(obs_variable, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
-        data => {
-            if (data["success"]) {
-                console.log(data)
-                this.ngOnInit()
+          var keys = Object.keys(result);
+
+          for (var i = 0; i < keys.length; i++) {
+            if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+              keys.splice(i, 1);
+              //var k=this.keys[i]
+              i--;
             }
-        });;
+          }
+          var new_values = {}
+          keys.forEach(attr => { new_values[attr] = result[attr] })
+          ////////console.log(new_values)
+          this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
+            data => {
+              if (data["success"]) {
+                //////////console.log(data["message"])
+                //this.model_id=data["_id"];
+                this.ngOnInit();
+                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
+                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result['_id'] + " has been successfully integrated in your history !!"
+                this.alertService.success(message)
+                return true;
+              }
+              else {
+                //////////console.log(data["message"])
+                this.alertService.error("this form contains errors! " + data["message"]);
+
+                return false;
+                //this.router.navigate(['/studies']);
+              }
+            }
+          );
         }
-      }
-    });
+      });
+    }
+    else {
+      const formDialogRef = this.dialog.open(FormGenericComponent, { disableClose: true, width: '1400px', data: { model_type: this.model_type, parent_id: this.parent_id, formData: {}, mode: "preprocess" } });
+      formDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          if (result.event == 'Confirmed') {
+            console.log(result)
+            let obs_variable: ObservedVariable = result["formData"]["form"]
+            this.globalService.add(obs_variable, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+              data => {
+                if (data["success"]) {
+                  console.log(data)
+                  this.ngOnInit()
+                }
+              });;
+          }
+        }
+      });
+    }
   }
   onEdit(element: ObservedVariableInterface) {
     console.warn("a study has been selected")
     console.warn(element)
     //this.notify.emit(elem)
     //let role = this.roles.filter(inv => inv.study_id == elem._id)[0]['role']
-    this.router.navigate(['/observed_variable_page'], { queryParams: { level: "1", grand_parent_id:this.grand_parent_id, parent_id: this.parent_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "obs_var_info", role: this.role, group_key: this.group_key } });
+    this.router.navigate(['/observed_variable_page'], { queryParams: { level: "1", grand_parent_id: this.grand_parent_id, parent_id: this.parent_id, model_key: element['_key'], model_id: element['_id'], model_type: this.model_type, mode: "edit", activeTab: "obs_var_info", role: this.role, group_key: this.group_key } });
 
 
   }

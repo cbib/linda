@@ -11,6 +11,7 @@ import { ExperimentalFactor } from 'src/app/models/linda/experimental_factor';
 import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
+import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 
 @Component({
   selector: 'app-experimental-factors-page',
@@ -134,7 +135,7 @@ export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
           }
       });
   }
-  add(){
+  add(template:boolean=false){
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let new_step = 0
     if (!this.currentUser.tutoriel_done) {
@@ -150,23 +151,33 @@ export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
     console.log(this.model_type)
     console.log(this.parent_id)
-    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true, width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
-    formDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.event == 'Confirmed') {
+    if (template){
+      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'experimental_factor', values: {}, parent_id: this.parent_id } });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
           console.log(result)
-          let exp_factor: ExperimentalFactor= result["formData"]["form"]
-          this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
-        data => {
-            if (data["success"]) {
-                console.log(data)
-                //this.ngOnInit()
-                this.reloadComponent()
-            }
-        });;
         }
-      }
-    });
+      });
+    }
+    else{
+      const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true, width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
+      formDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          if (result.event == 'Confirmed') {
+            console.log(result)
+            let exp_factor: ExperimentalFactor= result["formData"]["form"]
+            this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+          data => {
+              if (data["success"]) {
+                  console.log(data)
+                  //this.ngOnInit()
+                  this.reloadComponent()
+              }
+          });;
+          }
+        }
+      });
+    }
 
     
   }

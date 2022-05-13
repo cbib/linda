@@ -162,6 +162,25 @@ export class ProjectsPageComponent implements OnInit, AfterViewInit {
         if(button_type==='edit'){
             this.help_message="Edit project page"
         }
+        else if(button_type==='edit'){
+            this.help_message="Edit project details"
+        }
+        else if (button_type==='remove'){
+            this.help_message="Remove project and all components associated "
+        }
+        
+        else if(button_type==='explore'){
+            this.help_message="Explore project - Combine differents variables with experimental factor(s) in differents of levels of observations"
+        }
+        else if(button_type==='exportisatab'){
+            this.help_message="Export project in ISA tab format - ISA tab format details (https://isa-specs.readthedocs.io/en/latest/isatab.html)"
+        }
+        else if (button_type==='exporttab'){
+            this.help_message="Export project in popular format (tsv, csv, json)"
+        }
+        else{
+            this.help_message="Share your study with other Linda users (admin only) "
+        }
     }
     get get_help_message(){
         return this.help_message

@@ -27,7 +27,7 @@ interface DialogData {
   styleUrls: ['./associate-biological-material.component.css']
 })
 
-export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
+export class AssociateBiologicalMaterial implements OnInit {
     @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
     private model_id: string;
@@ -63,9 +63,6 @@ export class AssociateBiologicalMaterial implements OnInit, AfterViewInit {
         //console.log(this.parent_id)
         await this.set_all_biological_materials()
         this.loaded = true
-    }
-    ngAfterViewInit() {
-      
     }
     goto_material_form(){
       this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create", role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });

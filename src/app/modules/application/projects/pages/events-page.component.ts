@@ -11,6 +11,7 @@ import { first } from 'rxjs/operators';
 import { FormGenericComponent } from 'src/app/modules/application/dialogs/form-generic.component'
 import { MatDialog } from '@angular/material/dialog';
 import { UserInterface } from 'src/app/models/linda/person';
+import { TemplateSelectionComponent } from '../../dialogs/template-selection.component';
 
 @Component({
   selector: 'app-events-page',
@@ -129,7 +130,7 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
     this.router.onSameUrlNavigation = 'reload';
     this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "events", role: this.role, group_key: this.group_key } });
   }
-  add() {
+  add(template:boolean=false) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let new_step = 0
     if (!this.currentUser.tutoriel_done) {
@@ -142,22 +143,32 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
             this.alertService.error("You are not in the right form as requested by the tutorial")
         }
     }
-    const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
-    formDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        if (result.event == 'Confirmed') {
-          //console.log(result)
-          let event: LindaEvent= result["formData"]["form"]
-          this.globalService.add(event, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
-        data => {
-            if (data["success"]) {
-                //console.log(data)
-                this.ngOnInit()
-            }
-        });;
+    if (template){
+      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'event', values: {}, parent_id: this.parent_id } });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          console.log(result)
         }
-      }
-    });
+      });
+    }
+    else{
+      const formDialogRef = this.dialog.open(FormGenericComponent, {disableClose: true,  width: '1200px', data: { model_type: this.model_type, parent_id:this.parent_id, formData: {} , mode: "preprocess"} });
+      formDialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          if (result.event == 'Confirmed') {
+            //console.log(result)
+            let event: LindaEvent= result["formData"]["form"]
+            this.globalService.add(event, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+          data => {
+              if (data["success"]) {
+                  //console.log(data)
+                  this.ngOnInit()
+              }
+          });;
+          }
+        }
+      });
+    }
 
 
   }

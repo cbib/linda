@@ -33,6 +33,12 @@ import { AssociateObservationUnit } from '../../dialogs/associate-observation-un
 import { BiologicalMaterialFullInterface } from 'src/app/models/linda/biological-material';
 import { timeStamp } from 'console';
 import { SampleSelectionComponent } from '../../dialogs/sample-selection.component';
+import { AssociateObservedVariable } from '../../dialogs/associate-observed-variable.component';
+
+export interface subComponent{
+    'Associated biological material':[]
+    'Associated sample':[]
+}
 
 @Component({
     selector: 'app-experimental-design-page',
@@ -61,7 +67,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         totalRowPerPlotControl: new FormControl(''),
         totalBlockPerRowControl: new FormControl('')
     })
-    plot_sub_components = ['Associated_biological_material', 'Associated samples']
+    plot_sub_components:subComponent[] = []
     bm_data = []
     //experimental_design_blocks:BlockDesign[]=[]
     design_types = ["CompleteBlockDesign", "IncompleteBlockDesign"]
@@ -96,8 +102,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     ///// TESST PART
     hideme = [];
     secondhideme = [];
+    thirdhideme = [];
     Index: any;
     SecondIndex: any;
+    ThirdIndex: any;
 
     /* products = [];  
     countryCode: any;  
@@ -155,12 +163,23 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     }
+    ngOnDestroy(): void {
+        //Called once, before the instance is destroyed.
+        //Add 'implements OnDestroy' to the class.
+    }
     ngAfterViewInit() {
         /* this.route.queryParams.subscribe(params => {
             this.activeTab = params['activeTab'];
             this._cdr.detectChanges()
         }); */
     }
+    get_collection_dates(blocknum:number,plotnum:number){
+        return Array.from(new Set(this.design.Blocking.value.filter(block=> block['Block number'].value===blocknum)[0]['Plot design'].value.filter(plot=>plot['Plot number'].value===plotnum)[0].get_samples().map(sample=>sample['Collection date'])))
+    }
+    get_plot_sub_components(blocknum:number, plotnum:number, date:string){
+        return this.design.Blocking.value.filter(block=> block['Block number'].value===blocknum)[0]['Plot design'].value.filter(plot=>plot['Plot number'].value===plotnum)[0].get_samples().filter(sample=>sample['Collection date']===date)
+    }
+
     get_design_by_key() {
         this.globalService.get_experimental_design_by_key(this.model_key).toPromise().then(async res => {
             if (res.success) {
@@ -310,6 +329,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 if (data['Associated observation units'].value !== null) {
                     this.observationUnitLoaded = true
                 }
+                this.get_collection_dates(1,1)
             }
         });
 
@@ -333,6 +353,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     onExtractDesign() {
         this.designLoaded = false
         this.blockDesignLoaded = false
+        this.removeBiologicalMaterial()
         console.warn(this.BlockDesignForm.controls)
         this.BlockDesignForm.get('totalBlockControl').value
         this.total_block_number = this.BlockDesignForm.get('totalBlockControl').value
@@ -365,6 +386,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
     onExtractBlockDesign() {
         this.blockDesignLoaded = false
+        this.removeBiologicalMaterial()
         console.warn(this.BlockDesignForm.controls)
         this.BlockDesignForm.get('totalBlockControl').value
         this.total_block_number = this.BlockDesignForm.get('totalBlockControl').value
@@ -399,7 +421,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
         else {
             this.design.Blocking.value.forEach(block_design => {
-
                 if (this.block_design_type === "CompleteBlockDesign") {
                     this.complete_block_design_type[this.block_design_subtype].value = true
                     block_design['Complete Block Design'].value.push(this.complete_block_design_type)
@@ -423,7 +444,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                             block_design.add_plot_design(plot_design)
                             //var plot_design:PlotDesign=new PlotDesign()
                             plot++
-
                         }
                         else {
                             plot_design.add_row_design(row_design)
@@ -432,14 +452,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                             block_design.add_plot_design(plot_design)
                         } */
                     }
-
-
-
                 }
             })
             this.blockDesignLoaded = true
         }
-
     }
     addObservationUnits() {
         const dialogRef = this.dialog.open(AssociateObservationUnit, { disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", material_id: this.material_id, design: this.design, mode: 'create', model_key: '' } });
@@ -574,6 +590,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
+                    this.design['Associated biological Materials'].value=null
+                    this.design['Associated sample ID'].value=null
                     this.design.Blocking.value.forEach(block_design => {
                         block_design['Plot design'].value.forEach(plot_design => {
                             plot_design.Associate_material_source.value = null
@@ -582,8 +600,12 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         })
                     })
                     this.biologicalMaterialLoaded = false
-                    this.removeObservationUnits(false)
-                    this.removeSample(false)
+                    if (this.design.get_observation_unit_id()!==null){
+                        this.removeObservationUnits(false)
+                    }
+                    if (this.design.get_sample_id()!==null){
+                        this.removeSample(false)
+                    }
                     this.onSave()
                 }
             }
@@ -628,21 +650,21 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         if  (confirm){
             const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'removesample', model_type: "sample" } });
             dialogRef.afterClosed().subscribe(async (result) => {
-            if (result) {
-                if (result.event == 'Confirmed') {
-                    this.design['Associated sample'].value = []
-                    this.design.Blocking.value.forEach(block_design => {
-                        block_design['Plot design'].value.forEach(plot_design => {
-                            plot_design['Associated samples'].value = []
+                if (result) {
+                    if (result.event == 'Confirmed') {
+                        this.design['Associated sample'].value = []
+                        this.design.Blocking.value.forEach(block_design => {
+                            block_design['Plot design'].value.forEach(plot_design => {
+                                plot_design['Associated samples'].value = []
+                            })
                         })
-                    })
-                    this.sampleLoaded = false
-                    await this.globalService.remove(this.design['Associated sample ID'].value).toPromise()
-                    this.design['Associated sample ID'].value = null
-                    this.onSave()
+                        this.sampleLoaded = false
+                        await this.globalService.remove(this.design['Associated sample ID'].value).toPromise()
+                        this.design['Associated sample ID'].value = null
+                        this.onSave()
+                    }
                 }
-            }
-        });
+            });
         }
         else{
             this.design['Associated sample'].value = []
@@ -659,11 +681,31 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         
     }
 
+    addObservations(){
+        const dialogRef = this.dialog.open(
+            AssociateObservedVariable, 
+            { 
+                disableClose: true, 
+                width: '95%', 
+                autoFocus: true, 
+                maxHeight: '1000px', 
+                data: { 
+                    model_id: "", 
+                    parent_id: this.parent_id, 
+                    model_type: "observed_variable", 
+                    material_id: this.material_id, 
+                    total_available_plots: this.design['number of entries'].value,
+                    design: this.design, 
+                    mode: 'create', 
+                    model_key: '' } });
+        dialogRef.afterClosed().subscribe(async result => {
+            if (result.event === 'Confirmed') {
 
-    ngOnDestroy(): void {
-        //Called once, before the instance is destroyed.
-        //Add 'implements OnDestroy' to the class.
+            }
+        });
     }
+
+    
     //edit mode submission
     onSave() {
         this.globalService.update_document(this.model_key, this.design, this.model_type, false).pipe(first()).toPromise().then(
@@ -816,8 +858,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     get_associated_biological_material(_pd: PlotDesign) {
         return _pd['Associated_biological_material'].value.length
     }
-    get_associated_sample(_pd: PlotDesign) {
-        return _pd['Associated samples'].value.length
+    get_associated_sample(_pd: PlotDesign, date:string) {
+        return _pd['Associated samples'].value.filter(sample=>sample['Collection date']===date).length
     }
     get_replicate_number(_pd: PlotDesign): number | string {
         if (_pd['Replicate number'].value !== null) {
@@ -855,6 +897,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     showPlotInfo(j: number, value) {
         this.secondhideme[j] = !this.secondhideme[j];
         this.SecondIndex = j;
+    }
+    showSampleDateInfo(k: number, value) {
+        this.thirdhideme[k] = !this.thirdhideme[k];
+        this.ThirdIndex = k;
     }
     close() {
         this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id: this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });

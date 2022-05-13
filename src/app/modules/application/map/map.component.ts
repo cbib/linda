@@ -24,15 +24,10 @@ export class MapComponent implements OnInit {
   private geoCoder;
   public searchElementRef: ElementRef;
   
-
   constructor(
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone
   ) { }
-  
-
-
-
 
   ngOnInit() {
     this.mapsAPILoader.load().then(() => {
@@ -41,7 +36,6 @@ export class MapComponent implements OnInit {
     });
     let map: google.maps.Map;
     const center: google.maps.LatLngLiteral = {lat: 30, lng: -110};
-
   }
 
   private setCurrentLocation() {
@@ -54,7 +48,6 @@ export class MapComponent implements OnInit {
       });
     }
   }
-
   
 
   getAddress(latitude, longitude) {
