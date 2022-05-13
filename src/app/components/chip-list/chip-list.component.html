@@ -1,0 +1,6 @@
+<mat-chip-list>
+    <mat-chip  *ngFor="let skill of skills">
+        {{skill.name}}
+        <mat-icon (click)="onRemove(skill.name)" matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+</mat-chip-list>
