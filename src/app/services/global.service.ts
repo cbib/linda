@@ -141,6 +141,12 @@ export class GlobalService {
     get_ncbi_taxon_data():Observable<any>{
         return this.http.get(this.APIUrl + "get_ncbi_taxon_data/");
     }
+    get_ncbi_taxon_data_by_species_regex(regex:string):Observable<any>{
+        return this.http.get(this.APIUrl + "get_ncbi_taxon_data_by_species_regex/"+ regex);
+    }
+    get_ncbi_taxon_data_by_taxon_regex(regex:string):Observable<any>{
+        return this.http.get(this.APIUrl + "get_ncbi_taxon_data_by_taxon_regex/"+ regex);
+    }
     get_germplasm_taxon_group_accession_numbers(taxon_group:string):Observable<ResDataModal>{
         return this.http.get<ResDataModal>(this.APIUrl + "get_germplasm_taxon_group_accession_numbers/" + taxon_group);
     }

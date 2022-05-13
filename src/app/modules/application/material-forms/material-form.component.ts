@@ -338,17 +338,30 @@ export class MaterialFormComponent implements OnInit {
     this.biologicalMaterialControl = this.materialTable.get('biologicalMaterialRows') as FormArray;
     this.generalControl = this.materialTable.get('generalRows') as FormArray;
   }
+  add_custom_material(){
+    let formDialogRef2 = this.bmdialog.open(BiologicalMaterialComponent, { width: '1200px', data: { material_type: 'Material ID', data_filename: "", mode:"no_data_files", selected_data:[] } });
+    formDialogRef2.afterClosed().subscribe((result2) => {
+      if (result2) {
+        if (result2.event == 'Confirmed') {
+          this.RowData=this.RowData.concat(result2.bm_list)
+            this.RefreshAll()
+        }
+      }
+    });
+  }
  
   getSelectedRows():void{
     const selectedNodes = this.selectAgGrid.api.getSelectedNodes();
     console.log(selectedNodes)
     const selectedData = selectedNodes.map(node => node.data);
     console.log(selectedData)
-    let formDialogRef2 = this.bmdialog.open(BiologicalMaterialComponent, { width: '1200px', data: { material_type: 'Material ID', data_filename: "", mode:"no_data_files" } });
+    let formDialogRef2 = this.bmdialog.open(BiologicalMaterialComponent, { disableClose:true, width: '1200px', data: { material_type: 'Material ID', data_filename: "", mode:"no_data_files", selected_data:selectedData } });
     formDialogRef2.afterClosed().subscribe((result2) => {
       if (result2) {
         if (result2.event == 'Confirmed') {
-            let biological_material_n:number = (result2.biological_material_n as number)
+            console.log(result2.bm_list)
+
+            /* let biological_material_n:number = (result2.biological_material_n as number)
             let replication:number = (result2.replication as number)
             for (let index = 0; index < selectedData.length; index++) {
               const element = selectedData[index];
@@ -372,7 +385,8 @@ export class MaterialFormComponent implements OnInit {
                   this.RowData.push(bm)
                 }
               }
-            }
+            } */
+            this.RowData=this.RowData.concat(result2.bm_list)
             this.RefreshAll()
         }
       }
@@ -581,10 +595,9 @@ export class MaterialFormComponent implements OnInit {
   onInputChanges(field:string,value: string){
     console.log(value)
   }
-  
   async get_ncbi_taxon(){
     this.taxons = await this.globalService.get_ncbi_taxon_data().toPromise()
-    console.log(this.taxons[0])
+    //console.log(this.taxons[0])
   }
   async get_germplasm_unique_taxon_groups(){
     this.unique_taxon_groups = await this.globalService.get_germplasm_unique_taxon_groups().toPromise()
@@ -639,9 +652,7 @@ export class MaterialFormComponent implements OnInit {
   get get_germplasm_loaded():boolean{
     return this.germplasm_loaded
   }
-  add_custom_material(){
-
-  }
+  
   CleanTable():void{
     this.RowData=[]
     this.RefreshAll()

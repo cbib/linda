@@ -58,6 +58,7 @@ import { AssociateBiologicalMaterial } from './associate-biological-material.com
 import { MatInputModule } from '@angular/material/input';
 import { AssociateObservationUnit } from './associate-observation-unit.component';
 import { MatMenuModule } from '@angular/material';
+import {ChipListComponent} from 'src/app/components/chip-list/chip-list.component'
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { MatMenuModule } from '@angular/material';
     EditFormComponent,
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
-    AssociateObservationUnit
+    AssociateObservationUnit,
+    ChipListComponent
   ],
   imports: [
     CommonModule,
@@ -148,7 +150,8 @@ import { MatMenuModule } from '@angular/material';
     EditFormComponent,
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
-    AssociateObservationUnit
+    AssociateObservationUnit,
+    ChipListComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -175,7 +178,8 @@ import { MatMenuModule } from '@angular/material';
     EditFormComponent,
     ProjectLoaderComponent,
     AssociateBiologicalMaterial,
-    AssociateObservationUnit
+    AssociateObservationUnit,
+    ChipListComponent
   ]
 })
 export class DialogModule { }

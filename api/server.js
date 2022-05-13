@@ -1165,7 +1165,51 @@ router.get('/get_ncbi_taxon_data/', function (req, res) {
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
 
-
+router.get('/get_ncbi_taxon_data_by_species_regex/:regex', function (req, res) {
+        var regex = req.pathParams.regex;
+        const coll = db._collection('NCBITaxons');
+        if (!coll) {
+            db._createDocumentCollection('NCBITaxons');
+        }
+        var get_data = db._query(aql`
+                FOR entry IN ${coll}
+                    LET RES=(FOR data in entry.data
+                        FILTER CONTAINS(data.species,${regex})
+                            RETURN data)
+                            RETURN RES
+                `).toArray();
+        //var result=get_data[0]
+        //console.log(get_data[0]['species'].length)
+        res.send(get_data[0]);
+    })
+        .pathParam('regex', joi.string().required(), 'regex to find reduced species set.')
+        .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+        .summary('List entry keys')
+        .description('Assembles a list of keys of entries in the collection.');
+    
+router.get('/get_ncbi_taxon_data_by_taxon_regex/:regex', function (req, res) {
+            var regex = req.pathParams.regex;
+            const coll = db._collection('NCBITaxons');
+            if (!coll) {
+                db._createDocumentCollection('NCBITaxons');
+            }
+            var get_data = db._query(aql`
+                    FOR entry IN ${coll}
+                        LET RES=(FOR data in entry.data
+                            FILTER CONTAINS(data.taxon,${regex})
+                                RETURN data)
+                                RETURN RES
+                    `).toArray();
+            //var result=get_data[0]
+            //console.log(get_data[0]['species'].length)
+            res.send(get_data[0]);
+        })
+            .pathParam('regex', joi.string().required(), 'regex to find reduced species set.')
+            .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+            .summary('List entry keys')
+            .description('Assembles a list of keys of entries in the collection.');
+        
+    
 /* var get_data = db._query(aql`
 LET document = DOCUMENT("NCBITaxons/33550834") 
 LET alteredList = (

@@ -95,8 +95,9 @@ export class SampleSelectionComponent implements OnInit {
     private globalService: GlobalService,
     private _cdr: ChangeDetectorRef,
     private alertService: AlertService,
-    public dialogRef: MatDialogRef<SampleSelectionComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData, public dialog: MatDialog) {
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<SampleSelectionComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData
+    ) {
     this.model_id = this.data.model_id;
     this.model_type = this.data.model_type;
     this.parent_id = this.data.parent_id;
