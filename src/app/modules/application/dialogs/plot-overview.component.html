@@ -1,0 +1,71 @@
+<h1 mat-dialog-title>Select Biological materials</h1>
+
+<!-- <div *ngIf="get_bm_data.length >0" >
+  {{get_bm_data.length}}
+</div> -->
+
+<div *ngIf="loaded">
+    <div mat-dialog-content class="mat-typography">
+        <h2>Biological material and plot design</h2>
+        <p>
+            Depending on the experimental design you defined previously, you need to pick up biological materials that
+            match your requirements.
+            Otherwise some plots will not be filled with any materials or materials will not be assigned to any plots in
+            your experimental design.
+        </p>
+        <h2>Experimental design details</h2>
+        <p> You have {{total_available_material_by_plots}} plots in your experimental design.
+            Take care to assign materials in respect of design capability !!
+            You could use differents configurations
+        </p>
+        <ul>
+            <li>
+                {{total_available_material_by_plots}} material source (with n plants) with one replicate each
+            </li>
+            <li>
+                1 material source but replicated {{total_available_material_by_plots}} times
+            </li>
+            <li>
+                {{total_available_material_by_plots/2}} material source (with n plants) with 2 replicate for each
+            </li>
+        </ul>
+        <br>
+        <p>
+            Which Biological materials do you plan to use ?
+        </p>
+        <alert></alert>
+        <!-- <span class="span-project"></span>
+        <mat-form-field appearance="standard">
+            <mat-label>Filter</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+        </mat-form-field>
+
+        <div>
+            <table style="width: 100%;" mat-table [dataSource]="get_dataSource" matSort cdkDropList>
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+                    <ng-container *ngIf="column==='Infraspecific name'">
+                        <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
+                        <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a>
+                        </td>
+
+                    </ng-container>
+                    <ng-container *ngIf="column!=='actions'">
+                        <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
+                        <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a>
+                        </td>
+                    </ng-container>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+                <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+            </table>
+            <mat-paginator #paginator (page)="handlePageBottom($event)"
+                [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5"
+                [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]"
+                aria-label="Select page of projects"></mat-paginator>
+        </div> -->
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">Cancel</button>
+        <button mat-button (click)="onOkClick()">Ok</button>
+    </div>
+</div>
