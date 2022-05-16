@@ -91,19 +91,6 @@
                 For in situ material, the region of provenance may be used when an accession is not available.
             </p>
             <textarea #myText2 [(ngModel)]="MaterialID" (paste)="onMaterialPaste($event)" (input)="onMaterialInput(myText2.value)"></textarea>
-            <!-- <section class="example-section">
-                <mat-radio-group [(ngModel)]="PasteMaterialIds" [ngModelOptions]="{standalone: true}">
-                    <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>
-                </mat-radio-group>
-            </section>
-            <mat-card *ngIf="PasteMaterialIds==='paste ids'">
-                <textarea #myText2 (paste)="onMaterialPaste($event)" (input)="onMaterialInput(myText2.value)"></textarea>
-            </mat-card>
-              <mat-card *ngIf="PasteMaterialIds===''">
-                <input [(ngModel)]="MaterialID" mdbInput placeholder="" type="text"
-                (keyup)="onMaterialIdChanged($event)" />
-              </mat-card> -->
-            
 
             <h4>biological material identifiers </h4>
             <p><b>Definition:</b>  Code used to identify the biological material in the data file. Should be unique within 

@@ -117,8 +117,8 @@
                     <tr>
                        <!--  <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Select</th> -->
                         <th scope="col" style="font-size:10px;text-align: center; cursor: move;">Detected value(s)</th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onExtractAllStudies()">Extract all</button></th>
-                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button (click)="onRemoveAllStudies()">Remove all</button></th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button [disabled]="has_associated_header_linda_id_by_values(detected_values)" (click)="onExtractAllStudies()">Extract all</button></th>
+                        <th scope="col" style="font-size:10px;text-align: center; cursor: move;"><button [disabled]="!has_associated_header_linda_id_by_values(detected_values)" (click)="onRemoveAllStudies()">Remove all</button></th>
                     </tr>
                 </thead>
                 <tbody>

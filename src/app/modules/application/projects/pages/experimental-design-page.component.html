@@ -214,6 +214,7 @@
                                             <th>Blocks per trial</th>  
                                             <th>Observation Unit external id</th> 
                                             <th>Associated samples</th> 
+                                            <th>Associated observations</th> 
 
                                         </tr>  
                                     </thead>  
@@ -228,6 +229,7 @@
                                             <td align="center">{{experimental_design_block['Blocks per trial'].value}}</td>
                                             <td align="center">{{get_observation_units(get_design)}}</td> 
                                             <td align="center">{{get_samples(get_design, experimental_design_block['Block number'].value)}}</td>
+                                            <td align="center">{{get_observations(get_design, experimental_design_block['Block number'].value)}}</td>
                                         </tr>  
                                         <!-- <div id="myresult" class="img-zoom-result"></div> -->  
                                         <tr [hidden]="!hideme[i]" class="sub-table no-bg">  
@@ -422,7 +424,7 @@
                                                                 </tr>
                                                                 <tr [hidden]="!thirdhideme[k]" class="sub-table no-bg">  
                                                                     <td align="center"> </td>  
-                                                                    <td colspan="15" class="p-0">   
+                                                                    <td class="p-0">   
                                                                     <table class="table mb-0 table-striped"> 
                                                                         <thead>  
                                                                             <tr>   
@@ -433,7 +435,7 @@
                                                                             </tr>  
                                                                         </thead> 
                                                                         <tbody>
-                                                                            <tr class="nga-card-step" *ngFor="let comp of get_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
+                                                                            <tr class="nga-card-step" *ngFor="let comp of get_sample_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
                                                                                 <td>{{comp['Sample ID']}}</td>  
                                                                                 <td>{{comp['Sample description']}}</td>  
                                                                                 <td>{{comp['bmUUID']}}</td> 
@@ -452,40 +454,37 @@
                                                                 <tr> 
                                                                     <th> </th>   
                                                                     <th>Observation date</th> 
-                                                                    <th>Observations</th> 
-
-   
-                                                                    
+                                                                    <th>Observations</th>   
                                                                 </tr>  
                                                             </thead> 
-                                                            <tbody *ngFor="let date of get_collection_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as k">
+                                                            <tbody *ngFor="let obsdate of get_observation_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as l">
                                                                 <tr class="nga-card-step" >  
                                                                     <td align="center">  
-                                                                        <button *ngIf="!thirdhideme[k]" (click)="showSampleDateInfo(k,plotInfo['Plot number'].value)" ></button>
-                                                                        <button *ngIf="thirdhideme[k]" (click)="thirdhideme[k] = !thirdhideme[k]" ></button>
+                                                                        <button *ngIf="!obsthirdhideme[l]" (click)="showObservationDateInfo(l,plotInfo['Plot number'].value)" ></button>
+                                                                        <button *ngIf="obsthirdhideme[l]" (click)="obsthirdhideme[l] = !obsthirdhideme[l]" ></button>
                                                                     </td> 
-                                                                    <td>{{date}}</td>
-                                                                    <td>{{get_associated_sample(plotInfo, date)}}</td>
+                                                                    <td>{{obsdate}}</td>
+                                                                    <td>{{get_associated_observation(plotInfo, obsdate)}}</td>
                                                                     
                                                                      
                                                                 </tr>
-                                                                <tr [hidden]="!thirdhideme[k]" class="sub-table no-bg">  
+                                                                <tr [hidden]="!obsthirdhideme[l]" class="sub-table no-bg">  
                                                                     <td align="center"> </td>  
-                                                                    <td colspan="15" class="p-0">   
+                                                                    <td class="p-0">   
                                                                     <table class="table mb-0 table-striped"> 
                                                                         <thead>  
                                                                             <tr>   
-                                                                                <th width="50">Associated sample ID</th> 
-                                                                                <th width="50">Sample description</th> 
-                                                                                <th width="50">Biological material UUID</th>  
+                                                                                <th width="50">Associated observation ID</th> 
+                                                                                <th width="50">Observation description</th> 
+                                                                                <th width="50">Obs UUID</th>  
                                                                                 
                                                                             </tr>  
                                                                         </thead> 
                                                                         <tbody>
-                                                                            <tr class="nga-card-step" *ngFor="let comp of get_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
-                                                                                <td>{{comp['Sample ID']}}</td>  
-                                                                                <td>{{comp['Sample description']}}</td>  
-                                                                                <td>{{comp['bmUUID']}}</td> 
+                                                                            <tr class="nga-card-step" *ngFor="let comp of get_observation_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, obsdate)">  
+                                                                                <td>{{comp['Observation ID']}}</td>  
+                                                                                <td>{{comp['Observation description']}}</td>  
+                                                                                <td>{{comp['obsUUID']}}</td> 
                                                                                 
                                                                             </tr>
                                                                               

@@ -552,6 +552,8 @@ export class DefineComponent implements OnInit, OnDestroy {
       }
       parent_ids.push(this.parent_id)
     }
+    console.log(values)
+    console.log(values_to_link)
     
     if (values.length > 0) {
       let add_study_res = await this.globalService.add_multiple(values, 'study', 'investigations', false, this.group_key, this.data_file._key, this.column_original_label, 'Study Name', parent_ids).toPromise()
@@ -927,6 +929,8 @@ export class DefineComponent implements OnInit, OnDestroy {
   has_event_associated_header(): boolean {
     return this.data_file.associated_headers.filter(associated_header => associated_header.associated_component_field === 'Event accession number').length > 0
   }
+
+  /*BiologicalMaterial PART ROUTINES*/
   
   /*ExperimentalFactor PART ROUTINES*/
   async onExtractAllExperimentalFactors() {
@@ -1785,9 +1789,25 @@ export class DefineComponent implements OnInit, OnDestroy {
     let study_linda_id = this.study_associated_header.associated_linda_id[this.study_associated_header.associated_values.indexOf(study_unique_id)]
     return this.associated_header.associated_linda_id.filter(linda_id => linda_id === study_linda_id).length > 0
   }
+  has_associated_header_linda_id_by_values(_values: string[]) {
+    ////console.log(_value)
+    let found = true
+    for (let index = 0; index < _values.length; index++) {
+      const element = _values[index];
+      this.data_file.Data.filter(line => line[this.column_original_label] === element).forEach(l => {
+        if (l["Study linda ID"] === "") {
+          found = false
+        }
+      })
+      
+    }
+
+    return found
+  }
   has_associated_header_linda_id_by_value(_value: string) {
     ////console.log(_value)
     let found = true
+    
     this.data_file.Data.filter(line => line[this.column_original_label] === _value).forEach(l => {
       if (l["Study linda ID"] === "") {
         found = false

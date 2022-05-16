@@ -4,15 +4,16 @@ import { GlobalService, AlertService } from '../../../services';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { BiologicalMaterialDialogModel } from '../../../models/biological_material_models'
-import { ExperimentalFactorDialogModel } from '../../../models/experimental_factor_models'
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { BiologicalMaterialFullInterface } from 'src/app/models/linda/biological-material';
 import { Router } from '@angular/router';
 import { ObservedVariable, ObservedVariableInterface } from 'src/app/models/linda/observed-variable';
 import { FormGenericComponent } from './form-generic.component';
 import { TemplateSelectionComponent } from './template-selection.component';
 import { first } from 'rxjs/operators';
+import { MatMenuTrigger } from '@angular/material';
+import { ExperimentalDesign } from 'src/app/models/linda/experimental-design';
+import { SampleInterface } from 'src/app/models/linda/sample';
+import { Observation, ObservationInterface } from 'src/app/models/linda/observation';
 
 interface DialogData {
   model_id: string;
@@ -22,8 +23,10 @@ interface DialogData {
   role: string;
   grand_parent_id: string;
   group_key: string;
+  design:ExperimentalDesign;
 }
 const OBSERVED_VARIABLE_ELEM: ObservedVariableInterface[] = []
+const SAMPLE_ELEM: SampleInterface[] = []
 
 
 @Component({
@@ -33,27 +36,54 @@ const OBSERVED_VARIABLE_ELEM: ObservedVariableInterface[] = []
 })
 
 export class AssociateObservedVariable implements OnInit {
+
+  @ViewChild(MatMenuTrigger, { static: false }) contextMenu: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger, { static: false }) userMenu: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger, { static: false }) helpMenu: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger, { static: false }) userMenusecond: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger, { static: false }) investigationMenu: MatMenuTrigger;
+  contextMenuPosition = { x: '0px', y: '0px' };
+  userMenuPosition = { x: '0px', y: '0px' };
+  userMenusecondPosition = { x: '0px', y: '0px' };
+  investigationMenuPosition = { x: '0px', y: '0px' };
+  helpMenuPosition = { x: '0px', y: '0px' };
+
+  //@ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild('paginator', { static: true }) paginator: MatPaginator;
+  @ViewChild('samplepaginator', { static: true }) samplepaginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatTable, { static: false }) table: MatTable<AssociateObservedVariable>
+  ///@ViewChild(MatTable, { static: false }) table: MatTable<AssociateObservedVariable>
+  
   private model_id: string;
+  private design:ExperimentalDesign;
   private user_key: string;
   private result: []
   private model_type: string;
   private parent_id: string;
   search_type: string
-
+  //sampledataSource = new MatTableDataSource(SAMPLE_ELEM);
+  private sampledataSource: MatTableDataSource<SampleInterface>;
+  //private sampledataSource:MatTableDataSource<SAMPLE_ELEM>
   dataSource = new MatTableDataSource(OBSERVED_VARIABLE_ELEM);
-  displayedColumns: string[] = ['Template type', 'select'];
+  displayedColumns: string[] = ['No Observed variables defined', 'select'];
+  displayedSamplesColumns: string[] = ['No Samples defined', 'select'];
+  private initialSampleSelection = []
+  sampleSelection = new SelectionModel<SampleInterface>(true, this.initialSampleSelection /* multiple */);
   private initialSelection = []
   selection = new SelectionModel<ObservedVariableInterface>(false, this.initialSelection /* multiple */);
   panel_disabled: boolean = false;
+  sample_panel_disabled: boolean=false;
   role: string = ""
   grand_parent_id: string = ""
   group_key: string = ""
   loaded: boolean = false
+  sampleloaded:boolean=false
   total_available_plots: number = 0
-  observations: any;
+  observations: ObservationInterface[];
+  observation_type: string="";
+  samples:[]
+  ObservationDate:Date;
+  
   constructor(
     private globalService: GlobalService,
     private alertService: AlertService,
@@ -70,10 +100,34 @@ export class AssociateObservedVariable implements OnInit {
     this.role = this.data.role
     this.grand_parent_id = this.grand_parent_id
     this.group_key = this.data.group_key
+    this.design=this.data.design
+    this.sampleloaded=false
+    this.set_all_observed_variables()
+    ///this.sampledataSource = new MatTableDataSource([])
+    //this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples())
+    //this.sampledataSource.paginator= this.samplepaginator
+    console.log(this.sampledataSource)
+    this.observations=[]
   }
 
   async ngOnInit() {
-    await this.set_all_observed_variables()
+    this.displayedSamplesColumns= Object.keys(this.design.get_associated_samples()[0]).filter(key=>!key.includes('UUID'))
+      this.displayedSamplesColumns.push('select')
+      this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples()); 
+      this.sampledataSource.paginator = this.samplepaginator;
+      this._cdr.detectChanges()
+      
+      this.observation_type=""
+    //await this.set_all_observed_variables()
+  }
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.sampledataSource.paginator= this.samplepaginator
+    this._cdr.detectChanges()
+  }
+  onDateAdd(event){
+    this.ObservationDate=event.target.value
   }
   async set_all_observed_variables() {
     var data = await this.globalService.get_all_observed_variables(this.parent_id.split('/')[1]).toPromise();
@@ -93,6 +147,14 @@ export class AssociateObservedVariable implements OnInit {
   add_data(){
     
   }
+  onObservationTypeChange(_observation_type:string){
+    this.observation_type=_observation_type
+    if (this.observation_type==='Destructive'){
+      this.sampleloaded=true
+      
+    }
+  }
+
   add_observed_variables(template: boolean = false) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     //let exp_factor: ExperimentalFactor = new ExperimentalFactor()
@@ -157,6 +219,34 @@ export class AssociateObservedVariable implements OnInit {
       });
     }
   }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+  isAllSampleSelected() {
+    const numSelected = this.sampleSelection.selected.length;
+    const numRows = this.sampledataSource.data.length;
+    return numSelected == numRows;
+  }
+  sampleRowToggle(row) {
+    this.sampleSelection.toggle(row)
+    if (this.sampleSelection.selected.length === 0) {
+      this.sample_panel_disabled = true
+    }
+    else (
+      this.sample_panel_disabled = false
+    )
+  }
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  sampleMasterToggle() {
+    this.isAllSampleSelected() ?
+      this.sampleSelection.clear() :
+      this.sampledataSource.data.forEach(row => this.sampleSelection.select(row)); this.sample_panel_disabled = false
+  }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
@@ -171,17 +261,46 @@ export class AssociateObservedVariable implements OnInit {
       this.panel_disabled = false
     )
   }
+  
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row)); this.panel_disabled = false
   }
+  get_observation_type(){
+    return this.observation_type
+  }
+  get get_design(){
+    return this.design
+  }
+  get get_sampleDataSource(){
+    return this.sampledataSource
+  }
   onNoClick(): void {
     this.dialogRef.close({ event: "Cancel", selected_material: null });
   }
   onOkClick(): void {
-    this.dialogRef.close({ event: "Confirmed", selected_observations: this.observations });
+    console.log(this.observations)
+    console.log(this.selection.selected)
+    console.log(this.sampleSelection.selected)
+    this.selection.selected.forEach(obs_var=>{
+      if (this.observation_type==='Destructive'){
+        this.sampleSelection.selected.forEach(sample=>{
+          let obs_uuid="sedwfxd"
+          this.observations.push(new Observation(obs_uuid,'observation first test', this.ObservationDate,true,sample['Sample ID'],sample.obsUUID, obs_var['_id']))
+        })
+      }
+      else{
+        this.design.Blocking.value.forEach(block=>{
+          block['Plot design'].value.forEach(plot=>{
+            let obs_uuid="sedwfxd"
+            this.observations.push(new Observation(obs_uuid,'observation first test', this.ObservationDate,false, 'Not defined', plot.get_observation_uuid(), obs_var['_id']))
+          })
+        })
+      }
+    });
+    this.dialogRef.close({ event: "Confirmed", selected_observed_variable: this.selection.selected, observation_type:this.observation_type, observations:this.observations });
   }
 
 }

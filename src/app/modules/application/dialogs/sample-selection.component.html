@@ -17,6 +17,10 @@
     <option value="" disabled>Select {{model_type}}s</option>
     <option *ngFor="let t of get_result()" value={{t._id}}>{{t._id}}</option>
   </select> -->
+  <mat-form-field appearance="standard">
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="B73_h" #input>
+  </mat-form-field>
   <table style="width: 100%;" mat-table matSort [dataSource]="materialdataSource">
     <ng-container *ngFor="let column of displayedMaterialColumns ; let i=index">
       <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">

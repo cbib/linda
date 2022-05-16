@@ -240,23 +240,29 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
     onRemove(element:ExperimentalDesignInterface) {
         console.log(element)
         const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true,width: '500px', data: { validated: false, only_childs: false, mode: 'remove', model_type: this.model_type } });
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    this.globalService.remove(element._id).pipe(first()).toPromise().then(
-                        data => {
-                            ////console.log(data)
-                            if (data["success"]) {
-                                console.log(data["message"])
-                                var message = element._id + " has been removed from your history !!"
-                                
-                                this.alertService.success(message)
-                                this.reloadComponent()
-                            }
-                            else {
-                                this.alertService.error("this form contains errors! " + data["message"]);
-                            }
-                        });
+                    const remove_res= await this.globalService.remove_observation_unit(element['Associated observation units'].value).toPromise()
+                    if (remove_res["success"]) {
+                        this.globalService.remove(element._id).pipe(first()).toPromise().then(
+                            data => {
+                                ////console.log(data)
+                                if (data["success"]) {
+                                    console.log(data["message"])
+                                    var message = element._id + " has been removed from your history !!"
+                                    
+                                    this.alertService.success(message)
+                                    this.reloadComponent()
+                                }
+                                else {
+                                    this.alertService.error("this form contains errors! " + data["message"]);
+                                }
+                            });
+                        }
+                        else{
+                            this.alertService.error("a error is occured when suppressing experimental associated component")
+                        }
                 }
             }
             //this.reloadComponent(['/projects'])

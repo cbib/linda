@@ -1,3 +1,5 @@
+import { Observation } from "./observation";
+import { Sample, SampleInterface } from "./sample";
 
 //Replication interface and class
 export interface ReplicationInterface {
@@ -105,7 +107,7 @@ export interface PlotDesignInterface {
         "ID": string;
     };
     "Associated samples": {
-        "value": string[];
+        "value": Sample[];
         "ID": "ASSOCIATEDSAMPLES";
     };
     "Replicate number": {
@@ -115,6 +117,10 @@ export interface PlotDesignInterface {
     "Observation uuid": {
         "value": string;
         "ID": string;
+    };
+    "Associated plot observations": {
+        "value": Observation[];
+        "ID": "ASSOCIATEDPLOTOBSERVATIONS";
     };
 }
 export class PlotDesign implements PlotDesignInterface{
@@ -148,8 +154,12 @@ export class PlotDesign implements PlotDesignInterface{
         "ID": "ASSOCIATEDBIOMAT";
     };
     "Associated samples": {
-        "value": string[];
+        "value": Sample[];
         "ID": "ASSOCIATEDSAMPLES";
+    };
+    "Associated plot observations": {
+        "value": Observation[];
+        "ID": "ASSOCIATEDPLOTOBSERVATIONS";
     };
     "Replicate number": {
         "value": number;
@@ -159,7 +169,7 @@ export class PlotDesign implements PlotDesignInterface{
         "value": string;
         "ID": "OBSERVATIONUUID";
     };
-    constructor(column_num:number=null, plot_num:number=null,associate_material_source:string=null, associated_biological_material:string[]=[], replicate_num:number=null, obs_uuid:string=null, associated_samples:string[]=[] ){
+    constructor(column_num:number=null, plot_num:number=null,associate_material_source:string=null, associated_biological_material:string[]=[], replicate_num:number=null, obs_uuid:string=null, associated_samples:Sample[]=[], associated_observations:Observation[]=[] ){
         this["Column number"]={value:column_num,  "ID": "CO_715:0000151"}
         this["Plot size"]={value:null,  "ID": "CO_715:0000152"}
         this["Plot number"]={value:plot_num,  "ID": "CO_715:0000155"}
@@ -170,6 +180,7 @@ export class PlotDesign implements PlotDesignInterface{
         this["Associated_biological_material"]={value:associated_biological_material,  "ID": "ASSOCIATEDBIOMAT"}
         this["Observation uuid"]={value:obs_uuid,  "ID": "OBSERVATIONUUID"}
         this["Associated samples"]={value:associated_samples,  "ID": "ASSOCIATEDSAMPLES"}
+        this["Associated plot observations"]={value:associated_observations,  "ID": "ASSOCIATEDPLOTOBSERVATIONS"}
 
     }
     add_row_design(_row_design:RowDesign){
@@ -217,17 +228,31 @@ export class PlotDesign implements PlotDesignInterface{
     get_biological_material(){
         return this["Associated_biological_material"].value
     }
-    add_sample(_associate_sample_id:string){
-        this["Associated samples"].value.push(_associate_sample_id)
+    add_observation(_associate_observation:Observation){
+        this["Associated plot observations"].value.push(_associate_observation)
     }
-    get_sample_id(index:number){
+    add_observations(_observations:Observation[]){
+        this["Associated plot observations"].value=this["Associated plot observations"].value.concat(_observations)
+    }
+    set_observations(_observations:Observation[]){
+        this["Associated plot observations"].value=_observations
+    }
+    get_observations():Observation[]{
+        return this["Associated plot observations"].value
+    }
+
+    get_sample_id(index:number):Sample  {
         return this["Associated samples"].value[index]
     }
-    set_samples(_samples:string[]){
-        this["Associated samples"].value=_samples
+    
+    add_sample(_associate_sample:Sample){
+        this["Associated samples"].value.push(_associate_sample)
     }
-    add_samples(_samples:string[]){
+    add_samples(_samples:Sample[]){
         this["Associated samples"].value=this["Associated samples"].value.concat(_samples)
+    }
+    set_samples(_samples:Sample[]){
+        this["Associated samples"].value=_samples
     }
     get_samples():{}[]{
         return this["Associated samples"].value
@@ -423,12 +448,20 @@ export interface ExperimentalDesignInterface     {
         "ID": string;
     };
     "Associated sample": {
-        "value":  string[];
+        "value":  SampleInterface[];
         "ID": "LindaSamples";
     };
     "Associated sample ID": {
         "value":  string;
         "ID": "LindaSampleDbIds";
+    };
+    "Associated observed variable IDs": {
+        "value":  string[];
+        "ID": "LindaObsVarDbIds";
+    };
+    "Associated observations": {
+        "value":  Observation[];
+        "ID": "LindaObsDbIds";
     };
 }
 export class ExperimentalDesign implements ExperimentalDesignInterface {
@@ -460,13 +493,22 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         "ID": "LindaObsUnitDbId";
     };
     "Associated sample": {
-        "value":  string[];
+        "value":  SampleInterface[];
         "ID": "LindaSamples";
     };
     "Associated sample ID": {
         "value":  string;
         "ID": "LindaSampleDbIds";
     };
+    "Associated observed variable IDs": {
+        "value":  string[];
+        "ID": "LindaObsVarDbIds";
+    };
+    "Associated observations": {
+        "value":  Observation[];
+        "ID": "LindaObsDbIds";
+    };
+
     constructor(){
         this["Definition"]="The process of planning a study to meet specified objectives or the allocation of treatments (inputs) to the experimental units (plots). Planning an experiment properly is very important in order to ensure that the right type of data and a sufficient sample size and power are available to answer the research questions of interest as clearly and efficiently as possible."
         this["Blocking"]={value: [], "ID":"CO_715:0000245"}
@@ -476,7 +518,10 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["Associated observation units"]={value:null,"ID": "LindaObsUnitDbId"}
         this["Associated sample"]={value:[],"ID": "LindaSamples"}
         this["Associated sample ID"]={value:null,"ID": "LindaSampleDbIds"}
+        this["Associated observed variable IDs"]={value:[],"ID": "LindaObsVarDbIds"}
+        this["Associated observations"]={value:[],"ID": "LindaObsDbIds"}
     }
+    
     get_block_design(_block_number:number){
         return this.Blocking.value.filter(block_design=> block_design["Block number"].value===_block_number)
     }
@@ -515,7 +560,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_observation_unit_id(){
         return this["Associated observation units"].value
     }
-    add_sample_ids(sample_id:string){
+    add_sample_ids(sample_id:SampleInterface){
         this["Associated sample"].value.push(sample_id)
     }
     set_sample_id(sample_id:string){
@@ -527,15 +572,52 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_sample_ids(index:number){
         return this["Associated sample"].value[index]
     }
-    set_associated_samples(sample_data:string[]){
+    set_associated_samples(sample_data:SampleInterface[]){
         this["Associated sample"].value=sample_data
     }
-    add_associated_samples(sample_data:string[]){
+    add_associated_samples(sample_data:SampleInterface[]){
         this["Associated sample"].value=this["Associated sample"].value.concat(sample_data)
     }
-    get_associated_samples(){
+    get_associated_samples():SampleInterface[]{
         return this["Associated sample"].value
     }
+
+    /* add_observed_variables(observed_variable_id:string){
+        this["Associated observed variables"].value.push(observed_variable_id)
+    }
+    get_observed_variable_id(index:number){
+        return this["Associated observed variables"].value[index]
+    }
+    
+    add_associated_observed_variables(observed_variable_data:string[]){
+        this["Associated observed variables"].value=this["Associated sample"].value.concat(observed_variable_data)
+    }
+    set_associated_observed_variables(observed_variable_data:string[]){
+        this["Associated observed variables"].value=observed_variable_data
+    }
+    */
+    add_associated_observations(observation:Observation){
+        return this["Associated observations"].value.push(observation)
+    }
+    set_associated_observations(observations:Observation[]){
+        return this["Associated observations"].value=observations
+    }
+    get_associated_observations():Observation[]{
+        return this["Associated observations"].value
+    }
+
+    set_observed_variable_id(observed_variable_ids:string[]){
+        this["Associated observed variable IDs"].value=observed_variable_ids
+    }
+    add_observed_variable_id(observed_variable_id:string){
+        this["Associated observed variable IDs"].value.push(observed_variable_id)
+    }
+    get_observed_variable_ids():string[]{
+        return this["Associated observed variable IDs"].value
+    }
+    
+    
+
     static create_design(obj) {
         var field = new ExperimentalDesign();
         for (var prop in obj) {

@@ -1515,6 +1515,7 @@
                     <mat-card-title for="'Experimental condition'">
                         General study informations
                     </mat-card-title>
+                    
                     <div class="form-group" *ngFor="let field of get_cleaned_model ; index as i;">
                         <div *ngIf="!['Type of growth facility','Description of growth facility','Cultural practices'].includes(field['key'])">
                             <div *ngIf="get_model[field['key']].Level==get_level">

@@ -5607,6 +5607,77 @@ router.get('/event', function (req, res) {
  ******************************************************************************************
  ******************************************************************************************
  ******************************************************************************************/
+ router.post('/add_observation_units_observed_variables', function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var parent_id = req.body.parent_id;//observation unit id
+    var values = req.body.values;
+    var observed_variable_id=req.body.observed_variable_id;
+    //var model_type = req.body.model_type;
+    var datatype = "observation_units";
+
+    //observation unit edge 
+    var observation_unit_edge_coll = datatype + '_edge'
+    if (!db._collection(observation_unit_edge_coll)) {
+        db._createEdgeCollection(observation_unit_edge_coll);
+    }
+    var observation_unit_edge = db._collection(observation_unit_edge_coll);
+
+    //observation units collection 
+    var observation_unit_coll = db._collection(datatype);
+    if (!observation_unit_coll) {
+        db._createDocumentCollection(datatype);
+    }
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+  `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' });
+    }
+    else {
+        var observation_data = values['observations'];
+        var observed_variable_obj = {
+                "_from": parent_id,
+                "_to": observed_variable_id,
+                "observations": []
+            }
+        // add Observed variable link to observation unit edge 
+        if (observation_data !== undefined) {
+            for (var j = 0; j < observation_data.length; j++) {
+                observation_data[j]['Observed variable ID'] = observed_variable_id
+                observed_variable_obj["observations"].push(observation_data[j])
+            }
+        }
+        if ("_from" in observed_variable_obj) {
+            db._query(aql`UPSERT ${observed_variable_obj} INSERT ${observed_variable_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
+            res.send({ success: true, message: 'Everything is good ', _id: observed_variable_id });
+        }
+    }
+})
+    .body(joi.object().keys({
+        username: joi.string().required(),
+        password: joi.string().required(),
+        parent_id: joi.string().required(),
+        values: joi.object({
+            observations: joi.array().items(joi.object().required()).required(),
+        }).required(),
+        observed_variable_id: joi.string().required(),
+    }).required(), 'Values to check.')
+    .response(joi.object().keys({
+        success: joi.boolean().required(),
+        message: joi.string().required(),
+        _id: joi.string().required()
+    }).required(), 'response.')
+    .summary('List entry keys')
+    .description('add MIAPPE description for given model.');
+
+
 //Post new data
 router.post('/add_observation_units_samples', function (req, res) {
     var username = req.body.username;
@@ -6158,7 +6229,7 @@ router.post('/add_observation_units', function (req, res) {
 router.post('/remove_observation_unit', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
-    var id = req.body.id;
+    var id = req.body.id;//observation unit
 
     const user = db._query(aql`
                     FOR entry IN ${users}
@@ -6192,7 +6263,7 @@ router.post('/remove_observation_unit', function (req, res) {
 
             //Delete child vertice in collection
             if ((childs[i].v_id !== null) || (childs[i].v_key !== null)) {
-                if (childs[i].v_id.split("/")[0] !== "biological_materials" && childs[i].v_id.split("/")[0] !== "experimental_factors") {
+                if (childs[i].v_id.split("/")[0] !== "biological_materials" && childs[i].v_id.split("/")[0] !== "experimental_factors" && childs[i].v_id.split("/")[0] !== "observed_variables") {
                     var child_coll = childs[i].v_id.split("/")[0];
                     var child_vkey = childs[i].v_key;
                     try {

@@ -12,47 +12,136 @@
       It typically takes the form of a measured characteristic of the observation unit 
       (plant or environmental trait), associated to the method and unit of measurement.
     </p> 
+    <p>
+      There are two types of osbservations availbale in Linda. Destructive obserrvaitons made 
+    </p>
     <h2>Experimental design details</h2>
     <p> You have {{total_available_plots}} plots in your experimental design. 
         Take care to assign materials in respect of design capability !!
         You could use differents configurations
     </p>
-    <p>You do not find corresponding variable, create one</p>
-    <button (click)="add_observed_variables()">Add new Observed variables</button>
-    <table style="width: 100%;" mat-table matSort [dataSource]="dataSource">
-        <ng-container *ngFor="let column of displayedColumns ; let i=index">
-          <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[i]}} </th>
-            <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
-          </ng-container>
-        </ng-container>
-    
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-              [indeterminate]="selection.hasValue() && !isAllSelected()">
-            </mat-checkbox>
-          </th>
-          <td mat-cell class="flex-stretch" *matCellDef="let row">
-            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
-              [checked]="selection.isSelected(row)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-      <mat-paginator #matpaginator [hidden]  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-      
-      <div *ngIf="selection.hasValue()">
-        <button (click)="add_data()">Link observations measures</button>
+
+    <h3>Select type of observations</h3>
+    <select [ngModel]="get_observation_type" name="design_type" size="1"
+      (change)="onObservationTypeChange($event.target.value)">
+      <option *ngFor="let type of ['Destructive', 'Non destructive']" [value]="type">{{type}}</option>
+    </select>
+    <h3>Samples selection table </h3>
+        <table *ngIf="sampleloaded" style="width: 100%;" mat-table [dataSource]="get_sampleDataSource">
+            <ng-container *ngFor="let column of displayedSamplesColumns ; let i=index">
+              <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedSamplesColumns[i]}} </th>
+                <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+              </ng-container>
+            </ng-container>
+        
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? sampleMasterToggle() : null" [checked]="sampleSelection.hasValue() && isAllSampleSelected()"
+                  [indeterminate]="sampleSelection.hasValue() && !isAllSampleSelected()">
+                </mat-checkbox>
+              </th>
+              <td mat-cell class="flex-stretch" *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? sampleRowToggle(row) : null"
+                  [checked]="sampleSelection.isSelected(row)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+        
+            <tr mat-header-row *matHeaderRowDef="displayedSamplesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedSamplesColumns;"></tr>
+          </table>
+          <mat-paginator [hidden] #samplepaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
+
+    <h4>Sample collection date</h4>
+    <input [(ngModel)]="ObservationDate" mdbInput placeholder="2005-08-15T15:52:01+00:00" type="date" class="form-control" (onchange)="onDateAdd($event)" />
+          
+    <!-- Destructive observations -->
+    <div *ngIf="this.observation_type==='Destructive' ">
+      <div *ngIf="get_design.get_associated_samples().length===0">
+        <p> You do not have any samples defined in this study, you need to add first in the experimental 
+          design page and then you can create desctrucive rom this material. </p>
       </div>
+      <div *ngIf="get_design.get_associated_samples().length>0">
+        <!-- table des samples -->
+      </div>
+    </div>
+    <!-- Non  Destructive observations -->
+    <div *ngIf="this.observation_type==='Non destructive' ">
       
+    </div>
+
+
+
+    <p>You do not find corresponding variable, create one</p>
+      <!-- <button (click)="add_observed_variables()">Add new Observed variables</button> -->
+      <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+          <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
+          <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+              [matMenuTriggerFor]="helpMenu">
+          </div>
+          <mat-menu #helpMenu="matMenu">
+              <button style="float: right;" class="btn btn-light" mat-menu-item
+                  [matMenuTriggerFor]="HelpSubMenu">Help</button>
+          </mat-menu>
+          <mat-menu #HelpSubMenu="matMenu">
+      <!-- <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>-->
+
+          </mat-menu>
+          <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+              [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+          </div>
+          <mat-menu #contextMenu="matMenu">
+              <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Observed variable</button>
+          </mat-menu>
+          
+          <mat-menu #contextSubMenu="matMenu">
+              <button mat-menu-item (click)="add_observed_variables(false)">from original model template</button>
+              <button mat-menu-item (click)="add_observed_variables(true)">from saved templates</button>
+          </mat-menu>
+          <span class="span-project"></span>
+          <mat-form-field appearance="standard">
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+          </mat-form-field>
+
+      <table style="width: 100%;" mat-table matSort [dataSource]="dataSource">
+          <ng-container *ngFor="let column of displayedColumns ; let i=index">
+            <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[i]}} </th>
+              <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
+            </ng-container>
+          </ng-container>
+      
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+                [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator #matpaginator [hidden]  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+        
+        <div *ngIf="selection.hasValue()">
+          <p> Now You are ready to load {{total_available_plots}} observations at plot level in your experimental design. 
+            A datafile will be created in which you can further add your measuremement values (e.g plant heigth or all plot observed)
+            Take care to assign materials in respect with observation unit levels in order to produce the right observations !!
+        </p>
+          <!-- <button (click)="add_data()">Link observations measures</button> -->
+        </div>  
   </div>
 
     <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button (click)="onOkClick()">Ok</button>
+    <button mat-button [disabled]="this.selection.selected.length===0" (click)="onOkClick()">Link observed variable</button>
   </div>
 </div>

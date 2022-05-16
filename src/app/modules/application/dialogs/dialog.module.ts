@@ -60,6 +60,7 @@ import { AssociateObservationUnit } from './associate-observation-unit.component
 import { MatMenuModule } from '@angular/material';
 import {ChipListComponent} from 'src/app/components/chip-list/chip-list.component'
 import { AssociateObservedVariable } from './associate-observed-variable.component';
+import { PlotOverviewComponent } from './plot-overview.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import { AssociateObservedVariable } from './associate-observed-variable.compone
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
     AssociateObservedVariable,
-    ChipListComponent
+    ChipListComponent,
+    PlotOverviewComponent
   ],
   imports: [
     CommonModule,
@@ -154,7 +156,8 @@ import { AssociateObservedVariable } from './associate-observed-variable.compone
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
     AssociateObservedVariable,
-    ChipListComponent
+    ChipListComponent,
+    PlotOverviewComponent
   ],
   entryComponents:[
     ConfirmationComponent,
@@ -183,7 +186,8 @@ import { AssociateObservedVariable } from './associate-observed-variable.compone
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
     AssociateObservedVariable,
-    ChipListComponent
+    ChipListComponent,
+    PlotOverviewComponent
   ]
 })
 export class DialogModule { }

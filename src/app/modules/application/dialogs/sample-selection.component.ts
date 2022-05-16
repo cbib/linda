@@ -403,10 +403,27 @@ export class SampleSelectionComponent implements OnInit {
   onSampleNumberChange(value: number) {
     this.TechnicalReplicateNumber = value
   }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.materialdataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.materialdataSource.paginator) {
+      this.materialdataSource.paginator.firstPage();
+    }
+  }
   onGlobalOntologyTermSelection(ontology_id: string, key: string, multiple: boolean = true) {
     //this.show_spinner = true;
     //console.log(key)
     //console.log(ontology_id)
+    let subClassof=""
+    if (key ==='Plant anatomical entity'){
+      subClassof="PO:0025131"
+    }
+    else{
+      subClassof="PO:0009012"
+
+    }
+    
     const dialogRef = this.dialog.open(OntologyTreeComponent, { disableClose: true, width: '1000px', autoFocus: true, maxHeight: '100vh', data: { ontology_id: ontology_id, selected_term: null, selected_set: [], selected_key: "", uncheckable: false, multiple: multiple, model_type: this.model_type, mode_simplified: false, observed: false, sub_class_of: "" } });
     // dialogRef..afterOpened().subscribe(result => {
     //     this.show_spinner = false;

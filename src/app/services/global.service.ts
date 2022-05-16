@@ -365,7 +365,7 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "update_field"}`, obj2send);
     }
-    update_multiple_field(values: string[], parent_id:string, _keys: string[], field: string, model_type: string, datafile_key:string="" ,datafile_header:string="" ,model_field:string="") {
+    update_multiple_field(values: string[], parent_id:string, _keys: string[], field: string, model_type: string, datafile_key:string="" ,datafile_header:string="" , model_field:string="") {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
@@ -654,7 +654,7 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "remove_childs_by_type_and_id"}`, obj2send);
     }
-    remove_observation_unit(id) {
+    remove_observation_unit(id:string) {
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
@@ -792,7 +792,18 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
-    
+    add_observation_units_observed_variables(values: {}, parent_id: string, obs_var_id:string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'parent_id': parent_id,
+            'values': values,
+            'observed_variable_id':obs_var_id
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_observation_units_observed_variables"}`, obj2send);
+    }
     add_observation_units_samples(values: {}, parent_id: string) {
         let user = this.get_user();
         let obj2send = {

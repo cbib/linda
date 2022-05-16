@@ -149,7 +149,7 @@ export class EnvironmentVariablesPageComponent implements OnInit {
     console.log(this.model_type)
     console.log(this.parent_id)
     if (template){
-      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'event', values: {}, parent_id: this.parent_id } });
+      const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'environment', values: {}, parent_id: this.parent_id } });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           console.log(result)

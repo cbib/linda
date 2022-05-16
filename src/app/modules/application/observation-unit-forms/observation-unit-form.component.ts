@@ -442,7 +442,6 @@ export class ObservationUnitFormComponent implements OnInit {
         }
         console.log(result)
         this.bmDataSource = new MatTableDataSource(this.bm_data.filter(bm=>bm['obsUUID']===this.observation_id)); 
-        
         this.bmDataSource.paginator = this.bmpaginator;
         this._cdr.detectChanges()
         this.mat_loaded=true

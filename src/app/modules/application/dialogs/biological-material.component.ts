@@ -88,7 +88,10 @@ export class BiologicalMaterialComponent implements OnInit {
           this.MaterialID = this.MaterialID.concat(bm.AccessionNumber + '\n')
         }
         this.MaterialpastedIds.push(bm.AccessionNumber)
-        this.taxonScientificNames.push({ name: bm.TaxonScientificName });
+        if (this.taxonScientificNames.filter(species=>species.name===bm.TaxonScientificName).length===0){
+          this.taxonScientificNames.push({ name: bm.TaxonScientificName });
+        }
+        
         this.Institution = bm.HoldingInstitution.split(" - ")[0]
         const res = await this.globalService.get_ncbi_taxon_data_by_species_regex(bm.TaxonScientificName).toPromise()
         console.log(res)
@@ -169,6 +172,7 @@ export class BiologicalMaterialComponent implements OnInit {
     if ((taxonScientificName || '').trim()) {
       this.taxonScientificNames.push({ name: taxonScientificName.trim() });
     }
+    this.taxonScientificNames=Array.from(new Set(this.taxonScientificNames))
     this.taxonScientificNameForm.reset();
     event.preventDefault();
   }
@@ -268,7 +272,7 @@ export class BiologicalMaterialComponent implements OnInit {
             bm.replication = this.replication
             bm.Species = tsn.name.split(" ")[1]
             bm.Organism = this.Taxon
-            bm['Infraspecific name'] = tsn.name
+            bm['Infraspecific name'] =tsn.name
             this.bm_list.push(bm)
             
           }
