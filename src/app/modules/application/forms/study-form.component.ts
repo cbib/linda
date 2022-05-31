@@ -91,13 +91,13 @@ export class StudyFormComponent implements OnInit {
       console.log(this.model_key)
       this.get_model_by_key();
     }
-    //console.log(this.mode)
+    
     
     //console.log(this.mode)
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.warn(this.parent_id)
     console.warn(this.mode)
     console.warn(this.model_key)
@@ -114,6 +114,8 @@ export class StudyFormComponent implements OnInit {
     // if (currentUser['tutoriel_checked'] === false){
     //     this.onClickTour()
     // }
+    let sites=await this.globalService.get_by_key("Experimental_sites", "experimental_site").toPromise()
+    console.log(sites)
     this.onClickTour()
 
   };

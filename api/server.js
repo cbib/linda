@@ -2806,7 +2806,6 @@ router.post('/update_document', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var _key = req.body._key;
-
     var values = req.body.values;
     var model_type = req.body.model_type;
     var datatype = "";
@@ -3048,7 +3047,7 @@ router.post('/update_multiple_field', function (req, res) {
             if (model_data[field] === value) {
                 if (datafile_key !== '') {
                     let df_id = "data_files/" + datafile_key
-                    if (model_field === 'Study unique ID') {
+                    if (model_field === 'Study Name') {
                         const edges3 = db._query(aql`
                         LET document = DOCUMENT(${df_id})
                         LET alteredData = (

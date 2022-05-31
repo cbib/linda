@@ -153,7 +153,7 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
         data_model.headers.splice(index, 1)
       }
     }
-    let unique_field = ['Study unique ID', 'Event accession number', 'Experimental Factor accession number', "Environment parameter accession number"]
+    let unique_field = ['Study Name', 'Event accession number', 'Experimental Factor accession number', "Environment parameter accession number"]
     // check if associated_component_field is in [Study unique ID, Event accession number, Experimental Factor accession number]
     // clean all childs 
     // if Study id column, clean all others associate headers

@@ -760,7 +760,7 @@
                     <mat-card-header>
                         The natural site, experimental field, greenhouse, phenotyping facility, etc. where the experiment took place.
                     </mat-card-header>
-                    <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center">
+                    <!-- <table class="dataTable table table-hover table-bordered table-responsive-md table-striped text-center">
                         <thead>
                         <tr class=" RespTable-firstRow">
                         <th><span><strong><span><span><span>"ShortName"</span></span></span></strong></span></th>
@@ -1227,7 +1227,10 @@
                         <td data-label="Département pilote"><span><span><span><span><span>ECODIV</span></span></span></span></span></td>
                         </tr>
                         </tbody>
-                        </table>
+                    </table> -->
+                    <!-- Table of experimental sites -->
+                    
+                    
                     <div class="form-group" *ngFor="let field of get_cleaned_model ; index as i;">
                         <div *ngIf="!['Type of growth facility','Description of growth facility','Cultural practices'].includes(field['key'])">
                             <div *ngIf="get_model[field['key']].Level==get_level">

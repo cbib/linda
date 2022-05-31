@@ -161,7 +161,7 @@ export class OntologyTreeComponent {
         this.ontology = data;
         this.ontologyNode = [];
         this.search_string = "";
-        var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "Solanacae"];
+        var ontologies_list = ["EnvO", "PECO", "BTO", "PO", "CO_20", "EFO", "CO_715", "OBI", "Solanacae", "Trait Ontology"];
         if (this.ontology_id === "XEO") {
             this.ontologyNode = this.build_xeo_isa_hierarchy(this.ontology);
         }
@@ -361,6 +361,13 @@ export class OntologyTreeComponent {
 
         var cpt = 0;
         this.show_spinner = true;
+
+        console.log(ontology)
+        console.log(ontology['term'].filter(_term=>_term["id"].includes(" TO") && ! _term["id"].startsWith("PATO")))
+        if (this.ontology_id==='Trait Ontology'){
+            ontology['term']=ontology['term'].filter(_term=>_term["id"].includes("TO")&& ! _term["id"].startsWith("PATO")) 
+        }
+        console.log(ontology)
         //console.log(this.show_spinner)
         //this.matSpinner.value= 0
         //this.ontology_tree_loading_progress_value = 0

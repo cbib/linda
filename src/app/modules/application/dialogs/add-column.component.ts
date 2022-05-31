@@ -362,6 +362,7 @@ export class AddColumnComponent implements OnInit {
             this.data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
             
           }
+          console.log(this.data_file.Data)
           /* await Promise.all(this.linkTerm.value.ids.map(async (element, index) => {
             if (element.includes("studies")){
               this.tmp_data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
@@ -397,7 +398,7 @@ export class AddColumnComponent implements OnInit {
           // Update headers
           this.data_file.headers.push(this.header.value)
           // Update associated_headers
-          if(this.get_component(this.standardTerm.value.field)==='study' && this.standardTerm.value.field==='Study unique ID'){
+          if(this.get_component(this.standardTerm.value.field)==='study' && this.standardTerm.value.field==='Study Name'){
             var associated_header: AssociatedHeadersInterface = {
               header: this.header.value,
               selected: true,
