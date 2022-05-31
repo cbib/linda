@@ -359,6 +359,7 @@ export class AddColumnComponent implements OnInit {
 
           for (let index = 0; index < this.linkTerm.value.parents.length; index++) {
             const element = this.linkTerm.value.parents[index];
+            console.log(element)
             this.data_file.Data.filter(line=>line["Study linda ID"]===element).forEach(l=>{l[this.header.value]=this.aliases.controls[index].value});
             
           }

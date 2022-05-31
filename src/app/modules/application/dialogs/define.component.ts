@@ -595,7 +595,9 @@ export class DefineComponent implements OnInit, OnDestroy {
               let keys: string[] = []
               for (let index = 0; index < values_to_link.length; index++) {
                 const element = values_to_link[index];
+                console.log(element)
                 const add_study_res = await this.globalService.get_lindaID_by_studyName(element, this.parent_id.split('/')[1]).toPromise()
+                console.log(add_study_res)
                 if (add_study_res['success']) {
                   keys.push(add_study_res["_id"].split("/")[1])
                 }
