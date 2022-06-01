@@ -27,7 +27,7 @@ interface DialogData {
 export class FilesLoaderComponent implements OnInit {
   //@ViewChild('autosize', {static: true}) autosize: CdkTextareaAutosize;
   errorMessage: string;
-  myTextarea=''
+  myStudyNames=''
   successMessage: string;
   parent_id:string=""
   mode:string=""
@@ -224,6 +224,19 @@ export class FilesLoaderComponent implements OnInit {
     isNumeric(n) {
       return !isNaN(parseFloat(n)) && isFinite(n);
     }
+    async add_existing_studies(){
+      const studies=await this.globalService.get_type_child_from_parent(this.parent_id.split("/")[0],this.parent_id.split("/")[1],'studies').toPromise()
+      console.log(studies)
+      for (let index = 0; index < studies.length; index++) {
+        const study:Study = studies[index];
+        if (index===studies.length-1){
+          this.myStudyNames+=study['Study Name']
+        }
+        else{
+          this.myStudyNames+=study['Study Name']+"\n"
+        }
+      }      
+    }
     Preview() {
       if (this.added) {
          this.preview_request=true
@@ -319,14 +332,14 @@ export class FilesLoaderComponent implements OnInit {
     }
     get_text_area(value){
       console.log(value)
-      console.log(this.myTextarea=value )
-      this.added=this.myTextarea!=='' && this.fileName!=='' 
+      console.log(this.myStudyNames=value )
+      this.added=this.myStudyNames!=='' && this.fileName!=='' 
       
 
     }
     get_filename(value){
       this.fileName=value
-      this.added=this.myTextarea!=='' && this.fileName!=='' 
+      this.added=this.myStudyNames!=='' && this.fileName!=='' 
     }
     onNoClick(): void {
       this.dialogRef.close({event:"Cancelled"});
@@ -339,7 +352,7 @@ export class FilesLoaderComponent implements OnInit {
 
       }
       else{
-        console.log(this.myTextarea.split('\n'))
+        console.log(this.myStudyNames.split('\n'))
         //remove doublons
 
         this.data_model['Data file description'] = 'Data have been extracted from ' + this.fileName
@@ -393,7 +406,7 @@ export class FilesLoaderComponent implements OnInit {
         this.data_model['headers'] = ["Study Name","Study linda ID"]
         //this.data_model['headers'] = ["Study Name","Study id","Study linda ID"]
         console.log(this.data_model)
-        this.myTextarea.split('\n').forEach(async _study_name=>{
+        this.myStudyNames.split('\n').forEach(async _study_name=>{
           study_names.push(_study_name)
         });
         for (let index = 0; index < study_names.length; index++) {
@@ -434,7 +447,7 @@ export class FilesLoaderComponent implements OnInit {
         }
         const data= await this.fileService.upload4(this.data_model, this.parent_id).pipe(first()).toPromise()//.then(
         console.log(data); 
-        /* this.myTextarea.split('\n').forEach(async _study_name=>{
+        /* this.myStudyNames.split('\n').forEach(async _study_name=>{
           study_names.push(_study_name)
           parent_ids.push(this.parent_id)
           
@@ -460,7 +473,7 @@ export class FilesLoaderComponent implements OnInit {
             console.log(data); 
           }
         }); */
-        /* this.myTextarea.split('\n').forEach(_study_id=>{
+        /* this.myStudyNames.split('\n').forEach(_study_id=>{
           model_data.push({'Study id':"", 'Study linda ID':"", 'Study Name':_study_id})
         }) */
         

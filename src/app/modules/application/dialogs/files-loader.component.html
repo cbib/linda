@@ -22,8 +22,29 @@
             </div>
             <div>
                 <h2>Download local data files</h2>
-                <p>Here you can integrate experimental data and metadata to enrich your projects or your studies. Use these 
-                    datafiles to create or describe your experimental design, your observations units, and many more.  </p>
+                <p>Here you can integrate experimental data and metadata to enrich your projects or your studies. Use 
+                    datafiles to create or describe your experimental design, your observations units, and many more.  
+                </p>
+                <h4>Usage </h4>
+                <p>
+                    You can create and describe most of the MIAPPE components here using tabular files. 
+                </p>
+                <p>
+                  Two ways are available depending on data at your disposal but in each case, 
+                  the only mandatory column needed in each file is the Study Name column.
+              </p>
+                <h5>build your own data file </h5>
+                <ul>
+                    <li>
+                      First select add data file from empty file by clicking on add menu <button title="Add a new datafile" class="btn btn-light btn-success"><span class="material-icons">add</span></button>. 
+                    </li>
+                    <li>
+                      Secondly, you have to precise file name and your Study Name column(s)  
+                    </li>
+                    <li>
+                      Finally, import your datafile 
+                    </li>
+                </ul>
             </div>
             <button [disabled]="!get_added" (click)="Preview()" style="float: right;" class="btn btn-info">Preview</button>
             <div *ngIf="error">
@@ -42,14 +63,32 @@
         <section *ngIf="get_mode==='empty_import'">
             <div>
                 <h2>Build your own data files</h2>
-                <p>Here you can create a datafile skeleton by simply paste Sutdy unique IDs. For each study IDs, a study will b i,ntegrrated in your project. Use these 
-                    datafiles later, to create or describe your experimental design, your observations units, and many more.  </p>
+                <p>Here you can create a datafile skeleton by simply paste Study names. For each Study Names, a study will be integrated in your project. Use these 
+                    datafiles later, to create or describe your experimental design, your observations units, and many more.  
+                </p>
+                <p>
+                    You can create and describe most of the MIAPPE components here using tabular files. 
+                </p>
+                <h4>Usage </h4>                
+                <ul>
+                    <li>
+                      First select name of your file. (.csv extension needed). 
+                    </li>
+                    <li>
+                      Secondly, you have to fill text area with your Study Name column(s) (one study name by row). You can use <button>Use existing studies</button> button to load the existing study name(s).
+                    </li>
+                    <li>
+                      Finally, click on  <button mat-button class="btn btn-default btn-success">Import Data</button>
+                    </li>
+                </ul>
             </div>
-                <mat-label>FreeText</mat-label>
-                <input [ngModel]="fileName" (ngModelChange)="get_filename($event)">
+                <button (click)="add_existing_studies()">Use existing studies</button>
+                <br>
+                <mat-label>filename + extension</mat-label>
+                <input class="matInput" [ngModel]="fileName" (ngModelChange)="get_filename($event)">
         
-                <mat-label>FreeText</mat-label>
-                <textarea [ngModel]="myTextarea" (ngModelChange)="get_text_area($event)"></textarea>
+                <mat-label>Study Names</mat-label>
+                <textarea [ngModel]="myStudyNames" (ngModelChange)="get_text_area($event)"></textarea>
         
         </section>
         <div *ngIf="get_preview_request">

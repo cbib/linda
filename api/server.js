@@ -2337,7 +2337,7 @@ router.post('/upload_data', function (req, res) {
     var password = req.body.password;
     var parent_id = req.body.parent_id;
     var values = req.body.values;
-    const edge = db._collection("studies_edge");
+    const edge = db._collection("investigations_edge");
     var coll = db._collection("data_files");
     //    //first check if user exist
     /////////////////////////////

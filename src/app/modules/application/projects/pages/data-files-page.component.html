@@ -1,5 +1,6 @@
 <mat-card>
     <div>
+        
         <button title="Add a new datafile" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
         <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
         <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x"
@@ -12,29 +13,21 @@
         <mat-menu #HelpSubMenu="matMenu">
             <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span
                     class="material-icons">view_headline</span></button>
-
-            <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+            <!--<button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>-->
+        </mat-menu>
+        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
                 [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
             </div>
-            <mat-menu #contextMenu="matMenu">
-                <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add
-                    datafiles</button>
-            </mat-menu>
-
-            <mat-menu #contextSubMenu="matMenu">
-                <button mat-menu-item (click)="onAdd('local_import')">from local files</button>
-                <button mat-menu-item (click)="onAdd('empty_import')">from empty files</button>
-            </mat-menu>
-            <!--         <button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>
-                                    <button mat-menu-item (click)="onClickTour(true,'4')">Studies</button>
-            <button mat-menu-item (click)="onClickTour(true,'6')">Experimental factors</button>
-            <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>
-            <button mat-menu-item (click)="onClickTour(true,'10')">Biological materials</button>
-            <button mat-menu-item (click)="onClickTour(true,'12')">Observations units</button>
-            <button mat-menu-item (click)="onClickTour(true,'14')">Data files</button> -->
+        <mat-menu #contextMenu="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add datafile</button>
         </mat-menu>
 
+        <mat-menu #contextSubMenu="matMenu">
+            <button mat-menu-item (click)="onAdd('local_import')">from local file</button>
+            <button mat-menu-item (click)="onAdd('empty_import')">from empty file</button>
+        </mat-menu>
         <span class="span-project"></span>
+    
         <mat-form-field appearance="standard">
             <mat-label>Filter</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>

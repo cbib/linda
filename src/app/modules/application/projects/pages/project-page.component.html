@@ -66,6 +66,7 @@
             access </p>
         </div>
         <div *ngIf="get_role==='owner'">
+        
           <app-data-files-page 
             *ngIf="activeTab==='project_data_files'" 
             (notify)="get_output_from_child($event)"
