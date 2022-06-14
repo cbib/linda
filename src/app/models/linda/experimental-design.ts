@@ -1,3 +1,4 @@
+import { BiologicalMaterialInterface } from "./biological-material";
 import { Observation } from "./observation";
 import { Sample, SampleInterface } from "./sample";
 
@@ -581,6 +582,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_associated_samples():SampleInterface[]{
         return this["Associated sample"].value
     }
+
 
     /* add_observed_variables(observed_variable_id:string){
         this["Associated observed variables"].value.push(observed_variable_id)

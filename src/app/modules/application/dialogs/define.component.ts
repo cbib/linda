@@ -1386,7 +1386,7 @@ export class DefineComponent implements OnInit, OnDestroy {
       env_model['Variable accession number'] = this.detected_values[index]
       values.push(env_model)
     }
-    let add_env_res = await this.globalService.add_multiple(values, 'observed_variable', 'observed_variables', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
+    let add_env_res = await this.globalService.add_multiple(values, 'observed_variable', 'studies', false, this.group_key, this.data_file._key, this.column_original_label, this.extraction_component_field, parent_ids).toPromise()
     if (add_env_res['success']) {
       this.data_file = add_env_res['datafile']
       this.while_added = false

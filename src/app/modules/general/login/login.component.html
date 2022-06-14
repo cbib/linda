@@ -24,5 +24,10 @@
     <li class="nav-item" style="list-style: none">
         <a class="nav-link"  [routerLink]="['/request-reset']" routerLinkActive="active-link">Forgot password ?</a>
       </li>
+      <h2>Sign In With guest account</h2>
+      <article>You can directly use linda without any account. Keep in mind that your data will not be saved in LINDA database until you do not have created an account</article>
+
+      <button [disabled]="loading" (click)="create_guest_profile()" class="btn btn-primary">Create Guest profile (24h validity)</button>
+
 </div>
 

@@ -752,11 +752,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     model_id: "", 
                     parent_id: this.parent_id, 
                     model_type: "observed_variable", 
+                    bm_data: this.bm_data,
                     material_id: this.material_id, 
                     total_available_plots: this.design['number of entries'].value,
                     design: this.design, 
-                    mode: 'create', 
-                    model_key: ''
                 } 
             });
 
@@ -1015,9 +1014,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         this.thirdhideme[k] = !this.thirdhideme[k];
         this.ThirdIndex = k;
     }
-    showObservationDateInfo(k: number, value) {
-        this.obsthirdhideme[k] = !this.obsthirdhideme[k];
-        this.obsThirdIndex = k;
+    showObservationDateInfo(l: number, value) {
+        this.obsthirdhideme[l] = !this.obsthirdhideme[l];
+        this.obsThirdIndex = l;
     }
     close() {
         this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id: this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });

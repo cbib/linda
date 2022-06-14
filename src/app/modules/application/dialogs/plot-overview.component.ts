@@ -78,11 +78,9 @@ export class PlotOverviewComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  onNoClick(): void {
-    this.dialogRef.close({event:"Cancel", selected_material: null});
+  onClose(): void {
+    this.dialogRef.close({event:"Close"});
   }
-  onOkClick(): void {
-    this.dialogRef.close({event:"Confirmed", selected_material:  this.selected_material});
-  }
+
 
 }

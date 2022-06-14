@@ -82,23 +82,32 @@ export class PersonComponent implements OnInit {
     console.log(this.currentPerson)
 
   }
+  isGuestProfile():boolean{
+    return this.currentPerson['Person name'].includes('Guest')
+  }
   onModify(field: string) {
-    //open modify field dialog with only one field and one button 
-    const dialogRef = this.editdialog.open(EditFormComponent, { width: '1000px', data: { person: this.currentPerson, field_to_edit: field } });
-    dialogRef.afterClosed().subscribe(data => {
-      if (data !== undefined) {
-        if (data['event']==='Confirmed'){
-          console.log(data)
-          if (field.includes('Person')){
-            this.ngOnInit()
+    if (this.currentPerson['Person name'].includes('Guest')){
+      this.alertService.error("You cannot modify the guest profile")
+    }
+    else{
+      //open modify field dialog with only one field and one button 
+      const dialogRef = this.editdialog.open(EditFormComponent, { width: '1000px', data: { person: this.currentPerson, field_to_edit: field } });
+      dialogRef.afterClosed().subscribe(data => {
+        if (data !== undefined) {
+          if (data['event']==='Confirmed'){
+            console.log(data)
+            if (field.includes('Person')){
+              this.ngOnInit()
+            }
+            else{
+              this.authenticationService.logout()
+              this.router.navigate(['/login'])
+            }
           }
-          else{
-            this.authenticationService.logout()
-            this.router.navigate(['/login'])
-          }
-        }
-      };
-    });
+        };
+      });
+    }
+    
   }
 
   get getregisterForm() {

@@ -13,6 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule} from '@angular/material/list'; 
 import { MatIconModule } from '@angular/material/icon';
 import { DialogModule } from '../dialogs/dialog.module';
+import { AlertModule } from '../alert/alert.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { DialogModule } from '../dialogs/dialog.module';
     MatDividerModule,
     MatListModule,
     MatIconModule,
-    DialogModule
+    DialogModule,
+    AlertModule
   ],
   exports: [
     ProfileComponent,

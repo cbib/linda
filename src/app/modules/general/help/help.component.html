@@ -38,7 +38,7 @@
     </p> 
     <mat-card>             
     <a><img src="assets/images/select_investigation.png" style="width:1200px;" ></a>
-</mat-card>  
+    </mat-card>  
     <p>Three possibilities are available to the user: </p>
     <ul>
         <li>
@@ -106,6 +106,54 @@
 </mat-expansion-panel><br>
 
 <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            How to create a study ?
+        </mat-panel-title>
+        <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
+    </mat-expansion-panel-header>
+    <mat-card>
+    </mat-card>
+</mat-expansion-panel>
+<br>
+<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            How to use data loader ?
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+        <h3>Prerequisites</h3>
+        You cannot use the datafile loader  without having  previoulsy created an investigation
+        <h3>Go to data files tab</h3>
+        Two ways to loa study  ussing loader are available
+        <h4>Using local data files</h4> 
+        By selecting "add datafile from local file", you can upload any tabular file at your disposal. 
+        The only restriction for your file is that they must one column for study name. 
+        This column will be used to link any other components in this file (event, environmentla parmaeterr, observed variable, etc.) 
+        or any other related data file containing the coresponding study name column.
+        1. First click on Browse button after that, you have to select file delimitor. 
+        2. Then cclick on Upload button to pre-load file. you can then clicck on preview to see te  file you're about to download.
+        3. 
+    </mat-card>
+</mat-expansion-panel>
+<br>
+<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            How to create an study with data loader ?
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+        <h3>Prerequisites</h3>
+        You cannot create study without having previoulsy created an investigation
+        <h3></h3>
+        Click on 
+    </mat-card>
+</mat-expansion-panel>
+<br>
+
+<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
 <mat-expansion-panel-header>
     <mat-panel-title>
         How to load environmental metadata ?
@@ -139,18 +187,7 @@
 </mat-expansion-panel>
 <br>
 
-<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            How to create an study with data loader ?
-        </mat-panel-title>
-    </mat-expansion-panel-header>
-    <mat-card>
-        <mat-card>             
-        </mat-card>  
-    </mat-card>
-</mat-expansion-panel>
-<br>
+
 <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
     <mat-expansion-panel-header>
         <mat-panel-title>

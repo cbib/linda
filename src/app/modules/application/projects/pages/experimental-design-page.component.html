@@ -1,68 +1,63 @@
 <div id="expdesign-page">
     <alert></alert>
-    <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close Design page</button>
-    <button 
-        *ngIf="mode==='edit'" 
-        joyrideStep="StepSubmit" 
-        title="" 
-        class="btn btn-success" 
-        style="float: right;" 
-        type="submit" 
-        (click)="onSave();"
-    >
-    Save changes
+    <button class="btn btn-danger" style="float: right;" type="submit" (click)="close();" [disabled]="">Close Design
+        page</button>
+    <button *ngIf="mode==='edit'" joyrideStep="StepSubmit" title="" class="btn btn-success" style="float: right;"
+        type="submit" (click)="onSave();">
+        Save changes
     </button>
-    <button 
-        *ngIf="mode==='create'" 
-        joyrideStep="StepSubmit" 
-        title="" 
-        class="btn btn-success" 
-        style="float: right;" 
-        type="submit" 
-        (click)="onAdd();"
-    >
-    Submit
-    </button>  
+    <button *ngIf="mode==='create'" joyrideStep="StepSubmit" title="" class="btn btn-success" style="float: right;"
+        type="submit" (click)="onAdd();">
+        Submit
+    </button>
     <div>
         <!-- Nav pills -->
         <ul class="nav nav-pills">
-        <li class="nav-item">
-            <a class="nav-link active" [ngClass]="{ 'active':activeTab==='exp_design_info'}" (click)="changeTab('exp_design_info')"
-            aria-controls="exp_design_info" role="tab" data-toggle="tab" href="#exp_design_info">1. Design informations</a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link active" [ngClass]="{ 'active':activeTab==='exp_design_info'}"
+                    (click)="changeTab('exp_design_info')" aria-controls="exp_design_info" role="tab" data-toggle="tab"
+                    href="#exp_design_info">1. Design informations</a>
+            </li>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
-            <div [ngClass]="{ 'active':activeTab==='exp_design_info'}" role="tabpanel" class="tab-pane active" id="expdesigninfo">
-                
+            <div [ngClass]="{ 'active':activeTab==='exp_design_info'}" role="tabpanel" class="tab-pane active"
+                id="expdesigninfo">
+
                 <h3>Build your experimental design</h3>
                 <mat-card *ngIf="activeTab==='exp_design_info'">
                     <div>
                         <div>
-                            <select [ngModel]="get_design_type"  name="design_type" size="1" (change)="onDesignTypeChange($event.target.value)" >
+                            <select [ngModel]="get_design_type" name="design_type" size="1"
+                                (change)="onDesignTypeChange($event.target.value)">
                                 <option *ngFor="let dt of design_types" [value]="dt">{{dt}}</option>
-                            </select> 
+                            </select>
                         </div>
                         <mat-divider></mat-divider>
-                        
+
                         <div *ngIf="get_design_type!=''">
                             <mat-accordion>
-                                <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                                <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"
+                                    (opened)="panelOpenState = true" (closed)="panelOpenState = false">
                                     <mat-expansion-panel-header>
                                         <mat-panel-title>
-                                          Block design settings
+                                            Block design settings
                                         </mat-panel-title>
                                     </mat-expansion-panel-header>
                                     <span>
                                         <h3>Experimental design representation</h3>
-                                            <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractDesign()">
-                                                <label for="total-block-control" >Select total number of blocks</label>
-                                                <input mdbInput class="form-control" type="number" formControlName="totalBlockControl" id="total-block-control"/> 
-                                
-                                                <label for="total-block-per-row-control" >Select total number of block per row</label>
-                                                <input mdbInput class="form-control" type="number" formControlName="totalBlockPerRowControl" id="total-block-per-row-control" /> 
-                                
-                                                <!-- <label for="total-row-per-block-control" >Select total number of rows per block</label>
+                                        <form [formGroup]="get_BlockDesignForm" (ngSubmit)="onExtractDesign()">
+                                            <label for="total-block-control">Select total number of blocks</label>
+                                            <input mdbInput class="form-control" type="number"
+                                                formControlName="totalBlockControl" id="total-block-control" />
+
+                                            <label for="total-block-per-row-control">Select total number of block per
+                                                row</label>
+                                            <input mdbInput class="form-control" type="number"
+                                                formControlName="totalBlockPerRowControl"
+                                                id="total-block-per-row-control" />
+
+                                            <!-- <label for="total-row-per-block-control" >Select total number of rows per block</label>
                                                 <input mdbInput class="form-control" type="number" formControlName="totalRowPerBlockControl" id="total-row-per-block-control" /> 
                                                 
                                                 <label for="total-column-per-block-control" >Select total number of column per block</label>
@@ -71,173 +66,203 @@
                                                 <label for="total-row-per-plot-control" >Select total number of row per plot</label>
                                                 <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
                                 -->
-                                                <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
-                                            </form>
-                                        </span>
+                                            <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate
+                                                Experimental design</button>
+                                        </form>
+                                    </span>
                                 </mat-expansion-panel>
                             </mat-accordion>
-                            
-                            
+
+
                             <mat-card *ngIf="designLoaded">
-                                <mat-grid-list  cols="{{totalBlockPerRowControl.value}}" rowHeight="100px">
-                                    <mat-grid-tile
-                                        (click)="display_block(bd)"
-                                        *ngFor="let bd of get_design.Blocking.value"
-                                        [colspan]="1"
-                                        [rowspan]="1"
-                                        [style.background]="'lightgreen'"
-                                        >
-                                    {{'Block ' + bd['Block number'].value}}
+                                <mat-grid-list cols="{{totalBlockPerRowControl.value}}" rowHeight="100px">
+                                    <mat-grid-tile (click)="display_block(bd)"
+                                        *ngFor="let bd of get_design.Blocking.value" [colspan]="1" [rowspan]="1"
+                                        [style.background]="'lightgreen'">
+                                        {{'Block ' + bd['Block number'].value}}
                                     </mat-grid-tile>
-                                </mat-grid-list> 
-                                
+                                </mat-grid-list>
+
                             </mat-card>
                             <div *ngIf="designLoaded">
-                            <alert></alert>
-                            <mat-accordion>
-                                <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-                                    <mat-expansion-panel-header>
-                                        <mat-panel-title>
-                                        Plot design settings
-                                        </mat-panel-title>
-                                    </mat-expansion-panel-header>
-                                    <h3>Select Factor repartition</h3>
-                                <mat-card-content *ngIf="!available_designs.includes('Balanced')">
-                                <h4>Completely randomized design</h4>
-                                <p>
-                                    The simplest, least restrictive experimental design is the Completely Randomized Design (CRD). In a CRD, the treatments are assigned 
-                                    to the plots without restriction. That is, with the CRD, every plot is equally likely to be assigned in any treatment 
-                                </p>
-                                <h4>Randomized complete block design</h4>
-                                <p>
-                                    The Randomized complete Block Design (RBD) is the design use most often in agricultural research. In a RBD, the plots (experimental units) are first classified into groups, 
-                                    or blocks, of plots within blocks in such a way that each treatment occurs the same number of time, usually once within each block. 
-                                    The object is to make the variation from plot to plot as small as possible within the blocks while maximizing the variation among blocks 
-                                </p>
-                                <h4>Latin Square Design</h4>
-                                <p>
-                                    In the latin square, the number of plots is the square of the number of treatments. For practical purposes, its use is restricted to trials with more than four
-                                    but fewer than 10 treatments.
-                                </p>
-                                </mat-card-content>
-                                <mat-radio-group
-                                aria-labelledby="example-radio-group-label"
-                                class="example-radio-group"
-                                [(ngModel)]="block_design_subtype"
-                                >
-                                <mat-radio-button class="example-radio-button" *ngFor="let available_design of available_designs" [value]="available_design">
-                                    {{available_design}}
-                                </mat-radio-button>
-                                </mat-radio-group>
-                            
-                                <h3>block design representation (rows and columns)</h3>
-                                <form [formGroup]="get_BlockDesignForm"  (ngSubmit)="onExtractBlockDesign()">
-                                    <label for="total-row-per-block-control" >Select total number of rows per block</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalRowPerBlockControl" id="total-row-per-block-control" /> 
-                                    
-                                    <label for="total-column-per-block-control" >Select total number of column per block</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalColumnPerBlockControl" id="total-column-per-block-control" /> 
-                                    
-                                    <label for="total-row-per-plot-control" >Select total number of row per plot</label>
-                                    <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
-                    
-                                    <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate Experimental design</button>
-                                </form>
-                                </mat-expansion-panel>
-                            </mat-accordion>
-                                
-                                
-                        </div>
+                                <alert></alert>
+                                <mat-accordion>
+                                    <mat-expansion-panel [disabled]="panel_disabled" [expanded]="panel_expanded"
+                                        (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                Plot design settings
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                        <h3>Select Factor repartition</h3>
+                                        <mat-card-content *ngIf="!available_designs.includes('Balanced')">
+                                            <h4>Completely randomized design</h4>
+                                            <p>
+                                                The simplest, least restrictive experimental design is the Completely
+                                                Randomized Design (CRD). In a CRD, the treatments are assigned
+                                                to the plots without restriction. That is, with the CRD, every plot is
+                                                equally likely to be assigned in any treatment
+                                            </p>
+                                            <h4>Randomized complete block design</h4>
+                                            <p>
+                                                The Randomized complete Block Design (RBD) is the design use most often
+                                                in agricultural research. In a RBD, the plots (experimental units) are
+                                                first classified into groups,
+                                                or blocks, of plots within blocks in such a way that each treatment
+                                                occurs the same number of time, usually once within each block.
+                                                The object is to make the variation from plot to plot as small as
+                                                possible within the blocks while maximizing the variation among blocks
+                                            </p>
+                                            <h4>Latin Square Design</h4>
+                                            <p>
+                                                In the latin square, the number of plots is the square of the number of
+                                                treatments. For practical purposes, its use is restricted to trials with
+                                                more than four
+                                                but fewer than 10 treatments.
+                                            </p>
+                                        </mat-card-content>
+                                        <mat-radio-group aria-labelledby="example-radio-group-label"
+                                            class="example-radio-group" [(ngModel)]="block_design_subtype">
+                                            <mat-radio-button class="example-radio-button"
+                                                *ngFor="let available_design of available_designs"
+                                                [value]="available_design">
+                                                {{available_design}}
+                                            </mat-radio-button>
+                                        </mat-radio-group>
+
+                                        <h3>block design representation (rows and columns)</h3>
+                                        <form [formGroup]="get_BlockDesignForm" (ngSubmit)="onExtractBlockDesign()">
+                                            <label for="total-row-per-block-control">Select total number of rows per
+                                                block</label>
+                                            <input mdbInput class="form-control" type="number"
+                                                formControlName="totalRowPerBlockControl"
+                                                id="total-row-per-block-control" />
+
+                                            <label for="total-column-per-block-control">Select total number of column
+                                                per block</label>
+                                            <input mdbInput class="form-control" type="number"
+                                                formControlName="totalColumnPerBlockControl"
+                                                id="total-column-per-block-control" />
+
+                                            <label for="total-row-per-plot-control">Select total number of row per
+                                                plot</label>
+                                            <input mdbInput class="form-control" type="number"
+                                                formControlName="totalRowPerPlotControl"
+                                                id="total-row-per-plot-control" />
+
+                                            <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate
+                                                Experimental design</button>
+                                        </form>
+                                    </mat-expansion-panel>
+                                </mat-accordion>
+
+
+                            </div>
                             <mat-card *ngIf="blockDesignLoaded">
-                                
-                                <mat-card-title>Plot Design in block {{get_design.Blocking.value[block_index]['Block number'].value}}</mat-card-title>
+
+                                <mat-card-title>Plot Design in block
+                                    {{get_design.Blocking.value[block_index]['Block number'].value}}</mat-card-title>
                                 <mat-card-content>
-                                    <p> 
-                                        You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}} plots defined in block {{get_design.Blocking.value[block_index]['Block number'].value}}
+                                    <p>
+                                        You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}}
+                                        plots defined in block
+                                        {{get_design.Blocking.value[block_index]['Block number'].value}}
                                     </p>
-                                <mat-grid-list  cols="{{totalColumnPerBlockControl.value}}" rowHeight="100px">
-                                    <mat-grid-tile
-                                        (click)="display_plot(pd)"
-                                        *ngFor="let pd of get_design.Blocking.value[block_index]['Plot design'].value"
-                                        [colspan]="1"
-                                        [rowspan]="1"
-                                        [style.background]="'lightgreen'"
-                                        >
-                                    {{get_associated_material_source(pd)}} 
-                                    <!-- {{pd['Plot number'].value + ":" + pd['Associate_material_source'].value}} -->
-                                    </mat-grid-tile>
-                                </mat-grid-list> 
-                                
-                            </mat-card-content>
+                                    <mat-grid-list cols="{{totalColumnPerBlockControl.value}}" rowHeight="100px">
+                                        <mat-grid-tile (click)="display_plot(pd)"
+                                            *ngFor="let pd of get_design.Blocking.value[block_index]['Plot design'].value"
+                                            [colspan]="1" [rowspan]="1" [style.background]="'lightgreen'">
+                                            {{get_associated_material_source(pd)}}
+                                            <!-- {{pd['Plot number'].value + ":" + pd['Associate_material_source'].value}} -->
+                                        </mat-grid-tile>
+                                    </mat-grid-list>
+
+                                </mat-card-content>
                                 <!-- <mat-card-footer>
                                     <p> You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}} plots defined in block {{get_design.Blocking.value[block_index]['Block number'].value}}
                                     </p>
                                 </mat-card-footer> -->
                             </mat-card>
                             <!-- Table of design -->
-                            
+
                             <mat-card *ngIf="blockDesignLoaded && designLoaded">
-                                
-                                <h3> Experimental design table: Observations unit, biological material, samples and observations association</h3>
-                                <button *ngIf="!get_biological_material_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addBiologicalMaterial()">
+
+                                <h3> Experimental design table: Observations unit, biological material, samples and
+                                    observations association</h3>
+                                <button *ngIf="!get_biological_material_loaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="addBiologicalMaterial()">
                                     Associate Biological Material
-                                  </button>
-                                  <button *ngIf="get_biological_material_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeBiologicalMaterial()">
+                                </button>
+                                <button *ngIf="get_biological_material_loaded" class="btn btn-primary" mat-raised-button
+                                    type="submit" (click)="removeBiologicalMaterial()">
                                     Unlink Biological Material
-                                  </button>
-                                  <button [disabled]="!biologicalMaterialLoaded" *ngIf="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addObservationUnits()">
-                                    Define Observation Units 
-                                  </button>
-                                  <button *ngIf="get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeObservationUnits()">
-                                    Unlink Observation Units 
-                                  </button>
-                                  <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
-                                    Add experimental factor 
-                                  </button>
-                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
-                                    Extract samples 
-                                  </button>
-                                  <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="addObservations()">
-                                    Add Observations 
-                                  </button>
-                                  <!-- <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
+                                </button>
+                                <button [disabled]="!biologicalMaterialLoaded" *ngIf="!get_observation_unit_loaded"
+                                    class="btn btn-primary" mat-raised-button type="submit"
+                                    (click)="addObservationUnits()">
+                                    Define Observation Units
+                                </button>
+                                <button *ngIf="get_observation_unit_loaded" class="btn btn-primary" mat-raised-button
+                                    type="submit" (click)="removeObservationUnits()">
+                                    Unlink Observation Units
+                                </button>
+                                <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="addExperimentalFactor()">
+                                    Add experimental factor
+                                </button>
+                                <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="extractSample()">
+                                    Extract samples
+                                </button>
+                                <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="addObservations()">
+                                    Add Observations
+                                </button>
+                                <!-- <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples 
                                   </button>
                                   <button *ngIf="get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="removeSample()">
                                     Delete samples 
                                   </button> -->
-                                <table  class="table table-bordered heading-hvr">  
-                                    <thead>  
-                                        <tr>  
-                                            <th> </th>  
-                                            <th>Block number </th>  
-                                            <th>Blocks per trial</th>  
-                                            <th>Observation Unit external id</th> 
-                                            <th>Associated samples</th> 
-                                            <th>Associated observations</th> 
+                                <table class="table table-bordered heading-hvr">
+                                    <thead>
+                                        <tr>
+                                            <th> </th>
+                                            <th>Block number </th>
+                                            <th>Blocks per trial</th>
+                                            <th>Observation Unit external id</th>
+                                            <th>Associated samples</th>
+                                            <th>Associated observations</th>
 
-                                        </tr>  
-                                    </thead>  
-                                    <tbody *ngFor="let experimental_design_block of get_design.Blocking.value; let i = index">  
-                        
-                                        <tr class="nga-card-step">  
-                                            <td align="center">  
-                                                <button *ngIf="!hideme[i]" (click)="showBlockInfo(i,experimental_design_block['Block number'].value)" ></button>
-                                                <button *ngIf="hideme[i]" (click)="hideme[i] = !hideme[i]" ></button>
-                                            </td> 
-                                            <td align="center">{{experimental_design_block['Block number'].value}}</td>     
-                                            <td align="center">{{experimental_design_block['Blocks per trial'].value}}</td>
-                                            <td align="center">{{get_observation_units(get_design)}}</td> 
-                                            <td align="center">{{get_samples(get_design, experimental_design_block['Block number'].value)}}</td>
-                                            <td align="center">{{get_observations(get_design, experimental_design_block['Block number'].value)}}</td>
-                                        </tr>  
-                                        <!-- <div id="myresult" class="img-zoom-result"></div> -->  
-                                        <tr [hidden]="!hideme[i]" class="sub-table no-bg">  
-                                            <td align="center"> </td>  
-                                            <td colspan="15" class="p-0">  
-                                            <table class="table mb-0 table-striped"> 
-                                                <!-- Mode toutes les lignes (une seul niveau d'ouvverture (par block)) --> 
-                                                <!-- <thead class="bg-dark text-white">  
+                                        </tr>
+                                    </thead>
+                                    <tbody
+                                        *ngFor="let experimental_design_block of get_design.Blocking.value; let i = index">
+
+                                        <tr class="nga-card-step">
+                                            <td align="center">
+                                                <button *ngIf="!hideme[i]"
+                                                    (click)="showBlockInfo(i,experimental_design_block['Block number'].value)"></button>
+                                                <button *ngIf="hideme[i]" (click)="hideme[i] = !hideme[i]"></button>
+                                            </td>
+                                            <td align="center">{{experimental_design_block['Block number'].value}}</td>
+                                            <td align="center">{{experimental_design_block['Blocks per trial'].value}}
+                                            </td>
+                                            <td align="center">{{get_observation_units(get_design)}}</td>
+                                            <td align="center">
+                                                {{get_samples(get_design, experimental_design_block['Block number'].value)}}
+                                            </td>
+                                            <td align="center">
+                                                {{get_observations(get_design, experimental_design_block['Block number'].value)}}
+                                            </td>
+                                        </tr>
+                                        <!-- <div id="myresult" class="img-zoom-result"></div> -->
+                                        <tr [hidden]="!hideme[i]" class="sub-table no-bg">
+                                            <td align="center"> </td>
+                                            <td colspan="15" class="p-0">
+                                                <table class="table mb-0 table-striped">
+                                                    <!-- Mode toutes les lignes (une seul niveau d'ouvverture (par block)) -->
+                                                    <!-- <thead class="bg-dark text-white">  
                                                 <tr>  
                                                     <th>Plot number</th>  
                                                     <th>Row number</th>  
@@ -263,8 +288,8 @@
                                                         <td>{{'Not defined yet'}}</td> 
                                                 </tr>  
                                                 </tbody>   -->
-                                                <!-- Mode par block et par plot (deux niveaux d'ouvverture (par block et par plot)) --> 
-                                                <!-- <thead class="bg-dark text-white">  
+                                                    <!-- Mode par block et par plot (deux niveaux d'ouvverture (par block et par plot)) -->
+                                                    <!-- <thead class="bg-dark text-white">  
                                                     <tr>  
                                                         <th> </th> 
                                                         <th>Plot number</th>  
@@ -309,9 +334,9 @@
                                                         </table>
                                                         </td>
                                                     </tr>
-                                                </tbody> -->  
-                                                <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) --> 
-                                                <!-- <thead class="bg-dark text-white">  
+                                                </tbody> -->
+                                                    <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) -->
+                                                    <!-- <thead class="bg-dark text-white">  
                                                     <tr>  
                                                         <th> </th> 
                                                         <th>Plot number</th> 
@@ -368,160 +393,164 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>  -->
-                                                <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) + third levle on harvested date--> 
-                                                <thead class="bg-dark text-white">  
-                                                    <tr>  
-                                                        <th> </th> 
-                                                        <th>Plot number</th> 
-                                                        <th>Row number</th>  
-                                                        <th>Column number</th> 
-                                                        <th>Associated material source</th> 
-                                                        <th># biological material </th> 
-                                                        <th>replicate number</th> 
-                                                        <th>Observation unit uuid</th> 
-                                                        <!-- <th>Samples</th>  -->
-                                                    </tr>  
-                                                 </thead> 
-                                                <tbody *ngFor="let plotInfo of get_design.Blocking.value[i]['Plot design'].value; let j = index" >  
-                                                    <tr class="nga-card-step" *ngFor="let rowInfo of plotInfo['Row design'].value">
-                                                        <td align="center">  
-                                                            <button *ngIf="!secondhideme[j]" (click)="showPlotInfo(j,plotInfo['Plot number'].value)" ></button>
-                                                            <button *ngIf="secondhideme[j]" (click)="secondhideme[j] = !secondhideme[j]" ></button>
-                                                        </td> 
-                                                        <td>{{plotInfo['Plot number'].value}}</td>
-                                                        <td>{{rowInfo['Row number'].value}}</td> 
-                                                        <td>{{plotInfo['Column number'].value}}</td>
-                                                        <td>{{get_associated_material_source(plotInfo)}}</td>
-                                                        <td>{{get_associated_biological_material(plotInfo)}}</td>
-                                                        <td>{{get_replicate_number(plotInfo)}}</td>
-                                                        <td>{{get_observation_uuid(plotInfo)}}</td> 
-                                                        <!-- <td>{{get_associated_sample(plotInfo)}}</td> -->
-                                                    </tr>
-                                                    <tr [hidden]="!secondhideme[j]" class="sub-table no-bg">  
-                                                        <td align="center"> </td>  
-                                                        <td colspan="15" class="p-0">   
-                                                        <table class="table mb-0 table-striped"> 
-                                                            <thead>  
-                                                                <tr> 
-                                                                    <th> </th>   
-                                                                    <th>Collection date</th> 
-                                                                    <th>Samples</th> 
+                                                    <!-- Mode par block et par plot et par samples, bm, et observed variables (trois niveaux d'ouvverture (par block et par plot)) + third levle on harvested date-->
+                                                    <thead class="bg-dark text-white">
+                                                        <tr>
+                                                            <th> </th>
+                                                            <th>Plot number</th>
+                                                            <th>Row number</th>
+                                                            <th>Column number</th>
+                                                            <th>Associated material source</th>
+                                                            <th># biological material </th>
+                                                            <th>replicate number</th>
+                                                            <th>Observation unit uuid</th>
+                                                            <!-- <th>Samples</th>  -->
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody
+                                                        *ngFor="let plotInfo of get_design.Blocking.value[i]['Plot design'].value; let j = index">
+                                                        <tr class="nga-card-step"
+                                                            *ngFor="let rowInfo of plotInfo['Row design'].value">
+                                                            <td align="center">
+                                                                <button *ngIf="!secondhideme[j]"
+                                                                    (click)="showPlotInfo(j,plotInfo['Plot number'].value)"></button>
+                                                                <button *ngIf="secondhideme[j]"
+                                                                    (click)="secondhideme[j] = !secondhideme[j]"></button>
+                                                            </td>
+                                                            <td>{{plotInfo['Plot number'].value}}</td>
+                                                            <td>{{rowInfo['Row number'].value}}</td>
+                                                            <td>{{plotInfo['Column number'].value}}</td>
+                                                            <td>{{get_associated_material_source(plotInfo)}}</td>
+                                                            <td>{{get_associated_biological_material(plotInfo)}}</td>
+                                                            <td>{{get_replicate_number(plotInfo)}}</td>
+                                                            <td>{{get_observation_uuid(plotInfo)}}</td>
+                                                            <!-- <td>{{get_associated_sample(plotInfo)}}</td> -->
+                                                        </tr>
+                                                        <tr [hidden]="!secondhideme[j]" class="sub-table no-bg">
+                                                            <td align="center"> </td>
+                                                            <td colspan="15" class="p-0">
+                                                                <table class="table mb-0 table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th> </th>
+                                                                            <th>Collection date</th>
+                                                                            <th>Samples</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody
+                                                                        *ngFor="let date of get_collection_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as k">
+                                                                        <tr class="nga-card-step">
+                                                                            <td align="center">
+                                                                                <button *ngIf="!thirdhideme[k]"
+                                                                                    (click)="showSampleDateInfo(k,plotInfo['Plot number'].value)"></button>
+                                                                                <button *ngIf="thirdhideme[k]"
+                                                                                    (click)="thirdhideme[k] = !thirdhideme[k]"></button>
+                                                                            </td>
+                                                                            <td>{{date}}</td>
+                                                                            <td>{{get_associated_sample(plotInfo, date)}}
+                                                                            </td>
 
-   
-                                                                    
-                                                                </tr>  
-                                                            </thead> 
-                                                            <tbody *ngFor="let date of get_collection_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as k">
-                                                                <tr class="nga-card-step" >  
-                                                                    <td align="center">  
-                                                                        <button *ngIf="!thirdhideme[k]" (click)="showSampleDateInfo(k,plotInfo['Plot number'].value)" ></button>
-                                                                        <button *ngIf="thirdhideme[k]" (click)="thirdhideme[k] = !thirdhideme[k]" ></button>
-                                                                    </td> 
-                                                                    <td>{{date}}</td>
-                                                                    <td>{{get_associated_sample(plotInfo, date)}}</td>
-                                                                    
-                                                                     
-                                                                </tr>
-                                                                <tr [hidden]="!thirdhideme[k]" class="sub-table no-bg">  
-                                                                    <td align="center"> </td>  
-                                                                    <td class="p-0">   
-                                                                    <table class="table mb-0 table-striped"> 
-                                                                        <thead>  
-                                                                            <tr>   
-                                                                                <th width="50">Associated sample ID</th> 
-                                                                                <th width="50">Sample description</th> 
-                                                                                <th width="50">Biological material UUID</th>  
-                                                                                
-                                                                            </tr>  
-                                                                        </thead> 
-                                                                        <tbody>
-                                                                            <tr class="nga-card-step" *ngFor="let comp of get_sample_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">  
-                                                                                <td>{{comp['Sample ID']}}</td>  
-                                                                                <td>{{comp['Sample description']}}</td>  
-                                                                                <td>{{comp['bmUUID']}}</td> 
-                                                                                
-                                                                            </tr>
-                                                                              
-                                                                            </tbody>
-                                                                    </table>
-                                                                    </td>
-                                                                </tr>
-                                                                  
-                                                                </tbody>
-                                                        </table>
-                                                        <table class="table mb-0 table-striped"> 
-                                                            <thead>  
-                                                                <tr> 
-                                                                    <th> </th>   
-                                                                    <th>Observation date</th> 
-                                                                    <th>Observations</th>   
-                                                                </tr>  
-                                                            </thead> 
-                                                            <tbody *ngFor="let obsdate of get_observation_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as l">
-                                                                <tr class="nga-card-step" >  
-                                                                    <td align="center">  
-                                                                        <button *ngIf="!obsthirdhideme[l]" (click)="showObservationDateInfo(l,plotInfo['Plot number'].value)" ></button>
-                                                                        <button *ngIf="obsthirdhideme[l]" (click)="obsthirdhideme[l] = !obsthirdhideme[l]" ></button>
-                                                                    </td> 
-                                                                    <td>{{obsdate}}</td>
-                                                                    <td>{{get_associated_observation(plotInfo, obsdate)}}</td>
-                                                                    
-                                                                     
-                                                                </tr>
-                                                                <tr [hidden]="!obsthirdhideme[l]" class="sub-table no-bg">  
-                                                                    <td align="center"> </td>  
-                                                                    <td class="p-0">   
-                                                                    <table class="table mb-0 table-striped"> 
-                                                                        <thead>  
-                                                                            <tr>   
-                                                                                <th width="50">Associated observation ID</th> 
-                                                                                <th width="50">Observation description</th> 
-                                                                                <th width="50">Obs UUID</th>  
-                                                                                
-                                                                            </tr>  
-                                                                        </thead> 
-                                                                        <tbody>
-                                                                            <tr class="nga-card-step" *ngFor="let comp of get_observation_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, obsdate)">  
-                                                                                <td>{{comp['Observation ID']}}</td>  
-                                                                                <td>{{comp['Observation description']}}</td>  
-                                                                                <td>{{comp['obsUUID']}}</td> 
-                                                                                
-                                                                            </tr>
-                                                                              
-                                                                            </tbody>
-                                                                    </table>
-                                                                    </td>
-                                                                </tr>
-                                                                  
-                                                                </tbody>
-                                                        </table>
-                                                        </td>
-                                                    </tr>
-                                                </tbody> 
-                                            </table>  
-                                            </td>  
-                                        </tr>  
-                        
-                                    </tbody>  
-                                </table>  
+
+                                                                        </tr>
+                                                                        <tr [hidden]="!thirdhideme[k]"
+                                                                            class="sub-table no-bg">
+                                                                            <td align="center"> </td>
+                                                                            <td colspan="15" class="p-0">
+                                                                                <table class="table mb-0 table-striped">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Associated sample ID
+                                                                                            </th>
+                                                                                            <th>Sample description</th>
+                                                                                            <th>Biological material UUID
+                                                                                            </th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr class="nga-card-step"
+                                                                                            *ngFor="let comp of get_sample_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, date)">
+                                                                                            <td>{{comp['Sample ID']}}
+                                                                                            </td>
+                                                                                            <td>{{comp['Sample description']}}
+                                                                                            </td>
+                                                                                            <td>{{comp['bmUUID']}}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <table class="table mb-0 table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th> </th>
+                                                                            <th>Observation date</th>
+                                                                            <th>Observations</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody
+                                                                        *ngFor="let obsdate of get_observation_dates(experimental_design_block['Block number'].value, plotInfo['Plot number'].value); index as l">
+                                                                        <tr class="nga-card-step">
+                                                                            <td align="center">
+                                                                                <button *ngIf="!obsthirdhideme[l]"
+                                                                                    (click)="showObservationDateInfo(l,plotInfo['Plot number'].value)"></button>
+                                                                                <button *ngIf="obsthirdhideme[l]"
+                                                                                    (click)="obsthirdhideme[l] = !obsthirdhideme[l]"></button>
+                                                                            </td>
+                                                                            <td>{{obsdate}}</td>
+                                                                            <td>{{get_associated_observation(plotInfo, obsdate)}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr [hidden]="!obsthirdhideme[l]"
+                                                                            class="sub-table no-bg">
+                                                                            <td align="center"> </td>
+                                                                            <td colspan="15" class="p-0">
+                                                                                <table class="table mb-0 table-striped">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Associated observation
+                                                                                                ID</th>
+                                                                                            <th>Observation description
+                                                                                            </th>
+                                                                                            <th>Obs UUID</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr class="nga-card-step"
+                                                                                            *ngFor="let comp of get_observation_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, obsdate)">
+                                                                                            <td>{{comp['Observation ID']}}
+                                                                                            </td>
+                                                                                            <td>{{comp['Observation description']}}
+                                                                                            </td>
+                                                                                            <td>{{comp['obsUUID']}}</td>
+
+                                                                                        </tr>
+
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
                             </mat-card>
                             <mat-card *ngIf="get_observation_unit_loaded">
-                                <app-observation-unit-page 
-                                (notify)="get_output_from_child($event)"
-                                [level]="1" 
-                                [model_type]="'observation_unit'" 
-                                [model_key]="" 
-                                [design_id]="get_model_id"
-                                [grand_parent_id]="get_grand_parent_id" 
-                                [parent_id]="get_parent_id" 
-                                [mode]="get_mode"
-                                [role]="get_role" 
-                                [group_key]="get_group_key"
-                                >
+                                <app-observation-unit-page (notify)="get_output_from_child($event)" [level]="1"
+                                    [model_type]="'observation_unit'" [model_key]="" [design_id]="get_model_id"
+                                    [grand_parent_id]="get_grand_parent_id" [parent_id]="get_parent_id"
+                                    [mode]="get_mode" [role]="get_role" [group_key]="get_group_key">
                                 </app-observation-unit-page>
                             </mat-card>
-                           
-                            
                         </div>
                     </div>
                 </mat-card>
@@ -529,4 +558,3 @@
         </div>
     </div>
 </div>
-

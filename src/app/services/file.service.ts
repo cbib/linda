@@ -36,7 +36,7 @@ export class FileService {
             'parent_id': parent_id,
             'values': data
         };
-        //console.log(obj2send)
+        console.log(obj2send)
         return this.httpClient.post(`${this.APIUrl + "upload_data"}`, obj2send).pipe(map(this.extractData));
     }
     public upload3(filename: string, data, headers, associated_headers, parent_id: string): Observable<any> {
