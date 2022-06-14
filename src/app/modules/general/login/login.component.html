@@ -1,5 +1,5 @@
 <div>
-     <h2>Sign In With Username/Email</h2>
+     <h2>Sign In with account details</h2>
      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
             <label for="username">Username</label>
@@ -24,9 +24,10 @@
     <li class="nav-item" style="list-style: none">
         <a class="nav-link"  [routerLink]="['/request-reset']" routerLinkActive="active-link">Forgot password ?</a>
       </li>
-      <h2>Sign In With guest account</h2>
+      <h2>Sign In with guest account</h2>
+      <br>
       <article>You can directly use linda without any account. Keep in mind that your data will not be saved in LINDA database until you do not have created an account</article>
-
+      <br>
       <button [disabled]="loading" (click)="create_guest_profile()" class="btn btn-primary">Create Guest profile (24h validity)</button>
 
 </div>

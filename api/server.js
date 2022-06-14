@@ -57,7 +57,7 @@ const queues = require('@arangodb/foxx/queues')
 const getUserName = require("./queries/get-user-name");
 const telegram = require("./queries/telegram-chat");
 const { exec } = require('child_process');
-//const { spawn } = require('child_process');
+const { spawn } = require('child_process');
 //const uuidV4 = require('uuid/v4');
 //const uuid = require('uuid');
 //const { v4: uuidv4 } = require('uuid');
@@ -958,7 +958,23 @@ router.post('/request-reset', (req, res) => {
           }); */
         //var spawn = require('child_process').spawn
 
-        var command = "sh ./scripts/send_mail.sh " + email + " " + token;
+        
+        const subprocess = spawn('/usr/bin/sh', [
+            "-u",
+            path.join(__dirname, '/scripts/send_mail.sh', " "+ email ," " + token)
+        ]);
+        // print output of script
+        subprocess.stdout.on('data', (data) => {
+            console.log(`data:${data}`);
+        });
+        subprocess.stderr.on('data', (data) => {
+            console.log(`error:${data}`);
+        });
+        subprocess.stderr.on('close', () => {
+            console.log("Closed");
+            res.send({ res: "all is good", dir_uuid: outputdirname })
+        });
+       /*  var command = "sh ./scripts/send_mail.sh " + email + " " + token;
         var sendmail = exec(command,
             (error, stdout, stderr) => {
                 if (error !== null) {
@@ -968,7 +984,7 @@ router.post('/request-reset', (req, res) => {
                 else {
                     res.send({ success: true });
                 }
-            });
+            }); */
 
         /* const child = require('child_process').spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
         child.stdout.on('data', data => {
