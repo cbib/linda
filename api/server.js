@@ -963,7 +963,7 @@ router.post('/request-reset', (req, res) => {
         /* const cp = require('child_process');
         const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token); */
         
-        const { exec } = require('child_process');
+        const { exec } = require('child_process').exec;
 
         const ls = exec('ls -l', function (error, stdout, stderr) {
           if (error) {
