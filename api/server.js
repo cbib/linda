@@ -960,9 +960,10 @@ router.post('/request-reset', (req, res) => {
             }
           }); */
         //var spawn = require('child_process').spawn
-
+        const cp = require('child_process');
+        const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token);
         
-        const subprocess = child_process.spawn('/usr/bin/sh', [
+        /* const subprocess = child_process.spawn('/usr/bin/sh', [
             "-u",
             path.join(__dirname, '/scripts/send_mail.sh', " "+ email ," " + token)
         ]);
@@ -976,7 +977,7 @@ router.post('/request-reset', (req, res) => {
         subprocess.stderr.on('close', () => {
             console.log("Closed");
             res.send({ res: "all is good", dir_uuid: outputdirname })
-        });
+        }); */
        /*  var command = "sh ./scripts/send_mail.sh " + email + " " + token;
         var sendmail = exec(command,
             (error, stdout, stderr) => {
