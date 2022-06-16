@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ResponseResetComponent } from './response-reset.component';
 
 const routes: Routes = [
-  { path: '', component: ResponseResetComponent },
+  //{ path: '', component: ResponseResetComponent },
   { path: ':token', component: ResponseResetComponent }
   ];
 

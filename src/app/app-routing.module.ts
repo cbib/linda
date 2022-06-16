@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'home2', pathMatch: 'full' },
   //{ path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'home2',component: HomeNewComponent},
-  { path: 'response-reset',component: ResponseResetComponent},
+  //{ path: 'response-reset',component: ResponseResetComponent},
   {
     path: 'login',
     loadChildren: () => import('./modules/general/login/login.module')
@@ -118,11 +118,11 @@ const routes: Routes = [
     loadChildren: () => import('./modules/general/request-reset/request-reset.module')
     .then(m => m.RequestResetModule)
   },
-  /* { 
+  { 
     path: 'response-reset', 
     loadChildren: () => import('./modules/general/response-reset/response-reset.module')
     .then(m => m.ResponseResetModule)
-  }, */
+  },
   // DOCUMENTATION MODULE
   { 
     path: '', 
