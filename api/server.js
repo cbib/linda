@@ -960,9 +960,25 @@ router.post('/request-reset', (req, res) => {
             }
           }); */
         //var spawn = require('child_process').spawn
-        const cp = require('child_process');
-        const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token);
+        /* const cp = require('child_process');
+        const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token); */
         
+        const { exec } = require('child_process');
+
+        const ls = exec('ls -l', function (error, stdout, stderr) {
+          if (error) {
+            console.log(error.stack);
+            console.log('Error code: ' + error.code);
+            console.log('Signal received: ' + error.signal);
+          }
+          console.log('Child Process STDOUT: ' + stdout);
+          console.log('Child Process STDERR: ' + stderr);
+        });
+        
+        ls.on('exit', function (code) {
+          console.log('Child process exited with exit code ' + code);
+        });
+
         /* const subprocess = child_process.spawn('/usr/bin/sh', [
             "-u",
             path.join(__dirname, '/scripts/send_mail.sh', " "+ email ," " + token)
