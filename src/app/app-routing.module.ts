@@ -7,7 +7,7 @@ import { HomeComponent } from './modules/general/home/home.component';
 import { AdminComponent } from './components/admin/admin.component'
 import { HomeNewComponent } from './modules/general/home/home-new.component';
 import { NotFoundComponent } from './modules/general/not-found/not-found.component';
-import { ResponseResetComponent } from './modules/general/response-reset/response-reset.component';
+//import { ResponseResetComponent } from './modules/general/response-reset/response-reset.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home2', pathMatch: 'full' },
