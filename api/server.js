@@ -43,8 +43,6 @@
 
 
 'use strict';
-const express = require('express');
-const app = express();
 var log = require("console").log;
 const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
