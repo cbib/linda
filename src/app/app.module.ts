@@ -64,6 +64,7 @@ import { HomeComponent } from './modules/general/home/home.component';
 import { HomeNewComponent } from './modules/general/home/home-new.component';
 import { NotFoundComponent } from './modules/general/not-found/not-found.component';
 import { ResponseResetComponent } from './modules/general/response-reset/response-reset.component';
+import { ResponseResetModule } from './modules/general/response-reset/response-reset.module';
 
 
 
@@ -79,8 +80,8 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
     DragDropDirective,
     PublicationsComponent,
     HomeNewComponent,
-    NotFoundComponent,
-    ResponseResetComponent
+    NotFoundComponent//,
+    //ResponseResetComponent
   ],
   imports: [
     BrowserModule,
@@ -125,7 +126,8 @@ import { ResponseResetComponent } from './modules/general/response-reset/respons
     AlertModule,
     MapModule,
     AssignModule,
-    RequestResetModule
+    RequestResetModule,
+    ResponseResetModule
     //DocumentationModule
     //ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })    
   ],
