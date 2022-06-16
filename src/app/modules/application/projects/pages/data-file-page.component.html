@@ -27,20 +27,28 @@
         <div class="loading"></div>
     </div>
 </ng-template>
-
+<div>
+    <h4>Usage</h4>
+    <p>
+        Each column in your datafile needs to be linked as a MIAPPE component if possible. 
+        Each datafile needs to have a column called Study name. 
+        If you  started from empty files, the study name has already be associated but not mapped as a real MIAPPE component. 
+        To do this, you need to extract value in your column and create corresponding studies
+    </p>
+</div>
 <div *ngIf="get_loaded; else loading">
     <section class="format-section">
         <alert id="assign-alert"></alert>
         <table *ngIf="get_loaded; else loading" style="margin: 0%;" id="data_file_table" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable  class="dataTable table table-hover table-bordered table-responsive-md text-center table-striped">
-            <thead >
+            <thead>
                 <tr>
                     <th *ngFor="let column of get_columns ; index as j;">
                         <div class="btn-group">
-                            <button mat-button class="btn btn-primary btn-xs"  (click)="onDefine(column)">Extract</button>
+                            <button mat-button class="btn btn-primary btn-xs" [style.background-color]="get_cell_style(column)" (click)="onDefine(column)">Extract</button>
                             <button class="close" mat-button (click)="onRemove(column)"><mat-icon>delete_forever</mat-icon></button>
                         </div>
                         <div>
-                            <mat-card [style.background-color]="get_cell_style(column)" [style.color]="'white'" [style.min-width]="'80px'" class="chips text-center"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
+                            <mat-card [style.background-color]="get_cell_style(column)" class="chips text-center" [style.color]="'white'" [style.min-width]="'80px'"  *ngIf="is_column_extracted(column)">{{get_column_extracted(column).associated_component_field}}</mat-card>
                             <mat-card [style.background-color]="get_style(column)" class="chips text-center" [style.min-width]="'80px'"  *ngIf="!is_column_extracted(column)">Not defined</mat-card>
                         </div>   
                     </th>

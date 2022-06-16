@@ -288,10 +288,10 @@ export class DataFilePageComponent implements AfterViewInit, OnDestroy, OnInit {
       }
       else {
         if (ass_headers.associated_linda_id.length == 0) {
-          return "LightSeaGreen"
+          return "#c0e4e3"
         }
         else {
-          return "DarkCyan"
+          return "#1b7170"
         }
 
       }
