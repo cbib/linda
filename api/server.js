@@ -43,6 +43,8 @@
 
 
 'use strict';
+const express = require('express');
+const app = express();
 var log = require("console").log;
 const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
@@ -963,7 +965,7 @@ router.post('/request-reset', (req, res) => {
         /* const cp = require('child_process');
         const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token); */
         
-        const { exec } = require('child_process').exec;
+        const { exec } = require('child_process');
 
         const ls = exec('ls -l', function (error, stdout, stderr) {
           if (error) {
