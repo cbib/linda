@@ -43,8 +43,6 @@
 
 
 'use strict';
-const express = require('express')
-const app = express();
 var log = require("console").log;
 const createRouter = require('@arangodb/foxx/router');
 var graph_module = require("@arangodb/general-graph");
@@ -60,7 +58,7 @@ const getUserName = require("./queries/get-user-name");
 const telegram = require("./queries/telegram-chat");
 var child_process = require('child_process');
 
-const { exec } = require('child_process');
+//const { exec } = require('child_process');
 //const spawn = require('child_process').spawn;
 const path = require('path')
 //const uuidV4 = require('uuid/v4');
@@ -950,89 +948,8 @@ router.post('/request-reset', (req, res) => {
         let personId = result[0]['person']['Person ID']
         var edges = db._query(aql`UPSERT {'Person ID':${personId}} INSERT {} UPDATE {'token':${token}}  IN ${users} RETURN NEW `);
         // send mail with email and token 
-
-        /* const { child_process } = require('child_process');
-        child_process.execFile('./scripts/send_mail.sh',[req.body.email,req.body.token], (err, data) => {
-            if (err) {
-              console.log("error "+err);
-              return res.status(500).send('Error');
-            }
-            else{
-                console.log("good")
-            }
-          }); */
-        //var spawn = require('child_process').spawn
-        /* const cp = require('child_process');
-        const cmd = cp.spawn('/usr/bin/sh ', __dirname, '/scripts/send_mail.sh ', email , token); */
+        res.send({ success: true , token:token})
         
-        const { exec } = require('child_process');
-
-        const ls = exec('ls -l', function (error, stdout, stderr) {
-          if (error) {
-            console.log(error.stack);
-            console.log('Error code: ' + error.code);
-            console.log('Signal received: ' + error.signal);
-          }
-          console.log('Child Process STDOUT: ' + stdout);
-          console.log('Child Process STDERR: ' + stderr);
-        });
-        
-        ls.on('exit', function (code) {
-          console.log('Child process exited with exit code ' + code);
-        });
-
-        /* const subprocess = child_process.spawn('/usr/bin/sh', [
-            "-u",
-            path.join(__dirname, '/scripts/send_mail.sh', " "+ email ," " + token)
-        ]);
-        // print output of script
-        subprocess.stdout.on('data', (data) => {
-            console.log(`data:${data}`);
-        });
-        subprocess.stderr.on('data', (data) => {
-            console.log(`error:${data}`);
-        });
-        subprocess.stderr.on('close', () => {
-            console.log("Closed");
-            res.send({ res: "all is good", dir_uuid: outputdirname })
-        }); */
-       /*  var command = "sh ./scripts/send_mail.sh " + email + " " + token;
-        var sendmail = exec(command,
-            (error, stdout, stderr) => {
-                if (error !== null) {
-                    console.log(`exec error: ${error}`);
-                    res.send({ success: false });
-                }
-                else {
-                    res.send({ success: true });
-                }
-            }); */
-
-        /* const child = require('child_process').spawn("./scripts/send_mail.sh'",[email,token], { detached: true } );
-        child.stdout.on('data', data => {
-          console.log(`stdout:\n${data}`);
-          res.send({ success: true });
-        });
-        
-        child.stderr.on('data', data => {
-          console.error(`stderr: ${data}`);
-          res.send({ success: false });
-        }); */
-        ////res.send('end spawn launch');
-
-        /* const exec = require('child_process').exec; 
-        var child;
-        const myShellScript = exec('sh send_mail.sh ');
-        myShellScript.stdout.on('data', (data)=>{
-            console.log(data); 
-            // do whatever you want here with data
-        });
-        myShellScript.stderr.on('data', (data)=>{
-            console.error(data);
-        }); */
-
-
-
     }
     catch (e) {
         if (!e.isArangoError || e.errorNum !== DOC_NOT_FOUND) {
@@ -1052,7 +969,7 @@ router.post('/request-reset', (req, res) => {
 
     //sendMail({'email':email})
     //res.json(sendMail({'email':email}));
-    res.send({ success: true })
+    //res.send({ success: true })
 })
     .body(joi.object({
         email: joi.string().required(),

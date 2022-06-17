@@ -19,7 +19,7 @@ export class RequestResetComponent implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private router: Router,
-   ) {
+  ) {
 
   }
 
@@ -30,31 +30,32 @@ export class RequestResetComponent implements OnInit {
   }
 
 
-  RequestResetUser(form) {
+  async RequestResetUser(form) {
     console.log(form)
     if (form.valid) {
       this.IsvalidForm = true;
       console.log(this.RequestResetForm.value)
-      this.authService.requestReset(this.RequestResetForm.value).toPromise().then(
-        data => {
-          if (data['success']){
-            console.log(data)
-            console.log("need to write routine service")
+      const data = await this.authService.requestReset(this.RequestResetForm.value).toPromise()//.then(
+      if (data['success']) {
+        console.log(data)
+        //get token and run auth service sendmail
+        //var token=data['token']
+        //this.RequestResetForm.value['token']=token
+        console.log(this.RequestResetForm.value['email'])
+        this.authService.sendmail(this.RequestResetForm.value['email'], data['token']).toPromise().then(
+          data2 => {
+            console.log(data2)
           }
-          /* this.RequestResetForm.reset();
-          this.successMessage = "Reset password link send to email sucessfully.";
-          setTimeout(() => {
-            this.successMessage = null;
-            this.router.navigate(['login']);
-          }, 3000); */
-        }
-        /* ,
-        err => {
-          if (err.error.message) {
-            this.errorMessage = err.error.message;
-          }
-        } */
-      );
+        )
+        console.log("need to write routine service")
+      }
+      /* this.RequestResetForm.reset();
+      this.successMessage = "Reset password link send to email sucessfully.";
+      setTimeout(() => {
+        this.successMessage = null;
+        this.router.navigate(['login']);
+      }, 3000); */
+
     } else {
       this.IsvalidForm = false;
     }

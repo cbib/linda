@@ -18,7 +18,7 @@ export interface AuthResponse {
 export class AuthenticationService {
 
     private APIUrl: string;
-    private nodemailerUrl: string;
+    private apimailUrl: string;
     private currentUserSubject: BehaviorSubject<UserInterface>;
     public currentUser: Observable<UserInterface>;
     public user: UserInterface;
@@ -31,7 +31,7 @@ export class AuthenticationService {
         this.currentUserSubject = new BehaviorSubject<UserInterface>(JSON.parse(tmp));
         this.currentUser = this.currentUserSubject.asObservable();
         this.APIUrl = Constants.APIConfig.APIUrl;
-        this.nodemailerUrl = Constants.APIConfig.nodemailerUrl;
+        this.apimailUrl = Constants.APIConfig.apimailUrl;
     }
     public get currentUserValue(): UserInterface {
         return this.currentUserSubject.value;
@@ -75,7 +75,15 @@ export class AuthenticationService {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
         //this.router.navigate(['/login']); 
-
+    }
+    
+    sendmail(email, token) {
+        let obj2send = {
+            'email': email,
+            'token': token
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.apimailUrl + "sendmail/"}`, obj2send);
     }
     requestReset(email_obj) {
         let token = uuid.v4()
