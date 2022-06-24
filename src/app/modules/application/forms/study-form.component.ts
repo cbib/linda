@@ -116,7 +116,7 @@ export class StudyFormComponent implements OnInit {
     // }
     let sites=await this.globalService.get_by_key("Experimental_sites", "experimental_site").toPromise()
     console.log(sites)
-    this.onClickTour()
+    //this.onClickTour()
 
   };
   onClickTour(help_mode: boolean = false) {

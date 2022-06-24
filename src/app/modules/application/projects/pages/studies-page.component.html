@@ -41,8 +41,8 @@
     </mat-menu>
     <div style="overflow: auto">
         <mat-card>
-            <p> Below is the Investigation table. This table summarizes all your projects in LINDA database.
-                Click on add investigation button it to expand Project Menu and select add new project. 
+            <p> Below is the studies table. This table summarizes all studies in your ccurret project.
+                Click on add study button it to expand Study Menu and select add new study. 
             </p>
              <mat-accordion>
                 <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
@@ -52,14 +52,14 @@
                     </mat-panel-title>
                     <!--<mat-panel-description>Currently I am {{panelOpenState ? 'open' : 'closed'}}</mat-panel-description>-->
                 </mat-expansion-panel-header>
-                <button title="Edit project" (click)="help('edit')" class="btn btn-light btn-xs fa fa-pencil"></button> 
-                <button  title="Remove project" (click)="help('remove')" class="btn btn-light btn-xs fa fa-trash"></button> 
-                <button  title="Share project with other users" (click)="help('share')"  class="btn btn-light">Share</button>
+                <button title="Edit study" (click)="help('edit')" class="btn btn-light btn-xs fa fa-pencil"></button> 
+                <button  title="Remove study" (click)="help('remove')" class="btn btn-light btn-xs fa fa-trash"></button> 
+                <button  title="Share study with other users" (click)="help('share')"  class="btn btn-light">Share</button>
                 <p>{{get_help_message}}</p>
                 </mat-expansion-panel><br>
             </mat-accordion>
             
-            <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
+            <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-success btn-xs"><span class="material-icons">view_headline</span></button>
 
             <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
                 [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
@@ -70,7 +70,7 @@
             
             <mat-menu #contextSubMenu="matMenu">
                 <button mat-menu-item (click)="onAdd(false)">from original model template</button>
-                <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
+               <!--  <button mat-menu-item (click)="onAdd(true)">from saved templates</button> -->
             </mat-menu>
             
             <h2>My Studies</h2>

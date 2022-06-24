@@ -35,6 +35,7 @@ import { timeStamp } from 'console';
 import { SampleSelectionComponent } from '../../dialogs/sample-selection.component';
 import { AssociateObservedVariable } from '../../dialogs/associate-observed-variable.component';
 import { PlotOverviewComponent } from '../../dialogs/plot-overview.component';
+import { AssociateExperimentalFactorComponent } from '../../dialogs/associate-experimental-factor.component';
 
 export interface subComponent{
     'Associated biological material':[]
@@ -560,8 +561,51 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
 
     addExperimentalFactor() {
+        console.log(this.parent_id)
+        const dialogRef = this.dialog.open(AssociateExperimentalFactorComponent, {
+            disableClose: true,
+            width: '1400px',
+            autoFocus: true,
+            maxHeight: '800px',
+            data: {
+                model_id: "",
+                parent_id: this.parent_id,
+                model_type: "experimental_factor",
+                total_available_plots: this.design['number of entries'].value,
+                role: this.role,
+                grand_parent_id: this.grand_parent_id,
+                group_key: this.group_key,
+                design:this.design
+            }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log(result)
+            }
+        });
     }
     removeExperimentalFactor() {
+        const dialogRef = this.dialog.open(AssociateExperimentalFactorComponent, {
+            disableClose: true,
+            width: '1400px',
+            autoFocus: true,
+            maxHeight: '800px',
+            data: {
+                model_id: "",
+                parent_id: this.parent_id,
+                model_type: "biological_material",
+                total_available_plots: this.design['number of entries'].value,
+                role: this.role,
+                grand_parent_id: this.grand_parent_id,
+                group_key: this.group_key,
+                design:this.design
+            }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log(result)
+            }
+        });
     }
 
     addBiologicalMaterial() {
@@ -664,7 +708,21 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             })
         })
         const dialogRef = this.dialog.open(SampleSelectionComponent,
-            { disableClose: true, width: '1400px', autoFocus: true, restoreFocus: false, maxHeight: '800px', data: { model_id: "", parent_id: this.parent_id, bm_data: this.bm_data, model_type: "sample", values: [], observation_id: obs_uuids } }
+            { 
+                disableClose: true, 
+                width: '1400px', 
+                autoFocus: true, 
+                restoreFocus: false, 
+                maxHeight: '800px', 
+                data: { 
+                    model_id: "", 
+                    parent_id: this.parent_id, 
+                    bm_data: this.bm_data, 
+                    model_type: "sample", 
+                    values: [], 
+                    observation_id: obs_uuids 
+                } 
+            }
         );
         dialogRef.afterClosed().subscribe(async res => {
             if (res.event === 'Confirmed') {
@@ -696,7 +754,17 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
     async removeSample(confirm:boolean=true) {
         if  (confirm){
-            const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'removesample', model_type: "sample" } });
+            const dialogRef = this.dialog.open(ConfirmationComponent, { 
+                disableClose: true, 
+                width: '500px', 
+                data: { 
+                    validated: false, 
+                    only_childs: false, 
+                    all_childs: true, 
+                    mode: 'removesample', 
+                    model_type: "sample" 
+                } 
+            });
             dialogRef.afterClosed().subscribe(async (result) => {
                 if (result) {
                     if (result.event == 'Confirmed') {

@@ -1,7 +1,7 @@
 <mat-card>
     <div>
         
-        <button title="Add a new datafile" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+        <button title="Add a new datafile" [matMenuTriggerFor]="contextMenu" class="btn btn-success btn-xs"><span class="material-icons">add</span></button>
         <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
         <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x"
             [style.top]="helpMenuPosition.y" [matMenuTriggerFor]="helpMenu">
@@ -11,8 +11,7 @@
                 [matMenuTriggerFor]="HelpSubMenu">Help</button>
         </mat-menu>
         <mat-menu #HelpSubMenu="matMenu">
-            <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span
-                    class="material-icons">view_headline</span></button>
+            <button title="Here is the button for help " [matMenuTriggerFor]="contextMenu" class="btn btn-light "><span class="material-icons">view_headline</span></button>
             <!--<button mat-menu-item (click)="onClickTour(true,'2')">Investigations</button>-->
         </mat-menu>
         <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
@@ -24,7 +23,7 @@
 
         <mat-menu #contextSubMenu="matMenu">
             <button mat-menu-item (click)="onAdd('local_import')">from local file</button>
-            <button mat-menu-item (click)="onAdd('empty_import')">from empty file</button>
+            <button mat-menu-item (click)="onAdd('empty_import')">from scratch</button>
         </mat-menu>
         <span class="span-project"></span>
     

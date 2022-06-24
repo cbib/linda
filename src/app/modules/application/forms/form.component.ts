@@ -110,7 +110,7 @@ export class FormComponent implements OnInit//, AfterViewInit
         // if (currentUser['tutoriel_checked'] === false){
         //     this.onClickTour()
         // }
-        this.onClickTour()
+        //this.onClickTour()
 
     };
     onClickTour(help_mode:boolean=false) {

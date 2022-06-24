@@ -65,6 +65,7 @@ export class AssociateBiologicalMaterial implements OnInit {
         this.loaded = true
     }
     goto_material_form(){
+      this.dialogRef.close()
       this.router.navigate(['/materialform'], { queryParams: { level: "1", parent_id: this.parent_id, model_key: "", model_type: 'biological_material', mode: "create", role:this.role, grand_parent_id:this.grand_parent_id, group_key:this.group_key } });
     }
     async set_all_biological_materials() {

@@ -958,7 +958,7 @@ router.post('/request-reset', (req, res) => {
         res.throw(404, 'The entry does not exist', e);
     }
 
-
+    res.send({ success: true , token:token})
 
 
 

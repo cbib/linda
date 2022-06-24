@@ -1,6 +1,6 @@
 <mat-card>
     <div>
-        <button title="Add a new experimental factor" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+        <button title="Add a new experimental factor" [matMenuTriggerFor]="contextMenu" class="btn btn-success btn-xs"><span class="material-icons">add</span></button>
         <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
         <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
             [matMenuTriggerFor]="helpMenu">
@@ -22,11 +22,11 @@
             [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
         </div>
         <mat-menu #contextMenu="matMenu">
-            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Experimental factor</button>
+            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light btn-success">Add Experimental factor</button>
         </mat-menu>
         
         <mat-menu #contextSubMenu="matMenu">
-            <button mat-menu-item (click)="add(false)">from original model template</button>
+            <button mat-menu-item (click)="add(false)">from original MIAPPE model</button>
             <button mat-menu-item (click)="add(true)">from saved templates</button>
         </mat-menu>
     

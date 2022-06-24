@@ -61,6 +61,7 @@ import { MatMenuModule } from '@angular/material';
 import {ChipListComponent} from 'src/app/components/chip-list/chip-list.component'
 import { AssociateObservedVariable } from './associate-observed-variable.component';
 import { PlotOverviewComponent } from './plot-overview.component';
+import { AssociateExperimentalFactorComponent } from './associate-experimental-factor.component';
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import { PlotOverviewComponent } from './plot-overview.component';
     AssociateObservationUnit,
     AssociateObservedVariable,
     ChipListComponent,
-    PlotOverviewComponent
+    PlotOverviewComponent,
+    AssociateExperimentalFactorComponent
   ],
   imports: [
     CommonModule,
@@ -156,6 +158,7 @@ import { PlotOverviewComponent } from './plot-overview.component';
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
     AssociateObservedVariable,
+    AssociateExperimentalFactorComponent,
     ChipListComponent,
     PlotOverviewComponent
   ],
@@ -186,6 +189,7 @@ import { PlotOverviewComponent } from './plot-overview.component';
     AssociateBiologicalMaterial,
     AssociateObservationUnit,
     AssociateObservedVariable,
+    AssociateExperimentalFactorComponent,
     ChipListComponent,
     PlotOverviewComponent
   ]

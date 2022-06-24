@@ -1,7 +1,7 @@
 
     <div>
         <!-- <button title="Save a new experimental design" class="btn btn-light btn-success"><span class="material-icons" (click)="save()">save</span></button> -->
-        <button title="Add a new experimental design" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span class="material-icons">add</span></button>
+        <button title="Add a new experimental design" [matMenuTriggerFor]="contextMenu" class="btn btn-success btn-xs"><span class="material-icons">add</span></button>
         <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span class="material-icons">help</span></button>
         <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
             [matMenuTriggerFor]="helpMenu">
@@ -23,10 +23,10 @@
             [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
         </div>
         <mat-menu #contextMenu="matMenu">
-            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Experimental design</button>
+            <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light  btn-xs">Add Experimental design</button>
         </mat-menu>
         <mat-menu #contextSubMenu="matMenu">
-            <button mat-menu-item (click)="onAdd(false)">from original model template</button>
+            <button mat-menu-item (click)="onAdd(false)">from original MIAPPE model</button>
             <button mat-menu-item (click)="onAdd(true)">from saved templates</button>
         </mat-menu>   
         <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" class="mat-elevation-z8" matSort>
