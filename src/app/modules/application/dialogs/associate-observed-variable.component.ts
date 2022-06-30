@@ -89,6 +89,8 @@ export class AssociateObservedVariable implements OnInit {
   loaded: boolean = false
   sampleloaded: boolean = false
   matloaded: boolean = false
+  showSample: boolean = false
+  showMat: boolean = false
   total_available_plots: number = 0
   observations: ObservationInterface[];
   observation_type: string = "";
@@ -119,8 +121,9 @@ export class AssociateObservedVariable implements OnInit {
     this.sampleloaded = false
 
     //set_associated_materials()
-    this.set_all_observed_variables()
-    ///this.sampledataSource = new MatTableDataSource([])
+    
+    this.sampledataSource = new MatTableDataSource([])
+    this.dataSource = new MatTableDataSource([])
     //this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples())
     //this.sampledataSource.paginator= this.samplepaginator
     //console.log(this.sampledataSource)
@@ -135,13 +138,21 @@ export class AssociateObservedVariable implements OnInit {
   }
 
   async ngOnInit() {
-    this.displayedSamplesColumns = Object.keys(this.design.get_associated_samples()[0]).filter(key => !key.includes('UUID'))
-    this.displayedSamplesColumns.push('select')
-    this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples());
-    this.sampledataSource.paginator = this.samplepaginator;
+    await this.set_all_observed_variables()
+    if(this.design.get_associated_samples()[0]===undefined){
+
+    }
+    else{
+      this.displayedSamplesColumns = Object.keys(this.design.get_associated_samples()[0]).filter(key => !key.includes('UUID'))
+      this.displayedSamplesColumns.push('select')
+      this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples());
+      this.sampledataSource.paginator = this.samplepaginator;
+    }
+    
     this.materialdataSource.data = this.bm_data
     this.materialdataSource.sort = this.sort
     this.materialdataSource.paginator = this.matpaginator;
+    console.log(this.materialdataSource.data)
     this._cdr.detectChanges()
     this.observation_type = ""
     //await this.set_all_observed_variables()
@@ -176,12 +187,12 @@ export class AssociateObservedVariable implements OnInit {
   onObservationTypeChange(_observation_type: string) {
     this.observation_type = _observation_type
     if (this.observation_type === 'Destructive') {
-      this.sampleloaded = true
-      this.matloaded = false
+      this.showSample = true
+      this.showMat = false
     }
     else {
-      this.matloaded = true
-      this.sampleloaded = false
+      this.showMat = true
+      this.showSample = false
     }
   }
 

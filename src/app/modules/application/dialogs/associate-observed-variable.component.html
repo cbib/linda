@@ -41,8 +41,8 @@
     </select>
     
 
-    <h3 *ngIf="sampleloaded" >Samples selection table </h3>
-    <table *ngIf="sampleloaded" style="width: 100%;" mat-table [dataSource]="get_sampleDataSource">
+    <h3 *ngIf="showSample">Samples selection table </h3>
+    <table *ngIf="showSample" style="width: 100%;" mat-table [dataSource]="get_sampleDataSource">
       <ng-container *ngFor="let column of displayedSamplesColumns ; let i=index">
         <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedSamplesColumns[i]}} </th>
@@ -66,9 +66,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedSamplesColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedSamplesColumns;"></tr>
     </table>
-    <mat-paginator [hidden]="!sampleloaded" #samplepaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
-    <h3 *ngIf="matloaded" >biological material  selection table </h3>
-    <table *ngIf="matloaded" style="width: 100%;" mat-table matSort [dataSource]="materialdataSource">
+    <mat-paginator [hidden]="!showSample" #samplepaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
+    
+    <h3 *ngIf="showMat" >biological material  selection table </h3>
+    <table *ngIf="showMat" style="width: 100%;" mat-table matSort [dataSource]="materialdataSource">
       <ng-container *ngFor="let column of displayedMaterialColumns ; let i=index">
         <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedMaterialColumns[i]}} </th>
@@ -92,10 +93,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedMaterialColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedMaterialColumns;"></tr>
     </table>
-    <mat-paginator #matpaginator [hidden]="!matloaded"  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+    <mat-paginator #matpaginator [hidden]="!showMat"  [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
   
     
-    <mat-accordion *ngIf="matloaded || sampleloaded">
+    <mat-accordion *ngIf="showMat || showSample">
       <mat-expansion-panel [disabled]="panel_disabled" [expanded]="false"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
           <mat-expansion-panel-header>
               <mat-panel-title>
@@ -126,7 +127,7 @@
               <!-- table des materials -->
               </div>
             </div>
-            <p>You do not find corresponding trait, create one</p>
+        <p>You do not find corresponding trait, create one</p>
         <!-- <button (click)="add_observed_variables()">Add new Observed variables</button> -->
         <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span
             class="material-icons">add</span></button>

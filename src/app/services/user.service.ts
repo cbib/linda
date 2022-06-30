@@ -39,7 +39,7 @@ export class UserService {
 
         return throwError(() => new Error('Something bad happened; please try again later.'))
 
-      }
+    }
     getAll() : Observable<PersonInterface[]> {
         //return this.http.get<UserInterface[]>(`${this.APIUrl}users`);
         return this.http.get<PersonInterface[]>(this.APIUrl + "persons/").pipe(catchError(this.handleError));
@@ -77,6 +77,11 @@ export class UserService {
         //return null
         return this.http.post(`${this.APIUrl}/update_person_infos`, person);
     }
+    get_persons(model_key:string, collection_type:string): Observable<PersonInterface[]>{
+        return this.http.get<PersonInterface[]>(this.APIUrl + "get_persons/" + model_key+ "/"+collection_type).pipe(catchError(this.handleError))
+    }
+
+
     get_person_id(user_key:string): Observable<string>{
         return this.http.get<string>(this.APIUrl + "get_person_id/" + user_key).pipe(catchError(this.handleError));
     }

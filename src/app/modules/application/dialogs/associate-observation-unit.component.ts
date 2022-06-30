@@ -45,9 +45,9 @@ export class AssociateObservationUnit implements OnInit {
   design:ExperimentalDesign;
   total_available_plots:number=0
   total_available_blocks:number=0
-  observation_unit_level:string=""
   current_material_id:string=""
   biological_model:BiologicalMaterialFullInterface;
+  observation_unit_level:string=""
   observation_levels= [
     {
       "levelName": "study",

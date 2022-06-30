@@ -226,8 +226,8 @@ export class GlobalService {
     get_studies(investigation_key: string, person_key: string) : Observable<StudyInterface[]>{
         return this.http.get<StudyInterface[]>(this.APIUrl + "get_studies/" + investigation_key + "/" + person_key).pipe(catchError(this.handleError));
     }
-    get_studies_and_persons(investigation_key: string): Observable<{"e":{},"s":{}}[]>{
-        return this.http.get<{"e":{},"s":{}}[]>(this.APIUrl + "get_studies_and_persons/" + investigation_key).pipe(catchError(this.handleError));
+    get_studies_and_persons(investigation_key: string): Observable<{"e":{},"v":{}}[]>{
+        return this.http.get<{"e":{},"v":{}}[]>(this.APIUrl + "get_studies_and_persons/" + investigation_key).pipe(catchError(this.handleError));
     }
     get_all_project_persons(investigation_key: string) : Observable<PersonInterface[]>{
         return this.http.get<PersonInterface[]>(this.APIUrl + "get_project_persons/" + investigation_key).pipe(catchError(this.handleError));

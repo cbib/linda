@@ -148,6 +148,19 @@ export class EventsPageComponent implements OnInit, AfterViewInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           console.log(result)
+          result = Object.keys(result).filter(key => !key.startsWith("_")).reduce((obj, key) => {obj[key] = result[key];return obj;}, {});
+          let exp_factor: LindaEvent= result
+          this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+            data => {
+              if (data["success"]) { 
+
+                this.reloadComponent() 
+                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result['_id'] + " has been successfully integrated in your history !!"
+                this.alertService.success(message)
+              }
+              else { this.alertService.error("this form contains errors! " + data["message"]);}
+            }
+          );
         }
       });
     }

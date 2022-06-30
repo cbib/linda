@@ -243,8 +243,30 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 if (result.event == 'Confirmed') {
-                    const remove_res= await this.globalService.remove_observation_unit(element['Associated observation units'].value).toPromise()
-                    if (remove_res["success"]) {
+                    if (element['Associated observation units'].value!==null){
+                        const remove_res= await this.globalService.remove_observation_unit(element['Associated observation units'].value).toPromise()
+                        if (remove_res["success"]) {
+                            this.globalService.remove(element._id).pipe(first()).toPromise().then(
+                                data => {
+                                    ////console.log(data)
+                                    if (data["success"]) {
+                                        console.log(data["message"])
+                                        var message = element._id + " has been removed from your history !!"
+                                        
+                                        this.alertService.success(message)
+                                        this.reloadComponent()
+                                    }
+                                    else {
+                                        this.alertService.error("this form contains errors! " + data["message"]);
+                                    }
+                                }
+                            );
+                        }
+                        else{
+                            this.alertService.error("a error is occured when suppressing experimental associated component")
+                        }
+                    }
+                    else{
                         this.globalService.remove(element._id).pipe(first()).toPromise().then(
                             data => {
                                 ////console.log(data)
@@ -258,11 +280,9 @@ export class ExperimentalDesignsPageComponent implements OnInit, OnDestroy, Afte
                                 else {
                                     this.alertService.error("this form contains errors! " + data["message"]);
                                 }
-                            });
-                        }
-                        else{
-                            this.alertService.error("a error is occured when suppressing experimental associated component")
-                        }
+                            }
+                        );
+                    }
                 }
             }
             //this.reloadComponent(['/projects'])

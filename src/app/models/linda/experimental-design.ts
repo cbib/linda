@@ -190,6 +190,9 @@ export class PlotDesign implements PlotDesignInterface{
     get_row_design(_row_number){
         return this["Row design"].value.filter(row_design=> row_design["Row number"].value===_row_number)[0]
     }
+    get_column_number(){
+        return this["Column number"].value
+    }
     set_observation_uuid(_obs_uuid:string){
         this["Observation uuid"].value=_obs_uuid
     }
@@ -444,6 +447,10 @@ export interface ExperimentalDesignInterface     {
         "value":  string;
         "ID": string;
     };
+    "Block per Row": {
+        "value":  number;
+        "ID": "BlockPerRow";
+    };
     "Associated observation units": {
         "value":  string;
         "ID": string;
@@ -489,6 +496,10 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         "value":  string;
         "ID": "LindaDbId";
     };
+    "Block per Row": {
+        "value":  number;
+        "ID": "BlockPerRow";
+    };
     "Associated observation units": {
         "value":  string;
         "ID": "LindaObsUnitDbId";
@@ -515,6 +526,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["Blocking"]={value: [], "ID":"CO_715:0000245"}
         this["Replication"]={value: null, "ID": "CO_715:0000149"}
         this["number of entries"]={value:null,"ID": "CO_715:0000148"}
+        this["Block per Row"]={value:null,"ID": "BlockPerRow"}
         this["Associated biological Materials"]={value:null,"ID": "LindaDbId"}
         this["Associated observation units"]={value:null,"ID": "LindaObsUnitDbId"}
         this["Associated sample"]={value:[],"ID": "LindaSamples"}
@@ -523,10 +535,32 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["Associated observations"]={value:[],"ID": "LindaObsDbIds"}
     }
     
+    get_total_block():number{
+        return this.Blocking.value.length
+    }
+    get_total_plot_per_block():number{
+        return this.Blocking.value[0]["Plot design"].value.length
+    }
+    get_total_column_per_block():number{
+        let total_column=1
+        this.Blocking.value[0]["Plot design"].value.forEach(val=>{
+            
+            if (val.get_column_number()>total_column){
+                total_column=val.get_column_number()
+            }
+        })
+        return total_column
+    }
+
     get_block_design(_block_number:number){
         return this.Blocking.value.filter(block_design=> block_design["Block number"].value===_block_number)
     }
-
+    set_block_per_row(_number_of_block_per_row:number){
+        this["Block per Row"].value=_number_of_block_per_row
+    }
+    get_block_per_row(){
+        return this["Block per Row"].value
+    }
     get_block_plot_design(_plot_number:number):PlotDesign{
         let _plot_design:PlotDesign=null;
         this.Blocking.value.forEach(block_design=> {

@@ -119,7 +119,7 @@ export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.onSameUrlNavigation = 'reload';
     this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "expfac", role: this.role, group_key: this.group_key } });
-}
+  }
   onRemove(element:ExperimentalFactorInterface) {
     this.globalService.remove(element._id).pipe(first()).toPromise().then(
       data => {
@@ -155,7 +155,13 @@ export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
       const dialogRef = this.dialog.open(TemplateSelectionComponent, {disableClose: true, width: '90%', data: { search_type: "Template", model_id: "", user_key: user._key, model_type: 'experimental_factor', values: {}, parent_id: this.parent_id } });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          console.log(result)
+          result = Object.keys(result).filter(key => !key.startsWith("_")).reduce((obj, key) => {obj[key] = result[key];return obj;}, {});
+          let exp_factor: ExperimentalFactor= result
+          this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+            data => {
+              if (data["success"]) { this.reloadComponent() }
+            }
+          );
         }
       });
     }
@@ -167,13 +173,14 @@ export class ExperimentalFactorsPageComponent implements OnInit,AfterViewInit {
             console.log(result)
             let exp_factor: ExperimentalFactor= result["formData"]["form"]
             this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
-          data => {
-              if (data["success"]) {
-                  console.log(data)
-                  //this.ngOnInit()
-                  this.reloadComponent()
+              data => {
+                if (data["success"]) {
+                    console.log(data)
+                    //this.ngOnInit()
+                    this.reloadComponent()
+                }
               }
-          });;
+            );
           }
         }
       });

@@ -249,24 +249,24 @@ export class DefineComponent implements OnInit, OnDestroy {
     // this.cleaned_event_model = this.get_model('event');
     this.existing_studies_names = []
     const edges = await this.globalService.get_studies_and_persons(this.parent_id.split('/')[1]).toPromise()
-    //console.log(edges)
+    console.log(edges)
     // get persons and person roles by projects with _to contains "persons" edge to get all persons found in this investigations
-    edges.filter(edge => edge['e']['_to'].includes("persons") && edge['e']['_from'].includes("investigations")).forEach(edge => { this.projectPersons.persons.push(edge["v"]); this.projectPersons.roles.push(edge["e"]["role"]); edge["e"]["group_keys"].forEach(element => { this.projectPersons.groups.push(element) }) })
+    edges.filter(edge => edge['e']['_to'].includes("persons") && edge['e']['_from'].includes("investigations")).forEach(edge => { this.projectPersons.persons.push(edge["v"] as PersonInterface); this.projectPersons.roles.push(edge["e"]["role"]); edge["e"]["group_keys"].forEach(element => { this.projectPersons.groups.push(element) }) })
     //console.log(this.projectPersons)
     // get studies in this investigation with _to contains "studies"
     edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies_names.push(edge["v"]["Study Name"]) })
-    edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies.push(edge["v"]) })
+    edges.filter(edge => edge['e']['_to'].includes("studies")).forEach(edge => { this.existing_studies.push(edge["v"] as StudyInterface) })
     // then find all persons roles by studies
 
     //this.definecolumnForm.get('Detected studies').setValue(this.existing_studies_ids);
     edges.filter(edge => edge['e']['_from'].includes("studies")).forEach(edge => {
       //this.existing_studies_ids.push(edge["e"]['_from']); 
-      this.studyPersons.persons.push(edge["v"]);
+      this.studyPersons.persons.push(edge["v"] as PersonInterface);
       this.studyPersons.roles.push(edge["e"]["role"])
     })
     for (let index = 0; index < this.existing_studies_names.length; index++) {
       const element = this.existing_studies_names[index];
-      edges.filter(edge => edge['e']['_to'].includes("studies") && edge['e']['_to'] === element).forEach(edge => { this.studyPersons.studies.push(edge["v"]) })
+      edges.filter(edge => edge['e']['_to'].includes("studies") && edge['e']['_to'] === element).forEach(edge => { this.studyPersons.studies.push(edge["v"] as StudyInterface) })
     }
     //edges.filter(edge=> edge['e']['_to'].includes("studies")).forEach(edge=>{this.studyPersons.studies.push(edge["v"])})
     //console.log(this.studyPersons)

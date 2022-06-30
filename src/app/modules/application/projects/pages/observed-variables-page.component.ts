@@ -127,6 +127,12 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
         }
       });
   }
+  reloadComponent() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id:  this.parent_id, model_type: 'study', mode: "edit", activeTab: "obsvar", role: this.role, group_key: this.group_key } });
+  }
   add(template: boolean = false) {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let new_step = 0
@@ -148,8 +154,7 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           console.log(result)
-          var keys = Object.keys(result);
-
+          /* var keys = Object.keys(result);
           for (var i = 0; i < keys.length; i++) {
             if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
               keys.splice(i, 1);
@@ -160,7 +165,23 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
           var new_values = {}
           keys.forEach(attr => { new_values[attr] = result[attr] })
           ////////console.log(new_values)
-          this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
+           */
+          result = Object.keys(result).filter(key => !key.startsWith("_")).reduce((obj, key) => {obj[key] = result[key];return obj;}, {});
+          let exp_factor: ObservedVariable= result
+          this.globalService.add(exp_factor, this.model_type, this.parent_id, false, "").pipe(first()).toPromise().then(
+            data => {
+              if (data["success"]) { 
+
+                this.reloadComponent() 
+                var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result['_id'] + " has been successfully integrated in your history !!"
+                this.alertService.success(message)
+              }
+              else { this.alertService.error("this form contains errors! " + data["message"]);}
+            }
+          );
+
+
+          /* this.globalService.add(result, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
             data => {
               if (data["success"]) {
                 //////////console.log(data["message"])
@@ -179,7 +200,7 @@ export class ObservedVariablesPageComponent implements OnInit, AfterViewInit {
                 //this.router.navigate(['/studies']);
               }
             }
-          );
+          ); */
         }
       });
     }

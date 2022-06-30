@@ -374,11 +374,29 @@ router.get('/get_person_id/:user_key', function (req, res) {
     person = db._query(aql`FOR edge IN ${users_edge} FILTER edge._from == ${user_id} AND CONTAINS(edge._to,"persons") RETURN edge._to`).toArray();
     res.send(person);
 })
-    .pathParam('user_key', joi.string().required(), 'user id of the entry.')
+.pathParam('user_key', joi.string().required(), 'user id of the entry.')
     //.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
     .response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
     .summary('List entry keys')
     .description('Assembles a list of keys of entries in the collection.');
+
+router.get('/get_persons/:model_key/:collection_type', function (req, res) {
+    var model_id = req.pathParams.collection_type +"/"+req.pathParams.model_key;
+    var person = [];
+    var persons_coll = 'persons'
+    if (!db._collection(persons_coll)) {
+        db._createCollection(persons_coll);
+    }
+    const persons = db._collection(persons_coll);
+    person = db._query(aql`FOR v, e, s IN 1..1 OUTBOUND ${model_id} GRAPH 'global' PRUNE e._from ==${model_id} FILTER CONTAINS(e._to, "persons") RETURN s.vertices[1]`);
+    res.send(person);
+})
+.pathParam('model_key', joi.string().required(), 'investigation id of the parent\'s entry.')
+.pathParam('collection_type', joi.string().required(), 'collection_type of the parent\'s entry.')
+//.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+.response(joi.array().items(joi.object().required()).required(), 'List of entry keys.')
+.summary('List entry keys')
+.description('Assembles a list of keys of entries in the collection.');
 
 router.get('/get_person/:person_id', function (req, res) {
     var person_id = req.pathParams.person_id;
@@ -1616,6 +1634,9 @@ router.get('/get_childs_by_model/:model_type/:model_key', function (req, res) {
             }
             else if (model_type == "environment") {
                 isa_model = "study_isa/Study_isa"
+            }
+            else if (model_type == "event") {
+                isa_model = "event_isa/Event_isa"
             }
             else {
                 isa_model = "assay_isa/assay_Isa"

@@ -52,6 +52,8 @@ export class SampleSelectionComponent implements OnInit {
   sampleTable: FormGroup;
   sampleControl: FormArray;
   sampleTouchedRows: any;
+  private initialSelection = []
+  selection = new SelectionModel<BiologicalMaterialDialogModel>(true, this.initialSelection /* multiple */);
   panel_disabled: boolean = true
   panel_expanded: boolean = false
   model_loaded: boolean = false
@@ -79,8 +81,7 @@ export class SampleSelectionComponent implements OnInit {
   materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatTable, { static: false }) table: MatTable<BiologicalMaterialDialogModel>
-  private initialSelection = []
-  selection = new SelectionModel<BiologicalMaterialDialogModel>(true, this.initialSelection /* multiple */);
+
   sample_index_row: number = 0;
   SampleDate: Date;
   sample_ready: boolean = false;

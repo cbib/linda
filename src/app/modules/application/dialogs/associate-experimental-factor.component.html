@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Select Experimental factors</h1>
+<h1 style="font-size: 40px;" mat-dialog-title> Experimental design and Experimental factors</h1>
 
 <!-- <div *ngIf="get_bm_data.length >0" >
   {{get_bm_data.length}}
@@ -13,33 +13,48 @@
       Then you have to select between three options, each describing a specific arrangment of factor across the block or plot   
 
     </p> 
-    <h2>Experimental design details</h2>
-    <p> You have {{total_available_plots}} plots in your experimental design. 
-        Take care to assign materials in respect of design capability !!
-        You could use differents configurations
-    </p>
-        <ul>
-          <li>
-            {{total_available_plots}} material source (with n plants) with one replicate each
-          </li>
-          <li>
-            1 material source but replicated {{total_available_plots}} times
-          </li>
-          <li>
-            {{total_available_plots/2}} material source (with n plants) with 2 replicate for each
-          </li>
-        </ul> 
-        <br>
-        <p>
+    <p>
         Which Experimental factor do you plan to use ? 
       </p>
+      
+    <h2>Experimental design details</h2>
+    <p> You have {{total_available_plots}} plots in your experimental design. 
+          Take care to assign factors in respect of design capability !!
+          You could use differents configurations
+      </p>
+    <p>You do not find corresponding trait, create new experimental factor</p>
+        <!-- <button (click)="add_observed_variables()">Add new Observed variables</button> -->
+        <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span
+            class="material-icons">add</span></button>
+        <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span
+            class="material-icons">help</span></button>
+        <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+          [matMenuTriggerFor]="helpMenu">
+        </div>
+        <mat-menu #helpMenu="matMenu">
+          <button style="float: right;" class="btn btn-light" mat-menu-item [matMenuTriggerFor]="HelpSubMenu">Help</button>
+        </mat-menu>
+        <mat-menu #HelpSubMenu="matMenu">
+          <!-- <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>-->
 
-    <p>The material you want is not there, create it using <button (click)="go_to_exp_factor_form()">Add factor</button></p>
+        </mat-menu>
+        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+          [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+        </div>
+        <mat-menu #contextMenu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Observed
+            variable</button>
+        </mat-menu>
+
+        <mat-menu #contextSubMenu="matMenu">
+          <button mat-menu-item (click)="add_experimental_factor(false)">from original model template</button>
+          <button mat-menu-item (click)="add_experimental_factor(true)">from saved templates</button>
+    </mat-menu>
     <alert></alert>
     <span class="span-project"></span>
         <mat-form-field appearance="standard">
             <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Watering" #input>
         </mat-form-field>
         <!-- <div *ngIf="loaded===true">
         <app-biological-material-table [data]="get_dataSource"></app-biological-material-table>
@@ -53,11 +68,24 @@
                 <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a></td>
                 
                 </ng-container>
-                <ng-container *ngIf="column!=='Infraspecific name'">
+                <ng-container *ngIf="column!=='Infraspecific name' && column!=='select'">
                     <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
                     <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a> </td>
-                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="column==='select'">
+                    <th mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+                      </th>
+                      <td mat-cell class="flex-stretch" *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+                          [checked]="selection.isSelected(row)">
+                        </mat-checkbox>
+                      </td>
+                </ng-container>
             </ng-container>
+            
             <!-- Disclaimer column -->
             <!-- <ng-container matColumnDef="disclaimer">
                 <td mat-footer-cell *matFooterCellDef colspan="2">
@@ -71,7 +99,54 @@
             </table>
             <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
             <!-- <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
-        </div>
+    </div>
+    
+    <h2>Select experimental factor level</h2>
+    <p> Depending on the level selected, different possibilities are offered to dispatch factors across experimental design
+    </p>
+    <select [ngModel]="get_observation_level" name="factor_level" size="1"
+        (change)="onObservationLevelChange($event.target.value)">
+        <option *ngFor="let level of observation_levels" [value]="level.levelName">{{level.levelName}}</option>
+    </select>  
+    <h2>Select Factor repartition</h2>
+    <mat-card-content *ngIf="!available_designs.includes('Balanced')">
+        <h3>Completely randomized design</h3>
+        <p>
+            The simplest, least restrictive experimental design is the Completely
+            Randomized Design (CRD). In a CRD, the treatments are assigned
+            to the plots without restriction. That is, with the CRD, every plot is
+            equally likely to be assigned in any treatment
+        </p>
+        <h3>Randomized complete block design</h3>
+        <p>
+            The Randomized complete Block Design (RBD) is the design use most often
+            in agricultural research. In a RBD, the plots (experimental units) are
+            first classified into groups,
+            or blocks, of plots within blocks in such a way that each treatment
+            occurs the same number of time, usually once within each block.
+            The object is to make the variation from plot to plot as small as
+            possible within the blocks while maximizing the variation among blocks
+        </p>
+        <h3>Latin Square Design</h3>
+        <p>
+            In the latin square, the number of plots is the square of the number of
+            treatments. For practical purposes, its use is restricted to trials with
+            more than four
+            but fewer than 10 treatments.
+        </p>
+    </mat-card-content>
+    <mat-radio-group aria-labelledby="example-radio-group-label"
+        class="example-radio-group" [(ngModel)]="block_design_subtype">
+        <mat-radio-button class="example-radio-button"
+            *ngFor="let available_design of available_designs"
+            [value]="available_design">
+            {{available_design}}
+        </mat-radio-button>
+    </mat-radio-group>
+    <br>
+
+      
+    
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>

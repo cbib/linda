@@ -67,7 +67,7 @@
                                                 <input mdbInput class="form-control" type="number" formControlName="totalRowPerPlotControl" id="total-row-per-plot-control" /> 
                                 -->
                                             <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate
-                                                Experimental design</button>
+                                                Experimental block design</button>
                                         </form>
                                     </span>
                                 </mat-expansion-panel>
@@ -94,7 +94,7 @@
                                                 Plot design settings
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
-                                        <h3>Select Factor repartition</h3>
+                                        <!-- <h3>Select Factor repartition</h3>
                                         <mat-card-content *ngIf="!available_designs.includes('Balanced')">
                                             <h4>Completely randomized design</h4>
                                             <p>
@@ -128,7 +128,7 @@
                                                 [value]="available_design">
                                                 {{available_design}}
                                             </mat-radio-button>
-                                        </mat-radio-group>
+                                        </mat-radio-group> -->
 
                                         <h3>block design representation (rows and columns)</h3>
                                         <form [formGroup]="get_BlockDesignForm" (ngSubmit)="onExtractBlockDesign()">
@@ -151,7 +151,7 @@
                                                 id="total-row-per-plot-control" />
 
                                             <button type="submit" [disabled]="!get_BlockDesignForm.valid">Generate
-                                                Experimental design</button>
+                                                Experimental plot design</button>
                                         </form>
                                     </mat-expansion-panel>
                                 </mat-accordion>
@@ -161,7 +161,12 @@
                             <mat-card *ngIf="blockDesignLoaded">
 
                                 <mat-card-title>Plot Design in block
-                                    {{get_design.Blocking.value[block_index]['Block number'].value}}</mat-card-title>
+                                    {{get_design.Blocking.value[block_index]['Block number'].value}}
+                                    <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="addExperimentalFactor()">
+                                    Apply experimental factor
+                                </button>
+                                </mat-card-title>
                                 <mat-card-content>
                                     <p>
                                         You have {{get_design.Blocking.value[block_index]['Plot design'].value.length}}
@@ -206,10 +211,7 @@
                                     type="submit" (click)="removeObservationUnits()">
                                     Unlink Observation Units
                                 </button>
-                                <button [disabled]="!get_observation_unit_loaded" class="btn btn-primary"
-                                    mat-raised-button type="submit" (click)="addExperimentalFactor()">
-                                    Add experimental factor
-                                </button>
+                                
                                 <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary"
                                     mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples

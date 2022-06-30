@@ -1,6 +1,6 @@
 import { Injectable, ɵCodegenComponentFactoryResolver } from '@angular/core';
 import { HttpClient, HttpEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { Constants } from "../constants";
 import { saveAs } from 'file-saver';
@@ -9,6 +9,9 @@ import * as fs from 'fs';
 import { element } from 'protractor';
 import * as XLSX from 'xlsx';
 import { AssociatedHeadersInterface } from '../models/linda/data_files';
+import { PersonInterface } from '../models/linda/person';
+import { UserService } from './user.service';
+import { GlobalService } from './global.service';
 
 
 @Injectable({
@@ -17,18 +20,21 @@ import { AssociatedHeadersInterface } from '../models/linda/data_files';
 export class FileService {
     private APIUrl: string;
     fileUploaded: File;
-    constructor(private httpClient: HttpClient) {
+    constructor(
+        private httpClient: HttpClient,
+        private userService: UserService,
+        private globalService: GlobalService) {
         this.APIUrl = Constants.APIConfig.APIUrl;
     }
     private extractData(res: Response) {
-        
+
         let body = res;
         return body || {};
     }
     private get_csv(csvData: any) {
         return csvData.split(/\r|\n|\r/);
     }
-    public upload4(data:{}, parent_id: string): Observable<any> {
+    public upload4(data: {}, parent_id: string): Observable<any> {
         let user = JSON.parse(localStorage.getItem('currentUser'));
         let obj2send = {
             'username': user.username,
@@ -104,19 +110,19 @@ export class FileService {
         })
         );
     }
-    public read_csv(fileUploaded:File) {
+    public read_csv(fileUploaded: File) {
         let fileReader = new FileReader();
-        var csv:string|ArrayBuffer=""
+        var csv: string | ArrayBuffer = ""
         fileReader.onload = (e) => {
             csv = fileReader.result;
         }
         fileReader.readAsText(fileUploaded);
-        return this.get_csv(csv) 
+        return this.get_csv(csv)
     }
-    public readExcel(fileUploaded:File) {
+    public readExcel(fileUploaded: File) {
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
-            var storeData:any = fileReader.result;
+            var storeData: any = fileReader.result;
             var data = new Uint8Array(storeData);
             var arr = new Array();
             for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
@@ -125,10 +131,10 @@ export class FileService {
             var first_sheet_name = book.SheetNames[0];
             var worksheet = book.Sheets[first_sheet_name];
             var csv = XLSX.utils.sheet_to_csv(worksheet);
-            return this.get_csv(csv);     
+            return this.get_csv(csv);
         }
         fileReader.readAsArrayBuffer(fileUploaded);
-        
+
     }
     public async build_path(root_id, models, selected_format) {
         //console.log(models)
@@ -296,7 +302,7 @@ export class FileService {
                 }
             }
         );
-        
+
         return _paths
     }
     public build_zip(paths, zipFile: JSZip) {
@@ -306,7 +312,7 @@ export class FileService {
         var dict = { 'filepath': [], 'model_type': [], 'parent_id': [] }
         for (var i = 0; i < paths['filepath'].length; i++) {
             let model_type = paths['data'][i]["_id"].split('/')[0]
-            if (model_type == "metadata_files" ||model_type =="data_files") {
+            if (model_type == "metadata_files" || model_type == "data_files") {
 
                 if (paths['filepath'][i].includes(".csv")) {
                     let csvData = this.ConvertMetadataJsonTo(paths['data'][i], ",");
@@ -386,7 +392,7 @@ export class FileService {
         zipFile.file('hierarchy.json', blob_json);
         return zipFile
     }
-    open_zip(fileUploaded:File){
+    open_zip(fileUploaded: File) {
         let zipFile: JSZip = new JSZip();
         return zipFile.loadAsync(fileUploaded)
     }
@@ -399,8 +405,83 @@ export class FileService {
     //             });
     //         });
     // }
+    public get_studies_person(submodels) {
+        var test = []
+        submodels['models_data'].filter(submodel => submodel["v"]["_id"].split('/')[0] === "studies").forEach(async element => {
+            let persons_in_study = await this.userService.get_persons(element["v"]['_key'], 'studies').toPromise()
 
-    public saveISA(model_data, submodels, model_type: string, collection_name = 'data', model_id = "", isa_model, model) {
+            test.push(persons_in_study)
+        });
+        return test
+    }
+    public build_study_contacts(_persons: any, _isa_model, study_id: string) {
+        _isa_model['STUDY CONTACTS']["Comment[Person ID]"] = []
+        _persons.forEach(person => {
+            if (study_id === person['model_id']) {
+                _isa_model['STUDY CONTACTS']["Comment[Person ID]"].push(person.vertice['Person ID'])
+                _isa_model['STUDY CONTACTS']["Study Person First Name"].push(person.vertice['Person name'].split(" ")[0])
+                if (person.vertice['Person name'].split(" ")[1]) {
+                    _isa_model['STUDY CONTACTS']["Study Person Last Name"].push(person.vertice['Person name'].split(" ")[1])
+                }
+                _isa_model['STUDY CONTACTS']["Study Person Mid Name"] = []
+                _isa_model['STUDY CONTACTS']["Study Person Email"].push(person.vertice['Person email'])
+                _isa_model['STUDY CONTACTS']["Study Person Roles"].push(person.vertice['Person role'])
+                _isa_model['STUDY CONTACTS']["Study Person Affiliation"].push(person.vertice['Person affiliation'])
+                _isa_model['STUDY CONTACTS']["Study Person Address"].push(person.vertice['Person affiliation'])
+            }
+
+        })
+        return _isa_model
+    }
+    public build_investigation_contacts(_persons_in_investigation, _isa_model) {
+        console.log(_isa_model)
+        _isa_model['INVESTIGATION CONTACTS']["Comment[Person ID]"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Email"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Roles"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Mid Name"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Affiliation"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Address"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person First Name"] = []
+        _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"] = []
+        _persons_in_investigation.forEach(person => {
+            _isa_model['INVESTIGATION CONTACTS']["Comment[Person ID]"].push(person['Person ID'])
+
+            console.log(person['Person name'].split(" ")[1])
+            //improve the management of Person name
+            // test lenght
+            if (person['Person name'].split(" ").lenght === 3) {
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person First Name"].push(person['Person name'].split(" ")[0])
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Mid Name"].push(person['Person name'].split(" ")[1])
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"].push(person['Person name'].split(" ")[2])
+            }
+            else if (person['Person name'].split(" ").lenght === 2) {
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person First Name"].push(person['Person name'].split(" ")[0])
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Mid Name"].push("")
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"].push(person['Person name'].split(" ")[1])
+
+            }
+            else {
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person First Name"].push(person['Person name'].split(" ")[0])
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Mid Name"].push("")
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"].push("")
+
+            }
+            /* if (person['Person name'].split(" ")[1]!==undefined){
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"].push(person['Person name'].split(" ")[1])
+            }
+            else{
+                _isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"].push("")
+            } */
+            console.log(_isa_model['INVESTIGATION CONTACTS']["Investigation Person Last Name"])
+
+            _isa_model['INVESTIGATION CONTACTS']["Investigation Person Email"].push(person['Person email'])
+            _isa_model['INVESTIGATION CONTACTS']["Investigation Person Roles"].push(person['Person role'])
+            _isa_model['INVESTIGATION CONTACTS']["Investigation Person Affiliation"].push(person['Person affiliation'])
+            _isa_model['INVESTIGATION CONTACTS']["Investigation Person Address"].push(person['Person affiliation'])
+        })
+        return _isa_model
+    }
+    public async saveISA(model_data, submodels, model_type: string, collection_name = 'data', model_id = "", isa_model, model) {
         ////console.log(submodels)
         var model_key = model_id.split("/")[1];
         var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
@@ -409,35 +490,52 @@ export class FileService {
         let zipFile: JSZip = new JSZip();
         //build isa model root
         ////console.log("entering isa conversion")
-        var return_data = { "Investigation": {}, "Study": [], "Trait Definition File": [], "Event": {}, "Assay": [] }
+        var return_data = { "Investigation": {}, "Study": [], "Trait Definition File": [], "Event": [], "Assay": [] }
 
         //Always an investigation
-        var filename = "i_investigation_" + model_key + ".txt"
+        var filename = "i_" + model_key + ".txt"
         var parent_id = ""
         var parent_data = {}
         var study_data = {}
         var study_id = ""
         var study_unique_id = ""
+        var persons_in_investigation = []
+        //console.log(model_data)
+        persons_in_investigation = await this.userService.get_persons(model_data['_key'], 'investigations').toPromise()
+        console.warn(persons_in_investigation)
+        isa_model = this.build_investigation_contacts(persons_in_investigation, isa_model)
+        var persons_in_study = await this.globalService.get_studies_and_persons(model_data['_key']).toPromise()
+        let persons = persons_in_study.filter(element => element.e['_from'].includes("studies")).filter(element2 => element2.v['_id'].includes('persons')).map(res => {
+            var rObj = {};
+            rObj['model_id'] = res.e['_from'];
+            rObj['vertice'] = res.v;
+            return rObj;
+        })
+        console.warn(persons)
 
-        ////console.log(model_data)
-        ////console.log(model)
-        ////console.log(isa_model)
-        return_data = this.build_isa_model2(model_data, model, isa_model, return_data, model_type, filename, parent_id, parent_data)
+        return_data = this.build_isa_model2(model_data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, {})
         ////console.log(submodels)
+        //let persons_in_study= this.get_studies_person(submodels)
+
         submodels['models_data'].forEach(
             submodel => {
-                ////console.log(submodel)
+                //console.warn(submodel)
+                console.warn("parent id: ", submodel["e"]["_from"])
+                console.warn("model id: ", submodel["v"]["_id"])
                 var filename = ""
                 parent_id = submodel["e"]["_from"]
                 if (submodel["v"]["_id"].split('/')[0] === "studies") {
+                    //submodel["isa_model"]=this.build_study_contacts(persons ,submodel["isa_model"], submodel["v"]["_id"])
+
                     ////console.log(submodel["v"]["_id"])
+                    console.log(submodel["isa_model"])
                     model_type = "study"
                     filename = filename
                     parent_data = model_data
                     study_data = submodel
                     study_id = submodel["v"]["_id"]
                     study_unique_id = submodel["v"]["Study unique ID"]
-                    return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data)
+                    return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, { persons: persons, edge: {} })
 
 
                 }
@@ -451,39 +549,42 @@ export class FileService {
                 else if (submodel["v"]["_id"].split('/')[0] === "biological_materials") {
                     ////console.log(submodel["v"]["_id"])
                     model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
-                    filename = "s_study_" + study_id.split('/')[1] + ".txt"
+                    filename = "s_" + study_id.split('/')[1] + ".txt"
                     if (parent_id.includes("observation_units")) {
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, submodel["e"])
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, { edge: submodel["e"], persons: [] })
                         // Here write the environment variable ???? 
                     }
                 }
-                else if (submodel["v"]["_id"].split('/')[0]==="experimental_factors"){
-                    model_type=submodel["v"]["_id"].split('/')[0].slice(0, -1)                
-                    filename="s_study_"+study_id.split('/')[1]+".txt"
+                else if (submodel["v"]["_id"].split('/')[0] === "experimental_factors") {
+                    model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
+                    filename = "s_" + study_id.split('/')[1] + ".txt"
 
-                    if (!parent_id.includes("observation_units")){
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, study_unique_id, study_data) 
+                    if (!parent_id.includes("observation_units")) {
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, study_unique_id, study_data, {})
                     }
                 }
-                else if (submodel["v"]["_id"].split('/')[0]==="samples"){
-                    model_type=submodel["v"]["_id"].split('/')[0].slice(0, -1)
-                    filename="a_assay_"+study_id.split('/')[1]+".txt"
-                    if (parent_id.includes("observation_units")){
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, submodel["e"]) 
+                else if (submodel["v"]["_id"].split('/')[0] === "samples") {
+                    model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
+                    filename = "a_" + study_id.split('/')[1] + "_phenotyping.txt"
+                    if (parent_id.includes("observation_units")) {
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, { edge: submodel["e"], persons: [] })
                     }
                 }
                 else if (submodel["v"]["_id"].split('/')[0] === "observed_variables") {
                     //////console.log(submodel["v"]["_id"])
                     model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
                     filename = "tdf_" + study_id.split('/')[1] + ".txt"
-                    
+
                     if (!parent_id.includes("observation_units")) {
                         parent_data = submodel
                         ////console.log(submodel)
                         ////console.log(return_data)
                         ////console.log(parent_id)
                         ////console.log(parent_data)
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data)
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, {})
+                    }
+                    else{
+                        console.log(model_data)
                     }
                     // else {
                     //     parent_data = model_data
@@ -512,18 +613,27 @@ export class FileService {
                 else if (submodel["v"]["_id"].split('/')[0] === "environments") {
                     ////console.log(study_id)
                     model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
-                    filename = "s_study_" + study_id.split('/')[1] + ".txt"
-                    return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, study_unique_id, study_data)
+                    filename = "s_" + study_id.split('/')[1] + ".txt"
+                    return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, study_unique_id, study_data, {})
+
+                }
+                else if (submodel["v"]["_id"].split('/')[0] === "events") {
+                    ////console.log(study_id)
+                    model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
+                    filename = "events.tsv"
+
+                    //filename = "e_" + study_id.split('/')[1] + ".txt"
+                    return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, study_unique_id, study_data, {})
 
                 }
                 else if (submodel["v"]["_id"].split('/')[0] === "observation_units") {
                     parent_data = submodel
                 }
-                else if (submodel["v"]["_id"].split('/')[0]==="experimental_factors"){
-                    model_type=submodel["v"]["_id"].split('/')[0].slice(0, -1)                
-                    filename="s_study_"+study_id.split('/')[1]+".txt"
-                    if (parent_id.includes("observation_units")){
-                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data) 
+                else if (submodel["v"]["_id"].split('/')[0] === "experimental_factors") {
+                    model_type = submodel["v"]["_id"].split('/')[0].slice(0, -1)
+                    filename = "s_" + study_id.split('/')[1] + ".txt"
+                    if (parent_id.includes("observation_units")) {
+                        return_data = this.build_isa_model2(submodel["v"], submodel["model"], submodel["isa_model"], return_data, model_type, filename, parent_id, parent_data, {})
                     }
                 }
 
@@ -551,13 +661,13 @@ export class FileService {
                 }
             }
         )
-        ////console.log(return_data)
+        console.log(return_data)
         var elements = Object.keys(return_data);
         for (var j = 0; j < elements.length; j++) {
             if (elements[j] == 'Investigation') {
                 let tsvData = this.ConvertInvestigationModelTo(return_data[elements[j]], "\t");
                 let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
-                let path = 'ISA/' + "i_" + model_id.replace('/', '_') + '.txt'
+                let path = 'ISA/' + "i_" + model_id.split('/')[1] + '.txt'
                 zipFile.file(path, blob_tsv);
             }
             else if (elements[j] == 'Study') {
@@ -588,7 +698,13 @@ export class FileService {
                 }
             }
             else {
-
+                console.log(return_data[elements[j]])
+                for (var elem in return_data[elements[j]]) {
+                    let tsvData = this.ConvertEventModelTo(return_data[elements[j]][elem]["event_data"], "\t");
+                    let blob_tsv = new Blob(['\ufeff' + tsvData], { type: 'text/tsv;charset=utf-8;' });
+                    let path = 'ISA/' + return_data[elements[j]][elem]["filename"]
+                    zipFile.file(path, blob_tsv);
+                }
             }
         }
 
@@ -597,7 +713,7 @@ export class FileService {
         zipFile = this.build_zip(paths, zipFile)
         zipFile.generateAsync({ type: "blob" }).then(function (blob) { saveAs(blob, dir_root_id + ".zip"); });
     }
-    public add_multiple_model(fileReader: FileReader, parent_id:string) {
+    public add_multiple_model(fileReader: FileReader, parent_id: string) {
         fileReader.onload = function (e) {
             var archive = new JSZip().loadAsync(e.target['result']).then(function (zip) {
                 var files = zip['files'];
@@ -621,16 +737,42 @@ export class FileService {
             });
         }
     }
-    public build_isa_model2(data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, edge={}) {
+    private handleError(error: HttpErrorResponse) {
+        if (error.status === 0) {
+            // A client-side or network error occurred. Handle it accordingly.
+            console.error('An error occurred:', error.error);
+        } else {
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong.
+            console.error(
+                `Backend returned code ${error.status}, body was: `, error.error);
+        }
+        // Return an observable with a user-facing error message.
+
+        return throwError(() => new Error('Something bad happened; please try again later.'))
+
+    }
+    public async get_persons(investigation_key) {
+        let persons: PersonInterface[] = await this.httpClient.get<PersonInterface[]>(this.APIUrl + "get_persons/" + investigation_key).pipe(catchError(this.handleError)).toPromise()
+        console.log(persons)
+        return persons
+    }
+    public build_isa_model2(data, model, isa_model, return_data, model_type, filename, parent_id, parent_data, { edge = {}, persons = [] }: { edge?: {}; persons?: {}[] }) {
 
         var environment_obj = {}
+        var event_obj = {}
         var keys = Object.keys(data);
+        console.log(model_type)
+        console.log(data['_id'])
+        console.log(isa_model)
         if (model_type === "investigation") {
             var isa_file = "Investigation"
             //add the model
             if (Object.keys(return_data[isa_file]).length === 0) {
                 return_data[isa_file] = isa_model
             }
+            // Build investigation contact section
+            // need to get person related to this investigation data['_id']
             ////console.log("-----------building isa ", model_type)
             for (var i = 0; i < keys.length; i++) {
                 if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
@@ -642,7 +784,7 @@ export class FileService {
                     var mapping_data = this.get_mapping_data_by_key(model, keys[i])
                     var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
                     var isa_field: string = mapping_data["ISA-Tab Field"]
-                    ////console.log("----------------------write field ", isa_field, " in section ", isa_section, " for ", isa_file)
+                    console.log("----------------------write field ", isa_field, " in section ", isa_section, " for ", isa_file)
                     if (return_data[isa_file][isa_section][isa_field]) {
                         if ((isa_field.includes("Type")) && (!isa_field.includes("Comment"))) {
                             data[keys[i]].split("/").forEach(element => {
@@ -666,26 +808,75 @@ export class FileService {
         }
         else if (model_type === "study") {
             var isa_file = "Investigation"
+            var study_contact_section = 'STUDY CONTACTS'
             ////console.log("-----------building isa ", model_type)
             //add the model
-
+            console.log(return_data[isa_file])
+            console.log(parent_id)
             var investigation_isa_sections = Object.keys(return_data[isa_file])
             for (var i = 0; i < investigation_isa_sections.length; i++) {
+                if (investigation_isa_sections[i].includes("STUDY CONTACTS")) {
+                    console.log(return_data[isa_file][investigation_isa_sections[i]])
+                    console.log(persons)
+                    if (persons.length > 0) {
+                        let current_person = persons.filter(person => person['model_id'] === data['_id'])[0]['vertice']
+                        //return_data[isa_file][investigation_isa_sections[i]]["Study Person First Name"].push(current_person['Person name'].split(" ")[0])
+                        if (!return_data[isa_file][investigation_isa_sections[i]]["Comment[Person ID]"]){
+                            return_data[isa_file][investigation_isa_sections[i]]["Comment[Person ID]"]=[]
+                        }
+                        return_data[isa_file][investigation_isa_sections[i]]["Comment[Person ID]"].push([current_person['Person ID']])
+                        if (current_person['Person name'].split(" ").lenght === 3) {
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person First Name"].push([current_person['Person name'].split(" ")[0]])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Mid Initials"].push([current_person['Person name'].split(" ")[1]])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Last Name"].push([current_person['Person name'].split(" ")[2]])
+                        }
+                        else if (current_person['Person name'].split(" ").lenght === 2) {
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person First Name"].push([current_person['Person name'].split(" ")[0]])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Mid Initials"].push([""])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Last Name"].push([current_person['Person name'].split(" ")[1]])
 
-                if (investigation_isa_sections[i].includes("STUDY")) {
+                        }
+                        else {
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person First Name"].push([current_person['Person name'].split(" ")[0]])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Mid Initials"].push([""])
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Last Name"].push([""])
+
+                        }
+                        /* if (current_person['Person name'].split(" ")[1]!==undefined){
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Last Name"].push(current_person['Person name'].split(" ")[1])
+
+                        }
+                        else{
+                            return_data[isa_file][investigation_isa_sections[i]]["Study Person Last Name"].push("")
+
+                        } */
+
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Email"].push([current_person['Person email']])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Roles"].push([current_person['Person role']])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Affiliation"].push([current_person['Person affiliation']])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Address"].push([current_person['Person affiliation']])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Phone"].push([""])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Roles"].push([""])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Fax"].push([""])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Roles Term Accession Number"].push([""])
+                        return_data[isa_file][investigation_isa_sections[i]]["Study Person Roles Term Source REF"].push([""])
+                    }
+                }
+                if (investigation_isa_sections[i].includes("STUDY") && !investigation_isa_sections[i].includes("STUDY CONTACTS")) {
                     //////console.log(return_data[isa_file][investigation_isa_sections[i]])
                     var study_isa_keys = Object.keys(return_data[isa_file][investigation_isa_sections[i]])
                     for (var j = 0; j < study_isa_keys.length; j++) {
                         return_data[isa_file][investigation_isa_sections[i]][study_isa_keys[j]].push([])
-                        //////console.log(return_data[isa_file][investigation_isa_sections[i]])
+
+
                     }
                 }
             }
-            //////console.log(return_data[isa_file])
+            console.log(return_data[isa_file])
             //return_data[isa_file]["STUDY"]["Study File Name"].push("")
 
 
-            
+
             for (var i = 0; i < keys.length; i++) {
                 if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                     keys.splice(i, 1);
@@ -739,7 +930,7 @@ export class FileService {
             ////console.log("----edge data", edge)
             ////console.log("-----------building isa ", model_type)
             var isa_file = "Study"
-            
+
             var parent_model = parent_data["model"];
             var index = 0
 
@@ -780,11 +971,11 @@ export class FileService {
                 // ////console.log(parent_data)
                 // ////console.log(parent_index)
                 // ////console.log(keys)
-                var bm_data=[]
-                bm_data=edge['biological_materials']
+                var bm_data = []
+                bm_data = edge['biological_materials']
                 for (var bm_index = 0; bm_index < bm_data.length; bm_index++) {
                     var data_index = data["Material source ID (Holding institute/stock centre, accession)"].indexOf(bm_data[bm_index]["materialId"])
-                    var bm_data_index=data["Biological material ID"][data_index].indexOf(bm_data[bm_index]["biologicalMaterialId"])
+                    var bm_data_index = data["Biological material ID"][data_index].indexOf(bm_data[bm_index]["biologicalMaterialId"])
                     var parent_index = parent_data['v']["obsUUID"].indexOf(bm_data[bm_index]["obsUUID"])
                     // ////console.log(bm_data[bm_index])
                     // ////console.log(data_index)
@@ -808,15 +999,15 @@ export class FileService {
                             if (return_data[isa_file][index]["study_data"][isa_field]) {
                                 if (return_data[isa_file][index]["study_data"][isa_field]["data"]) {
                                     var data2;
-                                    if (keys[i].includes("Material") || keys[i].includes("Infraspecific") ){
-                                        data2=data[keys[i]][data_index]
-                                        
+                                    if (keys[i].includes("Material") || keys[i].includes("Infraspecific")) {
+                                        data2 = data[keys[i]][data_index]
+
                                     }
-                                    else if (keys[i].includes("Biological")){
-                                        data2=data[keys[i]][data_index][bm_data_index]
+                                    else if (keys[i].includes("Biological")) {
+                                        data2 = data[keys[i]][data_index][bm_data_index]
                                     }
-                                    else{
-                                        data2=data[keys[i]]    
+                                    else {
+                                        data2 = data[keys[i]]
                                     }
 
                                     if (isa_field.includes("Characteristics")) {
@@ -861,14 +1052,14 @@ export class FileService {
                             // ////console.log(parent_keys[i])
                             // ////console.log(parent_data["v"][parent_keys[i]][parent_index])
                             // ////console.log(parent_data["v"])
-                    //         var is_ontology_key = this.is_ontology_key(parent_model, parent_keys[i][parent_index])
+                            //         var is_ontology_key = this.is_ontology_key(parent_model, parent_keys[i][parent_index])
                             mapping_data = this.get_mapping_data_by_key(parent_model, parent_keys[i])
                             var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
                             var isa_field: string = mapping_data["ISA-Tab Field"]
                             ////console.log("write observation unit field ", isa_field, " in section ", isa_section, " for ", isa_file)
                             if (return_data[isa_file][index]["study_data"][isa_field]) {
                                 if (return_data[isa_file][index]["study_data"][isa_field]["data"]) {
-    
+
                                     if (isa_field.includes("Characteristics")) {
                                         var term_source_ref = ""
                                         var term_accession_number = ""
@@ -896,31 +1087,41 @@ export class FileService {
                             else {
                                 return_data[isa_file][index]["study_data"][isa_field] = { "data": [parent_data["v"][parent_keys[i]][parent_index]] }
                             }
-    
+
                         }
                     }
                 }
                 ////console.log(return_data)
 
 
-                
+
 
             }
 
         }
         else if (model_type === "sample") {
+            var isa_file = "Investigation"
+            console.log(parent_id)
+            //add SAmples in study protocol
+            for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
+                if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Name"][i].push('Sampling')
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Type"][i].push('Sampling')
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i].push(data["Collection date"][0]+";"+data['Sample description'][0])
+                }
+            }
             var isa_file = "Assay"
             ////console.log("#############################################################model type", model_type)
 
             //console.log("----data", data)
-            
+
             ////console.log("----parent id", parent_id)
             ////console.log("----return data", return_data)
             ////console.log("----parent data", parent_data)
             ////console.log("----edge data", edge)
             ////console.log("-----------building isa ", model_type)
-            
-            
+
+
             var parent_keys = Object.keys(parent_data["v"]);
             var parent_model = parent_data["model"];
             var index = 0
@@ -943,8 +1144,8 @@ export class FileService {
                 }
             }
             var already_exist = false
-            for (var i = 0; i < return_data['Assay'][index]["assay_data"]['Sample Name']["data"].length; i++) {
-                if ((return_data['Assay'][index]["assay_data"]['Sample Name']["data"][i] === parent_data['v']['Observation unit ID']) && (return_data['Assay'][index]["assay_data"]['Extract Name']["data"][i] === data['Sample ID'])) {
+            for (var i = 0; i < return_data[isa_file][index]["assay_data"]['Sample Name']["data"].length; i++) {
+                if ((return_data[isa_file][index]["assay_data"]['Sample Name']["data"][i] === parent_data['v']['Observation unit ID']) && (return_data['Assay'][index]["assay_data"]['Extract Name']["data"][i] === data['Sample ID'])) {
                     already_exist = true
                 }
 
@@ -953,16 +1154,18 @@ export class FileService {
             if (!already_exist) {
                 if (!return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].includes(filename)) {
                     return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].push(filename)
+                    return_data['Investigation']['STUDY ASSAYS']['Study Assay Measurement Type'][index].push("phenotyping")
+                    return_data['Investigation']['STUDY ASSAYS']['Study Assay Technology Type'][index].push(parent_data['v']['Observation unit type'][0] + " level analysis")
                 }
-                var sample_data=edge['samples']
-                /// NEW CODE TO TEST
-                for (var sample_index = 0; sample_index < sample_data.length; sample_index++) { 
+                var sample_data = edge['samples']
+                /// NEW CODE TO TESTs
+                for (var sample_index = 0; sample_index < sample_data.length; sample_index++) {
                     var parent_index = parent_data['v']["obsUUID"].indexOf(sample_data[sample_index]["obsUUID"])
                     //get index of sample obsUUID in parent_data['v'] i.e observation unit data
                     //console.log(parent_index)
 
                     return_data['Assay'][index]["assay_data"]['Sample Name']["data"].push(parent_data['v']['Observation unit ID'][parent_index])
-                
+
                     //console.log(sample_data[sample_index])
                     for (var i = 0; i < keys.length; i++) {
                         if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
@@ -990,7 +1193,7 @@ export class FileService {
                                         let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
                                         return_data[isa_file][index]["assay_data"][isa_field]["data"].push(tmp_array)
                                     }
-                                    
+
 
                                     else {
                                         /* //console.log(data[sample_index])
@@ -1010,7 +1213,7 @@ export class FileService {
                                         let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
                                         return_data[isa_file][index]["assay_data"][isa_field]["data"] = [tmp_array]
                                     }
-                                    else{
+                                    else {
                                         return_data[isa_file][index]["assay_data"][isa_field]["data"] = [data[keys[i]][sample_index]]
                                     }
                                 }
@@ -1027,13 +1230,13 @@ export class FileService {
                                     let tmp_array = [data[keys[i]][sample_index], { "Term Source REF": term_source_ref }, { "Term Accession Number": term_accession_number }]
                                     return_data[isa_file][index]["assay_data"][isa_field] = { "data": [tmp_array] }
                                 }
-                                else{
+                                else {
                                     return_data[isa_file][index]["assay_data"][isa_field] = { "data": [data[keys[i]][sample_index]] }
 
                                 }
                             }
                         }
-                        
+
                     }
                 }
                 /* for (var sample_index = 0; sample_index < sample_data.length; sample_index++) {   
@@ -1107,8 +1310,8 @@ export class FileService {
                         }
                     }
                 } */
-                
-                 /// OLD CODE TO TEST
+
+                /// OLD CODE TO TEST
                 /* //console.log(edge['samples'])
                 for (var i = 0; i < keys.length; i++) {
                     if (keys[i].startsWith("_") || keys[i].startsWith("Definition") || keys[i].includes("UUID")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
@@ -1189,7 +1392,8 @@ export class FileService {
             ////console.log("----edge data", edge)
             ////console.log("-----------building isa ", model_type)
 
-            if (parent_data['v']['_id'].includes("studies")){
+            if (parent_data['v']['_id'].includes("studies")) {
+                //write investigation file 
                 var isa_file = "Investigation"
                 for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
                     ////console.log(return_data[isa_file]["STUDY"]["Study Identifier"])
@@ -1232,7 +1436,7 @@ export class FileService {
                     }
                 }
             }
-            else{
+            else {
                 //Write Study isa part    
                 isa_file = "Study"
 
@@ -1256,7 +1460,7 @@ export class FileService {
                                 ////console.log(parent_data['v']['Observation unit ID'][parent_index])
                                 if (return_data['Study'][i]["study_data"]['Sample Name']["data"][j] === parent_data['v']['Observation unit ID'][parent_index]) {
                                     ////console.log(parent_data["v"]["Observation Unit factor value"][parent_index])
-                                    var factor_obj={}
+                                    var factor_obj = {}
                                     factor_obj["factor"] = data["Experimental Factor type"]
                                     factor_obj["value"] = parent_data["v"]["Observation Unit factor value"][parent_index]
                                     let tmp_array = [factor_obj, { "Term Source REF": data["Experimental Factor accession number"].split(":")[0] }, { "Term Accession Number": data["Experimental Factor accession number"] }]
@@ -1343,10 +1547,32 @@ export class FileService {
         else if (model_type === "observation_unit") {
         }
         else if (model_type === "environment") {
+
+            console.log(data)
+            console.log(data["Environment parameter"])
+            console.log(parent_id)
             var isa_file = "Investigation"
+            console.log(return_data[isa_file]["STUDY PROTOCOLS"])
+            console.log(return_data[isa_file]["STUDY"])
+            console.log(return_data[isa_file]["STUDY"]["Study Identifier"])
+            console.log(return_data[isa_file]["STUDY"]["Study Identifier"][0])
             for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
-                if (return_data[isa_file]["STUDY"]["Study Identifier"][i] === parent_id) {
-                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i].push(data["Environment parameter"])
+                if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
+                    console.log(data["Environment parameter"])
+                    if (!return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Name"][i].includes('Growth')) {
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Name"][i].push('Growth')
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i].push(data["Environment parameter"])
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Accession Number"][i].push(data["Environment parameter accession number"])
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Source REF"][i].push(data["Environment parameter accession number"].split(":")[0])
+                    }
+                    else {
+                        //get Growth index, usually 0
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i][0] = return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i][0] + ";" + (data["Environment parameter"])
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Accession Number"][i][0] = return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Accession Number"][i][0] + ";" + (data["Environment parameter accession number"])
+                        return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Source REF"][i][0] = return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Source REF"][i][0] + ";" + (data["Environment parameter accession number"].split(":")[0])
+                    }
+
+
                 }
             }
 
@@ -1425,10 +1651,90 @@ export class FileService {
             // }
         }
         else if (model_type === "event") {
+            console.log(data)
+            console.log(data["Event type"])
+            console.log(parent_id)
+            var isa_file = "Investigation"
+            console.log(return_data[isa_file]["STUDY PROTOCOLS"])
+            console.log(return_data[isa_file]["STUDY"])
+            console.log(return_data[isa_file]["STUDY"]["Study Identifier"])
+            console.log(return_data[isa_file]["STUDY"]["Study Identifier"][0])
+            for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
+                if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Name"][i].push('Event')
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name"][i].push(data["Event type"])
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Accession Number"][i].push(data["Event accession number"])
+                    return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Parameters Name Term Source REF"][i].push(data["Event accession number"].split(":")[0])
+                }
+            }
+
+            var isa_file = "Event"
+            var parent_keys = Object.keys(parent_data["v"]);
+            var parent_model = parent_data["model"];
+            var index = 0
+            if (return_data[isa_file].length === 0) {
+                //if (Object.keys(return_data[isa_file]).length === 0){
+                return_data[isa_file].push({ "filename": filename, "event_data": isa_model })
+                return_data[isa_file][0]["event_data"]["Event Type"]["data"].push(data["Event type"])
+                return_data[isa_file][0]["event_data"]["Event Description"]["data"].push(data["Event description"])
+                return_data[isa_file][0]["event_data"]["Event Date*"]["data"].push(data["Event date"])
+                return_data[isa_file][0]["event_data"]["Event Accession Number"]["data"].push(data["Event accession number"])
+                return_data[isa_file][0]["event_data"]["Study ID*"]["data"].push(parent_id)
+                return_data[isa_file][0]["event_data"]["Observation Unit(s)"]["data"].push("NA")
+
+                //return_data[isa_file]=isa_model
+            }
+            else {
+                var found: boolean = false
+                if (return_data[isa_file].length !== 0) {
+                    for (var i = 0; i < return_data[isa_file].length; i++) {
+                        if (return_data[isa_file][i]["filename"] === filename) {
+                            found = true
+                            index = i
+                            return_data[isa_file][i]["event_data"]["Event Type"]["data"].push(data["Event type"])
+                            return_data[isa_file][i]["event_data"]["Event Description"]["data"].push(data["Event description"])
+                            return_data[isa_file][i]["event_data"]["Event Date*"]["data"].push(data["Event date"])
+                            return_data[isa_file][i]["event_data"]["Event Accession Number"]["data"].push(data["Event accession number"])
+                            return_data[isa_file][i]["event_data"]["Study ID*"]["data"].push(parent_id)
+                            return_data[isa_file][i]["event_data"]["Observation Unit(s)"]["data"].push("NA")
+                            
+
+
+                            
+
+                        }
+                    }
+                    if (!found) {
+                        return_data[isa_file].push({ "filename": filename, "event_data": isa_model })
+                        index = return_data[isa_file].length - 1
+                        return_data[isa_file][i]["event_data"]["Event Type"]["data"].push(data["Event type"])
+                        return_data[isa_file][i]["event_data"]["Event Description"]["data"].push(data["Event description"])
+                        return_data[isa_file][i]["event_data"]["Event Date*"]["data"].push(data["Event date"])
+                        return_data[isa_file][i]["event_data"]["Event Accession Number"]["data"].push(data["Event accession number"])
+                        return_data[isa_file][i]["event_data"]["Study ID*"]["data"].push(parent_id)
+                        return_data[isa_file][i]["event_data"]["Observation Unit(s)"]["data"].push("NA")
+                    }
+                }
+
+            }
+
+            //Write in return data in this isa model is not exists
+
+            /* var already_exist = false
+            for (var i = 0; i < return_data[isa_file][index]["event_data"]['Event Accession Number']["data"].length; i++) {
+                if ((return_data[isa_file][index]["event_data"]['Sample Name']["data"][i] === parent_data['v']['Observation unit ID']) && (return_data['Assay'][index]["assay_data"]['Extract Name']["data"][i] === data['Sample ID'])) {
+                    already_exist = true
+                }
+
+            } */
+
+            //var study_index=return_data[isa_file]["STUDY"]["Study Identifier"].length -1
+            /* event_obj["parameter"] = data["Event"]
+            event_obj["value"] = data["Event value"]
+            let tmp_array = [event_obj, { "Term Source REF": "" }, { "Term Accession Number": "" }] */
+
         }
-        else {
-        }
-        ////console.log(return_data)
+        console.log(return_data)
         return return_data
     }
     public build_isa_model(data, model, isa_model, return_data, model_type) {
@@ -1660,7 +1966,7 @@ export class FileService {
         var model_key = model_id.split("/")[1];
         //var paths = { 'filepath': [], 'data': [], 'parent_id': [] }
         var root_id = collection_name + '/' + model_key
-        var paths:{ 'filepath': any[], 'data': any[], 'parent_id': any[] } = await this.build_path(root_id, submodels, selected_format)
+        var paths: { 'filepath': any[], 'data': any[], 'parent_id': any[] } = await this.build_path(root_id, submodels, selected_format)
         //console.log(paths)
         let zipFile: JSZip = new JSZip();
         // write the data for the selected root node
@@ -1794,7 +2100,9 @@ export class FileService {
     }
     public ConvertInvestigationModelTo(objArray, sep = '\t') {
         //////console.log(objArray)
+        console.log(sep)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        console.log(array)
         let str = '';
         var keys = Object.keys(array);
         var study_number = 0
@@ -1841,7 +2149,15 @@ export class FileService {
                         str += keys[i] + '\r\n';
                         var subkeys = Object.keys(array[keys[i]]);
                         for (var j = 0; j < subkeys.length; j++) {
-                            str += subkeys[j] + sep + array[keys[i]][subkeys[j]][n] + '\r\n';
+                            /* console.log(subkeys[j])
+                            console.log(array[keys[i]][subkeys[j]][n]) */
+                            if (array[keys[i]][subkeys[j]][n].length > 1) {
+                                str += subkeys[j] + sep + array[keys[i]][subkeys[j]][n].join('\t') + '\r\n';
+                            }
+                            else {
+                                str += subkeys[j] + sep + array[keys[i]][subkeys[j]][n] + '\r\n';
+                            }
+
                         }
                     }
                 }
@@ -1853,9 +2169,54 @@ export class FileService {
         }
 
 
-        //////console.log(str)
         return str;
     }
+
+    public ConvertEventModelTo(objArray, sep = ',') {
+        console.log(objArray)
+        let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        console.log(array)
+        let str = '';
+        //Write header in study isa file and count object
+        var keys = Object.keys(array);
+        var event_number = 0
+        var headers = []
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                keys.splice(i, 1);
+                i--;
+            }
+            else {
+                console.log(array[keys[i]])
+                event_number = array[keys[i]]['data'].length
+                str += keys[i] + sep;
+            }
+        }
+        console.log(str)
+        //remove last separator
+        str = str.slice(0, -1);
+        str += '\r\n';
+        for (var j = 0; j < event_number; j++) {
+            for (var i = 0; i < keys.length; i++) {
+                console.log(keys[i])
+                if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
+                    keys.splice(i, 1);
+                    i--;
+                }
+                else {
+                    console.log(array[keys[i]]['data'])
+                    console.log(array[keys[i]]['data'][j])
+                    str += array[keys[i]]['data'][j] + sep;
+                }
+
+            }
+            str = str.slice(0, -1);
+            str += '\r\n';
+        }
+        console.log(str)
+        return str;
+    
+    } 
     public ConvertTraitModelTo(objArray, sep = ',') {
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         let str = '';
@@ -1998,20 +2359,20 @@ export class FileService {
         //     if (h.includes)
 
         // }
-        
-        
+
+
         for (var n = 0; n < biological_material_number; n++) {
-           // ////console.log("#############################=> write a new line")
+            // ////console.log("#############################=> write a new line")
             var row = '';
             for (var h = 0; h < headers.length; h++) {
                 var header_found: boolean = false
                 //////console.log("searching for header: ", headers[h])
-                
+
                 for (var i = 0; i < keys.length; i++) {
 
 
                     //////console.log(obj[keys[i]])
-                    
+
                     if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                         keys.splice(i, 1);
                         i--;
@@ -2023,7 +2384,7 @@ export class FileService {
                         // key_data["data"].forEach(element => {
                         //////console.log(key_data["data"])
                         //////console.log(element)
-                        
+
                         //////console.log(keys[i], obj[keys[i]])
                         if (element) {
                             if (keys[i] === "Parameter Value[ ]") {
@@ -2357,7 +2718,7 @@ export class FileService {
         let data = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         //console.log(data)
         var headers = data["headers"];
-        var associated_headers:AssociatedHeadersInterface[] = data["associated_headers"];
+        var associated_headers: AssociatedHeadersInterface[] = data["associated_headers"];
         var lines = data["Data"]
 
         let row = '';
@@ -2382,7 +2743,7 @@ export class FileService {
         for (let index_data in lines) {
             //console.log(lines[index_data])
             row = '';
-            var keys=Object.keys(lines[index_data])
+            var keys = Object.keys(lines[index_data])
             for (let i = 0; i < keys.length; i++) {
                 row += lines[index_data][keys[i]] + sep;
             }
@@ -2397,7 +2758,7 @@ export class FileService {
         // ////console.log(model)
         // ////console.log(model[key])
         var mapping_data = {}
-        if (Object.keys(model).includes(key)){
+        if (Object.keys(model).includes(key)) {
             if (model[key]["Mapping"]) {
                 mapping_data = model[key]["Mapping"]
             }
@@ -2405,7 +2766,7 @@ export class FileService {
         return mapping_data
     }
     public is_ontology_key(model: {}, key: string) {
-        if (Object.keys(model).includes(key)){
+        if (Object.keys(model).includes(key)) {
             if (model[key]["Associated ontologies"]) {
                 return true
             }
@@ -2413,7 +2774,7 @@ export class FileService {
                 return false
             }
         }
-        else{
+        else {
             return false
         }
 

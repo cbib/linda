@@ -325,6 +325,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     this.material_id = data["Associated biological Materials"].value
                     this.design.set_biological_material_id(data["Associated biological Materials"].value)
                 }
+                this.design.set_block_per_row(data['Block per Row'].value)
                 //this.design=data
                 //this.design=data as ExperimentalDesign
                 //console.log(Object.keys(this.design).filter((key) => typeof this.design[key] === 'function').map((key) => this.design[key]))
@@ -337,8 +338,9 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 this.totalRowPerPlotControl.setValue(RowPerPlot)
                 this.totalRowPerBlockControl.patchValue(row_num.length)
                 this.totalRowPerBlockControl.setValue(row_num.length)
-                this.totalBlockPerRowControl.patchValue(4)
-                this.totalBlockPerRowControl.setValue(4)
+                console.log(data['Block per Row'].value)
+                this.totalBlockPerRowControl.patchValue(this.get_design.get_block_per_row())
+                this.totalBlockPerRowControl.setValue(this.get_design.get_block_per_row())
                 console.log(this.design)
                 this.designLoaded = true
                 this.blockDesignLoaded = true
@@ -382,6 +384,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         this.total_column_per_block = this.BlockDesignForm.get('totalColumnPerBlockControl').value
         this.total_row_per_block = this.BlockDesignForm.get('totalRowPerBlockControl').value
         this.total_row_per_plot = this.BlockDesignForm.get('totalRowPerPlotControl').value
+        this.total_block_per_row = this.totalBlockPerRowControl.value
         console.warn(this.total_row_per_plot)
         // this.experimental_design_blocks=[]
         /* let blocks=this.total_block_number
@@ -393,6 +396,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         var replication: Replication = new Replication()
         replication.set_replicate_number(3)
         this.design.set_replication(replication)
+        this.design.set_block_per_row(this.total_block_per_row)
         //this.design.set_number_of_entries(this.total_block_number*this.total_column_per_block*this.total_row_per_block)
         for (var block = 1; block < (this.total_block_number + 1); block++) {
             var block_design: BlockDesign = new BlockDesign(block, this.total_block_number)
@@ -439,8 +443,47 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         var plot = 1
         this.design.Blocking.value.forEach(block_design => {
             block_design.clean_plot_design()
+            block_design['Complete Block Design'].value=[]
+            block_design['Incomplete Block Design'].value=[]
         })
-        if (!this.block_design_subtype) {
+
+        this.design.Blocking.value.forEach(block_design => {
+            if (this.block_design_type === "CompleteBlockDesign") {
+                //this.complete_block_design_type[this.block_design_subtype].value = true
+                block_design['Complete Block Design'].value.push(this.complete_block_design_type)
+            }
+            else {
+                //this.incomplete_block_design_type[this.block_design_subtype] = true
+                block_design['Incomplete Block Design'].value.push(this.incomplete_block_design_type)
+            }
+            for (var column = 1; column < this.total_column_per_block + 1; column++) {
+                //var plot_design=new PlotDesign()
+                for (var row = 1; row < this.total_row_per_block + 1; row++) {
+                    var row_design: RowDesign = new RowDesign()
+                    row_design.set_row_number(row)
+                    row_design.set_row_per_plot(this.total_row_per_plot)
+
+                    if (row % this.total_row_per_plot === 0) {
+                        var plot_design = new PlotDesign()
+                        plot_design.set_column_number(column)
+                        plot_design.set_plot_number(plot)
+                        plot_design.add_row_design(row_design)
+                        block_design.add_plot_design(plot_design)
+                        //var plot_design:PlotDesign=new PlotDesign()
+                        plot++
+                    }
+                    else {
+                        plot_design.add_row_design(row_design)
+                    }
+                    /* else{
+                        block_design.add_plot_design(plot_design)
+                    } */
+                }
+            }
+        })
+        this.blockDesignLoaded = true
+
+        /* if (!this.block_design_subtype) {
             this.alertService.error("You have to define which design subtypes first")
         }
         else {
@@ -472,14 +515,12 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         else {
                             plot_design.add_row_design(row_design)
                         }
-                        /* else{
-                            block_design.add_plot_design(plot_design)
-                        } */
+
                     }
                 }
             })
             this.blockDesignLoaded = true
-        }
+        } */
     }
     addObservationUnits() {
         const dialogRef = this.dialog.open(AssociateObservationUnit, { disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", material_id: this.material_id, design: this.design, mode: 'create', model_key: '' } });
@@ -574,6 +615,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 total_available_plots: this.design['number of entries'].value,
                 role: this.role,
                 grand_parent_id: this.grand_parent_id,
+                available_designs:this.available_designs,
                 group_key: this.group_key,
                 design:this.design
             }
@@ -858,21 +900,59 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     
     //edit mode submission
     onSave() {
-        this.globalService.update_document(this.model_key, this.design, this.model_type, false).pipe(first()).toPromise().then(
-            data => {
-                if (data["success"]) {
-                    var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
-                    this.alertService.success(message)
-                    return true;
+        if (this.design.get_total_block()!==this.totalBlockControl.value){
+            this.removeBiologicalMaterial()
+        }
+        if(this.totalColumnPerBlockControl.value*this.totalRowPerBlockControl.value!==this.design.get_total_plot_per_block()){
+            this.removeBiologicalMaterial()
+        }
+        if (this.totalRowPerPlotControl.value!==this.design.Blocking.value[0]['Plot design'].value[0].get_row_design(1)['Row per plot'].value){
+            this.removeBiologicalMaterial()
+        }
+        else{
+            /* if(this.totalColumnPerBlockControl.value!==this.design.get_total_column_per_block() || this.totalRowPerBlockControl.value!==this.design.get_total_row_per_block()){
+                this.total_row_per_plot=this.totalRowPerPlotControl.value
+                this.design.Blocking.value.forEach(block_design => {
+                    let plot=1
+                    
+                    for (var column = 1; column < this.totalColumnPerBlockControl.value + 1; column++) {
+                        //var plot_design=new PlotDesign()
+                        for (var row = 1; row < this.totalRowPerBlockControl.value + 1; row++) {
+                            var plot_design=block_design.get_plot_design(plot)
+                            var row_design: RowDesign = new RowDesign()
+                            row_design.set_row_number(row)
+                            row_design.set_row_per_plot(this.total_row_per_plot)
+
+                            if (row % this.total_row_per_plot === 0) {
+                                
+                                plot_design.set_column_number(column)
+                                plot++
+                            }
+                            else {
+                                plot_design.add_row_design(row_design)
+                            }
+                        }
+                    }
+                });
+            } */
+        this.design.set_block_per_row(this.totalBlockPerRowControl.value)
+        //check that block or plot design 
+            this.globalService.update_document(this.model_key, this.design, this.model_type, false).pipe(first()).toPromise().then(
+                data => {
+                    if (data["success"]) {
+                        var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
+                        this.alertService.success(message)
+                        return true;
+                    }
+                    else {
+                        this.alertService.error("this form contains errors! " + data["message"]);
+                        return false;
+                    };
+
+
                 }
-                else {
-                    this.alertService.error("this form contains errors! " + data["message"]);
-                    return false;
-                };
-
-
-            }
-        );
+            );
+        }
     }
     //create mode submission
     onAdd() {
@@ -924,6 +1004,26 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         console.log(_block['Block number'].value)
         console.log(this.get_design.Blocking.value)
         this.block_index = _block['Block number'].value - 1
+    }
+    changeTab(tab: string) {
+        this.activeTab = tab
+        console.log(this.activeTab)
+    }
+    showBlockInfo(i, value) {
+        this.hideme[i] = !this.hideme[i];
+        this.Index = i;
+    }
+    showPlotInfo(j: number, value) {
+        this.secondhideme[j] = !this.secondhideme[j];
+        this.SecondIndex = j;
+    }
+    showSampleDateInfo(k: number, value) {
+        this.thirdhideme[k] = !this.thirdhideme[k];
+        this.ThirdIndex = k;
+    }
+    showObservationDateInfo(l: number, value) {
+        this.obsthirdhideme[l] = !this.obsthirdhideme[l];
+        this.obsThirdIndex = l;
     }
     display_plot(_plot: PlotDesignInterface) {
         console.log(_plot['Plot number'].value)
@@ -1066,26 +1166,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             console.log("Cancel form")
         }
     }
-    changeTab(tab: string) {
-        this.activeTab = tab
-        console.log(this.activeTab)
-    }
-    showBlockInfo(i, value) {
-        this.hideme[i] = !this.hideme[i];
-        this.Index = i;
-    }
-    showPlotInfo(j: number, value) {
-        this.secondhideme[j] = !this.secondhideme[j];
-        this.SecondIndex = j;
-    }
-    showSampleDateInfo(k: number, value) {
-        this.thirdhideme[k] = !this.thirdhideme[k];
-        this.ThirdIndex = k;
-    }
-    showObservationDateInfo(l: number, value) {
-        this.obsthirdhideme[l] = !this.obsthirdhideme[l];
-        this.obsThirdIndex = l;
-    }
+    
     close() {
         this.router.navigate(['/study_page'], { queryParams: { level: "1", parent_id: this.grand_parent_id, model_key: this.parent_id.split('/')[1], model_id: this.parent_id, model_type: 'study', mode: "edit", activeTab: "studydesign", role: this.role, group_key: this.group_key } });
 
