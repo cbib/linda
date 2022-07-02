@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort'
 import { first } from 'rxjs/operators';
 import structuredClone from '@ungap/structured-clone';
 import * as uuid from 'uuid';
+import {ChipListComponent} from 'src/app/components/chip-list/chip-list.component'
+
 import {
     ExperimentalDesign,
     BlockDesign,
@@ -36,11 +38,17 @@ import { SampleSelectionComponent } from '../../dialogs/sample-selection.compone
 import { AssociateObservedVariable } from '../../dialogs/associate-observed-variable.component';
 import { PlotOverviewComponent } from '../../dialogs/plot-overview.component';
 import { AssociateExperimentalFactorComponent } from '../../dialogs/associate-experimental-factor.component';
+import { ExperimentalFactor } from 'src/app/models/linda/experimental_factor';
+import { indexOf } from 'lodash';
 
 export interface subComponent{
     'Associated biological material':[]
     'Associated sample':[]
 }
+
+export interface ExperimentalFactorNames {
+    name: string;
+  }
 
 @Component({
     selector: 'app-experimental-design-page',
@@ -97,6 +105,23 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     public block_index: number = 0
     public plot_index: number = 0
     public material_id: string = ""
+    public selected_factor_id:string=""
+    public selected_factor_values:string[]=[]
+    factors_col = [
+        'LightCoral',
+        'lightblue',
+        'Silver',
+        'lightgreen',
+        'Gainsboro',
+        'LightPink',
+        'Orange',
+        'DarkKhaki',
+        'AntiqueWhite',
+        'CornflowerBlue',
+        'DarkMagenta',
+        'LavenderBlush',
+        'Turquoise'
+      ]
     sample_data = []
     panel_disabled: boolean = false
     panel_expanded: boolean = false
@@ -110,6 +135,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     SecondIndex: any;
     ThirdIndex: any;
     obsThirdIndex: any;
+    experimentalFactorNames: ExperimentalFactorNames[]=[];
 
     /* products = [];  
     countryCode: any;  
@@ -246,6 +272,15 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 if (data['Associated observed variable IDs'].value.length > 0){
                     this.design.set_observed_variable_id(data['Associated observed variable IDs'].value)    
                 }
+                if (data['Associated experimental factor IDs'].value.length > 0){
+                    this.design.set_experimental_factor_id(data['Associated experimental factor IDs'].value) 
+                    data['Associated experimental factor IDs'].value.forEach(factor=>{
+                        this.experimentalFactorNames.push({ name: factor})
+                    })
+                    this.selected_factor_id=data['Associated experimental factor IDs'].value[0]
+                    
+                       
+                }
                 if (data['Associated observations'].value.length > 0){
                     this.design.set_associated_observations(data['Associated observations'].value)    
                 }
@@ -289,11 +324,14 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     }
                     //new_block_design=BlockDesign.create_block_design(block)
                     block['Plot design'].value.forEach(plot_design => {
-                        let new_plot_design = new PlotDesign(plot_design['Column number'].value, plot_design['Plot number'].value, plot_design['Associate_material_source'].value, plot_design['Associated_biological_material'].value, plot_design['Replicate number'].value)
+                        if (!this.selected_factor_values.includes(plot_design.Associated_factor_values.value[0])){
+                            this.selected_factor_values.push(plot_design.Associated_factor_values.value[0])
+                        }
+                        let new_plot_design = new PlotDesign(plot_design['Column number'].value, plot_design['Plot number'].value, plot_design['Associate_material_source'].value, plot_design['Associated_biological_material'].value,plot_design.Associated_factor_values.value, plot_design['Replicate number'].value)
                         //new_plot_design=PlotDesign.create_plot_design(plot_design)
                         //Object.assign(new_plot_design, plot_design)
-                        if (plot_design['Observation uuid'].value !== null) {
-                            new_plot_design.set_observation_uuid(plot_design['Observation uuid'].value)
+                        if (plot_design['Observation unit uuid'].value !== null) {
+                            new_plot_design.set_observation_uuid(plot_design['Observation unit uuid'].value)
                         }
                         if (plot_design['Associated samples'].value !== null) {
                             new_plot_design.set_samples(plot_design['Associated samples'].value)
@@ -363,6 +401,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             this.complete_block_design_type = new CompleteBlockDesign(false, false, false)
             console.log(this.complete_block_design_type)
             this.available_designs = Object.keys(this.complete_block_design_type)
+            this.available_designs.push
         }
         else {
             this.incomplete_block_design_type = new IncompleteBlockDesign(false, false)
@@ -564,7 +603,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         this.design.set_observation_unit_id(null)
                         this.design.Blocking.value.forEach(block_design => {
                             block_design['Plot design'].value.forEach(plot_design => {
-                                plot_design['Observation uuid'].value = null
+                                plot_design['Observation unit uuid'].value = null
                             })
                         });
                         this.observationUnitLoaded = false
@@ -585,7 +624,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             this.design.set_observation_unit_id(null)
             this.design.Blocking.value.forEach(block_design => {
                 block_design['Plot design'].value.forEach(plot_design => {
-                    plot_design['Observation uuid'].value = null
+                    plot_design['Observation unit uuid'].value = null
                 })
             });
             this.observationUnitLoaded = false
@@ -617,14 +656,141 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 grand_parent_id: this.grand_parent_id,
                 available_designs:this.available_designs,
                 group_key: this.group_key,
-                design:this.design
+                design:this.design,
+                total_blocks_per_row:this.totalBlockPerRowControl.value,
+                block_design_type:this.block_design_type,
+                total_columns_per_block:this.totalColumnPerBlockControl.value
             }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 console.log(result)
+                result.selected_experimental_factor.forEach(async exp_fac=>{
+                    let selected_experimental_factor: ExperimentalFactor = exp_fac
+                    if (!this.design.get_experimental_factor_ids().includes(selected_experimental_factor._id)){
+                        this.design.add_experimental_factor_id(selected_experimental_factor._id)
+                        this.selected_factor_id=selected_experimental_factor._id
+                        this.experimentalFactorNames.push({ name: selected_experimental_factor._id});
+                        this.selected_factor_values=selected_experimental_factor['Experimental Factor values'].split(';')
+                        let plot_index=0
+                        this.design.Blocking.value.forEach(block => {
+                            if (this.block_design_type === "CompleteBlockDesign") {
+                                block['Complete Block Design'].value[0][result.block_design_subtype].value=true
+                            }
+                            else{
+                                block['Incomplete Block Design'].value[0][result.block_design_subtype].value=true
+                            }
+                            block['Plot design'].value.forEach(plot => {
+                                plot.add_factor_values(result.experimental_factor_values[plot_index+1]['factor_value'])
+                                console.log(plot.Associated_factor_values.value)
+                                //plot.add_factor_values('test')
+                                plot_index++
+                            });
+                        });
+                        //  update all observation unit factor value
+                        //const data = await this.globalService.add_observation_units_factor_value( result.experimental_factor_values , this.design.get_observation_unit_id()).toPromise()
+                    }
+                    else{
+                        this.alertService.error("this factor is already associated with this design")
+                    }
+                });
+
+
+
             }
         });
+    }
+    get_background_color(index: number, subtype: string = "") {
+        /* console.log(index)
+        if (subtype === 'completely randomized design') {
+          console.log(subtype)
+        }
+        else if (subtype === 'Randomized complete block design') {
+          console.log(subtype)
+        }
+        else if (subtype === 'Balanced incomplete design') {
+          console.log(subtype)
+        }
+        else if (subtype === 'Partially balanced design') {
+          console.log(subtype)
+        }
+        else if (subtype === 'Latin square') {
+          console.log(subtype)
+        }
+        else {
+          console.log(subtype)
+        } */
+        if (this.design.get_experimental_factor_ids().length>0){
+            //get factor index
+            let factor_value_index=indexOf(this.design.get_experimental_factor_ids(), this.selected_factor_id)
+            //console.log(indexOf(this.selected_factor_values,this.design.get_block_plot_design(index+1).get_factor_values()[factor_value_index]))
+            //console.log(this.selected_factor_values)
+
+            //get factor values 
+            //console.log(this.design.get_block_plot_design(index).Associated_factor_values)
+            //console.log(this.experimentalFactorNames)
+
+            return this.factors_col[indexOf(this.selected_factor_values,this.design.get_block_plot_design(index+1).get_factor_values()[factor_value_index])]
+        }
+        else{
+            return  'lightgreen' 
+        }
+        
+    
+    
+      }
+      onBlockIndexChange(value){
+        console.log(value)
+        this.block_index = value
+      }
+    get get_block_index(){
+        return this.block_index
+    }
+    get_output_from_ExpFactorNamesForm(val: any) {
+        
+        //remove factor mode
+        if(val.skills.length<this.experimentalFactorNames.length) {
+            //remove factor ids and factor valuess in each plot
+        }
+        //select factor mode
+        else if (val.skills.length===this.experimentalFactorNames.length){
+            this.selected_factor_id=val.selected_skill
+            this.selected_factor_values=[]
+            let factor_value_index=indexOf(this.design.get_experimental_factor_ids(), this.selected_factor_id)
+            this.design.Blocking.value.forEach(block => {
+                block['Plot design'].value.forEach(plot => {
+                    if (!this.selected_factor_values.includes(plot.get_factor_values()[factor_value_index]))
+                    this.selected_factor_values.push(plot.get_factor_values()[factor_value_index])
+                })
+            })
+            
+            // get index  off  this factor in design
+            // get all factor values in each plot at this index
+            // get unique entry 
+        }
+        //add factor
+        else{
+            this.selected_factor_id=val.selected_skill
+            this.selected_factor_values=[]
+            console.log(val.selected_skill)
+            this.experimentalFactorNames = val.skills
+            let factor_value_index=indexOf(this.design.get_experimental_factor_ids(), this.selected_factor_id)
+            this.design.Blocking.value.forEach(block => {
+                block['Plot design'].value.forEach(plot => {
+                    if (!this.selected_factor_values.includes(plot.get_factor_values()[factor_value_index]))
+                    this.selected_factor_values.push(plot.get_factor_values()[factor_value_index])
+                })
+            })
+
+        }
+        
+    }
+    get_background_code_color(index: number) {
+
+        return this.factors_col[index + 1]
+      }
+    get get_factor_values(){
+        return this.selected_factor_values
     }
     removeExperimentalFactor() {
         const dialogRef = this.dialog.open(AssociateExperimentalFactorComponent, {
@@ -646,6 +812,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 console.log(result)
+                
             }
         });
     }
@@ -1150,11 +1317,11 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
     }
     get_observation_uuid(_pd: PlotDesign): number | string {
-        if (_pd['Observation uuid'].value === null || _pd['Observation uuid'].value === "") {
+        if (_pd['Observation unit uuid'].value === null || _pd['Observation unit uuid'].value === "") {
             return "No observations defined"
         }
         else {
-            return _pd['Observation uuid'].value
+            return _pd['Observation unit uuid'].value
 
         }
     }

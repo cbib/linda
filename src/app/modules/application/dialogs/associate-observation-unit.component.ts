@@ -221,7 +221,7 @@ export class AssociateObservationUnit implements OnInit {
         let obs_unit={}
         
         obs_unit['External ID']=""
-        obs_unit['Observation Unit factor value']=""
+        obs_unit['Observation Unit factor value']=[]
         obs_unit['Observation unit ID']=value+":"+ block['Block number'].value
         obs_unit['Observation unit type']=value
         obs_unit['Spatial distribution']=value+":"+ block['Block number'].value
@@ -254,7 +254,7 @@ export class AssociateObservationUnit implements OnInit {
           let obs_unit={}
           let sub_bm_list:BiologicalMaterialDialogModel[]=[]
           obs_unit['External ID']=""
-          obs_unit['Observation Unit factor value']=""
+          obs_unit['Observation Unit factor value']=[]
           obs_unit['Observation unit ID']=value+":"+plot['Plot number'].value
           obs_unit['Observation unit type']=value
           obs_unit['Spatial distribution']="block-"+block['Block number'].value+":"+"plot-"+plot['Plot number'].value + ":column-"+plot['Column number'].value

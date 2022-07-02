@@ -62,6 +62,8 @@ import { TableModule} from 'primeng/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { DialogModule } from '../../dialogs/dialog.module';
+//import { ChipListComponent } from 'src/app/components/chip-list/chip-list.component';
 
 
 
@@ -86,7 +88,9 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     ObservedVariablesPageComponent,
     EnvironmentVariablesPageComponent,
     EnvironmentVariablePageComponent,
-    DataFilePageComponent],
+    DataFilePageComponent,
+    //ChipListComponent,
+  ],
   imports: [
     CommonModule,
     ProjectsPageRoutingModule,
@@ -121,7 +125,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     MatCheckboxModule,
     TextFieldModule,
     // Primeng modules
-    TableModule
+    TableModule,
+    DialogModule
   ],
   exports: [
     ProjectsPageComponent,

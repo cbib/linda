@@ -103,6 +103,10 @@ export interface PlotDesignInterface {
         "value": string;
         "ID": string;
     };
+    "Associated_factor_values": {
+        "value": string[];
+        "ID": string;
+    };
     "Associated_biological_material": {
         "value": string[];
         "ID": string;
@@ -115,7 +119,7 @@ export interface PlotDesignInterface {
         "value": number;
         "ID": string;
     };
-    "Observation uuid": {
+    "Observation unit uuid": {
         "value": string;
         "ID": string;
     };
@@ -150,6 +154,10 @@ export class PlotDesign implements PlotDesignInterface{
         "value": string;
         "ID": "ASSOCIATEDMAT";
     };
+    "Associated_factor_values": {
+        "value": string[];
+        "ID": "ASSOCIATEDFACTORS";
+    };
     "Associated_biological_material": {
         "value": string[];
         "ID": "ASSOCIATEDBIOMAT";
@@ -166,11 +174,11 @@ export class PlotDesign implements PlotDesignInterface{
         "value": number;
         "ID": "REPLICATENUMBER";
     };
-    "Observation uuid": {
+    "Observation unit uuid": {
         "value": string;
-        "ID": "OBSERVATIONUUID";
+        "ID": "OBSERVATIONUNITUUID";
     };
-    constructor(column_num:number=null, plot_num:number=null,associate_material_source:string=null, associated_biological_material:string[]=[], replicate_num:number=null, obs_uuid:string=null, associated_samples:Sample[]=[], associated_observations:Observation[]=[] ){
+    constructor(column_num:number=null, plot_num:number=null,associate_material_source:string=null, associated_biological_material:string[]=[], associated_factor_values:string[]=[], replicate_num:number=null, obs_uuid:string=null, associated_samples:Sample[]=[], associated_observations:Observation[]=[] ){
         this["Column number"]={value:column_num,  "ID": "CO_715:0000151"}
         this["Plot size"]={value:null,  "ID": "CO_715:0000152"}
         this["Plot number"]={value:plot_num,  "ID": "CO_715:0000155"}
@@ -179,9 +187,11 @@ export class PlotDesign implements PlotDesignInterface{
         this["Row design"]={value: [],  "ID": "CO_715:0000156"}
         this.Associate_material_source={value: associate_material_source,  "ID": "ASSOCIATEDMAT"}
         this["Associated_biological_material"]={value:associated_biological_material,  "ID": "ASSOCIATEDBIOMAT"}
-        this["Observation uuid"]={value:obs_uuid,  "ID": "OBSERVATIONUUID"}
+        this["Observation unit uuid"]={value:obs_uuid,  "ID": "OBSERVATIONUNITUUID"}
         this["Associated samples"]={value:associated_samples,  "ID": "ASSOCIATEDSAMPLES"}
         this["Associated plot observations"]={value:associated_observations,  "ID": "ASSOCIATEDPLOTOBSERVATIONS"}
+        this["Associated_factor_values"]={value:associated_factor_values,  "ID": "ASSOCIATEDFACTORS"}
+        
 
     }
     add_row_design(_row_design:RowDesign){
@@ -194,10 +204,10 @@ export class PlotDesign implements PlotDesignInterface{
         return this["Column number"].value
     }
     set_observation_uuid(_obs_uuid:string){
-        this["Observation uuid"].value=_obs_uuid
+        this["Observation unit uuid"].value=_obs_uuid
     }
     get_observation_uuid(){
-        return this["Observation uuid"].value
+        return this["Observation unit uuid"].value
     }
     set_plot_number(_plot_number:number){
         this["Plot number"].value=_plot_number
@@ -231,6 +241,12 @@ export class PlotDesign implements PlotDesignInterface{
     }
     get_biological_material(){
         return this["Associated_biological_material"].value
+    }
+    add_factor_values(factor_value:string){
+        this["Associated_factor_values"].value.push(factor_value)
+    }
+    get_factor_values(){
+        return this["Associated_factor_values"].value
     }
     add_observation(_associate_observation:Observation){
         this["Associated plot observations"].value.push(_associate_observation)
@@ -467,6 +483,10 @@ export interface ExperimentalDesignInterface     {
         "value":  string[];
         "ID": "LindaObsVarDbIds";
     };
+    "Associated experimental factor IDs": {
+        "value":  string[];
+        "ID": "LindaExpFacDbIds";
+    };
     "Associated observations": {
         "value":  Observation[];
         "ID": "LindaObsDbIds";
@@ -516,6 +536,10 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         "value":  string[];
         "ID": "LindaObsVarDbIds";
     };
+    "Associated experimental factor IDs": {
+        "value":  string[];
+        "ID": "LindaExpFacDbIds";
+    };
     "Associated observations": {
         "value":  Observation[];
         "ID": "LindaObsDbIds";
@@ -532,6 +556,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
         this["Associated sample"]={value:[],"ID": "LindaSamples"}
         this["Associated sample ID"]={value:null,"ID": "LindaSampleDbIds"}
         this["Associated observed variable IDs"]={value:[],"ID": "LindaObsVarDbIds"}
+        this["Associated experimental factor IDs"]={value:[],"ID": "LindaExpFacDbIds"}
         this["Associated observations"]={value:[],"ID": "LindaObsDbIds"}
     }
     
@@ -651,7 +676,15 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_observed_variable_ids():string[]{
         return this["Associated observed variable IDs"].value
     }
-    
+    set_experimental_factor_id(experimental_factor_ids:string[]){
+        this["Associated experimental factor IDs"].value=experimental_factor_ids
+    }
+    add_experimental_factor_id(experimental_factor_id:string){
+        this["Associated experimental factor IDs"].value.push(experimental_factor_id)
+    }
+    get_experimental_factor_ids():string[]{
+        return this["Associated experimental factor IDs"].value
+    }
     
 
     static create_design(obj) {

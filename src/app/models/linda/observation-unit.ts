@@ -7,7 +7,7 @@ export interface ObservationUnitInterface {
     'Observation unit type':string[];
     'External ID':string[];
     'Spatial distribution':string[];
-    'Observation Unit factor value':string[];
+    'Observation Unit factor value':string[][];
     'obsUUID':string[];   
 }
 export class ObservationUnit implements ObservationUnitInterface {
@@ -19,7 +19,7 @@ export class ObservationUnit implements ObservationUnitInterface {
     'Observation unit type':string[];
     'External ID':string[];
     'Spatial distribution':string[];
-    'Observation Unit factor value':string[];
+    'Observation Unit factor value':string[][];
     'obsUUID':string[];
 
     constructor(){
@@ -40,7 +40,7 @@ export interface ObservationUnitCompactedInterface {
     'Observation unit type':string;
     'External ID':string;
     'Spatial distribution':string;
-    'Observation Unit factor value':string;
+    'Observation Unit factor value':string[];
     'obsUUID':string;   
 }
 export class ObservationUnitCompacted implements ObservationUnitCompactedInterface {
@@ -52,7 +52,7 @@ export class ObservationUnitCompacted implements ObservationUnitCompactedInterfa
     'Observation unit type':string;
     'External ID':string;
     'Spatial distribution':string;
-    'Observation Unit factor value':string;
+    'Observation Unit factor value':string[];
     'obsUUID':string;
 
     constructor(){
@@ -60,7 +60,7 @@ export class ObservationUnitCompacted implements ObservationUnitCompactedInterfa
         this['Observation unit type']=""
         this['External ID']=""
         this['Spatial distribution']=""
-        this['Observation Unit factor value']=""
+        this['Observation Unit factor value']=[]
         this['obsUUID']=""
     }
 }

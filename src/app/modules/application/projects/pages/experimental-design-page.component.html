@@ -166,6 +166,19 @@
                                     mat-raised-button type="submit" (click)="addExperimentalFactor()">
                                     Apply experimental factor
                                 </button>
+                                <div class="chip-list">
+                                    <chip-list (notify)="get_output_from_ExpFactorNamesForm($event)" [skills]="experimentalFactorNames"></chip-list>
+                                </div>
+                                <mat-grid-list cols="get_factor_values.length" rowHeight="20px">
+                                    <mat-grid-tile *ngFor="let factor of get_factor_values; index as i" [colspan]="1" [rowspan]="1"
+                                      [style.background]="get_background_code_color(i)">{{factor}}</mat-grid-tile>
+                                    <!-- <mat-grid-tile [style.background]="'blue'">Treament value 2</mat-grid-tile> -->
+                                  </mat-grid-list>
+
+                                  <select [ngModel]="get_block_index" name="design_type" size="1"
+                                  (change)="onBlockIndexChange($event.target.value)">
+                                  <option *ngFor="let bc of get_design.Blocking.value" [value]="bc['Block number'].value">Block {{bc['Block number'].value}}</option>
+                                </select>
                                 </mat-card-title>
                                 <mat-card-content>
                                     <p>
@@ -176,7 +189,7 @@
                                     <mat-grid-list cols="{{totalColumnPerBlockControl.value}}" rowHeight="100px">
                                         <mat-grid-tile (click)="display_plot(pd)"
                                             *ngFor="let pd of get_design.Blocking.value[block_index]['Plot design'].value"
-                                            [colspan]="1" [rowspan]="1" [style.background]="'lightgreen'">
+                                            [colspan]="1" [rowspan]="1" [style.background]="get_background_color(pd['Plot number'].value-1, block_design_subtype)">
                                             {{get_associated_material_source(pd)}}
                                             <!-- {{pd['Plot number'].value + ":" + pd['Associate_material_source'].value}} -->
                                         </mat-grid-tile>

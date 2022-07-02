@@ -217,24 +217,19 @@ export class AssociateObservedVariable implements OnInit {
           }
           var new_values = {}
           keys.forEach(attr => { new_values[attr] = result[attr] })
-          ////////console.log(new_values)
+          
+          
           this.globalService.add(new_values, this.model_type, this.parent_id, false).pipe(first()).toPromise().then(
             data => {
               if (data["success"]) {
-                //////////console.log(data["message"])
-                //this.model_id=data["_id"];
                 this.ngOnInit();
-                //this.router.navigate(['/homespace'],{ queryParams: { key:  this.parent_id.split('/')[1]} });
                 var message = "A new " + this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " based on " + result['_id'] + " has been successfully integrated in your history !!"
                 this.alertService.success(message)
                 return true;
               }
               else {
-                //////////console.log(data["message"])
                 this.alertService.error("this form contains errors! " + data["message"]);
-
                 return false;
-                //this.router.navigate(['/studies']);
               }
             }
           );

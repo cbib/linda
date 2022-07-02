@@ -8,117 +8,117 @@
   <div mat-dialog-content class="mat-typography">
     <h2>Experimental factor and experimental design</h2>
     <p>
-      Depending on the experimental design you defined previously, you need to associate experimental factor to a given observation level. 
-      for example if you plan to associate a factor with 2 values (wateredr and rainfed) at the block level, you have to select block in the corrreponding select list below.
-      Then you have to select between three options, each describing a specific arrangment of factor across the block or plot   
+      Depending on the experimental design you defined previously, you need to associate experimental factor to a given
+      observation level.
+      for example if you plan to associate a factor with 2 values (wateredr and rainfed) at the block level, you have to
+      select block in the corrreponding select list below.
+      Then you have to select between three options, each describing a specific arrangment of factor across the block or
+      plot
 
-    </p> 
+    </p>
     <p>
-        Which Experimental factor do you plan to use ? 
-      </p>
-      
+      Which Experimental factor do you plan to use ?
+    </p>
+
     <h2>Experimental design details</h2>
-    <p> You have {{total_available_plots}} plots in your experimental design. 
-          Take care to assign factors in respect of design capability !!
-          You could use differents configurations
-      </p>
+    <p> You have {{total_available_plots}} plots in your experimental design.
+      Take care to assign factors in respect of design capability !!
+      You could use differents configurations
+    </p>
     <p>You do not find corresponding trait, create new experimental factor</p>
-        <!-- <button (click)="add_observed_variables()">Add new Observed variables</button> -->
-        <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span
-            class="material-icons">add</span></button>
-        <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span
-            class="material-icons">help</span></button>
-        <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
-          [matMenuTriggerFor]="helpMenu">
-        </div>
-        <mat-menu #helpMenu="matMenu">
-          <button style="float: right;" class="btn btn-light" mat-menu-item [matMenuTriggerFor]="HelpSubMenu">Help</button>
-        </mat-menu>
-        <mat-menu #HelpSubMenu="matMenu">
-          <!-- <button mat-menu-item (click)="onClickTour(true,'8')">Observed variables</button>-->
-
-        </mat-menu>
-        <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
-          [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
-        </div>
-        <mat-menu #contextMenu="matMenu">
-          <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Observed
-            variable</button>
-        </mat-menu>
-
-        <mat-menu #contextSubMenu="matMenu">
-          <button mat-menu-item (click)="add_experimental_factor(false)">from original model template</button>
-          <button mat-menu-item (click)="add_experimental_factor(true)">from saved templates</button>
+    <!-- <button (click)="add_observed_variables()">Add new Observed variables</button> -->
+    <button title="Add a new project" [matMenuTriggerFor]="contextMenu" class="btn btn-light btn-success"><span
+        class="material-icons">add</span></button>
+    <button title="Help button " [matMenuTriggerFor]="helpMenu" class="btn btn-light"><span
+        class="material-icons">help</span></button>
+    <div style="visibility: hidden; position: fixed" [style.left]="helpMenuPosition.x" [style.top]="helpMenuPosition.y"
+      [matMenuTriggerFor]="helpMenu">
+    </div>
+    <mat-menu #helpMenu="matMenu">
+      <button style="float: right;" class="btn btn-light" mat-menu-item [matMenuTriggerFor]="HelpSubMenu">Help</button>
     </mat-menu>
-    <alert></alert>
+    <mat-menu #HelpSubMenu="matMenu">
+      <button mat-menu-item (click)="onClickTour(true,'8')">How to add experimental factor</button>
+
+    </mat-menu>
+    <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+      [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+    </div>
+    <mat-menu #contextMenu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="contextSubMenu" class="btn btn-light fas fa-tools">Add Observed
+        variable</button>
+    </mat-menu>
+
+    <mat-menu #contextSubMenu="matMenu">
+      <button mat-menu-item (click)="add_experimental_factor(false)">from original model template</button>
+      <button mat-menu-item (click)="add_experimental_factor(true)">from saved templates</button>
+    </mat-menu>
     <span class="span-project"></span>
-        <mat-form-field appearance="standard">
-            <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Watering" #input>
-        </mat-form-field>
-        <!-- <div *ngIf="loaded===true">
+    <mat-form-field appearance="standard">
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Watering" #input>
+    </mat-form-field>
+    <!-- <div *ngIf="loaded===true">
         <app-biological-material-table [data]="get_dataSource"></app-biological-material-table>
         </div> -->
-        <div *ngIf="loaded===true">
-            <table  style="width: 100%;" mat-table [dataSource]="get_dataSource" matSort cdkDropList>
-            
-            <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
-                <ng-container *ngIf="column==='Infraspecific name'">
-                <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
-                <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a></td>
-                
-                </ng-container>
-                <ng-container *ngIf="column!=='Infraspecific name' && column!=='select'">
-                    <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
-                    <td mat-cell *matCellDef="let element"> <a (click)="onSelect(element)">{{element[column]}}</a> </td>
-                </ng-container>
-                <ng-container *ngIf="column==='select'">
-                    <th mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()">
-                        </mat-checkbox>
-                      </th>
-                      <td mat-cell class="flex-stretch" *matCellDef="let row">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
-                          [checked]="selection.isSelected(row)">
-                        </mat-checkbox>
-                      </td>
-                </ng-container>
-            </ng-container>
-            
-            <!-- Disclaimer column -->
-            <!-- <ng-container matColumnDef="disclaimer">
-                <td mat-footer-cell *matFooterCellDef colspan="2">
-                Please note that the cost of items displayed are completely and totally made up.
-                </td>
-            </ng-container> -->
-                        
-            <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
-            <tr class="nga-card-step"  mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
-        <!-- <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="example-second-footer-row"></tr> -->
-            </table>
-            <mat-paginator #paginator (page)="handlePageBottom($event)" [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5" [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects"></mat-paginator>
-            <!-- <mat-paginator (page)="handlePageBottom($event)" [pageSize]="paginator.pageSize" [pageIndex]="paginator.pageIndex" [length]="paginator.length" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator> -->
+    <div *ngIf="loaded===true">
+      <table style="width: 100%;" mat-table [dataSource]="get_dataSource" matSort cdkDropList>
+        <ng-container matColumnDef="{{column}}" *ngFor="let column of get_displayedColumns">
+          <ng-container *ngIf="column==='Infraspecific name'">
+            <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
+            <td mat-cell *matCellDef="let element"> <a>{{element[column]}}</a></td>
+
+          </ng-container>
+          <ng-container *ngIf="column!=='Infraspecific name' && column!=='select'">
+            <th mat-header-cell cdkDrag *matHeaderCellDef> {{column}} </th>
+            <td mat-cell *matCellDef="let element"> <a>{{element[column]}}</a> </td>
+          </ng-container>
+          <ng-container *ngIf="column==='select'">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+                [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="get_displayedColumns"></tr>
+        <tr class="nga-card-step" mat-row *matRowDef="let row; columns: get_displayedColumns;"></tr>
+      </table>
+      <mat-paginator #paginator (page)="handlePageBottom($event)"
+        [length]="get_dataSource?.data ? get_dataSource?.data.length : 0" [pageSize]="5"
+        [pageIndex]="paginator.pageIndex" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of projects">
+      </mat-paginator>
     </div>
-    
-    <h2>Select experimental factor level</h2>
-    <p> Depending on the level selected, different possibilities are offered to dispatch factors across experimental design
-    </p>
-    <select [ngModel]="get_observation_level" name="factor_level" size="1"
-        (change)="onObservationLevelChange($event.target.value)">
-        <option *ngFor="let level of observation_levels" [value]="level.levelName">{{level.levelName}}</option>
-    </select>  
-    <h2>Select Factor repartition</h2>
-    <mat-card-content *ngIf="!available_designs.includes('Balanced')">
-        <h3>Completely randomized design</h3>
-        <p>
+
+    <section *ngIf="selection.hasValue()">
+      <!-- <h2>Select experimental factor level</h2>
+      <p> Depending on the level selected, different possibilities are offered to dispatch factors across experimental design
+      </p>
+      <select [ngModel]="get_observation_level" name="factor_level" size="1"
+          (change)="onObservationLevelChange($event.target.value)">
+          <option *ngFor="let level of observation_levels" [value]="level.levelName">{{level.levelName}}</option>
+      </select>  -->
+
+
+      <section>
+
+        <h2>Select Factor repartition</h2>
+        <mat-card-content *ngIf="!available_designs.includes('Balanced incomplete design')">
+          <h3>Completely randomized design</h3>
+          <p>
             The simplest, least restrictive experimental design is the Completely
             Randomized Design (CRD). In a CRD, the treatments are assigned
             to the plots without restriction. That is, with the CRD, every plot is
             equally likely to be assigned in any treatment
-        </p>
-        <h3>Randomized complete block design</h3>
-        <p>
+          </p>
+          <h3>Randomized complete block design</h3>
+          <p>
             The Randomized complete Block Design (RBD) is the design use most often
             in agricultural research. In a RBD, the plots (experimental units) are
             first classified into groups,
@@ -126,31 +126,97 @@
             occurs the same number of time, usually once within each block.
             The object is to make the variation from plot to plot as small as
             possible within the blocks while maximizing the variation among blocks
-        </p>
-        <h3>Latin Square Design</h3>
-        <p>
+          </p>
+          <h3>Latin Square Design</h3>
+          <p>
             In the latin square, the number of plots is the square of the number of
             treatments. For practical purposes, its use is restricted to trials with
             more than four
             but fewer than 10 treatments.
-        </p>
-    </mat-card-content>
-    <mat-radio-group aria-labelledby="example-radio-group-label"
-        class="example-radio-group" [(ngModel)]="block_design_subtype">
-        <mat-radio-button class="example-radio-button"
-            *ngFor="let available_design of available_designs"
-            [value]="available_design">
+          </p>
+        </mat-card-content>
+        <mat-card-content *ngIf="available_designs.includes('Balanced incomplete design')">
+          <p>
+            As the name implies, in incomplete block designs the plots are grouped
+            into blocks that are not large enough to contain a full replication of
+            all treatments (experimental factors).
+            Incomplete block designs fall into two broad classes: Balanced designs
+            and partially balanced designs.
+            In balanced design, each treatment occurs together in the same block with every
+            other treatment an equal number of times, usually once.
+            In a balanced incomplete block design, all pairs of treatment are compared with the
+            same precision event though the differences between block may be large.
+            It is possible to construct a balanced design for any numbers of treatments
+            and any block size (plots per block).
+            These two parameters fix the minimum number of replications required for balance.
+            Often, this minimum is too large for the balanced design to be of practical significance.
+          </p>
+          <h3>Balanced incomplete block design</h3>
+          <p>
+            A Balanced Incomplete Block Design (BIBD) can be used when it is not possible
+            to include all treatments or factor combinations in every block.
+            Use BIBDs for testing <b>a</b> treatments in <b>b</b> blocks when only <b>k</b> treatments
+            can be run in any one block (and <b>k</b> &lt; <b>a</b>).
+            <br>A BIB design is a design with <b>a</b> treatments and <b>b</b> blocks in which each block is of size <b>k</b>,
+            each treatment is replicated <b>r</b> times, and every pair of distinct treatments occurs together in <b style="font-family: sans-serif;">&#955;</b> blocks.
+            <br>The design is said to have the parameters (<b>a</b>, <b>b</b>, <b>r</b>, <b>k</b>, <b style="font-family: sans-serif;">&#955;</b>).
+            The design is said to be proper if <b>k</b> &lt; <b>a</b>, that is, the blocks are incomplete.
+            <br>For a proper BIB design, Fisher’s inequality <b>b</b> <b style="font-family: sans-serif;">&ge;</b> <b>a</b>, or equivalently <b>r</b> <b style="font-family: sans-serif;">&ge;</b> <b>k</b>, holds.
+            A BIB design is said to be symmetric if <b>a</b> = <b>b</b>, and consequently  <b>r</b> = <b>k</b>.
+            Such a design is called a symmetric (<b>a</b>,<b>k</b> , <b style="font-family: sans-serif;">&#955;</b>) design, and <b style="font-family: sans-serif;">&#955;</b>(<b>a</b> - 1) = <b>k</b>(<b>k</b> - 1).
+            A necessary condition for the existence of a symmetric (<b>a</b>, <b>k</b>, <b style="font-family: sans-serif;">&#955;</b>) design is given by the following:
+            For example, you might have a
+            situation where there are limitations on the number of treatments that
+            can be tested at the same time. The BIBD design is constructed such that
+            each treatment and each pair of treatments occurs together in blocks an equal
+            number of times. This makes the design balanced.
+            Not including all treatments in every block makes the design incomplete.
+          </p>
+          <h3>Partially balanced design</h3>
+          <p>
+            Because balanced designs are not always practical, a class of designs called partially
+            balanced incomplete block design (pbibd) has been developed.
+          </p>
+        </mat-card-content>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+          [(ngModel)]="block_design_subtype">
+          <mat-radio-button (change)="change_design_subtype($event)" class="example-radio-button"
+            *ngFor="let available_design of available_designs" [value]="available_design">
             {{available_design}}
-        </mat-radio-button>
-    </mat-radio-group>
+          </mat-radio-button>
+        </mat-radio-group>
+        <alert></alert>
+        <button (click)="dispatch_again()">Dispatch treatment</button>
+        <mat-grid-list cols="get_factor_values.length" rowHeight="20px">
+          <mat-grid-tile *ngFor="let factor of get_factor_values; index as i" [colspan]="1" [rowspan]="1"
+            [style.background]="get_background_code_color(i)">{{factor}}</mat-grid-tile>
+          <!-- <mat-grid-tile [style.background]="'blue'">Treament value 2</mat-grid-tile> -->
+        </mat-grid-list>
+        <section *ngIf="get_block_design_subtype!==''">
+          <h2>Treatment repartition</h2>
+          <mat-grid-list cols="{{total_blocks_per_row}}" rowHeight="100px">
+            <mat-grid-tile (click)="display_block(bd)" *ngFor="let bd of get_design.Blocking.value; index as j"
+              [colspan]="1" [rowspan]="1" [style.background]="get_block_background_color(j, block_design_subtype)">
+              {{'Block ' + bd['Block number'].value}}
+            </mat-grid-tile>
+          </mat-grid-list>
+        </section>
+        <section *ngIf="get_block_design_subtype!==''">
+          <h2>Treatment repartition</h2>
+          <mat-grid-list cols="{{total_columns_per_block}}" rowHeight="100px">
+            <mat-grid-tile *ngFor="let pd of get_design.Blocking.value[block_index]['Plot design'].value; index as j"
+              [colspan]="1" [rowspan]="1" [style.background]="get_background_color(pd['Plot number'].value-1, block_design_subtype)">
+              {{get_associated_material_source(pd)}}
+              <!-- {{pd['Plot number'].value + ":" + pd['Associate_material_source'].value}} -->
+            </mat-grid-tile>
+          </mat-grid-list>
+        </section>
+      </section>
+    </section>
     <br>
-
-      
-    
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
     <button mat-button (click)="onOkClick()">Ok</button>
   </div>
 </div>
-

@@ -37,6 +37,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatSliderModule } from '@angular/material/slider'
+import { MatGridListModule } from '@angular/material/grid-list'; 
 import { TextFieldModule} from '@angular/cdk/text-field';
 import { ScrollingModule} from '@angular/cdk/scrolling';
 import { FormModule } from '../forms/form.module';
@@ -111,6 +112,7 @@ import { AssociateExperimentalFactorComponent } from './associate-experimental-f
     MatInputModule,
     ProgressBarModule,
     MatExpansionModule,
+    MatGridListModule,
     MatTreeModule,
     MatCardModule,
     MatIconModule,

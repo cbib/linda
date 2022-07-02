@@ -792,6 +792,17 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
+    add_observation_units_factor_value(experimental_factor_values:[],obs_unit_id:string){
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'experimental_factor_values': experimental_factor_values,
+            'obs_unit_id': obs_unit_id
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_observation_units_factor_value"}`, obj2send);
+    }
     add_observation_units_observed_variables(values: {}, parent_id: string, obs_var_id:string) {
         let user = this.get_user();
         let obj2send = {

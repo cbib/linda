@@ -131,13 +131,13 @@ export class BiologicalMaterialComponent implements OnInit {
   }
   get_output_from_taxonScientificNameForm(val: any) {
     console.log(this.taxonScientificNameForm.value)
-    this.taxonScientificNames = val
+    this.taxonScientificNames = val.skills
     console.log(this.taxonScientificNameForm.value)
 
   }
   get_output_from_BiologicalMaterialPreprocessingForm(val: any) {
     console.log(this.BiologicalMaterialPreprocessingForm.value)
-    this.BiologicalMaterialPreprocessings = val
+    this.BiologicalMaterialPreprocessings = val.skills
     console.log(this.BiologicalMaterialPreprocessingForm.value)
 
   }

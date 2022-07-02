@@ -11,6 +11,10 @@ export class ChipListComponent {
     removable=true
     onRemove(name:string){
       this.skills=this.skills.filter(skill=>skill.name!==name)
-      this.notify.emit(this.skills)
+      this.notify.emit({skills:this.skills, selected_skill:name})
+    }
+    onSelect(name:any){
+      //this.skills=this.skills.filter(skill=>skill.name!==name)
+      this.notify.emit({skills:this.skills, selected_skill:name})
     }
 }
