@@ -741,7 +741,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
       }
     onBlockIndexChange(value){
         console.log(value)
-        this.block_index = value
+        this.block_index = value -1 
     }
     get get_block_index(){
         return this.block_index
