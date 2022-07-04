@@ -688,7 +688,15 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                             });
                         });
                         //  update all observation unit factor value
-                        //const data = await this.globalService.add_observation_units_factor_value( result.experimental_factor_values , this.design.get_observation_unit_id()).toPromise()
+                        console.log(result.experimental_factor_values)
+                        console.log(this.design.get_observation_unit_id())
+                        let factor_values:string[]=[]
+                        Object.keys(result.experimental_factor_values).forEach(key=>{
+                            factor_values.push(result.experimental_factor_values[key]['factor_value'])
+                        })
+                        console.log(factor_values)
+                        const data2 = await this.globalService.add_observation_unit_factor(selected_experimental_factor,this.design.get_observation_unit_id()).toPromise()
+                        const data = await this.globalService.add_observation_units_factor_value(factor_values, this.design.get_observation_unit_id(), selected_experimental_factor['Experimental Factor type']).toPromise()
                     }
                     else{
                         this.alertService.error("this factor is already associated with this design")
@@ -787,7 +795,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
     get_background_code_color(index: number) {
 
-        return this.factors_col[index + 1]
+        return this.factors_col[index]
       }
     get get_factor_values(){
         return this.selected_factor_values

@@ -792,13 +792,14 @@ export class GlobalService {
         };
         return this.http.post(`${this.APIUrl + "add_multi"}`, obj2send);
     }
-    add_observation_units_factor_value(experimental_factor_values:[],obs_unit_id:string){
+    add_observation_units_factor_value(experimental_factor_values:string[],obs_unit_id:string, factor_type:string){
         let user = this.get_user();
         let obj2send = {
             'username': user.username,
             'password': user.password,
             'experimental_factor_values': experimental_factor_values,
-            'obs_unit_id': obs_unit_id
+            'obs_unit_id': obs_unit_id,
+            'factor_type':factor_type
         };
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_observation_units_factor_value"}`, obj2send);
@@ -839,6 +840,19 @@ export class GlobalService {
         console.log(obj2send)
         return this.http.post(`${this.APIUrl + "add_observation_units"}`, obj2send);
     }
+    
+    add_observation_unit_factor(experimental_factor: {},  observation_unit_id: string) {
+        let user = this.get_user();
+        let obj2send = {
+            'username': user.username,
+            'password': user.password,
+            'observation_unit_id': observation_unit_id,
+            'experimental_factor': experimental_factor
+        };
+        console.log(obj2send)
+        return this.http.post(`${this.APIUrl + "add_observation_unit_factor"}`, obj2send);
+    }
+
     add_observation_units2(values: {}, model_type: string, parent_id: string) {
         let user = this.get_user();
         let obj2send = {

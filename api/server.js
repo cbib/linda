@@ -5582,6 +5582,83 @@ router.get('/event', function (req, res) {
  ******************************************************************************************
  ******************************************************************************************
  ******************************************************************************************/
+ router.post('/add_observation_units_factor_value', function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var experimental_factor_values = req.body.experimental_factor_values;
+    var obs_unit_id = req.body.obs_unit_id;
+    var factor_type = req.body.factor_type
+    //observation unit edge 
+    var observation_unit_edge_coll = 'observation_units_edge'
+    if (!db._collection(observation_unit_edge_coll)) {
+        db._createEdgeCollection(observation_unit_edge_coll);
+    }
+    var observation_unit_edge = db._collection(observation_unit_edge_coll);
+
+    //observation units collection 
+    var observation_unit_coll = db._collection('observation_units');
+    if (!observation_unit_coll) {
+        db._createDocumentCollection('observation_units');
+    }
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+  `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' });
+    }
+    else {
+        const factors_values = db._query(aql`FOR entry IN ${observation_unit_coll} 
+            FILTER entry._id==${obs_unit_id}
+            RETURN entry['Observation Unit factor value']
+        `).toArray();
+        console.log(factors_values)
+        console.log(factors_values)
+        console.log(factor_type)
+        for (var j = 0; j < experimental_factor_values.length; j++) {
+            let obj={}
+            obj[factor_type]=experimental_factor_values[j]
+            factors_values[0][j].push(obj)
+        }
+        console.log(factors_values)
+        /* LET alteredFactorsValues = (
+            FOR element IN document['Observation Unit factor value'] 
+                LET newItem = PUSH(element,"3") 
+                RETURN newItem 
+        ) */
+        const data = db._query(aql`
+        LET document = DOCUMENT(${obs_unit_id})
+        UPDATE document 
+            WITH { 'Observation Unit factor value': ${factors_values[0]} } 
+                IN observation_units 
+            RETURN {after: NEW }
+        `);
+        res.send({ success: true, message: 'document has been updated ', _id: obs_unit_id });
+
+    }
+
+ }).body(joi.object().keys({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    experimental_factor_values:  joi.array().items(joi.string().required()).required(),
+    obs_unit_id:joi.string().required(),
+    factor_type:joi.string().required()
+}).required(), 'Values to check.')
+.response(joi.object().keys({
+    success: joi.boolean().required(),
+    message: joi.string().required(),
+    _id: joi.string().required()
+}).required(), 'response.')
+.summary('List entry keys')
+.description('add MIAPPE description for given model.');
+
+
+
  router.post('/add_observation_units_observed_variables', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -6199,6 +6276,60 @@ router.post('/add_observation_units', function (req, res) {
     .summary('List entry keys')
     .description('add MIAPPE description for given model.');
 
+router.post('/add_observation_unit_factor', function (req, res) { 
+    var username = req.body.username;
+    var password = req.body.password;
+    var observation_unit_id = req.body.observation_unit_id;
+    var experimental_factor = req.body.experimental_factor;
+    var datatype = "observation_units";
+
+    //observation unit edge 
+    var observation_unit_edge_coll = 'observation_units_edge'
+    if (!db._collection(observation_unit_edge_coll)) {
+        db._createEdgeCollection(observation_unit_edge_coll);
+    }
+    var observation_unit_edge = db._collection(observation_unit_edge_coll);
+
+    //observation units collection 
+    var observation_unit_coll = db._collection(datatype);
+    if (!observation_unit_coll) {
+        db._createDocumentCollection(datatype);
+    }
+
+    /////////////////////////////
+    //first check if user exist
+    /////////////////////////////
+    const user = db._query(aql`
+    FOR entry IN ${users}
+    FILTER entry.username == ${username}
+    FILTER entry.password == ${password}
+    RETURN entry
+  `);
+    if (user.next() === null) {
+        res.send({ success: false, message: 'Username ' + username + ' doesn\'t exists' , _id:username});
+    }
+    else {
+        var ef_obj = {
+            "_from": observation_unit_id,
+            "_to": experimental_factor['_id']
+        }
+        const result=db._query(aql`UPSERT ${ef_obj} INSERT ${ef_obj} UPDATE {} IN ${observation_unit_edge} RETURN NEW `);
+        res.send({ success: true, message: 'successfully added factor in observation unit edge' , _id:result['_id']});
+    }
+})  
+.body(joi.object().keys({
+    username: joi.string().required(),
+    password: joi.string().required(),
+    observation_unit_id: joi.string().required(),
+    experimental_factor: joi.object().required()
+}).required(), 'Values to check.')
+.response(joi.object().keys({
+    success: joi.boolean().required(),
+    message: joi.string().required(),
+    _id: joi.string().required()
+}).required(), 'response.')
+.summary('List entry keys')
+.description('add MIAPPE description for given model.');
 
 
 router.post('/remove_observation_unit', function (req, res) {

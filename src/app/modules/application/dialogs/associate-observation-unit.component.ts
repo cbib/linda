@@ -48,50 +48,40 @@ export class AssociateObservationUnit implements OnInit {
   current_material_id:string=""
   biological_model:BiologicalMaterialFullInterface;
   observation_unit_level:string=""
+  //study, block, sub-block, plot, sub-plot, pot, plant
   observation_levels= [
     {
       "levelName": "study",
       "levelOrder": 1
     },
     {
-      "levelName": "field",
+      "levelName": "block",
       "levelOrder": 2
     },
     {
-      "levelName": "entry",
+      "levelName": "sub-block",
       "levelOrder": 3
     },
     {
-      "levelName": "rep",
+      "levelName": "plot",
       "levelOrder": 4
     },
     {
-      "levelName": "block",
+      "levelName": "sub-plot",
       "levelOrder": 5
     },
+
     {
-      "levelName": "sub-block",
+      "levelName": "pot",
       "levelOrder": 6
     },
     {
-      "levelName": "plot",
+      "levelName": "plant",
       "levelOrder": 7
     },
     {
-      "levelName": "sub-plot",
-      "levelOrder": 8
-    },
-    {
-      "levelName": "plant",
-      "levelOrder": 9
-    },
-    {
-      "levelName": "pot",
-      "levelOrder": 10
-    },
-    {
       "levelName": "sample",
-      "levelOrder": 11
+      "levelOrder": 8
     }
   ]
   loaded:boolean=false
@@ -208,13 +198,6 @@ export class AssociateObservationUnit implements OnInit {
     this.return_data = { "observation_units": [], "biological_materials": [], "samples": [], "experimental_factors": [] }
     if(value==='study'){
     }
-    else if(value==='field'){
-    }
-    else if(value==='entry'){
-    }
-    else if (value==='rep'){
-      
-    }
     else if (value==='block'){
       let bm_list:BiologicalMaterialDialogModel[][]=[]
       this.design.Blocking.value.forEach(block=>{
@@ -275,13 +258,13 @@ export class AssociateObservationUnit implements OnInit {
     else if (value==='sub-plot'){
       
     }
-    else if (value==='plant'){
+    else if (value==='pot'){
       
     }
-    else if(value==='sample'){
+    else if(value==='plant'){
 
     }
-    //pot
+    //sample
     else{
 
     }

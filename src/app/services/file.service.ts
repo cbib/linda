@@ -784,7 +784,7 @@ export class FileService {
                     var mapping_data = this.get_mapping_data_by_key(model, keys[i])
                     var isa_section = mapping_data["ISA-Tab Section (for Investigation file)"]
                     var isa_field: string = mapping_data["ISA-Tab Field"]
-                    console.log("----------------------write field ", isa_field, " in section ", isa_section, " for ", isa_file)
+                    //console.log("----------------------write field ", isa_field, " in section ", isa_section, " for ", isa_file)
                     if (return_data[isa_file][isa_section][isa_field]) {
                         if ((isa_field.includes("Type")) && (!isa_field.includes("Comment"))) {
                             data[keys[i]].split("/").forEach(element => {
@@ -811,13 +811,13 @@ export class FileService {
             var study_contact_section = 'STUDY CONTACTS'
             ////console.log("-----------building isa ", model_type)
             //add the model
-            console.log(return_data[isa_file])
-            console.log(parent_id)
+            //console.log(return_data[isa_file])
+            //console.log(parent_id)
             var investigation_isa_sections = Object.keys(return_data[isa_file])
             for (var i = 0; i < investigation_isa_sections.length; i++) {
                 if (investigation_isa_sections[i].includes("STUDY CONTACTS")) {
-                    console.log(return_data[isa_file][investigation_isa_sections[i]])
-                    console.log(persons)
+                    //console.log(return_data[isa_file][investigation_isa_sections[i]])
+                    //console.log(persons)
                     if (persons.length > 0) {
                         let current_person = persons.filter(person => person['model_id'] === data['_id'])[0]['vertice']
                         //return_data[isa_file][investigation_isa_sections[i]]["Study Person First Name"].push(current_person['Person name'].split(" ")[0])
@@ -872,7 +872,7 @@ export class FileService {
                     }
                 }
             }
-            console.log(return_data[isa_file])
+            //console.log(return_data[isa_file])
             //return_data[isa_file]["STUDY"]["Study File Name"].push("")
 
 
@@ -1101,7 +1101,7 @@ export class FileService {
         }
         else if (model_type === "sample") {
             var isa_file = "Investigation"
-            console.log(parent_id)
+            //console.log(parent_id)
             //add SAmples in study protocol
             for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
                 if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
@@ -1150,7 +1150,7 @@ export class FileService {
                 }
 
             }
-            console.warn('##################ALREADY EXIST : ', already_exist)
+            //console.warn('##################ALREADY EXIST : ', already_exist)
             if (!already_exist) {
                 if (!return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].includes(filename)) {
                     return_data['Investigation']['STUDY ASSAYS']['Study Assay File Name'][index].push(filename)
@@ -1385,7 +1385,7 @@ export class FileService {
             ////console.log("#############################################################model type", model_type)
             ////console.log("----data", data)
             //in this case it is study id
-            ////console.log("----parent id", parent_id)
+            console.log("----parent id", parent_id)
             ////console.log("----return data", return_data)
             //in this case it is observation unit data
             ////console.log("----parent data", parent_data)
@@ -1399,7 +1399,9 @@ export class FileService {
                     ////console.log(return_data[isa_file]["STUDY"]["Study Identifier"])
                     if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
                         return_data[isa_file]["STUDY FACTORS"]["Study Factor Name"][i].push(data["Experimental Factor type"])
+                        return_data[isa_file]["STUDY FACTORS"]["Study Factor Type"][i].push(data["Experimental Factor type"])
                         return_data[isa_file]["STUDY FACTORS"]["Study Factor Type Term Accession Number"][i].push(data["Experimental Factor accession number"])
+                        return_data[isa_file]["STUDY FACTORS"]["Study Factor Type Term Source REF"][i].push(data["Experimental Factor accession number"].split(':')[0])
                         if (return_data[isa_file]["STUDY FACTORS"]["Comment[Study Factor Description]"]) {
                             if (return_data[isa_file]["STUDY FACTORS"]["Comment[Study Factor Description]"].length === 0) {
                                 for (var j = 0; j < return_data[isa_file]["STUDY"]["Study Identifier"].length; j++) {
@@ -1414,8 +1416,6 @@ export class FileService {
                                 return_data[isa_file]["STUDY FACTORS"]["Comment[Study Factor Description]"].push([])
                             }
                             return_data[isa_file]["STUDY FACTORS"]["Comment[Study Factor Description]"][i].push(data["Experimental Factor description"])
-
-
                         }
 
                         if (return_data[isa_file]["STUDY FACTORS"]["Comment[Study Factor Values]"]) {
@@ -1439,7 +1439,6 @@ export class FileService {
             else {
                 //Write Study isa part    
                 isa_file = "Study"
-
                 var parent_keys = Object.keys(parent_data["v"]);
                 var parent_model = parent_data["model"];
                 var index = 0
@@ -1449,9 +1448,9 @@ export class FileService {
                         if (return_data[isa_file][i]["filename"] === filename) {
                             found = true
                             index = i
-                            ////console.log('found ', filename)
-                            ////console.log(return_data[isa_file][i]["study_data"])
-                            ////console.log(return_data[isa_file][i]["study_data"]["Factor Value[ ]"]["data"])
+                            console.log('found ', filename)
+                            console.log(return_data[isa_file][i]["study_data"])
+                            console.log(return_data[isa_file][i]["study_data"]["Factor Value[ ]"]["data"])
                             for (var j = 0; j < return_data[isa_file][i]["study_data"]["Characteristics[Material Source ID]"]['data'].length; j++) {
                                 ////console.log(return_data['Study'][i]["study_data"]['Sample Name']["data"][j])
                                 ////console.log(parent_data['v']['Observation unit ID'])
@@ -1459,34 +1458,26 @@ export class FileService {
                                 var parent_index = parent_data['v']['Observation unit ID'].indexOf(return_data['Study'][i]["study_data"]['Sample Name']["data"][j])
                                 ////console.log(parent_data['v']['Observation unit ID'][parent_index])
                                 if (return_data['Study'][i]["study_data"]['Sample Name']["data"][j] === parent_data['v']['Observation unit ID'][parent_index]) {
-                                    ////console.log(parent_data["v"]["Observation Unit factor value"][parent_index])
+                                    //console.log(parent_data["v"]["Observation Unit factor value"][parent_index])
                                     var factor_obj = {}
                                     factor_obj["factor"] = data["Experimental Factor type"]
                                     factor_obj["value"] = parent_data["v"]["Observation Unit factor value"][parent_index]
                                     let tmp_array = [factor_obj, { "Term Source REF": data["Experimental Factor accession number"].split(":")[0] }, { "Term Accession Number": data["Experimental Factor accession number"] }]
-                                    return_data[isa_file][i]["study_data"]["Factor Value[ ]"]["data"][j] = tmp_array
+                                    return_data[isa_file][i]["study_data"]["Factor Value[ ]"]["data"][j].push(tmp_array)
                                 }
                                 // else{
                                 //     if (!return_data['Study'][i]["study_data"]['Sample Name']["data"][j]){
                                 //         factor_obj["factor"]=""
                                 //         factor_obj["value"]= ""
                                 //         let tmp_array = [factor_obj, { "Term Source REF":"", { "Term Accession Number": "" }]
-
                                 //         return_data[isa_file][i]["study_data"]["Factor Value[ ]"]["data"].push(tmp_array)
                                 //     }
-
-
                                 // }
-
                             }
-
                         }
                     }
                 }
             }
-
-
-
         }
         else if (model_type === "observed_variable") {
             ////console.log("#############################################################model type", model_type)
@@ -1579,7 +1570,7 @@ export class FileService {
             //var study_index=return_data[isa_file]["STUDY"]["Study Identifier"].length -1
             environment_obj["parameter"] = data["Environment parameter"]
             environment_obj["value"] = data["Environment parameter value"]
-            let tmp_array = [environment_obj, { "Term Source REF": "" }, { "Term Accession Number": "" }]
+            let tmp_array = [environment_obj, { "Term Source REF": data["Environment parameter accession number"].split(':')[0] }, { "Term Accession Number": data["Environment parameter accession number"] }]
 
 
 
@@ -1651,14 +1642,14 @@ export class FileService {
             // }
         }
         else if (model_type === "event") {
-            console.log(data)
+            /* console.log(data)
             console.log(data["Event type"])
-            console.log(parent_id)
+            console.log(parent_id) */
             var isa_file = "Investigation"
-            console.log(return_data[isa_file]["STUDY PROTOCOLS"])
+            /* console.log(return_data[isa_file]["STUDY PROTOCOLS"])
             console.log(return_data[isa_file]["STUDY"])
             console.log(return_data[isa_file]["STUDY"]["Study Identifier"])
-            console.log(return_data[isa_file]["STUDY"]["Study Identifier"][0])
+            console.log(return_data[isa_file]["STUDY"]["Study Identifier"][0]) */
             for (var i = 0; i < return_data[isa_file]["STUDY"]["Study Identifier"].length; i++) {
                 if (return_data[isa_file]["STUDY"]["Study Identifier"][i][0] === parent_id) {
                     return_data[isa_file]["STUDY PROTOCOLS"]["Study Protocol Name"][i].push('Event')
@@ -1744,7 +1735,6 @@ export class FileService {
         ////console.log("@@@@@@@@@@@@@@@@@@@@@@#=>", model_type)
         var environment_obj = {}
         var already_exist = false
-
 
         if (model_type === "biological_material") {
             //vérifier qu'il existe un modéle dans return data pour la study qui contient ce matériel biologique
@@ -2173,7 +2163,7 @@ export class FileService {
     }
 
     public ConvertEventModelTo(objArray, sep = ',') {
-        console.log(objArray)
+        //console.log(objArray)
         let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         console.log(array)
         let str = '';
@@ -2187,25 +2177,25 @@ export class FileService {
                 i--;
             }
             else {
-                console.log(array[keys[i]])
+                //console.log(array[keys[i]])
                 event_number = array[keys[i]]['data'].length
                 str += keys[i] + sep;
             }
         }
-        console.log(str)
+        //console.log(str)
         //remove last separator
         str = str.slice(0, -1);
         str += '\r\n';
         for (var j = 0; j < event_number; j++) {
             for (var i = 0; i < keys.length; i++) {
-                console.log(keys[i])
+                //console.log(keys[i])
                 if (keys[i].startsWith("_") || keys[i].startsWith("Definition")) {// || this.model[this.keys[i]].Level ==undefined || this.model[this.keys[i]].Level !=this.level) {
                     keys.splice(i, 1);
                     i--;
                 }
                 else {
-                    console.log(array[keys[i]]['data'])
-                    console.log(array[keys[i]]['data'][j])
+                    //console.log(array[keys[i]]['data'])
+                    //console.log(array[keys[i]]['data'][j])
                     str += array[keys[i]]['data'][j] + sep;
                 }
 
@@ -2213,7 +2203,7 @@ export class FileService {
             str = str.slice(0, -1);
             str += '\r\n';
         }
-        console.log(str)
+        //console.log(str)
         return str;
     
     } 
@@ -2260,6 +2250,7 @@ export class FileService {
         let str = '';
         //Write header in study isa file and count object
         var keys = Object.keys(obj);
+        console.log(obj)
         var biological_material_number = 0
         var headers = []
         for (var i = 0; i < keys.length; i++) {
@@ -2270,7 +2261,7 @@ export class FileService {
             }
             else {
                 key_data["data"].forEach(element => {
-                    //////console.log(element)
+                    
                     if (element) {
                         if (keys[i] === "Parameter Value[ ]") {
                             //////console.log(element[0]["parameter"]+ sep)
@@ -2288,22 +2279,38 @@ export class FileService {
                             }
                         }
                         else if (keys[i] === "Factor Value[ ]") {
+                            //console.log(element)
                             //////console.log(element[0]["parameter"]+ sep)
                             //////console.log(keys[i], "=>", key_data["data"])
                             if (element.length > 0) {
-                                if (!str.includes("Factor Value[" + element[0]["factor"] + "]")) {
+                                element.forEach(elem=>{
+                                    if (!str.includes("Factor Value[" + elem[0]["factor"] + "]")) {
+                                        str += "Factor Value[" + elem[0]["factor"] + "]" + sep;
+                                        headers.push("Factor Value[" + elem[0]["factor"] + "]")
+                                        for (var j = 1; j < elem.length; j++) {
+                                            var extra_keys = Object.keys(elem[j]);
+                                            //console.log(extra_keys)
+                                            for (var k = 0; k < extra_keys.length; k++) {
+                                                str += extra_keys[k] + sep;
+                                                headers.push(extra_keys[k])
+                                            }
+                                        }
+                                    } 
+                                })
+                                /* if (!str.includes("Factor Value[" + element[0]["factor"] + "]")) {
                                     str += "Factor Value[" + element[0]["factor"] + "]" + sep;
                                     headers.push("Factor Value[" + element[0]["factor"] + "]")
                                     for (var j = 1; j < element.length; j++) {
                                         var extra_keys = Object.keys(element[j]);
+                                        //console.log(extra_keys)
                                         for (var k = 0; k < extra_keys.length; k++) {
                                             str += extra_keys[k] + sep;
                                             headers.push(extra_keys[k])
                                         }
                                     }
-                                }
+                                } */
+                                //console.log(str)
                             }
-
                         }
                         else {
                             //Characteristics descriptors
@@ -2322,7 +2329,6 @@ export class FileService {
                                         }
                                     }
                                 }
-
                             }
                             //Source name or sample name
                             else {
@@ -2349,7 +2355,7 @@ export class FileService {
             }
         }
 
-        //////console.log(headers)
+        console.log(headers)
         //////console.log(biological_material_number)
         str = str.slice(0, -1);
         str += '\r\n';
@@ -2413,27 +2419,35 @@ export class FileService {
 
                             }
                             else if (keys[i] === "Factor Value[ ]") {
+                                
                                 //////console.log(keys[i], "=>", key_data)
                                 if (element.length > 0) {
                                     //for (elem in element){
-                                    if (headers[h] === "Factor Value[" + element[0]["factor"] + "]") {
-                                        //////console.log("header found: ", headers[h])
-                                        header_found = true
-                                        str += element[0]['value'] + sep;
-                                        row += element[0]['value'] + "_";
-                                        for (var j = 1; j < element.length; j++) {
-                                            //////console.log(element[j])
-                                            var extra_keys = Object.keys(element[j]);
-                                            for (var k = 0; k < extra_keys.length; k++) {
-                                                //////console.log(element[j][extra_keys[k]])
-                                                str += element[j][extra_keys[k]] + sep;
-                                                row += element[j][extra_keys[k]] + "_";
-                                            }
-                                        }
-                                        h += 2
-                                        break;
-                                    }
+                                    for (let index = 0; index < element.length; index++) {
+                                        const elem = element[index];
+                                        if (headers[h] === "Factor Value[" + elem[0]["factor"] + "]") {
+                                            //console.log("header found: ", headers[h])
+                                            //console.warn(element)
+                                            header_found = true
+                                            var factor_obj=elem[0]['value'].filter(el=>el[elem[0]["factor"]]!==undefined)[0]
+                                            str += factor_obj[elem[0]["factor"]] + sep;
+                                            row += factor_obj[elem[0]["factor"]] + "_";
 
+                                            /* str += element[0]['value'][element[0]["factor"]] + sep;
+                                            row += element[0]['value'][element[0]["factor"]] + "_"; */
+                                            for (var j = 1; j < elem.length; j++) {
+                                                //////console.log(element[j])
+                                                var extra_keys = Object.keys(elem[j]);
+                                                for (var k = 0; k < extra_keys.length; k++) {
+                                                    //////console.log(element[j][extra_keys[k]])
+                                                    str += elem[j][extra_keys[k]] + sep;
+                                                    row += elem[j][extra_keys[k]] + "_";
+                                                }
+                                            }
+                                            h += 2
+                                            break;
+                                        }
+                                    }
                                     //}
                                 }
                                 // else {
