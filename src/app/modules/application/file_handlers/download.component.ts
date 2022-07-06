@@ -245,6 +245,9 @@ export class DownloadComponent implements OnInit, OnDestroy {
                 this.model_key = params['model_key'];
                 this.mode = params['mode'];
                 this.parent_id = params['parent_id']
+                if (!this.mode){
+                    this.mode='create'
+                }
             }
         );
         this.selectedOption = <componentInterface>{ name: 'Assign MIAPPE components', value: '' }

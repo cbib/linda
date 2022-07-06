@@ -1204,7 +1204,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         console.log(_plot['Plot number'].value)
         this.plot_index = _plot['Plot number'].value - 1
         
-        const dialogRef = this.dialog.open(PlotOverviewComponent, {
+        /* const dialogRef = this.dialog.open(PlotOverviewComponent, {
             disableClose: true,
             width: '1400px',
             autoFocus: true,
@@ -1223,7 +1223,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             if (result) {
                 console.log(result)
             }
-        });
+        }); */
     }
     onSubmit() {
         console.warn(this.BlockDesignForm.value);

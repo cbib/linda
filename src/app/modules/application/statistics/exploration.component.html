@@ -1,4 +1,13 @@
 <div id="explore_page">
+
+<h4>Investigation exploration </h4>
+<mat-card *ngIf="maintenance">
+    Still in development, new version upcoming on 31 of July 2022 !!! 
+</mat-card>
+
+    
+
+<div *ngIf="!maintenance">
 <h4>Investigation exploration </h4>
 <p>You're about to mine your data with Linda.
     You can visualize easily your observations and correlate them with experimental factors and environmental
@@ -112,4 +121,5 @@
         </div>
         <br> -->
 </section>
+</div>
 </div>

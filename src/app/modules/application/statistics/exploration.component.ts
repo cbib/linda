@@ -23,7 +23,7 @@ export class ExplorationComponent implements OnInit {
   ObservationUnits: {} = {};
   BiologicalMaterials: {} = {};
   title = 'Angular Charts';
-
+  maintenance:boolean=true
   view: any[] = [2500, 800];
   view2: any[] = [1500, 800];
 

@@ -51,7 +51,8 @@ export class AssociateObservedVariable implements OnInit {
   userMenusecondPosition = { x: '0px', y: '0px' };
   investigationMenuPosition = { x: '0px', y: '0px' };
   helpMenuPosition = { x: '0px', y: '0px' };
-
+  autogenerateIsChecked: boolean = false
+  ObservationDescription: string = "";
   //@ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   @ViewChild('obsvarpaginator', { static: true }) obsvarpaginator: MatPaginator;
@@ -271,17 +272,17 @@ export class AssociateObservedVariable implements OnInit {
   sampleRowToggle(row) {
     this.sampleSelection.toggle(row)
     if (this.sampleSelection.selected.length === 0) {
-      this.sample_panel_disabled = true
+      this.panel_disabled = true
     }
     else (
-      this.sample_panel_disabled = false
+      this.panel_disabled = false
     )
   }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   sampleMasterToggle() {
     this.isAllSampleSelected() ?
       this.sampleSelection.clear() :
-      this.sampledataSource.data.forEach(row => this.sampleSelection.select(row)); this.sample_panel_disabled = false
+      this.sampledataSource.data.forEach(row => this.sampleSelection.select(row)); this.panel_disabled = false
   }
   isAllMatSelected() {
     const numSelected = this.matSelection.selected.length;
@@ -291,17 +292,17 @@ export class AssociateObservedVariable implements OnInit {
   matRowToggle(row) {
     this.matSelection.toggle(row)
     if (this.matSelection.selected.length === 0) {
-      this.mat_panel_disabled = true
+      this.panel_disabled = true
     }
     else (
-      this.mat_panel_disabled = false
+      this.panel_disabled = false
     )
   }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   matMasterToggle() {
     this.isAllMatSelected() ?
       this.matSelection.clear() :
-      this.materialdataSource.data.forEach(row => this.matSelection.select(row)); this.mat_panel_disabled = false
+      this.materialdataSource.data.forEach(row => this.matSelection.select(row)); this.panel_disabled = false
   }
   isAllSelected() {
     const numSelected = this.selection.selected.length;

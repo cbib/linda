@@ -603,6 +603,7 @@ export class ObservationUnitFormComponent implements OnInit {
   }
   get_experimental_factor(observation_id: string) {
     var obs_ef_data = []
+    console.log(this.ef_data)
     this.ef_data.forEach(element => {
       if (element.obsUUID === observation_id) {
         obs_ef_data.push(element)

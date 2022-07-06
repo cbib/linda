@@ -169,11 +169,12 @@
                                 <div class="chip-list">
                                     <chip-list (notify)="get_output_from_ExpFactorNamesForm($event)" [skills]="experimentalFactorNames"></chip-list>
                                 </div>
-                                <mat-grid-list cols="get_factor_values.length" rowHeight="20px">
+                                <!-- Color indicator -->
+                                <mat-grid-list *ngIf="get_factor_values.length>0" cols="get_factor_values.length" rowHeight="20px">
                                     <mat-grid-tile *ngFor="let factor of get_factor_values; index as i" [colspan]="1" [rowspan]="1"
                                       [style.background]="get_background_code_color(i)">{{factor}}</mat-grid-tile>
                                     <!-- <mat-grid-tile [style.background]="'blue'">Treament value 2</mat-grid-tile> -->
-                                  </mat-grid-list>
+                                </mat-grid-list>
 
                                   <select [ngModel]="get_block_index" name="design_type" size="1"
                                   (change)="onBlockIndexChange($event.target.value)">
@@ -559,13 +560,13 @@
                                     </tbody>
                                 </table>
                             </mat-card>
-                            <mat-card *ngIf="get_observation_unit_loaded">
+                            <!-- <mat-card *ngIf="get_observation_unit_loaded">
                                 <app-observation-unit-page (notify)="get_output_from_child($event)" [level]="1"
                                     [model_type]="'observation_unit'" [model_key]="" [design_id]="get_model_id"
                                     [grand_parent_id]="get_grand_parent_id" [parent_id]="get_parent_id"
                                     [mode]="get_mode" [role]="get_role" [group_key]="get_group_key">
                                 </app-observation-unit-page>
-                            </mat-card>
+                            </mat-card> -->
                         </div>
                     </div>
                 </mat-card>

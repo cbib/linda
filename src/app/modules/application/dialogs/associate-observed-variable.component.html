@@ -106,7 +106,19 @@
             <h4>Observation date</h4>
             <input [(ngModel)]="ObservationDate" mdbInput placeholder="2005-08-15T15:52:01+00:00" type="date"
               class="form-control" (onchange)="onDateAdd($event)" />
-
+            <h4>Observation description</h4>
+            <textarea [(ngModel)]="ObservationDescription" matInput placeholder="Distal part of the leaf ; 100 mg of roots taken from 10 roots at 20 degree Celsius, conserved in vacuum at 20 mM NaCl salinity, stored at -60 degree Celsius to -85 degree Celsius."  type="text" size="2"></textarea>
+            <h4>Auto generate sample ID</h4>
+            <!-- <mat-slide-toggle [(ngModel)]="autogenerateIsChecked" [disabled]="!selection.hasValue()" (change)="autoGenerateID()">
+                ID autogenerate
+            </mat-slide-toggle> -->
+            <mat-slide-toggle [(ngModel)]="autogenerateIsChecked">
+              ID autogenerate
+            </mat-slide-toggle>
+              <p>
+              generate incremental sample identifier using material source and biological material identifier.
+              </p>
+          <br/>
             <!-- Destructive observations -->
             <div *ngIf="this.observation_type==='Destructive' ">
               <div *ngIf="get_design.get_associated_samples().length===0">
@@ -192,11 +204,11 @@
 
     
     <div *ngIf="selection.hasValue()">
-      <p> Now You are ready to load {{total_available_plots}} observations at plot level in your experimental design.
+      <p> Now You are ready to add {{total_available_plots}} observations in your experimental design.
+        <br>
         A datafile will be created in which you can further add your measuremement values (e.g plant heigth or all plot
         observed)
-        Take care to assign materials in respect with observation unit levels in order to produce the right observations
-        !!
+        <br>
       </p>
       <!-- <button (click)="add_data()">Link observations measures</button> -->
     </div>
