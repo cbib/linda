@@ -163,6 +163,7 @@ import { AssociateObservationsMeasurementComponent } from './associate-observati
     AssociateObservationUnit,
     AssociateObservedVariable,
     AssociateExperimentalFactorComponent,
+    AssociateObservationsMeasurementComponent,
     ChipListComponent,
     PlotOverviewComponent
   ],
@@ -194,6 +195,7 @@ import { AssociateObservationsMeasurementComponent } from './associate-observati
     AssociateObservationUnit,
     AssociateObservedVariable,
     AssociateExperimentalFactorComponent,
+    AssociateObservationsMeasurementComponent,
     ChipListComponent,
     PlotOverviewComponent
   ]

@@ -25,9 +25,6 @@ interface DialogData {
   material_id: string;
   total_available_plots: number;
   design: ExperimentalDesign;
-
-
-
 }
 const OBSERVED_VARIABLE_ELEM: ObservedVariableInterface[] = []
 const SAMPLE_ELEM: SampleInterface[] = []
@@ -81,13 +78,11 @@ export class AssociateObservedVariable implements OnInit {
   sampleSelection = new SelectionModel<SampleInterface>(true, this.initialSampleSelection /* multiple */);
   private initialSelection = []
   selection = new SelectionModel<ObservedVariableInterface>(false, this.initialSelection /* multiple */);
-
   private initialMatSelection = []
   matSelection = new SelectionModel<BiologicalMaterialDialogModel>(true, this.initialMatSelection /* multiple */);
   panel_disabled: boolean = false;
   sample_panel_disabled: boolean = false;
   mat_panel_disabled: boolean = false;
-
   loaded: boolean = false
   sampleloaded: boolean = false
   matloaded: boolean = false
@@ -103,6 +98,9 @@ export class AssociateObservedVariable implements OnInit {
   private bm_data: [];
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
   displayedColumns: string[] = ['Trait', 'Method', 'Variable ID', 'Variable name', 'Scale', 'select'];
+  
+  
+  
   constructor(
     private globalService: GlobalService,
     private alertService: AlertService,

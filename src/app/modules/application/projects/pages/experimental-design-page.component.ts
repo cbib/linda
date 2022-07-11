@@ -40,6 +40,7 @@ import { PlotOverviewComponent } from '../../dialogs/plot-overview.component';
 import { AssociateExperimentalFactorComponent } from '../../dialogs/associate-experimental-factor.component';
 import { ExperimentalFactor } from 'src/app/models/linda/experimental_factor';
 import { indexOf } from 'lodash';
+import { AssociateObservationsMeasurementComponent } from '../../dialogs/associate-observations-measurement.component';
 
 export interface subComponent{
     'Associated biological material':[]
@@ -653,7 +654,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
         
     }
-
     addExperimentalFactor() {
         console.log(this.parent_id)
         const dialogRef = this.dialog.open(AssociateExperimentalFactorComponent, {
@@ -803,9 +803,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     this.selected_factor_values.push(plot.get_factor_values()[factor_value_index])
                 })
             })
-
         }
-        
     }
     get_background_code_color(index: number) {
 
@@ -838,7 +836,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             }
         });
     }
-
     addBiologicalMaterial() {
         const dialogRef = this.dialog.open(AssociateBiologicalMaterial, {
             disableClose: true,
@@ -897,7 +894,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             }) 
         */
     }
-
     removeBiologicalMaterial() {
         const dialogRef = this.dialog.open(ConfirmationComponent, { disableClose: true, width: '500px', data: { validated: false, only_childs: false, all_childs: true, mode: 'unlinkbm', model_type: "biological_material" } });
         dialogRef.afterClosed().subscribe(async (result) => {
@@ -929,7 +925,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
             }
         });
     }
-
     extractSample() {
         //first  get bm data
         let obs_uuids = []
@@ -1039,7 +1034,6 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         }
         
     }
-
     addObservations(){
         const dialogRef = this.dialog.open(
             AssociateObservedVariable, 
@@ -1089,7 +1083,27 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     }
 
     addObservationsMeasures(){
+        const dialogRef = this.dialog.open(
+            AssociateObservationsMeasurementComponent, 
+            { 
+                disableClose: true, 
+                width: '95%', 
+                autoFocus: true, 
+                maxHeight: '1000px', 
+                data: { 
+                    model_id: "", 
+                    parent_id: this.parent_id, 
+                    model_type: "observed_variable", 
+                    total_available_plots: this.design['number of entries'].value,
+                    design: this.design, 
+                } 
+            });
 
+        dialogRef.afterClosed().subscribe(async result => {
+            if (result.event === 'Confirmed') {
+                console.log(result)
+            }
+        })
     }
 
     
