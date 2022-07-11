@@ -428,14 +428,14 @@ export class AssociateObservedVariable implements OnInit {
           this.sampleSelection.selected.forEach((sample, index) => {
             console.log(sample)
             let obs_uuid = this.pasted_ids[index]
-            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id'], obs_var['Scale'], obs_var['Trait']))
           })
         }
         else{
           this.sampleSelection.selected.forEach((sample, index) => {
             console.log(sample)
             let obs_uuid = sample['Sample ID'] + "_obs_" + (index + 1) 
-            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id'], obs_var['Scale'], obs_var['Trait']))
           })
         }
       }
@@ -443,13 +443,13 @@ export class AssociateObservedVariable implements OnInit {
         if (this.labelPosition_observation_ID!=='autogenerate ids'){  
           this.matSelection.selected.forEach((bm, index) => {
             let obs_uuid = this.pasted_ids[index]
-            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id'], obs_var['Scale'], obs_var['Trait']))
           })
         }
         else{
           this.matSelection.selected.forEach((bm, index) => {
             let obs_uuid = bm.biologicalMaterialId + "_obs_" + (index + 1) 
-            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id'], obs_var['Scale'], obs_var['Trait']))
           })
 
         }

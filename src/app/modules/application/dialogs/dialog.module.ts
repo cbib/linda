@@ -63,6 +63,7 @@ import {ChipListComponent} from 'src/app/components/chip-list/chip-list.componen
 import { AssociateObservedVariable } from './associate-observed-variable.component';
 import { PlotOverviewComponent } from './plot-overview.component';
 import { AssociateExperimentalFactorComponent } from './associate-experimental-factor.component';
+import { AssociateObservationsMeasurementComponent } from './associate-observations-measurement.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { AssociateExperimentalFactorComponent } from './associate-experimental-f
     AssociateObservedVariable,
     ChipListComponent,
     PlotOverviewComponent,
-    AssociateExperimentalFactorComponent
+    AssociateExperimentalFactorComponent,
+    AssociateObservationsMeasurementComponent
   ],
   imports: [
     CommonModule,

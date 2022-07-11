@@ -97,6 +97,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
     public blockDesignLoaded: boolean = false
     public biologicalMaterialLoaded: boolean = false
     public observationUnitLoaded: boolean = false
+    public observationLoaded:boolean=false
     public sampleLoaded: boolean = false;
     public complete_block_design_type: CompleteBlockDesign;
     public incomplete_block_design_type: IncompleteBlockDesign;
@@ -338,6 +339,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                         }
                         if (plot_design['Associated plot observations'].value !== null) {
                             new_plot_design.set_observations(plot_design['Associated plot observations'].value)
+                            this.observationLoaded=true
                         }
                         plot_design['Row design'].value.forEach(row_design => {
                             //let new_row_design=new RowDesign()
@@ -1066,6 +1068,7 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     this.design.Blocking.value.forEach(block => {
                         block['Plot design'].value.forEach(plot => {
                             plot.add_observations(result.observations.filter(observation => observation['obsUUID'] === plot.get_observation_uuid()))
+                            this.observationLoaded=true
                         })
                     })
 
@@ -1083,6 +1086,10 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                 })
             }
         });
+    }
+
+    addObservationsMeasures(){
+
     }
 
     

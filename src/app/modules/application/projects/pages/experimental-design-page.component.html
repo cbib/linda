@@ -175,7 +175,6 @@
                                       [style.background]="get_background_code_color(i)">{{factor}}</mat-grid-tile>
                                     <!-- <mat-grid-tile [style.background]="'blue'">Treament value 2</mat-grid-tile> -->
                                 </mat-grid-list>
-
                                   <select [ngModel]="get_block_index" name="design_type" size="1"
                                   (change)="onBlockIndexChange($event.target.value)">
                                   <option *ngFor="let bc of get_design.Blocking.value" [value]="bc['Block number'].value">Block {{bc['Block number'].value}}</option>
@@ -233,6 +232,10 @@
                                 <button [disabled]="!this.observationUnitLoaded" class="btn btn-primary"
                                     mat-raised-button type="submit" (click)="addObservations()">
                                     Add Observations
+                                </button>
+                                <button [disabled]="!this.observationLoaded" class="btn btn-primary"
+                                    mat-raised-button type="submit" (click)="addObservationsMeasures()">
+                                    Add Observed variables measures
                                 </button>
                                 <!-- <button *ngIf="!get_sample_loaded" [disabled]="!this.observationUnitLoaded" class="btn btn-primary" mat-raised-button type="submit" (click)="extractSample()">
                                     Extract samples 
@@ -527,8 +530,11 @@
                                                                                         <tr>
                                                                                             <th>Associated observation
                                                                                                 ID</th>
-                                                                                            <th>Observation description
-                                                                                            </th>
+                                                                                            <th>Observation description</th>
+                                                                                            <th>Observation trait</th>
+                                                                                           
+                                                                                            <th>Observation measurement</th>
+                                                                                            <th>Observation unit</th>
                                                                                             <th>Obs UUID</th>
 
                                                                                         </tr>
@@ -538,9 +544,12 @@
                                                                                             *ngFor="let comp of get_observation_plot_sub_components(experimental_design_block['Block number'].value, plotInfo['Plot number'].value, obsdate)">
                                                                                             <td>{{comp['Observation ID']}}
                                                                                             </td>
-                                                                                            <td>{{comp['Observation description']}}
-                                                                                            </td>
+                                                                                            <td>{{comp['Observation description']}}</td>
+                                                                                            <td>{{comp['Observed trait']}}</td>
+                                                                                            <td>{{comp['Observed variable measure']}}</td>
+                                                                                            <td>{{comp['Observed variable unit']}}</td>
                                                                                             <td>{{comp['obsUUID']}}</td>
+                                                                                            Trait
 
                                                                                         </tr>
 
