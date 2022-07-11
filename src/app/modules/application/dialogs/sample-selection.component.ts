@@ -74,7 +74,7 @@ export class SampleSelectionComponent implements OnInit {
   technicalReplicateIsChecked: boolean = false
   TechnicalReplicateNumber: number = 1;
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
-
+  labelPosition_sample_ID: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
   //displayedMaterialColumns: string[] = ['Biological material ID', 'Material source ID (Holding institute/stock centre, accession)', 'Genus', 'Species', 'Database id', 'select'];
   displayedSampleColumns: string[] = ['Sample ID', 'Plant anatomical entity', 'Plant structure development stage', 'Sample description', 'External ID', 'Collection date', 'Edit'];
   private sampledataSource: MatTableDataSource<any> = new MatTableDataSource([]);
@@ -90,7 +90,7 @@ export class SampleSelectionComponent implements OnInit {
   SampleDescription: string = "";
   PlantAnatomicalEntity: string = "";
   PlantStructureDevelopmentStage: string = ""
-
+  pasted_ids:string[]=[]
   constructor(
     private fb: FormBuilder,
     private globalService: GlobalService,
@@ -134,7 +134,6 @@ export class SampleSelectionComponent implements OnInit {
     this.materialdataSource.paginator = this.matpaginator;
     this._cdr.detectChanges()
   }
-
 
   load_material(): BiologicalMaterialDialogModel[] {
 
@@ -341,6 +340,54 @@ export class SampleSelectionComponent implements OnInit {
       this.ready_to_show = false
     }
   }
+
+  onInput(content: string, type:string) {
+    console.log(content)
+    console.log(content.split("\n"))
+    if (type==='extid'){
+    
+      if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.selection.selected.length){
+          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+      
+        }
+      }
+
+    }
+
+  }
+  onPaste(event: ClipboardEvent) {
+    let clipboardData = event.clipboardData;
+    let content = clipboardData.getData('text');
+
+    if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+    }
+    else{
+        if (content.split("\n").length!==this.selection.selected.length){
+          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+      
+        }
+    }
+      
+    
+    console.log(content)
+  }
+  get get_total():number{
+    let total=this.selection.selected.length*this.TechnicalReplicateNumber*this.totalSampleByMaterial
+    return total
+  } 
   get get_sampledataSource() { return this.sampledataSource }
 
   get getSampleDescription() {

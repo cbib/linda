@@ -41,9 +41,9 @@
         </mat-expansion-panel-header>
         <div id="help_associate_obs_unit_buttons">
           <p>
-            1. Select level of observations <br>
-            2. Define experimental factor associated with   <br>
-            3. Click on <button>Add Observations</button> to create corresponding observation units. <br>
+            1. Select level of observations (observation unit) <br>
+            2. Define observation units ids    <br>
+            3. Click on <button>Add Observations units</button> to create corresponding observation units. <br>
             4. Click on <button>OK</button> button to link each observation unit with the corresponding level in your experimental design<br>
           </p>
         </div>
@@ -55,7 +55,7 @@
     <option *ngFor="let level of observation_levels" [value]="level.levelName">{{level.levelName}}</option>
   </select>
   
-  <div *ngIf="get_loaded===true">
+  <div *ngIf="observation_unit_level!==''">
     <p>You have selected <b>{{get_observation_unit_level}}</b> level and consequently preload
       {{return_data.observation_units.length}} observation units in your study <br>
       associated with {{return_data.biological_materials.length*return_data.biological_materials[0].length}} biological
@@ -70,46 +70,73 @@
               </mat-panel-title>
           </mat-expansion-panel-header>
           <h4>External ID</h4>
-          <input [(ngModel)]="ExternalID" mdbInput placeholder="LINDA:323544" type="text" class="form-control" (onchange)="onIDAdd($event)" />
+          <!-- <input [(ngModel)]="ExternalID" mdbInput placeholder="LINDA:323544" type="text" class="form-control" (onchange)="onIDAdd($event)" /> -->
+          <p>
+            You can use your own observation unit ID by selecting <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>. 
+          </p>
+          <div class="form-group">
+            <section class="example-section">
+                <mat-radio-group [(ngModel)]="labelPosition_obs_extID" [ngModelOptions]="{standalone: true}">
+                  <mat-radio-button class="example-margin" value="autogenerate ids">Autogenerate external ids</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="paste ids">Paste external ids</mat-radio-button>
+                </mat-radio-group>
+            </section>
+            <mat-card *ngIf="labelPosition_obs_extID==='autogenerate ids'">
+              <!-- <label for="obsunit">Select total number of observation units:</label><input id="obsunit" type="number">
+              <label for="prefix">Select prefix for ids:</label><input id="prefix" type="text"> -->
+              <p>you are ready to autogenerate external Ids for {{return_data.observation_units.length}} observation units !! </p>
+            </mat-card>
+            <mat-card *ngIf="labelPosition_obs_extID!=='autogenerate ids'">
+              <p>Paste your list of Ids here !! 
+                Each Id has to be separated by a new line !! 
+                Take care to have the same number of line than the total observation units</p>
+                <!-- <mat-checkbox class="example-margin" [(ngModel)]="checked">Checked</mat-checkbox> -->
+                <textarea #myText (paste)="onPaste($event, 'obs_id')" (input)="onInput(myText.value, 'obs_id')"></textarea>
+            </mat-card>
+        </div>  
+        
           <h4>Observation unit ID</h4>
           <p>
             You can use your own observation unit ID by selecting <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>. 
           </p>
           <div class="form-group">
             <section class="example-section">
-                <mat-radio-group [(ngModel)]="labelPosition" [ngModelOptions]="{standalone: true}">
+                <mat-radio-group [(ngModel)]="labelPosition_obsID" [ngModelOptions]="{standalone: true}">
                   <mat-radio-button class="example-margin" value="autogenerate ids">Autogenerate ids</mat-radio-button>
                   <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>
                 </mat-radio-group>
             </section>
-            <mat-card *ngIf="labelPosition==='autogenerate ids'">
-              <label for="obsunit">Select total number of observation units:</label><input id="obsunit" type="number">
-              <label for="prefix">Select prefix for ids:</label><input id="prefix" type="text">
+            <mat-card *ngIf="labelPosition_obsID==='autogenerate ids'">
+              <!-- <label for="obsunit">Select total number of observation units:</label><input id="obsunit" type="number">
+              <label for="prefix">Select prefix for ids:</label><input id="prefix" type="text"> -->
+              <p>you are ready to autogenerate Ids for {{return_data.observation_units.length}} observation units !! </p>
             </mat-card>
-            <mat-card *ngIf="labelPosition!=='autogenerate ids'">
+            <mat-card *ngIf="labelPosition_obsID!=='autogenerate ids'">
+              <p>Paste your list of Ids here !! 
+                Each Id has to be separated by a new line !! 
+                Take care to have the same number of line than the total observation units</p>
                 <!-- <mat-checkbox class="example-margin" [(ngModel)]="checked">Checked</mat-checkbox> -->
-                <textarea #myText (paste)="onPaste($event)" (input)="onInput(myText.value)"></textarea>
+                <textarea #myText (paste)="onPaste($event, 'extid')" (input)="onInput(myText.value,'extid')"></textarea>
             </mat-card>
         </div>  
           
 
-          <h4>Auto generate sample ID</h4>
-            <!-- <mat-slide-toggle [(ngModel)]="autogenerateIsChecked" [disabled]="!selection.hasValue()" (change)="autoGenerateID()">
+          <!-- <h4>Auto generate sample ID</h4>
+            <mat-slide-toggle [(ngModel)]="autogenerateIsChecked" [disabled]="!selection.hasValue()" (change)="autoGenerateID()">
                 ID autogenerate
-            </mat-slide-toggle> -->
+            </mat-slide-toggle> 
             <mat-slide-toggle [(ngModel)]="autogenerateIsChecked">
               ID autogenerate
             </mat-slide-toggle>
             <p>
               generate incremental sample identifier using material source and biological material identifier.
             </p>
-            <br/>
-          <h4>Experimental factor</h4>
-
-            <ng-container *ngIf="get_experimental_factor().length===0">
-              <button class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
-                Add Experimental factor
-              </button>
+            <br/> -->
+          <!-- <h4>Experimental factor</h4>
+          <ng-container *ngIf="get_experimental_factor().length===0">
+            <button class="btn btn-primary" mat-raised-button type="submit" (click)="addExperimentalFactor()">
+              Add Experimental factor
+            </button>
           </ng-container>
           <ng-container  *ngIf="get_experimental_factor().length>0">
             <button mat-button [matMenuTriggerFor]="menu">select factor value</button>
@@ -122,7 +149,7 @@
               </ng-container>
             </mat-menu>
             <input [(ngModel)]="experimental_factor_value" mdbInput placeholder="Watered" type="text" class="form-control" (keypress)="onTaskAdd($event)" />
-          </ng-container>
+          </ng-container> -->
           
            
       </mat-expansion-panel>

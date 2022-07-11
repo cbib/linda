@@ -87,7 +87,8 @@ export class AssociateObservationUnit implements OnInit {
   loaded:boolean=false
   building:boolean=false
   built: boolean=false;
-  labelPosition: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
+  labelPosition_obsID: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
+  labelPosition_obs_extID: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
 
 
   autogenerateIsChecked: boolean = false
@@ -95,6 +96,8 @@ export class AssociateObservationUnit implements OnInit {
   experimental_factor_id: string="";
   experimental_factor_value: string="";
   ExternalID:string
+  pasted_external_ids:string[]=[]
+  pasted_ids:string[]=[]
 
   constructor(
     private globalService: GlobalService, 
@@ -109,7 +112,7 @@ export class AssociateObservationUnit implements OnInit {
       this.model_type = this.data.model_type
       this.parent_id = this.data.parent_id
       this.material_id=this.data.material_id
-      
+      this.mode=this.data.mode
       this.design=this.data.design
       
       this.design.Blocking.value.forEach(block=>{
@@ -118,9 +121,6 @@ export class AssociateObservationUnit implements OnInit {
           this.total_available_plots+=1
         })
       });
-      console.log(this.total_available_blocks)
-      this.mode=this.data.mode
-      console.log(this.design)
       this.building=false
       this.loaded=false
       this.built=false
@@ -181,13 +181,82 @@ export class AssociateObservationUnit implements OnInit {
       }
     });
   }
-  onPaste(event: ClipboardEvent) {
-    let clipboardData = event.clipboardData;
-    let pastedText = clipboardData.getData('text');
-    console.log(pastedText)
-  }
+
   
-  onInput(content: string) {
+  onInput(content: string, type:string) {
+    console.log(content)
+    console.log(content.split("\n"))
+    if (type==='extid'){
+    
+      if ([...new Set(content.split("\n"))].length!==this.return_data.observation_units.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.return_data.observation_units.length){
+          this.alertService.error("you need to have same number of observation IDs than observation units IDs. in your case, you need " +this.return_data.observation_units.length + " observations Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_external_ids=content.split("\n")
+      
+        }
+      }
+
+    }
+    else{
+      if ([...new Set(content.split("\n"))].length!==this.return_data.observation_units.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.return_data.observation_units.length){
+          this.alertService.error("you need to have same number of observation IDs than observation units IDs. in your case, you need " +this.return_data.observation_units.length + " observations Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+      
+        }
+      }
+      
+    }
+  }
+  onPaste(event: ClipboardEvent, type:string) {
+    let clipboardData = event.clipboardData;
+    let content = clipboardData.getData('text');
+
+    if (type==='extid'){
+    
+      if ([...new Set(content.split("\n"))].length!==this.return_data.observation_units.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.return_data.observation_units.length){
+          this.alertService.error("you need to have same number of observation IDs than observation units IDs. in your case, you need " +this.return_data.observation_units.length + " observations Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_external_ids=content.split("\n")
+      
+        }
+      }
+
+    }
+    else{
+      if ([...new Set(content.split("\n"))].length!==this.return_data.observation_units.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.return_data.observation_units.length){
+          this.alertService.error("you need to have same number of observation IDs than observation units IDs. in your case, you need " +this.return_data.observation_units.length + " observations Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+      
+        }
+      }
+      
+    }
     console.log(content)
   }
 
@@ -333,6 +402,18 @@ export class AssociateObservationUnit implements OnInit {
   async save() {
     this.building=true
     if (this.mode === "create") {
+      if (this.labelPosition_obsID==="paste ids"){
+        this.return_data.observation_units.forEach((obs_unit, index)=>{
+          obs_unit['Observation unit ID']=this.pasted_ids[index]
+        })    
+      }
+      if (this.labelPosition_obs_extID==="paste ids"){
+        this.return_data.observation_units.forEach((obs_unit, index)=>{
+          obs_unit['External ID']=this.pasted_external_ids[index]
+        })
+      }
+
+      
       //timer(0, 5000).pipe( switchMap(() => this.globalService.add_observation_units(this.return_data, this.model_type, this.parent_id)), takeUntil(this.stopPolling) )
       const data=await this.globalService.add_observation_units(this.return_data, this.model_type, this.parent_id).toPromise()
       if (data["success"]) {
@@ -380,7 +461,6 @@ export class AssociateObservationUnit implements OnInit {
           if (data["success"]) {
             var message = this.model_type[0].toUpperCase() + this.model_type.slice(1).replace("_", " ") + " has been successfully updated in your history !!"
             this.alertService.success(message)
-
           }
           else {
             this.alertService.error("this form contains errors! " + data["message"]);
@@ -402,7 +482,6 @@ export class AssociateObservationUnit implements OnInit {
   get get_model_key(){
       return this.model_key
   }
-
   onNoClick(): void {
     this.dialogRef.close({event:"Cancel", selected_material: null});
   }

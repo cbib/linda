@@ -562,7 +562,19 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
         } */
     }
     addObservationUnits() {
-        const dialogRef = this.dialog.open(AssociateObservationUnit, { disableClose: true, width: '1400px', autoFocus: true, maxHeight: '1000px', data: { model_id: "", parent_id: this.parent_id, model_type: "observation_unit", material_id: this.material_id, design: this.design, mode: 'create', model_key: '' } });
+        const dialogRef = this.dialog.open(AssociateObservationUnit, { 
+            disableClose: true, 
+            width: '1400px', 
+            autoFocus: true, 
+            maxHeight: '1000px', 
+            data: { 
+                model_id: "", 
+                parent_id: this.parent_id, 
+                model_type: "observation_unit", 
+                material_id: this.material_id, 
+                design: this.design, 
+                mode: 'create', 
+                model_key: '' } });
         dialogRef.afterClosed().subscribe(async result => {
             if (result.event === 'Confirmed') {
                 console.log(result.observation_unit_id)

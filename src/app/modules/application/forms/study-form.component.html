@@ -73,14 +73,22 @@
         <div>
             <div *ngIf="nod==='investigation'">
                 <h2>Investigation Form</h2>
+                
                 <!-- <mat-card class="menu_mat_card">
                 <h5>Definition</h5>
                 <p><b>Investigation</b> is the entry point of each MIAPPE dataset. It contains several general metadata fields 
                     (e.g. title, description, submission/publication dates), including some critical for FAIRness 
-                    (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. </p>
+                    (unique identifier, licence, MIAPPE version). One or more publications may be associated with the investigation. 
+                </p>
                 </mat-card> -->
             </div>
             <div *ngIf="nod==='study'">
+                <h2>Studies</h2>
+                <h5>Definition</h5>
+                <p><b>Study</b> corresponds to one experiment and defines its location (which by definition must be single per study) 
+                    and duration. It lists general fields documenting the experiment (e.g. experimental design, cultural practices, 
+                    growth facility). Like the investigation, it contains a unique identifier field. An investigation must have one or more studies.  
+                </p>
                 <!-- <h2>Studies</h2>
                 <mat-card  class="menu_mat_card">
                 <h5>Definition</h5>
@@ -172,6 +180,8 @@
             
         </div> 
     </ng-template>
+        <h1 style="text-align: center">{{ model_type[0].toUpperCase() +  model_type.slice(1).replace("_"," ")}}</h1>
+        <p>{{get_model['Definition']}}</p>
         <form [formGroup]="get_modelForm">
             <div style="margin-top: 50px;"
             joyrideStep="StepContentForm"
@@ -1521,6 +1531,7 @@
                     
                     <div class="form-group" *ngFor="let field of get_cleaned_model ; index as i;">
                         <div *ngIf="!['Type of growth facility','Description of growth facility','Cultural practices'].includes(field['key'])">
+                            
                             <div *ngIf="get_model[field['key']].Level==get_level">
                                 <label for="{{field['key']}}">{{field['key']}}</label>
                                 <span style="display:inline-block; margin-left: 10px;">

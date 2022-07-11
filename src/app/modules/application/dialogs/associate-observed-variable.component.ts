@@ -342,15 +342,16 @@ export class AssociateObservedVariable implements OnInit {
     console.log(this.sampleSelection.selected)
     this.selection.selected.forEach(obs_var => {
       if (this.observation_type === 'Destructive') {
-        this.sampleSelection.selected.forEach(sample => {
-          let obs_uuid = "sedwfxd"
-          this.observations.push(new Observation(obs_uuid, 'observation first test', this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
+        this.sampleSelection.selected.forEach((sample, index) => {
+          console.log(sample)
+          let obs_uuid = sample['Sample ID'] + "_obs_" + (index + 1) 
+          this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
         })
       }
       else {
-        this.matSelection.selected.forEach(bm => {
-          let obs_uuid = "sedwfxd"
-          this.observations.push(new Observation(obs_uuid, 'observation first test', this.ObservationDate, false, 'Not defined', bm.obsUUID, obs_var['_id']))
+        this.matSelection.selected.forEach((bm, index) => {
+          let obs_uuid = bm.biologicalMaterialId + "_obs_" + (index + 1) 
+          this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
         })
         /*this.design.Blocking.value.forEach(block => {
           block['Plot design'].value.forEach(plot => {
