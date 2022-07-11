@@ -54,12 +54,13 @@ export class AssociateObservedVariable implements OnInit {
   autogenerateIsChecked: boolean = false
   ObservationDescription: string = "";
   //@ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-
+  pasted_ids:string[]=[]
   @ViewChild('obsvarpaginator', { static: true }) obsvarpaginator: MatPaginator;
   @ViewChild('samplepaginator', { static: true }) samplepaginator: MatPaginator;
   @ViewChild('matpaginator', { static: true }) matpaginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   ///@ViewChild(MatTable, { static: false }) table: MatTable<AssociateObservedVariable>
+  labelPosition_observation_ID: 'autogenerate ids' | 'paste ids' = 'autogenerate ids';
 
   private model_id: string;
   private design: ExperimentalDesign;
@@ -136,6 +137,47 @@ export class AssociateObservedVariable implements OnInit {
    } */
   get get_associated_materials(): BiologicalMaterialDialogModel[] {
     return this.bm_data
+  }
+  onInput(content: string, type:string) {
+    if (type==='extid'){
+      if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+        if (content.split("\n").length!==this.selection.selected.length){
+          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+        }
+      }
+    }
+  }
+  get get_total():number{
+    if (this.observation_type === 'Destructive') {
+      return this.sampleSelection.selected.length
+    }
+    else{
+      return this.matSelection.selected.length
+
+    }
+  } 
+  onPaste(event: ClipboardEvent, type:string) {
+    let clipboardData = event.clipboardData;
+    let content = clipboardData.getData('text');
+    if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+    }
+    else{
+        if (content.split("\n").length!==this.selection.selected.length){
+          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
+        }
+        else{
+          this.alertService.success("Correct number of observation IDs !! ")
+          this.pasted_ids=content.split("\n")
+        }
+    }
   }
 
   async ngOnInit() {

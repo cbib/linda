@@ -949,7 +949,8 @@ export class ExperimentalDesignPageComponent implements OnInit, OnDestroy, After
                     bm_data: this.bm_data, 
                     model_type: "sample", 
                     values: [], 
-                    observation_id: obs_uuids 
+                    observation_id: obs_uuids,
+                    design:this.design
                 } 
             }
         );

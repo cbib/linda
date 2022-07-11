@@ -15,6 +15,7 @@ import { BiologicalMaterialDialogModel } from '../../../models/biological_materi
 import { MatPaginator } from '@angular/material';
 import { date, RxwebValidators } from "@rxweb/reactive-form-validators"
 import { RxReactiveFormsModule } from "@rxweb/reactive-form-validators"
+import { ExperimentalDesign } from 'src/app/models/linda/experimental-design';
 
 interface DialogData {
   model_id: string;
@@ -22,7 +23,8 @@ interface DialogData {
   model_type: string;
   bm_data: [];
   values: [];
-  observation_id: string[]
+  observation_id: string[];
+  design:ExperimentalDesign;
 }
 
 export interface Sample {
@@ -91,6 +93,7 @@ export class SampleSelectionComponent implements OnInit {
   PlantAnatomicalEntity: string = "";
   PlantStructureDevelopmentStage: string = ""
   pasted_ids:string[]=[]
+  design:ExperimentalDesign;
   constructor(
     private fb: FormBuilder,
     private globalService: GlobalService,
@@ -104,6 +107,7 @@ export class SampleSelectionComponent implements OnInit {
     this.parent_id = this.data.parent_id;
     this.bm_data = this.data.bm_data
     this.observation_id = this.data.observation_id
+    this.design=this.data.design
     this.result = []
     this.sampleTable = this.fb.group({
       sampleRows: this.fb.array([])
@@ -255,41 +259,45 @@ export class SampleSelectionComponent implements OnInit {
     this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
     this.sampleControl.clear()
     this.totalSample = 0
-    for (var i = 0; i < this.getTechnicalReplicateNumber(); i++) {
-      for (var j = 0; j < this.selection.selected.length; j++) {
-        for (var k = 0; k < this.totalSampleByMaterial; k++) {
-          var select = this.selection.selected[j]
-          //console.log("selected: ", select)
-          var bm_id = select["bmUUID"]
-          //console.log(bm_id)
-          this.sampleControl.push(this.initiateSampleForm(select))
-
-          if (this.autogenerateIsChecked) {
-            let rep_label = "_rep_" + (k + 1)
+    if (this.selection.selected.length===0){
+      this.alertService.error("You have to select at least one material in the upper table !! ")
+      this.ready_to_show = false
+    }
+    else{
+      for (var i = 0; i < this.getTechnicalReplicateNumber(); i++) {
+        for (var j = 0; j < this.selection.selected.length; j++) {
+          for (var k = 0; k < this.totalSampleByMaterial; k++) {
             var select = this.selection.selected[j]
             //console.log("selected: ", select)
-
+            var bm_id = select["bmUUID"]
             //console.log(bm_id)
-
-            /* for (var j = 0; j < this.sampleControl.controls.length; j++) { */
-            //console.log(this.sampleControl.controls[j].value)
-            var auto_generated_sampleid = select['biologicalMaterialId'] + '_sample_' + (i + 1) + rep_label
-            //this.sampleControl.controls[j].patchValue({'Sample ID': select['biologicalMaterialId'] })
-            this.sampleControl.controls[this.totalSample].get('Sample ID').patchValue(auto_generated_sampleid)
-            this.sampleControl.controls[this.totalSample].get('Sample ID').setValue(auto_generated_sampleid)
-
+            this.sampleControl.push(this.initiateSampleForm(select))
+  
+            if (this.autogenerateIsChecked) {
+              let rep_label = "_rep_" + (k + 1)
+              var select = this.selection.selected[j]
+              //console.log("selected: ", select)
+  
+              //console.log(bm_id)
+  
+              /* for (var j = 0; j < this.sampleControl.controls.length; j++) { */
+              //console.log(this.sampleControl.controls[j].value)
+              var auto_generated_sampleid = select['biologicalMaterialId'] + '_sample_' + (i + 1) + rep_label
+              //this.sampleControl.controls[j].patchValue({'Sample ID': select['biologicalMaterialId'] })
+              this.sampleControl.controls[this.totalSample].get('Sample ID').patchValue(auto_generated_sampleid)
+              this.sampleControl.controls[this.totalSample].get('Sample ID').setValue(auto_generated_sampleid)
+  
+            }
+            this.totalSample++
           }
-          this.totalSample++
         }
       }
+      this.autoGenerateID() 
+      this.sampledataSource = new MatTableDataSource((this.sampleTable.get('sampleRows') as FormArray).controls);
+      this.sampledataSource.paginator = this.sampleselectionpaginator;
+      this._cdr.detectChanges()
+      this.ready_to_show = true
     }
-    /* if (this.autogenerateIsChecked){
-      this.autoGenerateID()
-    } */
-    this.sampledataSource = new MatTableDataSource((this.sampleTable.get('sampleRows') as FormArray).controls);
-    this.sampledataSource.paginator = this.sampleselectionpaginator;
-    this._cdr.detectChanges()
-    this.ready_to_show = true
   }
   autoGenerateID() {
     this.sampleControl = this.sampleTable.get('sampleRows') as FormArray;
@@ -299,7 +307,8 @@ export class SampleSelectionComponent implements OnInit {
     //console.log('this.selection.selected.length: ',this.selection.selected.length)
     //console.log("autogenerate id activated")
     this.totalSample = 0
-    for (var k = 0; k < this.totalSampleByMaterial; k++) {
+    console.log(this.design['Associated sample'].value.length)
+    for (var k = this.design['Associated sample'].value.length; k < (this.totalSampleByMaterial+this.design['Associated sample'].value.length); k++) {
       for (var j = 0; j < this.selection.selected.length; j++) {
         for (var i = 0; i < this.getTechnicalReplicateNumber(); i++) {
           let rep_label = "_rep_" + (i + 1)
@@ -342,10 +351,7 @@ export class SampleSelectionComponent implements OnInit {
   }
 
   onInput(content: string, type:string) {
-    console.log(content)
-    console.log(content.split("\n"))
     if (type==='extid'){
-    
       if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
         this.alertService.error("you have duplicated Ids  !!! ")
       }
@@ -356,17 +362,13 @@ export class SampleSelectionComponent implements OnInit {
         else{
           this.alertService.success("Correct number of observation IDs !! ")
           this.pasted_ids=content.split("\n")
-      
         }
       }
-
     }
-
   }
   onPaste(event: ClipboardEvent) {
     let clipboardData = event.clipboardData;
     let content = clipboardData.getData('text');
-
     if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
         this.alertService.error("you have duplicated Ids  !!! ")
     }
@@ -377,12 +379,8 @@ export class SampleSelectionComponent implements OnInit {
         else{
           this.alertService.success("Correct number of observation IDs !! ")
           this.pasted_ids=content.split("\n")
-      
         }
     }
-      
-    
-    console.log(content)
   }
   get get_total():number{
     let total=this.selection.selected.length*this.TechnicalReplicateNumber*this.totalSampleByMaterial
@@ -433,10 +431,12 @@ export class SampleSelectionComponent implements OnInit {
     this.selection.toggle(row)
     if (this.selection.selected.length === 0) {
       this.panel_disabled = true
+      this.panel_expanded = false
     }
-    else (
+    else {
       this.panel_disabled = false
-    )
+      this.panel_expanded = true
+    }
   }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
@@ -561,7 +561,7 @@ export class SampleSelectionComponent implements OnInit {
       this.dialogRef.close({ event: "Confirmed", sample_data: sample_data });
     }
     else (
-      this.alertService.error("Some sample do not have ID associated")
+      this.alertService.error("Some fields are still empty !!  ")
     )
 
 
