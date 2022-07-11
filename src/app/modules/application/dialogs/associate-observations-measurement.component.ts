@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MatPaginator, MatTableDataSource, MAT_DIALOG_DATA } from '@angular/material';
 import { ExperimentalDesign } from 'src/app/models/linda/experimental-design';
 import { ObservationInterface } from 'src/app/models/linda/observation';
@@ -20,7 +20,7 @@ interface DialogData {
   templateUrl: './associate-observations-measurement.component.html',
   styleUrls: ['./associate-observations-measurement.component.css']
 })
-export class AssociateObservationsMeasurementComponent implements OnInit {
+export class AssociateObservationsMeasurementComponent implements OnInit, AfterViewInit {
   //entry params
   private model_id: string;
   private design: ExperimentalDesign;
@@ -36,7 +36,7 @@ export class AssociateObservationsMeasurementComponent implements OnInit {
   labelPosition_obsID: 'from files' | 'paste ids' = 'from files';
   pasted_ids:string[]=[]
   private observationdataSource: MatTableDataSource<ObservationInterface>;
-  displayedObservationsColumns: string[] = ['No Samples defined', 'select'];
+  displayedObservationsColumns: string[] = ['No observations defined', 'select'];
   private initialSelection = []
   panel_disabled: boolean = false;
   selection = new SelectionModel<ObservationInterface>(false, this.initialSelection /* multiple */);
@@ -58,9 +58,10 @@ export class AssociateObservationsMeasurementComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.design.get_associated_samples()[0]!==undefined){
+    if(this.design.get_associated_observations()[0]!==undefined){
       this.displayedObservationsColumns = Object.keys(this.design.get_associated_observations()[0]).filter(key => !key.includes('UUID'))
       this.displayedObservationsColumns.push('select')
+      console.log(this.displayedObservationsColumns)
       this.observationdataSource = new MatTableDataSource(this.design.get_associated_observations());
       this.observationdataSource.paginator = this.observationpaginator;
     }

@@ -26,36 +26,35 @@
   <h3 >Observations selection table </h3>
     <table  style="width: 100%;" mat-table [dataSource]="get_observationDataSource">
       <ng-container *ngFor="let column of displayedObservationsColumns ; let i=index">
-        <ng-container *ngIf="column!='select'" matColumnDef="{{column}}">
+        <ng-container *ngIf="column!=='select'" matColumnDef="{{column}}">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedObservationsColumns[i]}} </th>
           <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
         </ng-container>
+        <ng-container *ngIf="column==='select'" matColumnDef="{{column}}">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell class="flex-stretch" *matCellDef="let row">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+                [checked]="selection.isSelected(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
       </ng-container>
 
-      <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </th>
-        <td mat-cell class="flex-stretch" *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
-            [checked]="selection.isSelected(row)">
-          </mat-checkbox>
-        </td>
-      </ng-container>
+      
       <tr mat-header-row *matHeaderRowDef="displayedObservationsColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedObservationsColumns;"></tr>
     </table>
     <mat-paginator  #observationpaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
     
   <h2>Associate experimental measurement with observed variables</h2>
-  <p> Given the selectedobservations, you have to feed Linda with the correspondding values</p>
+  <p> Given the selected observations, you have to feed Linda with the corresponding values</p>
   <p> In your case, you have {{get_observationDataSource.data.length}} observations in your experimental design. </p>
-  <p> Do you want to extract {{total_available_plots}} observation units (one per plot)?
-    <br>To do so, please select plot level in list below <br>
-  </p>
+<br>
   <h2>Define Observation unit level</h2>
   <span class="span-project"></span>
   <mat-accordion>
@@ -83,15 +82,12 @@
               Global options
               </mat-panel-title>
           </mat-expansion-panel-header>
-          <h4>Observation unit ID</h4>
-          <p>
-            You can use your own observation unit ID by selecting <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>. 
-          </p>
+          <h4>Observation measurements</h4>
           <div class="form-group">
             <section class="example-section">
                 <mat-radio-group [(ngModel)]="labelPosition_obsID" [ngModelOptions]="{standalone: true}">
                   <mat-radio-button class="example-margin" value="from files">Load from files</mat-radio-button>
-                  <mat-radio-button class="example-margin" value="paste ids">Paste ids</mat-radio-button>
+                  <mat-radio-button class="example-margin" value="paste ids">Paste values</mat-radio-button>
                 </mat-radio-group>
             </section>
             <mat-card *ngIf="labelPosition_obsID==='from files'">
@@ -100,9 +96,9 @@
               
             </mat-card>
             <mat-card *ngIf="labelPosition_obsID!=='from files'">
-              <p>Paste your list of Ids here !! 
-                Each Id has to be separated by a new line !! 
-                Take care to have the same number of line than the total observation units</p>
+              <p>Paste your list of values here !! 
+                Each value has to be separated by a new line !! 
+                Take care to have the same number of line than the total observations selected</p>
                 <!-- <mat-checkbox class="example-margin" [(ngModel)]="checked">Checked</mat-checkbox> -->
                 <textarea #myText (paste)="onPaste($event, 'extid')" (input)="onInput(myText.value,'extid')"></textarea>
             </mat-card>
