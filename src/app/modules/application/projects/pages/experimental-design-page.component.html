@@ -171,7 +171,7 @@
                                 </div>
                                 <!-- Color indicator -->
                                 <mat-grid-list *ngIf="get_factor_values.length>0" cols="get_factor_values.length" rowHeight="20px">
-                                    <mat-grid-tile *ngFor="let factor of get_factor_values; index as i" [colspan]="1" [rowspan]="1"
+                                    <mat-grid-tile *ngFor="let factor of get_factor_values.sort(); index as i" [colspan]="1" [rowspan]="1"
                                       [style.background]="get_background_code_color(i)">{{factor}}</mat-grid-tile>
                                     <!-- <mat-grid-tile [style.background]="'blue'">Treament value 2</mat-grid-tile> -->
                                 </mat-grid-list>
