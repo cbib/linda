@@ -135,62 +135,22 @@ export class AssociateObservedVariable implements OnInit {
      this.associated_materials=await this.globalService.get_biological_material_by_key(this.associated_material_id.split("/")[1]).toPromise()
      console.log(materials)
    } */
-  get get_associated_materials(): BiologicalMaterialDialogModel[] {
-    return this.bm_data
-  }
-  onInput(content: string, type:string) {
-    if (type==='extid'){
-      if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
-        this.alertService.error("you have duplicated Ids  !!! ")
-      }
-      else{
-        if (content.split("\n").length!==this.selection.selected.length){
-          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
-        }
-        else{
-          this.alertService.success("Correct number of observation IDs !! ")
-          this.pasted_ids=content.split("\n")
-        }
-      }
-    }
-  }
-  get get_total():number{
-    if (this.observation_type === 'Destructive') {
-      return this.sampleSelection.selected.length
-    }
-    else{
-      return this.matSelection.selected.length
-
-    }
-  } 
-  onPaste(event: ClipboardEvent, type:string) {
-    let clipboardData = event.clipboardData;
-    let content = clipboardData.getData('text');
-    if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
-        this.alertService.error("you have duplicated Ids  !!! ")
-    }
-    else{
-        if (content.split("\n").length!==this.selection.selected.length){
-          this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.selection.selected.length + " samples Ids")
-        }
-        else{
-          this.alertService.success("Correct number of observation IDs !! ")
-          this.pasted_ids=content.split("\n")
-        }
-    }
-  }
+  
 
   async ngOnInit() {
     await this.set_all_observed_variables()
-    if(this.design.get_associated_samples()[0]===undefined){
-
-    }
-    else{
+    if(this.design.get_associated_samples()[0]!==undefined){
       this.displayedSamplesColumns = Object.keys(this.design.get_associated_samples()[0]).filter(key => !key.includes('UUID'))
       this.displayedSamplesColumns.push('select')
       this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples());
       this.sampledataSource.paginator = this.samplepaginator;
     }
+    /* else{
+      this.displayedSamplesColumns = Object.keys(this.design.get_associated_samples()[0]).filter(key => !key.includes('UUID'))
+      this.displayedSamplesColumns.push('select')
+      this.sampledataSource = new MatTableDataSource(this.design.get_associated_samples());
+      this.sampledataSource.paginator = this.samplepaginator;
+    } */
     
     this.materialdataSource.data = this.bm_data
     this.materialdataSource.sort = this.sort
@@ -375,6 +335,86 @@ export class AssociateObservedVariable implements OnInit {
   get get_sampleDataSource() {
     return this.sampledataSource
   }
+  get get_associated_materials(): BiologicalMaterialDialogModel[] {
+    return this.bm_data
+  }
+  onInput(content: string) {
+    if (this.observation_type === 'Destructive') {
+      if (content.split("\n").length!==this.sampleSelection.selected.length){
+      
+        console.log([...new Set(content.split("\n"))].length)
+        
+        this.alertService.error("you need to have same number of observation IDs than sample selected. in your case, you need " +this.sampleSelection.selected.length + " samples Ids")
+
+      }
+      else{
+        if ([...new Set(content.split("\n"))].length!==this.sampleSelection.selected.length){
+              this.alertService.error("you have duplicated Ids  !!! ")          
+        }
+          else{
+            this.alertService.success("Correct number of observation IDs !! ")
+            this.pasted_ids=content.split("\n")
+          }
+      }
+    }
+    else{
+      if ([...new Set(content.split("\n"))].length!==this.matSelection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+          if (content.split("\n").length!==this.matSelection.selected.length){
+            this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.matSelection.selected.length + " samples Ids")
+          }
+          else{
+            this.alertService.success("Correct number of observation IDs !! ")
+            this.pasted_ids=content.split("\n")
+          }
+      }
+    }
+  }
+  get get_total():number{
+    if (this.observation_type === 'Destructive') {
+      return this.sampleSelection.selected.length
+    }
+    else{
+      return this.matSelection.selected.length
+
+    }
+  } 
+  onPaste(event: ClipboardEvent) {
+
+    let clipboardData = event.clipboardData;
+    let content = clipboardData.getData('text');
+    console.log(content)
+    if (this.observation_type === 'Destructive') {
+      if ([...new Set(content.split("\n"))].length!==this.sampleSelection.selected.length){
+          this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+          if (content.split("\n").length!==this.sampleSelection.selected.length){
+            this.alertService.error("you need to have same number of observation IDs than sample selected. in your case, you need " +this.sampleSelection.selected.length + " samples Ids")
+          }
+          else{
+            this.alertService.success("Correct number of observation IDs !! ")
+            this.pasted_ids=content.split("\n")
+          }
+      }
+    }
+    else{
+      if ([...new Set(content.split("\n"))].length!==this.matSelection.selected.length){
+        this.alertService.error("you have duplicated Ids  !!! ")
+      }
+      else{
+          if (content.split("\n").length!==this.matSelection.selected.length){
+            this.alertService.error("you need to have same number of sample IDs than biological materials selected. in your case, you need " +this.matSelection.selected.length + " samples Ids")
+          }
+          else{
+            this.alertService.success("Correct number of observation IDs !! ")
+            this.pasted_ids=content.split("\n")
+          }
+      }
+    }
+  }
   onNoClick(): void {
     this.dialogRef.close({ event: "Cancel", selected_material: null });
   }
@@ -384,17 +424,35 @@ export class AssociateObservedVariable implements OnInit {
     console.log(this.sampleSelection.selected)
     this.selection.selected.forEach(obs_var => {
       if (this.observation_type === 'Destructive') {
-        this.sampleSelection.selected.forEach((sample, index) => {
-          console.log(sample)
-          let obs_uuid = sample['Sample ID'] + "_obs_" + (index + 1) 
-          this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
-        })
+        if (this.labelPosition_observation_ID!=='autogenerate ids'){  
+          this.sampleSelection.selected.forEach((sample, index) => {
+            console.log(sample)
+            let obs_uuid = this.pasted_ids[index]
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
+          })
+        }
+        else{
+          this.sampleSelection.selected.forEach((sample, index) => {
+            console.log(sample)
+            let obs_uuid = sample['Sample ID'] + "_obs_" + (index + 1) 
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, true, sample['Sample ID'], sample.obsUUID, obs_var['_id']))
+          })
+        }
       }
       else {
-        this.matSelection.selected.forEach((bm, index) => {
-          let obs_uuid = bm.biologicalMaterialId + "_obs_" + (index + 1) 
-          this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
-        })
+        if (this.labelPosition_observation_ID!=='autogenerate ids'){  
+          this.matSelection.selected.forEach((bm, index) => {
+            let obs_uuid = this.pasted_ids[index]
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
+          })
+        }
+        else{
+          this.matSelection.selected.forEach((bm, index) => {
+            let obs_uuid = bm.biologicalMaterialId + "_obs_" + (index + 1) 
+            this.observations.push(new Observation(obs_uuid, this.ObservationDescription, this.ObservationDate, false, bm.biologicalMaterialId, bm.obsUUID, obs_var['_id']))
+          })
+
+        }
         /*this.design.Blocking.value.forEach(block => {
           block['Plot design'].value.forEach(plot => {
             let obs_uuid = "sedwfxd"

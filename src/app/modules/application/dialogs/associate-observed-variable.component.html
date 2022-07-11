@@ -109,10 +109,11 @@
             <h4>Observation description</h4>
             <textarea [(ngModel)]="ObservationDescription" matInput placeholder="Distal part of the leaf ; 100 mg of roots taken from 10 roots at 20 degree Celsius, conserved in vacuum at 20 mM NaCl salinity, stored at -60 degree Celsius to -85 degree Celsius."  type="text" size="2"></textarea>
             
-            <h4>Sample ID</h4>
-          <!-- <input [(ngModel)]="ExternalID" mdbInput placeholder="LINDA:323544" type="text" class="form-control" (onchange)="onIDAdd($event)" /> -->
+            <h4>Observation ID</h4>
+            <alert></alert>
+            <!-- <input [(ngModel)]="ExternalID" mdbInput placeholder="LINDA:323544" type="text" class="form-control" (onchange)="onIDAdd($event)" /> -->
           <p>
-            You can use your own sample IDs by selecting <mat-radio-button class="example-margin" value="paste ids">Paste sample ids</mat-radio-button>. 
+            You can use your own observation IDs by selecting <mat-radio-button class="example-margin" value="paste ids">Paste observation ids</mat-radio-button>. 
           </p>
           <div class="form-group">
             
