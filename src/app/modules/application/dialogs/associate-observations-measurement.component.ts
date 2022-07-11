@@ -53,6 +53,8 @@ export class AssociateObservationsMeasurementComponent implements OnInit {
     this.parent_id = this.data.parent_id
     this.total_available_plots = this.data.total_available_plots
     this.design = this.data.design
+
+    this.observationdataSource = new MatTableDataSource([])
   }
 
   ngOnInit() {
@@ -62,6 +64,10 @@ export class AssociateObservationsMeasurementComponent implements OnInit {
       this.observationdataSource = new MatTableDataSource(this.design.get_associated_observations());
       this.observationdataSource.paginator = this.observationpaginator;
     }
+  }
+  ngAfterViewInit() {
+    this.observationdataSource.paginator = this.observationpaginator;
+    this._cdr.detectChanges()
   }
   onInput(content: string) {
     

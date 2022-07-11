@@ -48,7 +48,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedObservationsColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedObservationsColumns;"></tr>
     </table>
-    <mat-paginator  #samplepaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
+    <mat-paginator  #observationpaginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of samples"></mat-paginator>
     
   <h2>Associate experimental measurement with observed variables</h2>
   <p> Given the selectedobservations, you have to feed Linda with the correspondding values</p>
@@ -97,7 +97,7 @@
             <mat-card *ngIf="labelPosition_obsID==='from files'">
               <!-- <label for="obsunit">Select total number of observation units:</label><input id="obsunit" type="number">
               <label for="prefix">Select prefix for ids:</label><input id="prefix" type="text"> -->
-              <p>you are ready to autogenerate Ids for {{total_available_plots}} observation measurments !! </p>
+              
             </mat-card>
             <mat-card *ngIf="labelPosition_obsID!=='from files'">
               <p>Paste your list of Ids here !! 
