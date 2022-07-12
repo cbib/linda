@@ -30,19 +30,20 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedObservationsColumns[i]}} </th>
           <td mat-cell class="flex-stretch" *matCellDef="let element"> {{element[column]}} </td>
         </ng-container>
-        <ng-container *ngIf="column==='select'" matColumnDef="{{column}}">
-            <th mat-header-cell *matHeaderCellDef>
-              <mat-checkbox (change)="$event ? masterToggle() : null"
-                [checked]="selection.hasValue() && isAllSelected()"
-                [indeterminate]="selection.hasValue() && !isAllSelected()">
-              </mat-checkbox>
-            </th>
-            <td mat-cell class="flex-stretch" *matCellDef="let row">
-              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
-                [checked]="selection.isSelected(row)">
-              </mat-checkbox>
-            </td>
-          </ng-container>
+        
+      </ng-container>
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell class="flex-stretch" *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? rowToggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
       </ng-container>
 
       
@@ -66,7 +67,8 @@
         </mat-expansion-panel-header>
         <div id="help_associate_obs_unit_buttons">
           <p>
-            1. Define observed variable measurement (paste or load from tabular file)    <br>
+            1. Select observations to describe <br>
+            2. Define observed variable measurement (paste values or load from tabular file)    <br>
             3. Click on <button>Add Observed variable measurement</button> to create corresponding measurements. <br>
             4. Click on <button>OK</button> button to link each measurement with the corresponding level in your experimental design<br>
           </p>
@@ -76,7 +78,7 @@
   
     <alert></alert>
     <mat-accordion>
-      <mat-expansion-panel [disabled]="false" [expanded]="false"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+      <mat-expansion-panel [disabled]="panel_disabled" [expanded]="false"  (opened)="panelOpenState = true" (closed)="panelOpenState = false">
           <mat-expansion-panel-header>
               <mat-panel-title>
               Global options
@@ -96,10 +98,12 @@
               
             </mat-card>
             <mat-card *ngIf="labelPosition_obsID!=='from files'">
-              <p>Paste your list of values here !! 
-                Each value has to be separated by a new line !! 
-                Take care to have the same number of line than the total observations selected</p>
-                <!-- <mat-checkbox class="example-margin" [(ngModel)]="checked">Checked</mat-checkbox> -->
+                <p>Paste your list of values here !! <br>
+                    Each value has to be separated by a new line !! 
+                    Take care to have the same number of line than the total observations selected ! <br>
+                    <b style="color: blue;"> For instance, you need {{this.selection.selected.length}} observation value(s)to match number of samples selected </b>
+                  </p>
+              
                 <textarea #myText (paste)="onPaste($event, 'extid')" (input)="onInput(myText.value,'extid')"></textarea>
             </mat-card>
         </div>  
@@ -138,7 +142,7 @@
            
       </mat-expansion-panel>
       <div class="action-container">
-        <button class="btn btn-primary" mat-raised-button type="submit" (click)="save()">Add Observation measurements</button>
+        <button class="btn btn-primary" mat-raised-button  (click)="save()">Add Observation measurements</button>
       </div>
     </mat-accordion>
     <!-- <button [disabled]="!get_loaded" (click)="save()">Add Observation units</button> -->

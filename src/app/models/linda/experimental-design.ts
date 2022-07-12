@@ -641,6 +641,7 @@ export class ExperimentalDesign implements ExperimentalDesignInterface {
     get_associated_samples():SampleInterface[]{
         return this["Associated sample"].value
     }
+    
 
 
     /* add_observed_variables(observed_variable_id:string){

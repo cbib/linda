@@ -38,8 +38,9 @@ export class AssociateObservationsMeasurementComponent implements OnInit, AfterV
   private observationdataSource: MatTableDataSource<ObservationInterface>;
   displayedObservationsColumns: string[] = ['No observations defined', 'select'];
   private initialSelection = []
-  panel_disabled: boolean = false;
-  selection = new SelectionModel<ObservationInterface>(false, this.initialSelection /* multiple */);
+  panel_disabled: boolean = true;
+  selection = new SelectionModel<ObservationInterface>(true, this.initialSelection /* multiple */);
+  
   constructor(
     private globalService: GlobalService,
     private alertService: AlertService,
@@ -80,13 +81,9 @@ export class AssociateObservationsMeasurementComponent implements OnInit, AfterV
 
       }
       else{
-        if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
-              this.alertService.error("you have duplicated Ids  !!! ")          
-        }
-          else{
-            this.alertService.success("Correct number of observation IDs !! ")
+        this.alertService.success("Correct number of observation IDs !! ")
             this.pasted_ids=content.split("\n")
-          }
+      
       }
     
   }
@@ -97,22 +94,32 @@ export class AssociateObservationsMeasurementComponent implements OnInit, AfterV
     let content = clipboardData.getData('text');
     console.log(content)
 
-      if ([...new Set(content.split("\n"))].length!==this.selection.selected.length){
-          this.alertService.error("you have duplicated Ids  !!! ")
+      if (content.split("\n").length!==this.selection.selected.length){
+            this.alertService.error("you need to have same number of observation values than total observations selected. in your case, you need " +this.selection.selected.length + " observation values")
       }
       else{
-          if (content.split("\n").length!==this.selection.selected.length){
-            this.alertService.error("you need to have same number of observation IDs than sample selected. in your case, you need " +this.selection.selected.length + " samples Ids")
-          }
-          else{
-            this.alertService.success("Correct number of observation IDs !! ")
+            this.alertService.success("Correct number of observation values !! ")
             this.pasted_ids=content.split("\n")
-          }
-      }
+        }
+      
     
   }
   async save() {
-    return true;
+    if (this.selection.selected.length!==this.pasted_ids.length || this.selection.selected.length===0){
+      this.alertService.error("not valid form ")
+
+    }
+    else{
+      this.selection.selected.forEach((obs, index) => {
+        console.log(this.pasted_ids[index])
+        console.log(obs['Observation ID'])
+        this.observationdataSource.data.filter(obsv=>obsv['Observation ID']===obs['Observation ID'])[0]['Observed variable measure']=this.pasted_ids[index]
+        console.log(this.observationdataSource.data.filter(obsv=>obsv['Observation ID']===obs['Observation ID'])[0])
+      })
+      this.alertService.success("You have successfully link your measurement to corresponding observations!! ")
+      //return true;
+    }
+    
   };
   isAllSelected() {
     const numSelected = this.selection.selected.length;

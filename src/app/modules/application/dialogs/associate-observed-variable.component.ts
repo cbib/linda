@@ -48,6 +48,8 @@ export class AssociateObservedVariable implements OnInit {
   userMenusecondPosition = { x: '0px', y: '0px' };
   investigationMenuPosition = { x: '0px', y: '0px' };
   helpMenuPosition = { x: '0px', y: '0px' };
+
+
   autogenerateIsChecked: boolean = false
   ObservationDescription: string = "";
   //@ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -72,7 +74,7 @@ export class AssociateObservedVariable implements OnInit {
   dataSource = new MatTableDataSource(OBSERVED_VARIABLE_ELEM);
   materialdataSource = new MatTableDataSource(BM_ELEMENT_DATA);
   //displayedColumns: string[] = ['No Observed variables defined', 'select'];
-  displayedSamplesColumns: string[] = ['No Samples defined', 'select'];
+  
   //displayedMaterialsColumns: string[] = ['No Materials defined', 'select'];
   private initialSampleSelection = []
   sampleSelection = new SelectionModel<SampleInterface>(true, this.initialSampleSelection /* multiple */);
@@ -96,6 +98,7 @@ export class AssociateObservedVariable implements OnInit {
   material_id: string = ""
   associated_materials: BiologicalMaterialDialogModel[] = []
   private bm_data: [];
+  displayedSamplesColumns: string[] = ['No Samples defined', 'select'];
   displayedMaterialColumns: string[] = ['biologicalMaterialId', 'materialId', 'genus', 'species', 'lindaID', 'select'];
   displayedColumns: string[] = ['Trait', 'Method', 'Variable ID', 'Variable name', 'Scale', 'select'];
   
