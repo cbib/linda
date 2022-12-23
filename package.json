@@ -39,7 +39,7 @@
     "ag-grid-enterprise": "^27.1.0",
     "angular-datatables": "^8.1.0",
     "angular-ui-tour": "^0.9.4",
-    "auth0": "^2.38.1",
+    "auth0": "^3.0.1",
     "bootstrap": "^3.4.1",
     "core-js": "^3.6.5",
     "csv": "^6.0.5",
