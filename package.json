@@ -37,7 +37,7 @@
     "ag-grid-angular": "^27.1.1",
     "ag-grid-community": "^27.1.0",
     "ag-grid-enterprise": "^27.1.0",
-    "angular-datatables": "^8.1.0",
+    "angular-datatables": "^15.0.0",
     "angular-ui-tour": "^0.9.4",
     "auth0": "^2.38.1",
     "bootstrap": "^3.4.1",
@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.29",
-    "@angular/cli": "^8.0.6",
+    "@angular/cli": "^15.1.4",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "^8.2.14",
     "@types/datatables.net": "^1.10.19",
